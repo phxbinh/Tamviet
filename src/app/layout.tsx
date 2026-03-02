@@ -180,7 +180,7 @@ import { PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   // Tự động đóng sidebar trên mobile khi chuyển trang
