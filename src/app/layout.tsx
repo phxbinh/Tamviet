@@ -106,7 +106,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
             `}>
               <div className="h-16 flex items-center justify-between px-6 border-b border-border/50 shrink-0 font-bold text-xl">
-                <span>NEON<span className="text-neon-cyan">TODO</span></span>
+                <Link href="/" className="font-bold text-xl tracking-tighter">
+                  NEON<span className="text-neon-cyan">TODO</span>
+                </Link>
                 <button onClick={() => setIsOpen(false)} className="md:hidden p-1 hover:bg-accent rounded"><X size={20}/></button>
               </div>
               <div className="h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
