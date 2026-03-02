@@ -5,7 +5,7 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { Sun, Moon, Monitor } from "lucide-react"; // Import Icon
 
-export function ThemeToggle() {
+export function ThemeToggle_() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -57,3 +57,55 @@ export function ThemeToggle() {
     </div>
   );
 }
+
+
+
+
+
+// src/components/ThemeToggle.tsx
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
+  if (!mounted) return <div className="w-[120px] h-10" />;
+
+  const modes = [
+    { id: 'light', icon: Sun, color: 'text-orange-500' },
+    { id: 'dark', icon: Moon, color: 'text-blue-400' },
+    { id: 'system', icon: Monitor, color: 'text-neon-purple' },
+  ];
+
+  return (
+    <div className="flex gap-1">
+      {modes.map((mode) => {
+        const Icon = mode.icon;
+        const isActive = theme === mode.id;
+        
+        return (
+          <button
+            key={mode.id}
+            onClick={() => setTheme(mode.id)}
+            className={`p-2.5 rounded-xl transition-all duration-300 ${
+              isActive 
+                ? `bg-background shadow-inner ${mode.color}` 
+                : 'text-muted-foreground hover:bg-muted'
+            }`}
+            title={mode.id}
+          >
+            <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
