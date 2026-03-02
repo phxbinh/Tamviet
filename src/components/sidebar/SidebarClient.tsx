@@ -6,7 +6,6 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { SidebarLink } from './links';
 
-/* --- Hiệu ứng mở rộng Menu mượt mà --- */
 function AnimatedSubmenu({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -45,13 +44,8 @@ export default function SidebarClient({ links, onNavigate }: { links: SidebarLin
     const isOpen = openByLevel[depth] === link.name;
     const pl = 12 + depth * 16;
 
-    // Style chung cho tất cả các nút/link
     const baseClass = "group relative flex w-full items-center justify-between rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 mb-0.5";
-    
-    // Style khi Link đang active (Hiệu ứng NEON)
     const activeClass = "bg-neon-cyan/10 text-neon-cyan shadow-[inset_0_0_10px_rgba(34,211,238,0.1)] before:absolute before:left-0 before:top-1/4 before:h-1/2 before:w-1 before:rounded-full before:bg-neon-cyan before:shadow-[0_0_10px_#22d3ee]";
-
-    // Style khi Link bình thường
     const inactiveClass = "text-muted-foreground hover:bg-accent hover:text-foreground";
 
     if (hasChildren) {
@@ -60,7 +54,7 @@ export default function SidebarClient({ links, onNavigate }: { links: SidebarLin
           <button
             type="button"
             onClick={() => toggleMenu(link.name, depth)}
-            className={`${baseClass} ${isOpen ? 'text-foreground' : inactiveClass}`}
+            className={`${baseClass} ${isOpen ? 'text-foreground bg-accent/30' : inactiveClass}`}
             style={{ paddingLeft: `${pl}px` }}
           >
             <span>{link.name}</span>
