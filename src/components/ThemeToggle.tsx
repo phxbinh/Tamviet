@@ -12,7 +12,7 @@ export function ThemeToggle_() {
   // Tránh lỗi hydration
   React.useEffect(() => setMounted(true), []);
 
-  if (!mounted) return <div className="p-2 w-10 h-10" />; 
+  if (!mounted) return <div className="p-2 w-5 h-5" />; 
 
   return (
     <div className="flex gap-1 p-1 border rounded-xl bg-muted/50 backdrop-blur-sm w-fit border-border shadow-sm">
