@@ -31,6 +31,7 @@ export default function Home() {
       <Features />
 
       {/* Footer: Sử dụng border-border để tự động đổi màu theo theme */}
+{/*
       <footer className="py-12 mt-auto border-t border-border bg-background/50 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
@@ -44,6 +45,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+*/}
 
     </div>
   );
