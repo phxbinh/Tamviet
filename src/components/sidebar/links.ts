@@ -15,6 +15,7 @@ export const sidebarLinks: SidebarLink[] = [
     name: 'Todos',
     showInSidebar: true,
     children: [
+      { name: 'Todos', href: '/todos' },
       { name: 'Todo list (no images)', href: '/todoimages' },
       { name: 'Todo with images', href: '/todowithimage' },
       { name: 'TodoImageGrok', href: '/todoImageGrok' },
