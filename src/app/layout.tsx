@@ -211,10 +211,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 fixed md:relative h-full border-r border-border bg-card/80 md:bg-card/40 backdrop-blur-xl z-50
                 transition-all duration-300 ease-in-out
                 ${isSidebarOpen 
-                  ? 'w-64 translate-x-0' 
-                  : 'w-64 -translate-x-full md:w-0 md:translate-x-0 md:border-none overflow-hidden'}
+                  ? 'w-64 translate-x-0 opacity-100' 
+                  : 'w-0 -translate-x-full opacity-0 md:w-0 md:translate-x-0 md:border-none'} 
+                overflow-hidden
               `}
             >
+
               <div className="h-full w-64 flex flex-col shrink-0">
                 <div className="h-16 flex items-center px-6 border-b border-border/50 justify-between shrink-0">
                   <Link href="/" className="font-bold text-xl tracking-tighter text-neon-cyan">
