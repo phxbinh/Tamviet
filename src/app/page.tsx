@@ -1,4 +1,5 @@
 // app/page.tsx
+import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { Features } from "@/components/Features";
 
@@ -6,6 +7,22 @@ export default function Home() {
   return (
     // Sử dụng Fragment hoặc div để không lặp lại thẻ <main> từ layout
     <div className="relative flex flex-col gap-10">
+
+      <Link
+          href="/todos"
+          className="
+            px-6 py-3
+            bg-gradient-to-r from-cyan-600 to-purple-600
+            rounded-xl
+            text-white
+            font-semibold
+            hover:from-cyan-500 hover:to-purple-500
+            shadow-md shadow-purple-500/30
+            transition-all
+          "
+        >
+          Xem Todos
+        </Link>
       
       {/* Hero Section: Điểm chạm đầu tiên với hiệu ứng Neon */}
       <Hero />
