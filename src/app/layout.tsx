@@ -68,82 +68,111 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 */
 
 // src/app/layout.tsx
-import type { Metadata } from "next";
+"use client";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
-import Sidebar from "@/components/sidebar/Sidebar"; // Import Sidebar của bạn
+import Sidebar from "@/components/Sidebar";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { Menu, X, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Todo Neon 2026",
-  description: "Hệ thống quản trị phong cách tương lai",
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mặc định đóng trên mobile
+  const pathname = usePathname();
+
+  // Reset trạng thái khi chuyển trang hoặc đổi kích thước màn hình
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setIsSidebarOpen(true);
+      else setIsSidebarOpen(false);
+    };
+    handleResize(); // Chạy lần đầu
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [pathname]);
+
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased overflow-hidden bg-background text-foreground`}>
+      <body className={`${inter.className} antialiased overflow-hidden bg-background`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
-          {/* TOAST HỆ THỐNG (Luôn trên cùng) */}
-          <Toast />
-
-          <div className="flex h-screen w-full overflow-hidden">
+          <div className="flex h-screen w-full overflow-hidden relative">
             
-            {/* CỘT 1: SIDEBAR (Cố định bên trái) */}
-            <aside className="hidden md:flex w-64 flex-col border-r border-border bg-card/30 backdrop-blur-xl">
-               {/* Logo Area trong Sidebar */}
-               <div className="h-16 flex items-center px-6 border-b border-border/50">
-                  <Link href="/" className="font-bold text-xl tracking-tighter transition-transform hover:scale-105 active:scale-95">
-                    NEON<span className="text-neon-cyan">TODO</span>
+            {/* 1. BACKDROP: Lớp nền mờ khi mở Menu trên Mobile */}
+            <div 
+              className={`
+                fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] transition-opacity duration-300 md:hidden
+                ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+              `}
+              onClick={() => setIsSidebarOpen(false)}
+            />
+
+            {/* 2. SIDEBAR: Hiệu ứng trượt (Slide-in) */}
+            <aside 
+              className={`
+                fixed md:relative h-full w-64 border-r border-border bg-card/90 md:bg-card/40 backdrop-blur-xl z-50
+                transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:hidden'}
+              `}
+            >
+              <div className="h-full flex flex-col w-64">
+                <div className="h-16 flex items-center px-6 border-b border-border/50 justify-between shrink-0">
+                  <Link href="/" className="font-bold text-xl tracking-tighter text-neon-cyan">
+                    NEON<span className="text-foreground">TODO</span>
                   </Link>
-               </div>
-               
-               {/* Nội dung danh sách link */}
-               <div className="flex-1 overflow-y-auto custom-scrollbar">
-                  <Sidebar />
-               </div>
+                  {/* Nút đóng nhanh chỉ hiện trên mobile */}
+                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 hover:bg-accent rounded-lg">
+                    <X size={20} />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto custom-scrollbar">
+                  <Sidebar onNavigate={() => { if (window.innerWidth < 768) setIsSidebarOpen(false) }} />
+                </div>
+              </div>
             </aside>
 
-            {/* CỘT 2: KHU VỰC NỘI DUNG CHÍNH (Header + Content) */}
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            {/* 3. KHU VỰC NỘI DUNG */}
+            <div className="flex-1 flex flex-col min-w-0 h-full relative">
               
-              {/* HEADER (Nằm trong Cột 2, dính lên top) */}
-              <header className="h-16 border-b border-border bg-background/60 backdrop-blur-md flex items-center justify-between px-6 z-30">
-                <div className="flex items-center gap-4">
-                  {/* Chỗ này sau này có thể thêm nút Breadcrumb hoặc Search */}
-                  <h2 className="text-sm font-medium text-muted-foreground italic">System / Dashboard</h2>
-                </div>
-
-                <nav className="flex items-center gap-6">
-                  <Link href="/todos" className="text-sm hover:text-neon-cyan transition-colors">
-                    Nhiệm vụ
-                  </Link>
-                  <div className="h-4 w-[1px] bg-border" />
-                  <span className="text-xs font-mono text-neon-purple opacity-70">v1.0.4-STABLE</span>
-                </nav>
+              {/* HEADER: Chứa Burger Icon */}
+              <header className="h-16 shrink-0 border-b border-border bg-background/60 backdrop-blur-md z-40 flex items-center px-4">
+                <button
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                  className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-neon-cyan transition-all"
+                  aria-label="Toggle Menu"
+                >
+                  {/* Trên mobile hiện Burger, trên Desktop hiện Panel Toggle */}
+                  <div className="md:hidden">
+                    <Menu size={24} /> 
+                  </div>
+                  <div className="hidden md:block">
+                    {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
+                  </div>
+                </button>
+                
+                <div className="ml-4 font-bold md:hidden text-neon-cyan tracking-tighter">NEON</div>
+                <div className="ml-auto hidden sm:block text-[10px] font-mono opacity-30 italic">NODE_STATUS: ACTIVE</div>
               </header>
 
-              {/* VÙNG CUỘN NỘI DUNG (children của các page.tsx) */}
-              <main className="flex-1 overflow-y-auto custom-scrollbar relative p-4 md:p-8">
-                 {/* Hiệu ứng Ambient Light nền nội dung cho chuyên nghiệp */}
-                 <div className="absolute top-0 left-1/4 w-1/2 h-64 bg-neon-cyan/5 blur-[120px] pointer-events-none -z-10" />
-                 
-                 <div className="max-w-6xl mx-auto">
-                    {children}
-                 </div>
+              {/* VÙNG CUỘN CHÍNH */}
+              <main className="flex-1 overflow-y-auto custom-scrollbar relative">
+                <div className="p-4 md:p-10 max-w-6xl mx-auto">
+                  {children}
+                </div>
               </main>
 
             </div>
           </div>
 
-          {/* Nút Theme nổi cố định */}
-          <div className="fixed bottom-6 right-6 z-50">
+          <Toast />
+          <div className="fixed bottom-5 right-5 z-[100]">
             <ThemeToggle />
           </div>
 
@@ -152,6 +181,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
 
 
