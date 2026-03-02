@@ -1,21 +1,29 @@
-// tailwind.config.ts
 import type { Config } from 'tailwindcss';
 
 export default {
+  // 1. Kích hoạt chế độ Dark mode dựa trên class
+  darkMode: 'class', 
+  
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
-    // thêm nếu có folder khác
+    './src/**/*.{js,ts,jsx,tsx,mdx}', // Thêm src nếu bạn dùng folder này
   ],
   theme: {
     extend: {
       colors: {
+        // Giữ lại các màu Neon của bạn cho đúng chất "todo-neon-2026"
         neonCyan: '#22d3ee',
         neonPurple: '#a855f7',
+        
+        // Gợi ý: Thêm các biến HSL nếu bạn muốn dùng CSS Variables như đã nói ở trên
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
       },
       zIndex: {
         100: '100',
-        550: '500',
+        500: '500', // Sửa lại cho đúng logic
         999: '999',
       },
       animation: {
@@ -23,4 +31,5 @@ export default {
       },
     },
   },
+  plugins: [],
 } satisfies Config;
