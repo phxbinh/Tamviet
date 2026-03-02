@@ -1,22 +1,52 @@
 /* src/app/globals.css */
 @import "tailwindcss";
 
+/* 1. ĐỊNH NGHĨA THEME (Dùng cho Tailwind classes) */
 @theme {
-  /* Màu sắc đặc trưng Neon */
+  /* Màu sắc Neon của bạn */
   --color-neon-cyan: #22d3ee;
   --color-neon-purple: #a855f7;
   
-  /* Z-index tùy chỉnh */
+  /* Đưa các CSS Variables vào hệ thống màu của Tailwind */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-primary: hsl(var(--primary));
+  --color-border: hsl(var(--border));
+
+  /* Z-index & Animation */
   --z-index-100: 100;
   --z-index-500: 500;
   --z-index-999: 999;
-
-  /* Hiệu ứng Animation */
   --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Thiết lập Dark/Light Mode động */
+/* 2. ĐỊNH NGHĨA BIẾN SỐ (Cho logic Dark/Light) */
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --primary: 221.2 83.2% 53.3%;
+    --border: 214.3 31.8% 91.4%;
+  }
+
+  .dark {
+    /* Màu nền tối đặc trưng Neon bạn muốn */
+    --background: 222.2 84% 4.9%; 
+    --foreground: 210 40% 98%;
+    --card: 217.2 32.6% 12%;
+    --primary: 217.2 91.2% 59.8%;
+    --border: 217.2 32.6% 17.5%;
+  }
+}
+
+/* 3. THIẾT LẬP CƠ BẢN (Base Styles) */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
   html, body {
     max-width: 100%;
     overflow-x: hidden;
@@ -25,17 +55,17 @@
   }
 
   body {
-    /* Màu nền mặc định cho Light Mode */
-    @apply bg-slate-50 text-slate-950 transition-colors duration-300;
+    @apply bg-background text-foreground transition-colors duration-300;
+    /* Nếu bạn muốn giữ hiệu ứng Gradient cũ cho Dark mode: */
   }
 
-  /* Giao diện khi ở chế độ Dark Mode */
+  /* Hiệu ứng Gradient đặc biệt chỉ khi ở Dark Mode */
   .dark body {
-    @apply bg-gradient-to-br from-gray-950 via-purple-950 to-indigo-950 text-gray-100;
+    background-image: radial-gradient(at top left, #020617, #1e1b4b, #020617);
   }
 }
 
-/* Utility Class hỗ trợ hiệu ứng Neon phát sáng */
-@utility neon-shadow-cyan {
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+/* 4. UTILITIES (Tùy chỉnh thêm) */
+@utility neon-glow {
+  box-shadow: 0 0 15px var(--color-neon-cyan);
 }
