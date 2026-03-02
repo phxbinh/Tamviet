@@ -67,11 +67,11 @@ export function ToggleTodo({ id, completed }: { id: number; completed: boolean }
     <button
       onClick={handleToggle}
       disabled={isPending}
-      {/* QUAN TRỌNG: 
+      /* QUAN TRỌNG: 
         1. shrink-0: Ngăn không cho flexbox bóp nghẹt hoặc kéo giãn nút.
         2. aspect-square: Đảm bảo tỉ lệ 1:1 (luôn luôn tròn).
         3. self-start: (Tùy chọn) Giúp nút luôn nằm ở đầu dòng thay vì nhảy vào giữa khi text quá dài.
-      */}
+      */
       className={`relative flex items-center justify-center w-6 h-6 shrink-0 aspect-square rounded-full border-2 transition-all duration-300 self-start mt-1 ${
         completed 
         ? 'border-neon-cyan bg-neon-cyan/20 shadow-[0_0_10px_#22d3ee]' 
