@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle"; // Import nút chuyển theme
 import Link from "next/link";
+import { Toast } from "@/components/Toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,6 +36,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="relative min-h-screen">
             {children}
           </main>
+
+          {/* Hệ thống Toast toàn cục */}
+          <Toast />
 
           <footer className="py-12 mt-auto border-t border-border bg-background/50 backdrop-blur-sm">
             <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
