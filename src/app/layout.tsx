@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ThemeToggle__ />
             </div>
           </div>
-*/
+*/}
           {/* Theme Toggle FAB */}
           <div className="fixed bottom-8 right-8 z-[100]">
             <ThemeToggle />
