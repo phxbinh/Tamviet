@@ -70,111 +70,87 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 // src/app/layout.tsx
 "use client";
 
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { Menu, X, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import Link from "next/link";
+import { Menu, X } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mặc định đóng trên mobile
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Reset trạng thái khi chuyển trang hoặc đổi kích thước màn hình
+  // Đóng sidebar khi đổi trang trên mobile
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) setIsSidebarOpen(true);
-      else setIsSidebarOpen(false);
-    };
-    handleResize(); // Chạy lần đầu
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    setIsOpen(false);
   }, [pathname]);
 
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased overflow-hidden bg-background`}>
+      {/* Thêm overscroll-none để tránh giật trên mobile */}
+      <body className={`${inter.className} antialiased h-screen overflow-hidden bg-background`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
-          <div className="flex h-screen w-full overflow-hidden relative">
+          <div className="flex h-full w-full relative">
             
-            {/* 1. BACKDROP: Lớp nền mờ khi mở Menu trên Mobile */}
-            <div 
-              className={`
-                fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] transition-opacity duration-300 md:hidden
-                ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-              `}
-              onClick={() => setIsSidebarOpen(false)}
-            />
-
-            {/* 2. SIDEBAR: Hiệu ứng trượt (Slide-in) */}
-            <aside 
-              className={`
-                fixed md:relative h-full w-64 border-r border-border bg-card/90 md:bg-card/40 backdrop-blur-xl z-50
-                transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]
-                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:hidden'}
-              `}
-            >
-              <div className="h-full flex flex-col w-64">
-                <div className="h-16 flex items-center px-6 border-b border-border/50 justify-between shrink-0">
-                  <Link href="/" className="font-bold text-xl tracking-tighter text-neon-cyan">
-                    NEON<span className="text-foreground">TODO</span>
-                  </Link>
-                  {/* Nút đóng nhanh chỉ hiện trên mobile */}
-                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 hover:bg-accent rounded-lg">
-                    <X size={20} />
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto custom-scrollbar">
-                  <Sidebar onNavigate={() => { if (window.innerWidth < 768) setIsSidebarOpen(false) }} />
-                </div>
+            {/* 1. SIDEBAR (Cố định chiều rộng, không gây giật layout) */}
+            <aside className={`
+              fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-card
+              transition-transform duration-300 ease-in-out
+              md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
+            `}>
+              <div className="h-16 flex items-center justify-between px-6 border-b border-border/50 shrink-0 font-bold text-xl">
+                <span>NEON<span className="text-neon-cyan">TODO</span></span>
+                <button onClick={() => setIsOpen(false)} className="md:hidden p-1 hover:bg-accent rounded"><X size={20}/></button>
+              </div>
+              <div className="h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
+                <Sidebar onNavigate={() => setIsOpen(false)} />
               </div>
             </aside>
 
-            {/* 3. KHU VỰC NỘI DUNG */}
-            <div className="flex-1 flex flex-col min-w-0 h-full relative">
+            {/* 2. BACKDROP (Mờ dần mượt mà) */}
+            <div 
+              onClick={() => setIsOpen(false)} 
+              className={`fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
+            />
+
+            {/* 3. NỘI DUNG CHÍNH (Chiếm trọn màn hình) */}
+            <div className="flex-1 flex flex-col min-w-0 h-full relative md:pl-64 transition-[padding] duration-300">
               
-              {/* HEADER: Chứa Burger Icon */}
-              <header className="h-16 shrink-0 border-b border-border bg-background/60 backdrop-blur-md z-40 flex items-center px-4">
-                <button
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-neon-cyan transition-all"
-                  aria-label="Toggle Menu"
-                >
-                  {/* Trên mobile hiện Burger, trên Desktop hiện Panel Toggle */}
-                  <div className="md:hidden">
-                    <Menu size={24} /> 
-                  </div>
-                  <div className="hidden md:block">
-                    {isSidebarOpen ? <PanelLeftClose size={20} /> : <PanelLeftOpen size={20} />}
-                  </div>
+              {/* Header (Sticky cố định trên cùng) */}
+              <header className="h-16 border-b border-border flex items-center px-4 shrink-0 bg-background/60 backdrop-blur-md sticky top-0 z-30 w-full">
+                <button onClick={() => setIsOpen(true)} className="md:hidden p-2 mr-2 hover:bg-accent rounded-lg transition-transform active:scale-90">
+                  <Menu size={24} />
                 </button>
-                
-                <div className="ml-4 font-bold md:hidden text-neon-cyan tracking-tighter">NEON</div>
-                <div className="ml-auto hidden sm:block text-[10px] font-mono opacity-30 italic">NODE_STATUS: ACTIVE</div>
+                <div className="font-semibold text-sm tracking-tight opacity-70">Hệ thống / Dashboard</div>
               </header>
 
-              {/* VÙNG CUỘN CHÍNH */}
-              <main className="flex-1 overflow-y-auto custom-scrollbar relative">
-                <div className="p-4 md:p-10 max-w-6xl mx-auto">
-                  {children}
+              {/* Vùng cuộn duy nhất của cả ứng dụng */}
+              <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar scroll-smooth">
+                {/* Content wrapper để tránh nội dung sát mép */}
+                <div className="p-4 md:p-8 max-w-6xl mx-auto w-full min-h-full flex flex-col">
+                  <div className="flex-1">
+                    {children}
+                  </div>
+                  
+                  {/* Footer đơn giản nằm trong main để cuộn theo nội dung */}
+                  <footer className="mt-12 py-6 border-t border-border/40 text-[11px] text-muted-foreground">
+                    © 2026 Todo Neon - Built for performance.
+                  </footer>
                 </div>
               </main>
-
             </div>
+
           </div>
 
           <Toast />
-          <div className="fixed bottom-5 right-5 z-[100]">
-            <ThemeToggle />
-          </div>
+          <div className="fixed bottom-6 right-6 z-[60]"><ThemeToggle /></div>
 
         </ThemeProvider>
       </body>
