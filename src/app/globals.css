@@ -60,4 +60,10 @@
     background-image: radial-gradient(at top left, #020617, #1e1b4b, #020617);
     background-attachment: fixed; /* Giúp gradient không bị vỡ khi cuộn trang */
   }
+
+  /* Fix lỗi Text bị giữ màu tối khi sang Light mode */
+  h1, h2, h3, h4, h5, h6, p, span, div {
+    color: hsl(var(--foreground));
+  }
+  
 }
