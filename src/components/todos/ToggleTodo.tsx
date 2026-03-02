@@ -44,6 +44,7 @@ export function ToggleTodo({ id, completed }: { id: number; completed: boolean }
 // src/components/todos/ToggleTodo.tsx
 'use client';
 
+import { Check, Loader2 } from "lucide-react";
 import { useTransition } from 'react';
 import { toggleTodoAction } from '@/actions/todos/actions';
 
@@ -66,17 +67,16 @@ export function ToggleTodo({ id, completed }: { id: number; completed: boolean }
     <button
       onClick={handleToggle}
       disabled={isPending}
-      className="relative flex items-center justify-center w-6 h-6 rounded-full border-2 border-neon-cyan/50 transition-all duration-300 hover:border-neon-cyan disabled:opacity-50"
-      aria-label="Toggle todo completed"
+      className={`relative flex items-center justify-center w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+        completed 
+        ? 'border-neon-cyan bg-neon-cyan/20 shadow-[0_0_10px_#22d3ee]' 
+        : 'border-muted-foreground/30 hover:border-neon-cyan'
+      }`}
     >
-      {/* Custom Checkbox UI */}
-      <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-        completed ? 'bg-neon-cyan shadow-[0_0_10px_#22d3ee] scale-100' : 'scale-0'
-      }`} />
-      
-      {/* Loading Spinner nhỏ khi pending */}
-      {isPending && (
-        <div className="absolute inset-0 border-2 border-t-transparent border-neon-purple rounded-full animate-spin" />
+      {isPending ? (
+        <Loader2 size={14} className="animate-spin text-neon-purple" />
+      ) : (
+        completed && <Check size={14} className="text-neon-cyan stroke-[3px]" />
       )}
     </button>
   );
