@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { addTodo, deleteTodo, toggleTodo, getTodoById, updateTodo } from '@/server/todos/db';  // Import từ file db.js của bạn
 
 // Action để thêm todo mới
-export async function createTodo(formData) {
+export async function createTodo(formData: FormData) {
   const title = formData.get('title')?.toString().trim();
 
   if (!title) {
@@ -24,7 +24,7 @@ export async function createTodo(formData) {
 }
 
 // Action để xóa todo
-export async function deleteTodoAction(formData) {
+export async function deleteTodoAction(formData: FormData) {
   const id = formData.get('id');
 
   if (!id) {
@@ -45,7 +45,7 @@ export async function deleteTodoAction(formData) {
 
 
 // Toggle completed chechked box todosnew
-export async function toggleTodoAction(formData) {
+export async function toggleTodoAction(formData: FormData) {
   const rawId = formData.get('id');
   const id = Number(rawId);
 
@@ -59,7 +59,7 @@ export async function toggleTodoAction(formData) {
   revalidatePath('/');
 }
 
-export async function updateTodoAction(formData) {
+export async function updateTodoAction(formData: FormData) {
   const id = Number(formData.get('id'));
   const title = formData.get('title')?.toString().trim();
 
@@ -71,7 +71,7 @@ export async function updateTodoAction(formData) {
   revalidatePath('/todos');
 }
 
-export async function deleteTodoFromDetail(formData) {
+export async function deleteTodoFromDetail(formData: FormData) {
   const id = Number(formData.get('id'));
   if (!id) throw new Error('Invalid ID');
 
