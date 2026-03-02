@@ -4,12 +4,7 @@ import { ThemeToggle } from "./ThemeToggle";
 export const Hero = () => {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-4 transition-colors duration-300">
-      {/* Nút chuyển đổi theme đặt ở góc trên */}
-{/*
-      <div className="fixed top-6 right-6 z-50">
-        <ThemeToggle />
-      </div>
-*/}
+
       <div className="max-w-4xl text-center space-y-6">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
           Xây dựng tương lai với <span className="text-primary">Next.js & TS</span>
