@@ -2,7 +2,7 @@
 'use client';
 
 import { useTransition } from 'react';
-import { toggleTodoAction } from './actions/todos/actions'; // adjust path
+import { toggleTodoAction } from '@/actions/todos/actions'; // adjust path
 
 export function ToggleTodo({ id, completed }: { id: number; completed: boolean }) {
   const [isPending, startTransition] = useTransition();
