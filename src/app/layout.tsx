@@ -75,7 +75,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, PanelLeftClose, PanelLeftOpen } from "lucide-react";
