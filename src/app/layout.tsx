@@ -166,96 +166,112 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import Link from "next/link";
 import { Toast } from "@/components/Toast";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { PanelLeftClose, PanelLeftOpen, Menu } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const pathname = usePathname();
 
-  // Đóng menu khi đổi trang (UX cho Mobile)
+  // Tự động đóng sidebar trên mobile khi chuyển trang
   useEffect(() => {
-    setIsMobileMenuOpen(false);
+    if (window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
   }, [pathname]);
 
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased bg-background text-foreground overflow-hidden`}>
+      <body className={`${inter.className} antialiased overflow-hidden bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
-          <div className="flex h-screen w-full overflow-hidden">
+          <div className="flex h-screen w-full overflow-hidden relative">
             
-            {/* --- SIDEBAR DESKTOP (Luôn hiện trên md+) --- */}
-            <aside className="hidden md:flex w-64 flex-col border-r border-border bg-card/30 backdrop-blur-xl shrink-0">
-              <div className="h-16 flex items-center px-6 border-b border-border/50 shrink-0 font-bold text-xl tracking-tighter">
-                NEON<span className="text-neon-cyan">TODO</span>
-              </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                <Sidebar />
+            {/* --- LỚP PHỦ MOBILE (Backdrop) --- */}
+            {isSidebarOpen && (
+              <div 
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[45] md:hidden transition-opacity"
+                onClick={() => setIsSidebarOpen(false)}
+              />
+            )}
+
+            {/* --- SIDEBAR --- */}
+            <aside 
+              className={`
+                fixed md:relative h-full border-r border-border bg-card/80 md:bg-card/40 backdrop-blur-xl z-50
+                transition-all duration-300 ease-in-out
+                ${isSidebarOpen 
+                  ? 'w-64 translate-x-0' 
+                  : 'w-64 -translate-x-full md:w-0 md:translate-x-0 md:border-none overflow-hidden'}
+              `}
+            >
+              <div className="h-full w-64 flex flex-col shrink-0">
+                <div className="h-16 flex items-center px-6 border-b border-border/50 justify-between shrink-0">
+                  <Link href="/" className="font-bold text-xl tracking-tighter text-neon-cyan">
+                    NEON<span className="text-foreground">TODO</span>
+                  </Link>
+                  {/* Nút đóng nhanh trên mobile */}
+                  <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-1 text-muted-foreground">
+                    <PanelLeftClose size={20} />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <Sidebar onNavigate={() => { if (window.innerWidth < 768) setIsSidebarOpen(false) }} />
+                </div>
               </div>
             </aside>
 
-            {/* --- SIDEBAR MOBILE (Trượt từ trái qua khi click Burger) --- */}
-            <div 
-              className={`fixed inset-0 z-[100] md:hidden transition-all duration-300 ${isMobileMenuOpen ? "visible" : "invisible"}`}
-            >
-              {/* Backdrop mờ nền */}
-              <div 
-                className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-100" : "opacity-0"}`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              />
-              {/* Nội dung Sidebar Mobile */}
-              <aside className={`absolute inset-y-0 left-0 w-72 bg-card border-r border-border transition-transform duration-300 ease-out shadow-2xl ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                <div className="h-16 flex items-center justify-between px-6 border-b border-border/50">
-                  <span className="font-bold text-xl tracking-tighter">NEON<span className="text-neon-cyan">TODO</span></span>
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2"><X size={20} /></button>
-                </div>
-                <div className="flex-1 overflow-y-auto pt-4">
-                  <Sidebar onNavigate={() => setIsMobileMenuOpen(false)} />
-                </div>
-              </aside>
-            </div>
-
-            {/* --- NỘI DUNG CHÍNH (Header + Main) --- */}
+            {/* --- NỘI DUNG CHÍNH --- */}
             <div className="flex-1 flex flex-col min-w-0 h-full relative">
               
-              {/* HEADER (Chứa Burger Icon cho Mobile) */}
+              {/* HEADER */}
               <header className="h-16 shrink-0 border-b border-border bg-background/60 backdrop-blur-md z-40 flex items-center px-4 justify-between">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={() => setIsMobileMenuOpen(true)}
-                    className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-neon-cyan transition-all"
                   >
-                    <Menu size={24} /> {/* ĐÂY LÀ BURGER ICON CỦA BẠN */}
+                    {isSidebarOpen ? <PanelLeftClose size={20} /> : <Menu size={20} />}
                   </button>
-                  <Link href="/" className="md:block hidden font-medium text-sm hover:text-neon-cyan transition-colors">Trang chủ</Link>
-                  <span className="md:hidden font-bold tracking-tighter">NEON</span>
+                  <Link href="/" className="md:hidden font-bold text-sm tracking-tighter text-neon-cyan">NEON</Link>
                 </div>
-                <div className="flex items-center gap-4 italic text-[10px] text-muted-foreground/30 font-mono">v1.0-STABLE</div>
+
+                <div className="flex items-center gap-4 italic text-[10px] text-muted-foreground/40 font-mono hidden sm:block">
+                  LIVE_SYSTEM_NODE_01
+                </div>
               </header>
 
-              {/* VÙNG CUỘN CHÍNH */}
-              <main className="flex-1 overflow-y-auto relative custom-scrollbar">
-                <div className="p-4 md:p-10 max-w-6xl mx-auto">
-                  {children}
+              {/* MAIN CONTENT */}
+              <main className="flex-1 overflow-y-auto custom-scrollbar relative flex flex-col">
+                <div className="flex-1 p-4 md:p-8">
+                  <div className="absolute top-0 left-1/4 w-1/2 h-64 bg-neon-cyan/5 blur-[120px] pointer-events-none -z-10" />
+                  <div className="max-w-6xl mx-auto">
+                    {children}
+                  </div>
                 </div>
+
+                <footer className="py-6 border-t border-border/40 bg-background/40 px-6">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest text-center md:text-left">
+                    © 2026 Todo Neon Protocol
+                  </p>
+                </footer>
               </main>
 
             </div>
           </div>
 
           <Toast />
-          <div className="fixed bottom-6 right-6 z-[100]">
+          <div className="fixed bottom-5 right-5 z-[100]">
             <ThemeToggle />
           </div>
 
