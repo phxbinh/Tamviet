@@ -12,57 +12,36 @@ export const metadata: Metadata = {
   description: "Ứng dụng ghi chú phong cách tương lai với Next.js 15",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.className} antialiased transition-colors duration-300`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* HEADER CHUNG - Luôn hiện ở mọi trang */}
-          <header className="sticky top-0 z-50 w-full border-b border-border bg-background/60 backdrop-blur-md">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          
+          {/* Navbar bây giờ chỉ chứa Logo và Menu */}
+          <header className="sticky top-0 z-40 w-full border-b border-border bg-background/60 backdrop-blur-md">
             <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-              {/* Logo / Brand */}
-              <Link href="/" className="group flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.5)] group-hover:scale-110 transition-transform">
-                  <span className="text-black font-black text-xs">N26</span>
-                </div>
-                <span className="font-bold text-xl tracking-tighter text-foreground">
-                  NEON<span className="text-neon-cyan">TODO</span>
-                </span>
+              <Link href="/" className="font-bold text-xl tracking-tighter">
+                NEON<span className="text-neon-cyan">TODO</span>
               </Link>
-
-              {/* Navigation & Theme Toggle */}
-              <nav className="flex items-center gap-6">
-                <Link 
-                  href="/todos" 
-                  className="text-sm font-medium text-muted-foreground hover:text-neon-cyan transition-colors"
-                >
+              <nav className="flex gap-6">
+                <Link href="/todos" className="text-sm hover:text-neon-cyan transition-colors">
                   Danh sách Todo
                 </Link>
-                
-                {/* Nút chuyển theme xuất hiện ở đây */}
-                <ThemeToggle />
               </nav>
             </div>
           </header>
 
-          {/* NỘI DUNG TRANG CHÍNH */}
-          <main className="relative min-h-[calc(100-64px)] flex flex-col">
+          <main className="relative min-h-screen">
             {children}
           </main>
 
-          {/* FOOTER CHUNG (Nếu bạn muốn hiện ở mọi nơi) */}
-          <footer className="py-8 border-t border-border text-center text-xs text-muted-foreground">
-            © 2026 Neon Todo System • Built with Next.js 15
-          </footer>
+          {/* NÚT THEME NỔI (FIXED) - Tách biệt hoàn toàn */}
+          <div className="fixed bottom-6 right-6 z-50 flex items-center justify-center">
+            <div className="p-1 rounded-2xl bg-card/80 backdrop-blur-xl border border-border shadow-[0_8px_32px_rgba(0,0,0,0.2)] dark:shadow-[0_8px_32px_rgba(34,211,238,0.15)] hover:scale-105 transition-all duration-300">
+              <ThemeToggle />
+            </div>
+          </div>
           
         </ThemeProvider>
       </body>
