@@ -37,12 +37,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
 
           {/* NÚT THEME NỔI (FIXED) - Tách biệt hoàn toàn */}
+{/*
           <div className="fixed bottom-6 right-6 z-50 flex items-center justify-center">
             <div className="p-1 rounded-2xl bg-card/80 backdrop-blur-xl border border-border shadow-[0_8px_32px_rgba(0,0,0,0.2)] dark:shadow-[0_8px_32px_rgba(34,211,238,0.15)] hover:scale-105 transition-all duration-300">
-              <ThemeToggle />
+              <ThemeToggle__ />
             </div>
           </div>
-          
+*/
+          {/* Theme Toggle FAB */}
+          <div className="fixed bottom-8 right-8 z-[100]">
+            <ThemeToggle />
+          </div>
+
         </ThemeProvider>
       </body>
     </html>
