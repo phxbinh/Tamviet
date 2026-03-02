@@ -97,10 +97,20 @@ async function handleAdd(formData: FormData) {
 
 
 // src/app/todos/page.tsx
+/*
 import { getTodos, addTodo } from '@/server/todos/db';
 import { revalidatePath } from 'next/cache';
 import { ToggleTodo } from '@/components/todos/ToggleTodo';
 import { ConfirmDeleteModal } from '@/components/modals/ConfirmDeleteModal';
+import Link from 'next/link';
+*/
+
+import { getTodos, addTodo } from '@/server/todos/db';
+import { createTodo, toggleTodoAction, deleteTodoAction } from '@/actions/todos/actions';
+import { revalidatePath } from 'next/cache';
+import { ToggleTodo } from '@/components/todos/ToggleTodo';
+import { ConfirmDeleteModal } from '@/components/modals/ConfirmDeleteModal';
+
 import Link from 'next/link';
 
 export default async function Todos() {
