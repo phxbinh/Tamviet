@@ -1,27 +1,7 @@
 /* src/app/globals.css */
 @import "tailwindcss";
 
-/* 1. ĐỊNH NGHĨA THEME (Dùng cho Tailwind classes) */
-@theme {
-  /* Màu sắc Neon của bạn */
-  --color-neon-cyan: #22d3ee;
-  --color-neon-purple: #a855f7;
-  
-  /* Đưa các CSS Variables vào hệ thống màu của Tailwind */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-primary: hsl(var(--primary));
-  --color-border: hsl(var(--border));
-
-  /* Z-index & Animation */
-  --z-index-100: 100;
-  --z-index-500: 500;
-  --z-index-999: 999;
-  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* 2. ĐỊNH NGHĨA BIẾN SỐ (Cho logic Dark/Light) */
+/* 1. Cấu hình các biến số (Variables) cho Dark/Light */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -32,8 +12,7 @@
   }
 
   .dark {
-    /* Màu nền tối đặc trưng Neon bạn muốn */
-    --background: 222.2 84% 4.9%; 
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 217.2 32.6% 12%;
     --primary: 217.2 91.2% 59.8%;
@@ -41,31 +20,41 @@
   }
 }
 
-/* 3. THIẾT LẬP CƠ BẢN (Base Styles) */
+/* 2. Cấu hình THEME (Thay thế hoàn toàn tailwind.config.ts) */
+@theme {
+  /* Kết nối biến HSL vào hệ thống Tailwind */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-primary: hsl(var(--primary));
+  --color-border: hsl(var(--border));
+
+  /* Thêm màu Neon đặc trưng */
+  --color-neon-cyan: #22d3ee;
+  --color-neon-purple: #a855f7;
+
+  /* Cấu hình Z-index */
+  --z-index-100: 100;
+  --z-index-500: 500;
+  --z-index-999: 999;
+
+  /* Cấu hình Animation */
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  /* Cấu hình Dark Mode (v4 cần dòng này để nhận diện class .dark) */
+  --variant-dark: (&:where(.dark, .dark *));
+}
+
+/* 3. Style cơ bản cho Body */
 @layer base {
   * {
     @apply border-border;
   }
-
-  html, body {
-    max-width: 100%;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-  }
-
   body {
     @apply bg-background text-foreground transition-colors duration-300;
-    /* Nếu bạn muốn giữ hiệu ứng Gradient cũ cho Dark mode: */
   }
-
-  /* Hiệu ứng Gradient đặc biệt chỉ khi ở Dark Mode */
   .dark body {
+    /* Hiệu ứng gradient sâu thẳm cho đúng chất Neon */
     background-image: radial-gradient(at top left, #020617, #1e1b4b, #020617);
   }
-}
-
-/* 4. UTILITIES (Tùy chỉnh thêm) */
-@utility neon-glow {
-  box-shadow: 0 0 15px var(--color-neon-cyan);
 }
