@@ -1,0 +1,41 @@
+/* src/app/globals.css */
+@import "tailwindcss";
+
+@theme {
+  /* Màu sắc đặc trưng Neon */
+  --color-neon-cyan: #22d3ee;
+  --color-neon-purple: #a855f7;
+  
+  /* Z-index tùy chỉnh */
+  --z-index-100: 100;
+  --z-index-500: 500;
+  --z-index-999: 999;
+
+  /* Hiệu ứng Animation */
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Thiết lập Dark/Light Mode động */
+@layer base {
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    /* Màu nền mặc định cho Light Mode */
+    @apply bg-slate-50 text-slate-950 transition-colors duration-300;
+  }
+
+  /* Giao diện khi ở chế độ Dark Mode */
+  .dark body {
+    @apply bg-gradient-to-br from-gray-950 via-purple-950 to-indigo-950 text-gray-100;
+  }
+}
+
+/* Utility Class hỗ trợ hiệu ứng Neon phát sáng */
+@utility neon-shadow-cyan {
+  box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+}
