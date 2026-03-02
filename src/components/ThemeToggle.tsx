@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Monitor } from "lucide-react"; // Import Icon
+import { Sun, Moon, Monitor, ChevronUp } from "lucide-react";
 
 export function ThemeToggle_() {
   const { theme, setTheme } = useTheme();
@@ -63,7 +63,7 @@ export function ThemeToggle_() {
 
 
 // src/components/ThemeToggle.tsx
-export function ThemeToggle() {
+export function ThemeToggle__() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -100,6 +100,72 @@ export function ThemeToggle() {
     </div>
   );
 }
+
+
+// src/components/ThemeToggle.tsx
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const modes = [
+    { id: 'system', icon: Monitor, label: 'Hệ thống', color: 'text-purple-400' },
+    { id: 'dark', icon: Moon, label: 'Tối', color: 'text-blue-400' },
+    { id: 'light', icon: Sun, label: 'Sáng', color: 'text-orange-400' },
+  ];
+
+  // Lấy icon của theme hiện tại để hiển thị nút chính
+  const CurrentIcon = modes.find(m => m.id === theme)?.icon || Monitor;
+
+  return (
+    <div className="relative flex flex-col items-center gap-3">
+      {/* MENU CỘT - Chạy từ dưới lên */}
+      <div 
+        className={`flex flex-col gap-3 transition-all duration-300 ease-out transform ${
+          isOpen 
+            ? "opacity-100 translate-y-0 scale-100" 
+            : "opacity-0 translate-y-10 scale-50 pointer-events-none"
+        }`}
+      >
+        {modes.map((mode) => (
+          <button
+            key={mode.id}
+            onClick={() => {
+              setTheme(mode.id);
+              setIsOpen(false);
+            }}
+            className={`group relative flex items-center justify-center w-12 h-12 rounded-full bg-card border border-border shadow-lg hover:border-neon-cyan transition-all ${
+              theme === mode.id ? "ring-2 ring-neon-cyan/50" : ""
+            }`}
+          >
+            <mode.icon size={20} className={mode.color} />
+            {/* Tooltip hiện tên khi hover */}
+            <span className="absolute right-14 px-2 py-1 rounded bg-popover text-xs border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              {mode.label}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* NÚT TRIGGER CHÍNH */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-14 h-14 rounded-full flex items-center justify-center border-2 transition-all duration-500 shadow-2xl ${
+          isOpen 
+            ? "bg-neon-cyan border-neon-cyan text-black rotate-180 shadow-[0_0_20px_rgba(34,211,238,0.6)]" 
+            : "bg-card border-border text-foreground hover:border-neon-cyan hover:shadow-[0_0_15px_rgba(34,211,238,0.3)]"
+        }`}
+      >
+        {isOpen ? <ChevronUp size={28} /> : <CurrentIcon size={28} />}
+      </button>
+    </div>
+  );
+}
+
+
 
 
 
