@@ -1,4 +1,4 @@
-/*
+
 import SidebarClient from './SidebarClient';
 import { sidebarLinks } from './links';
 
@@ -11,8 +11,8 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     </div>
   );
 }
-*/
 
+/*
 import SidebarClient from './SidebarClient';
 import { sidebarLinks } from './links';
 
@@ -37,3 +37,4 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
     </div>
   );
 }
+*/
