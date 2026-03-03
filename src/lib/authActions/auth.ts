@@ -116,6 +116,41 @@ export async function signOut() {
 }
 
 
+/**
+ * QUÊN MẬT KHẨU (Gửi email khôi phục)
+ */
+export async function requestPasswordReset(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const email = (formData.get('email') as string)?.trim();
+
+  if (!email) return { error: 'Vui lòng nhập địa chỉ email' };
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/change-password`,
+  });
+
+  if (error) return { error: error.message };
+
+  return { success: true, message: 'Yêu cầu đã được gửi! Vui lòng kiểm tra hộp thư.' };
+}
+
+/**
+ * ĐỔI MẬT KHẨU MỚI (Cập nhật trực tiếp)
+ */
+export async function updatePassword(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  if (password !== confirmPassword) return { error: 'Mật khẩu xác nhận không khớp' };
+  if (password.length < 6) return { error: 'Mật khẩu phải từ 6 ký tự trở lên' };
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) return { error: error.message };
+
+  return { success: true, message: 'Cập nhật mật khẩu thành công!' };
+}
 
 
 
