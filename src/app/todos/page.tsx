@@ -57,7 +57,7 @@ export default async function Todos() {
 
               <Link
                 href={`/todos/${todo.id}`}
-                className={`text-lg font-medium transition-all duration-300 hover:text-neon-cyan ${
+                className={`text-lg font-medium transition-colors duration-300 hover:text-neon-cyan ${
                   todo.completed
                     ? 'line-through text-muted-foreground opacity-60'
                     : 'text-foreground'
