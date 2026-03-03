@@ -29,7 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
             `}>
               <div className="h-16 flex items-center justify-between px-6 border-b border-border shrink-0">
-                <span className="font-bold tracking-tighter">NEON<span className="text-neon-cyan">TODO</span></span>
+                <Link
+                  href="/"
+                >
+                  <span className="font-bold tracking-tighter">TÂM<span className="text-neon-cyan"> VIỆT</span></span> </Link>
                 <button onClick={() => setIsOpen(false)} className="md:hidden p-2"><X size={18}/></button>
               </div>
               <div className="flex-1 overflow-y-auto custom-scrollbar">
