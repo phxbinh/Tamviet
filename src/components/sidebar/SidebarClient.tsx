@@ -1,4 +1,4 @@
-/*
+
 'use client';
 
 import Link from 'next/link';
@@ -71,9 +71,10 @@ export default function SidebarClient({ links, onNavigate }: { links: SidebarLin
 
   return <nav className="px-3">{links.map((link) => renderLink(link, 0))}</nav>;
 }
-*/
 
 
+
+/*
 'use client';
 
 import Link from 'next/link';
@@ -157,7 +158,7 @@ export default function SidebarClient({ links, onNavigate }: { links: SidebarLin
   return <nav className="px-3">{links.map((link) => renderLink(link, 0))}</nav>;
 }
 
-
+*/
 
 
 
