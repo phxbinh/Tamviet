@@ -19,7 +19,7 @@ export default async function Todos() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
+    <div className="max-w-2xl mx-auto px-1 py-10">
       {/* Tiêu đề với Gradient Neon */}
       <h1 className="text-5xl md:text-6xl font-extrabold mb-12 text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-neon-cyan via-blue-500 to-neon-purple drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
         Todo Neon JS
