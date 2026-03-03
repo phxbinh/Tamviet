@@ -28,7 +28,7 @@ export default async function Todos() {
       {/* Form thêm todo: Thích nghi theme + Focus Neon Glow */}
       <form
         action={handleAdd}
-        className="mb-10 relative flex gap-3 rounded-2xl bg-card/50 backdrop-blur-xl border border-border shadow-xl focus-within:border-neon-cyan/50 focus-within:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all duration-300 p-2"
+        className="mb-10 relative flex gap-3 rounded-2xl bg-card/50 backdrop-blur-xl border border-border shadow-xl focus-within:border-neon-cyan/50 focus-within:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-colors duration-300 p-2"
       >
         <input
           name="title"
