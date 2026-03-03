@@ -256,7 +256,7 @@ const openModal = (type: 'terms' | 'privacy') => {
         </div>
       </div>
     </div>
-{/* Đặt component Modal ở cuối file (ngoài cùng)*/}
+
 <LegalModal 
   isOpen={modalConfig.isOpen} 
   onClose={() => setModalConfig({ ...modalConfig, isOpen: false })} 
