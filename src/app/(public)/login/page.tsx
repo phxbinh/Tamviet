@@ -224,7 +224,7 @@ export default function LoginPage() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight">Đăng nhập hệ thống</h1>
-              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1">Hạt nhân quản trị NEON</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] mt-1">Hạt nhân quản trị TÂM VIỆT</p>
             </div>
           </div>
 
