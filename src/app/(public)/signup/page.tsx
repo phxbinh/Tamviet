@@ -73,6 +73,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { signUp } from '@/lib/authActions/auth';
 import { Mail, Lock, Loader2, UserPlus, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import LegalModal from '@/components/modals/LegalModal';
 
 type FormState =
   | {
@@ -97,6 +98,24 @@ export default function SignupPage() {
       return () => clearTimeout(timer);
     }
   }, [state]);
+
+
+
+// Thêm vào trong component SignupPage
+const [modalConfig, setModalConfig] = useState<{isOpen: boolean, title: string, type: 'terms' | 'privacy'}>({
+  isOpen: false,
+  title: '',
+  type: 'terms'
+});
+
+// Hàm tiện ích để mở modal
+const openModal = (type: 'terms' | 'privacy') => {
+  setModalConfig({
+    isOpen: true,
+    title: type === 'terms' ? 'Điều khoản dịch vụ' : 'Chính sách bảo mật',
+    type
+  });
+};
 
   return (
     <div className="h-full flex items-center justify-center p-6">
@@ -192,11 +211,28 @@ export default function SignupPage() {
                 )}
               </button>
 
-              <div className="pt-2">
-                <p className="text-[10px] text-center text-muted-foreground leading-relaxed">
-                  Bằng cách nhấn đăng ký, bạn đồng ý với <Link href="#" className="underline">Điều khoản dịch vụ</Link> và <Link href="#" className="underline">Chính sách bảo mật</Link> của chúng tôi.
-                </p>
-              </div>
+{/* Trong phần JSX, thay thế đoạn link bằng*/}
+<div className="pt-2">
+  <p className="text-[10px] text-center text-muted-foreground leading-relaxed">
+    Bằng việc nhấn đăng ký, bạn đồng ý với{' '}
+    <button 
+      type="button"
+      onClick={() => openModal('terms')} 
+      className="underline hover:text-emerald-500 transition-colors"
+    >
+      Điều khoản dịch vụ
+    </button>{' '}
+    và{' '}
+    <button 
+      type="button"
+      onClick={() => openModal('privacy')} 
+      className="underline hover:text-emerald-500 transition-colors"
+    >
+      Chính sách bảo mật
+    </button>{' '}
+    của chúng tôi.
+  </p>
+</div>
             </form>
           )}
 
@@ -220,6 +256,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+{/* Đặt component Modal ở cuối file (ngoài cùng)*/}
+<LegalModal 
+  isOpen={modalConfig.isOpen} 
+  onClose={() => setModalConfig({ ...modalConfig, isOpen: false })} 
+  title={modalConfig.title}
+  type={modalConfig.type}
+/>
   );
 }
 
