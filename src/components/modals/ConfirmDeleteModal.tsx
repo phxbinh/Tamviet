@@ -52,7 +52,7 @@ export function ConfirmDeleteModal({
           </h3>
           
           <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-            Nhiệm vụ này sẽ biến mất vĩnh viễn khỏi hệ thống Neon.
+            Nhiệm vụ này sẽ biến mất vĩnh viễn khỏi hệ thống.
           </p>
         </div>
 
