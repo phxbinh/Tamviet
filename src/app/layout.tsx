@@ -441,7 +441,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               {/* THẺ MAIN: Nơi duy nhất được phép Scroll chiều cao fix 100% còn lại */}
               <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-background/50 relative">
-                <div className="p-4 md:p-8 max-w-6xl mx-auto min-h-full">
+                <div className="p-1 md:p-8 max-w-6xl mx-auto min-h-full">
                   {children}
                 </div>
               </main>
