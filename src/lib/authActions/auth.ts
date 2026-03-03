@@ -99,7 +99,7 @@ console.log('role', role)
     redirect('/admin');
   }
 
-  redirect('/dashboard');
+  redirect('/welcome');
 }
 
 /**
