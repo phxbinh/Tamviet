@@ -377,6 +377,88 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 */
+/*
+"use client";
+
+import { useState } from "react";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Toast } from "@/components/Toast";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { Menu, X } from "lucide-react";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      
+      <body className={`${inter.className} h-screen w-screen overflow-hidden bg-background antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          
+          <div className="flex h-full w-full relative">
+            
+            
+            <aside className={`
+              fixed md:relative inset-y-0 left-0 z-50 w-64 border-r border-border bg-card
+              transition-transform duration-300 ease-in-out shrink-0 flex flex-col
+              ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+            `}>
+              <div className="h-16 flex items-center justify-between px-6 border-b border-border/50 shrink-0">
+                <span className="font-bold text-xl tracking-tighter">NEON<span className="text-neon-cyan">TODO</span></span>
+                <button onClick={() => setIsOpen(false)} className="md:hidden p-2 hover:bg-accent rounded-lg">
+                  <X size={20}/>
+                </button>
+              </div>
+              
+              
+              <div className="flex-1 overflow-y-auto custom-scrollbar">
+                <Sidebar onNavigate={() => setIsOpen(false)} />
+              </div>
+            </aside>
+
+            
+            {isOpen && (
+              <div onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity" />
+            )}
+
+            
+            <div className="flex-1 flex flex-col min-w-0 h-full">
+              
+              
+              <header className="h-16 border-b border-border flex items-center px-4 shrink-0 bg-background/60 backdrop-blur-md">
+                <button onClick={() => setIsOpen(true)} className="md:hidden p-2 hover:bg-accent rounded-lg mr-2">
+                  <Menu size={24} />
+                </button>
+                <h1 className="font-semibold text-sm opacity-80">Workspace / Tasks</h1>
+              </header>
+
+              
+              <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-background/50 relative">
+                <div className="p-1 md:p-8 max-w-6xl mx-auto min-h-full">
+                  {children}
+                </div>
+              </main>
+
+            </div>
+          </div>
+
+          <Toast />
+          <div className="fixed bottom-6 right-6 z-50 shadow-2xl">
+            <ThemeToggle />
+          </div>
+
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+*/
+
 
 "use client";
 
@@ -396,61 +478,69 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="vi" suppressHydrationWarning>
-      {/* Body fix cứng 100vh và chặn scroll toàn trang */}
+      {/* Body khóa cứng kích thước thiết bị, chặn scroll toàn cục */}
       <body className={`${inter.className} h-screen w-screen overflow-hidden bg-background antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
           <div className="flex h-full w-full relative">
             
-            {/* --- SIDEBAR --- 
-                Fixed trên mobile, Static trên desktop để chia layout
-            */}
+            {/* CỘT 1: SIDEBAR (Fix chiều rộng, tự scroll nội dung bên trong) */}
             <aside className={`
               fixed md:relative inset-y-0 left-0 z-50 w-64 border-r border-border bg-card
               transition-transform duration-300 ease-in-out shrink-0 flex flex-col
               ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
             `}>
-              <div className="h-16 flex items-center justify-between px-6 border-b border-border/50 shrink-0">
-                <span className="font-bold text-xl tracking-tighter">NEON<span className="text-neon-cyan">TODO</span></span>
-                <button onClick={() => setIsOpen(false)} className="md:hidden p-2 hover:bg-accent rounded-lg">
-                  <X size={20}/>
-                </button>
+              <div className="h-16 flex items-center justify-between px-6 border-b border-border/50 shrink-0 font-bold">
+                <span className="tracking-tighter uppercase">Neon<span className="text-neon-cyan">Todo</span></span>
+                <button onClick={() => setIsOpen(false)} className="md:hidden p-1"><X size={20}/></button>
               </div>
-              
-              {/* Sidebar tự scroll nội dung bên trong nó */}
               <div className="flex-1 overflow-y-auto custom-scrollbar">
                 <Sidebar onNavigate={() => setIsOpen(false)} />
               </div>
             </aside>
 
-            {/* BACKDROP cho Mobile */}
+            {/* BACKDROP MOBILE */}
             {isOpen && (
-              <div onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity" />
+              <div onClick={() => setIsOpen(false)} className="fixed inset-0 bg-black/60 z-40 md:hidden" />
             )}
 
-            {/* --- KHU VỰC BÊN PHẢI --- */}
-            <div className="flex-1 flex flex-col min-w-0 h-full">
+            {/* CỘT 2: KHU VỰC HIỂN THỊ CHÍNH (Chiếm 100% diện tích còn lại) */}
+            <div className="flex-1 flex flex-col min-w-0 h-full relative">
               
-              {/* Header fix chiều cao, không scroll */}
-              <header className="h-16 border-b border-border flex items-center px-4 shrink-0 bg-background/60 backdrop-blur-md">
-                <button onClick={() => setIsOpen(true)} className="md:hidden p-2 hover:bg-accent rounded-lg mr-2">
+              {/* HEADER: Fix Top, chiều cao cố định 64px (h-16) */}
+              <header className="absolute top-0 left-0 right-0 h-16 border-b border-border bg-background/60 backdrop-blur-md z-30 flex items-center px-4 shrink-0">
+                <button onClick={() => setIsOpen(true)} className="md:hidden p-2 mr-2 hover:bg-accent rounded-lg">
                   <Menu size={24} />
                 </button>
-                <h1 className="font-semibold text-sm opacity-80">Workspace / Tasks</h1>
+                <div className="text-sm font-medium opacity-70">Hệ thống quản lý</div>
               </header>
 
-              {/* THẺ MAIN: Nơi duy nhất được phép Scroll chiều cao fix 100% còn lại */}
-              <main className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar bg-background/50 relative">
-                <div className="p-1 md:p-8 max-w-6xl mx-auto min-h-full">
+              {/* THẺ CHÍNH: Bọc Main và Footer, bắt đầu từ dưới Header (pt-16) */}
+              {/* Thẻ này đảm nhận scroll-y cho toàn bộ nội dung */}
+              <div className="flex-1 overflow-y-auto overflow-x-hidden pt-16 custom-scrollbar flex flex-col">
+                
+                {/* MAIN: Chứa nội dung trang */}
+                <main className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
                   {children}
-                </div>
-              </main>
+                </main>
+
+                {/* FOOTER: Nằm dưới thẻ main, cuộn theo nội dung */}
+                <footer className="h-20 shrink-0 border-t border-border/40 flex items-center px-6 md:px-12 bg-card/20">
+                  <div className="max-w-6xl mx-auto w-full flex justify-between items-center text-[11px] text-muted-foreground uppercase tracking-widest">
+                    <span>© 2026 Todo Neon</span>
+                    <div className="flex gap-4">
+                      <a href="#" className="hover:text-neon-cyan transition-colors">Github</a>
+                      <a href="#" className="hover:text-neon-cyan transition-colors">Privacy</a>
+                    </div>
+                  </div>
+                </footer>
+              </div>
 
             </div>
           </div>
 
           <Toast />
-          <div className="fixed bottom-6 right-6 z-50 shadow-2xl">
+          <div className="fixed bottom-6 right-6 z-[100]">
             <ThemeToggle />
           </div>
 
