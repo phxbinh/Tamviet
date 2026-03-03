@@ -112,7 +112,7 @@ export default function SignupPage() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight">Khởi tạo tài khoản</h1>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-bold">Gia nhập hệ sinh thái NEON</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-bold">Gia nhập hệ sinh thái TÂM VIỆT</p>
             </div>
           </div>
 
