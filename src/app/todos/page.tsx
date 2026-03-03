@@ -39,7 +39,7 @@ export default async function Todos() {
         />
         <button
           type="submit"
-          className="px-8 py-3 bg-neon-cyan text-black font-bold rounded-xl hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] transform hover:scale-[1.02] active:scale-95 transition-all duration-300"
+          className="px-8 py-3 bg-neon-cyan text-black font-bold rounded-xl hover:shadow-[0_0_15px_rgba(34,211,238,0.6)] transform hover:scale-[1.02] active:scale-95 transition-colors duration-300"
         >
           Thêm
         </button>
@@ -50,7 +50,7 @@ export default async function Todos() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className="group flex items-center justify-between p-5 rounded-2xl bg-card border border-border hover:border-neon-purple/40 hover:shadow-[0_0_15px_rgba(168,85,247,0.1)] transition-all duration-300"
+            className="group flex items-center justify-between p-5 rounded-2xl bg-card border border-border hover:border-neon-purple/40 hover:shadow-[0_0_15px_rgba(168,85,247,0.1)] transition-colors duration-300"
           >
             <div className="flex items-center gap-4 flex-1">
               <ToggleTodo id={todo.id} completed={todo.completed} />
