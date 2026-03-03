@@ -119,7 +119,7 @@ export async function signOut() {
 /**
  * QUÊN MẬT KHẨU
  */
-export async function requestPasswordReset(
+export async function requestPasswordReset_(
   prevState: any, // Thêm vào đây
   formData: FormData
 ) {
@@ -136,6 +136,34 @@ export async function requestPasswordReset(
 
   return { success: true, message: 'Yêu cầu đã được gửi! Vui lòng kiểm tra hộp thư.' };
 }
+
+
+
+// src/lib/authActions/auth.ts
+
+export async function requestPasswordReset(prevState: any, formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const email = (formData.get('email') as string)?.trim();
+
+  if (!email) return { error: 'Vui lòng nhập email' };
+
+  // Mẹo: Dùng URLSearchParams để build link chuẩn không bao giờ lỗi
+  const params = new URLSearchParams();
+  params.set('next', '/change-password');
+  
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?${params.toString()}`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectTo,
+  });
+
+  if (error) return { error: error.message };
+  return { success: true, message: 'Vui lòng kiểm tra email.' };
+}
+
+
+
+
 
 
 /**
