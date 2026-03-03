@@ -2,11 +2,11 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { createSupabaseServerClient } from '../../supabase/server';
+import { createSupabaseServerClient } from '../supabase/server';
 
 import { sql } from '@/lib/neon/sql';
 
-import { syncUser, ensureProfile } from '../../neon/users';
+import { syncUser, ensureProfile } from '../neon/users';
 
 /**
  * SIGN UP
