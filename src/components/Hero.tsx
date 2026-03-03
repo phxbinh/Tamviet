@@ -3,7 +3,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export const Hero = () => {
   return (
-    <section className="min-h-[480px] flex flex-col items-center justify-top px-4 transition-colors duration-300">
+    <section className="min-h-[720px] flex flex-col items-center justify-center px-4 transition-colors duration-300">
 
       <div className="max-w-4xl text-center space-y-6">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
