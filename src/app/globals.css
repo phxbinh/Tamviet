@@ -1,17 +1,15 @@
 /* src/app/globals.css */
 @import "tailwindcss";
 
-/* 1. ĐỊNH NGHĨA BIẾN SỐ (Logic màu sắc) */
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%; /* Light mode background nhạt */
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --primary: 221.2 83.2% 53.3%;
     --border: 214.3 31.8% 91.4%;
   }
 
-  /* Ép buộc các biến đổi màu khi có class .dark */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -21,85 +19,47 @@
   }
 }
 
-/* 2. CẤU HÌNH THEME (Đăng ký với Tailwind) */
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
   --color-primary: hsl(var(--primary));
   --color-border: hsl(var(--border));
-
   --color-neon-cyan: #22d3ee;
   --color-neon-purple: #a855f7;
-
-  --z-index-100: 100;
-  --z-index-500: 500;
-  --z-index-999: 999;
-
-  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  
-  /* SỬA LẠI DÒNG NÀY: Cách khai báo variant dark chuẩn nhất cho v4 khi dùng class */
-  --variant-dark: .dark &;
 }
 
-/* 3. STYLE CƠ BẢN (Base Styles) */
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
-  html {
-    /* Ngăn nội dung nhảy khi thanh scroll xuất hiện */
-    scrollbar-gutter: stable;
+  /* KHÓA CỨNG tầng ngoài cùng */
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden !important; /* Tuyệt đối không cho scroll ở đây */
+    margin: 0;
+    padding: 0;
   }
 
   body {
-    /* Đảm bảo dùng màu nền từ biến đã định nghĩa */
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     @apply transition-colors duration-300;
   }
 
-  /* Xử lý hiệu ứng Gradient Neon cho Dark Mode một cách an toàn */
+  /* Gradient cho Dark Mode - Bỏ background-attachment: fixed để tránh bug scroll */
   .dark body {
-    background-image: radial-gradient(at top left, #020617, #1e1b4b, #020617);
-    background-attachment: fixed; /* Giúp gradient không bị vỡ khi cuộn trang */
+    background-image: radial-gradient(at top left, #020617, #0f172a, #020617);
   }
-
-  /* Fix lỗi Text bị giữ màu tối khi sang Light mode */
-  h1, h2, h3, h4, h5, h6, p, span, div {
-    color: hsl(var(--foreground));
-  }
-  
 }
-
-
-
-
-
 
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
     border-radius: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--neon-cyan) / 0.5);
+    background: #22d3ee80;
   }
 }
-
-
-
-
-
-
-
-
-
-
