@@ -1,6 +1,6 @@
 
 // src/app/(auth)/change-password/page.tsx
-// Sử dụng cho thay đổi password
+// Sử dụng cho thay đổi password -
 
 'use client';
 
