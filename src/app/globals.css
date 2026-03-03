@@ -2,15 +2,6 @@
 @import "tailwindcss";
 
 
-/* Ngăn transition khi mới load trang để tránh bị lòe loẹt lúc đầu */
-.preload * {
-  -webkit-transition: none !important;
-  -moz-transition: none !important;
-  -ms-transition: none !important;
-  -o-transition: none !important;
-}
-
-
 @layer base {
   :root {
     --background: 210 40% 98%; /* Light mode background nhạt */
