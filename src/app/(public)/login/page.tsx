@@ -126,38 +126,6 @@ export default function LoginPage() {
 }
 
 
-// ... (các import khác giữ nguyên)
-import Link from 'next/link';
-
-// Trong phần form của LoginPage
-<div className="space-y-2">
-  <div className="flex justify-between items-center px-1">
-    <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
-      Mật mã bảo mật
-    </label>
-    
-    {/* LINK QUÊN MẬT KHẨU Ở ĐÂY */}
-    <Link 
-      href="/forgot-password" 
-      className="text-[10px] font-bold text-cyan-500 hover:text-cyan-400 transition-colors uppercase tracking-tighter"
-    >
-      Quên mật mã?
-    </Link>
-  </div>
-  
-  <div className="relative group">
-    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" size={18} />
-    <input
-      name="password"
-      type="password"
-      placeholder="••••••••"
-      required
-      className="w-full bg-background/50 border border-border/60 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-    />
-  </div>
-</div>
-
-
 
 
 
