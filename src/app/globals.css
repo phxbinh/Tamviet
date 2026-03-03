@@ -1,6 +1,16 @@
 /* src/app/globals.css */
 @import "tailwindcss";
 
+
+/* Ngăn transition khi mới load trang để tránh bị lòe loẹt lúc đầu */
+.preload * {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -ms-transition: none !important;
+  -o-transition: none !important;
+}
+
+
 @layer base {
   :root {
     --background: 210 40% 98%; /* Light mode background nhạt */
@@ -9,7 +19,11 @@
     --primary: 221.2 83.2% 53.3%;
     --border: 214.3 31.8% 91.4%;
   }
-
+  
+  *, ::before, ::after {
+    @apply transition-colors duration-300 ease-in-out;
+  }
+  
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
