@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="vi" suppressHydrationWarning className="h-full">
-      <body className={`${inter.className} antialiased h-full w-full overflow-hidden transition-colors duration-500 ease-in-out bg-background text-foreground`}>
+      <body className={`${inter.className} antialiased h-full w-full overflow-hidden transition-colors duration-300 ease-in-out bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
           <div className="flex h-full w-full overflow-hidden bg-background">
