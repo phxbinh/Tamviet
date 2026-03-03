@@ -62,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* Footer: Nằm cuối luồng cuộn */}
                 <footer className="mt-auto py-4 border-t border-border/40 px-6 shrink-0 text-center md:text-left">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-                    © 2026 Neon Lab — All Systems Operational
+                    © 2026 Tâm Việt — All Systems Operational
                   </p>
                 </footer>
 
