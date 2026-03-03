@@ -117,9 +117,12 @@ export async function signOut() {
 
 
 /**
- * QUÊN MẬT KHẨU (Gửi email khôi phục)
+ * QUÊN MẬT KHẨU
  */
-export async function requestPasswordReset(formData: FormData) {
+export async function requestPasswordReset(
+  prevState: any, // Thêm vào đây
+  formData: FormData
+) {
   const supabase = await createSupabaseServerClient();
   const email = (formData.get('email') as string)?.trim();
 
@@ -134,14 +137,19 @@ export async function requestPasswordReset(formData: FormData) {
   return { success: true, message: 'Yêu cầu đã được gửi! Vui lòng kiểm tra hộp thư.' };
 }
 
+
 /**
  * ĐỔI MẬT KHẨU MỚI (Cập nhật trực tiếp)
  */
-export async function updatePassword(formData: FormData) {
+export async function updatePassword(
+  prevState: any, // Thêm tham số này vào đầu
+  formData: FormData
+) {
   const supabase = await createSupabaseServerClient();
   const password = formData.get('password') as string;
   const confirmPassword = formData.get('confirmPassword') as string;
 
+  if (!password || !confirmPassword) return { error: 'Vui lòng nhập đầy đủ thông tin' };
   if (password !== confirmPassword) return { error: 'Mật khẩu xác nhận không khớp' };
   if (password.length < 6) return { error: 'Mật khẩu phải từ 6 ký tự trở lên' };
 
@@ -151,6 +159,7 @@ export async function updatePassword(formData: FormData) {
 
   return { success: true, message: 'Cập nhật mật khẩu thành công!' };
 }
+
 
 
 
