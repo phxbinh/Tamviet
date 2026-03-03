@@ -37,7 +37,7 @@ export default async function WelcomePage() {
   if (!user) redirect('/login');
 
   return (
-    <div className="h-full flex items-center justify-center p-6">
+    <div className="h-full flex items-center justify-center p-2">
       {/* Background trang trí nhẹ nhàng, không gây rối mắt */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(16,185,129,0.05),transparent)] pointer-events-none" />
 
