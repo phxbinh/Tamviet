@@ -70,3 +70,35 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
+
+
+
+/*
+Thay vì để người dùng nhấn nút liên tục
+dẫn đến lỗi Rate Limit, bạn có thể thêm
+logic Vô hiệu hóa nút gửi trong vòng 60 giây
+sau khi nhấn.
+
+// Trong forgot-password/page.tsx
+const [canRetry, setCanRetry] = useState(true);
+const [timeLeft, setTimeLeft] = useState(0);
+
+const handleSend = () => {
+  setCanRetry(false);
+  setTimeLeft(60); // Đếm ngược 60s
+};
+
+useEffect(() => {
+  if (timeLeft > 0) {
+    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+    return () => clearTimeout(timer);
+  } else {
+    setCanRetry(true);
+  }
+}, [timeLeft]);
+*/
+
+
+
+
+
