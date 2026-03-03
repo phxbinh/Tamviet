@@ -16,9 +16,16 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
+
+/*
+<body className="transition-colors duration-500 ease-in-out bg-background text-foreground">
+  {children}
+</body>
+*/
+
   return (
     <html lang="vi" suppressHydrationWarning className="h-full">
-      <body className={`${inter.className} antialiased h-full w-full overflow-hidden`}>
+      <body className={`${inter.className} antialiased h-full w-full overflow-hidden transition-colors duration-500 ease-in-out bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           
           <div className="flex h-full w-full overflow-hidden bg-background">
