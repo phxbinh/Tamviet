@@ -296,7 +296,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar/Sidebar";
 import { Menu, X } from "lucide-react";
 
 const inter = Inter({ subsets: ["latin"] });
