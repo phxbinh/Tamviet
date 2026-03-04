@@ -24,24 +24,7 @@ export async function withUserContext<T>(
 }
 */
 
-
-export async function withUserContext<T>(
-  userId: string,
-  queryFn: (tx: any) => Promise<T>
-): Promise<T> {
-  const result = await sqlApp.transaction(async (tx) => {
-    await tx`
-      SELECT set_config('app.user_id', ${userId}, true)
-    `;
-    
-    return queryFn(tx);
-  });
-
-  return result as T;
-}
-
-
-
+/*
 export async function getMyProfile(
   userId: string
 ): Promise<Profile | null> {
@@ -61,3 +44,49 @@ export async function getMyProfile(
     return rows[0] ?? null;
   });
 }
+*/
+
+
+
+
+
+export async function withUserContext<T>(
+  userId: string,
+  queryFn: (tx: any) => any
+): Promise<T> {
+
+  const results = await sqlApp.transaction((tx) => [
+    tx`SELECT set_config('app.user_id', ${userId}, true)`,
+    queryFn(tx), // KHÔNG await ở đây
+  ]);
+
+  return results[1] as T;
+}
+
+export async function getMyProfile(
+  userId: string
+): Promise<Profile | null> {
+
+  const rows = await withUserContext<Profile[]>(
+    userId,
+    (tx) => tx`
+      select
+        user_id,
+        role,
+        avatar_url,
+        created_at,
+        updated_at
+      from profiles
+      where user_id = ${userId}
+      limit 1
+    `
+  );
+
+  return rows[0] ?? null;
+}
+
+
+
+
+
+
