@@ -1,5 +1,5 @@
 // src/lib/dataQueries/profiles.ts
-
+import { sql, sqlAdmin, sqlApp } from '../neon/sql';
 export async function withUserContext<T>(
   userId: string,
   queryFn: (tx: any) => any
