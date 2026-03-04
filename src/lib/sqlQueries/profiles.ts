@@ -9,6 +9,7 @@ export type Profile = {
   updated_at: string;
 };
 
+/*
 export async function withUserContext<T>(
   userId: string,
   queryFn: (tx: any) => any
@@ -21,6 +22,25 @@ export async function withUserContext<T>(
   //console.log("userId: ", userId);
   return results[1] as T
 }
+*/
+
+
+export async function withUserContext<T>(
+  userId: string,
+  queryFn: (tx: any) => Promise<T>
+): Promise<T> {
+  return sqlApp.transaction(async (tx) => {
+    await tx`
+      SELECT set_config('app.user_id', ${userId}, true)
+    `;
+    
+    return queryFn(tx);
+  });
+}
+
+
+
+
 
 
 export async function getMyProfile(
