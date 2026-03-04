@@ -7,7 +7,12 @@ import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldC
 import { UserAvatar } from './UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
 
-export default function DashboardSidebar({ user }: { user: any }) {
+interface DashboardSidebarProps {
+  user: any; 
+  onNavigate?: () => void; // Thêm dòng này, dấu '?' nghĩa là không bắt buộc
+}
+
+export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   const menuItems = [
