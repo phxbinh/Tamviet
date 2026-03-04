@@ -14,6 +14,7 @@ export async function getCurrentUser() {
   try {
     // 2. Sử dụng hàm getMyProfile của bạn để lấy data từ Neon
     const profile = await getMyProfile(user.id);
+    console.log(profile.role, "--", profile.avatar_url)
 
     // Trả về một object gộp cả Email (từ Auth) và Profile (từ Neon)
     return {
