@@ -1,5 +1,14 @@
 // src/lib/dataQueries/profiles.ts
 import { sql, sqlAdmin, sqlApp } from '../neon/sql';
+
+export type Profile = {
+  user_id: string;
+  role: 'admin' | 'user';
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export async function withUserContext<T>(
   userId: string,
   queryFn: (tx: any) => any
