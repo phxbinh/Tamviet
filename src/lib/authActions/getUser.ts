@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { getMyProfile } from '@/lib/dataQueries/profiles'; // Đường dẫn đến file chứa hàm của bạn
+import { getMyProfile } from '@/lib/sqlQueries/profiles'; // Đường dẫn đến file chứa hàm của bạn
 
 export async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
