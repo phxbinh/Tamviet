@@ -43,17 +43,31 @@ export async function middleware(request: NextRequest) {
 
   // 2. Refresh session (Quan trọng nhất để không bị văng login)
   const { data: { user } } = await supabase.auth.getUser()
-
   const pathname = request.nextUrl.pathname
 
-  // 🔒 Logic bảo vệ Route
-  if (!user && (pathname.startsWith('/welcome') || pathname.startsWith('/admin'))) {
+  // 3. Định nghĩa các nhóm Route
+  const isAuthPage = pathname === '/login' || 
+                     pathname === '/signup' || 
+                     pathname === '/forgot-password' || 
+                     pathname === '/change-password';
+
+  const isProtectedRoute = pathname.startsWith('/dashboard') || 
+                           pathname.startsWith('/welcome') || 
+                           pathname.startsWith('/admin');
+
+  // 🔒 TRƯỜNG HỢP 1: Chưa đăng nhập mà cố vào vùng cấm
+  if (!user && isProtectedRoute) {
+    // Lưu lại trang định vào để sau khi login xong quay lại (Optionally)
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // 🔁 Đã login thì không cho quay lại auth pages
-  if (user && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/welcome', request.url))
+  // 🔁 TRƯỜNG HỢP 2: Đã đăng nhập rồi thì không cho vào các trang Auth (trừ đổi mật khẩu nếu cần)
+  // Lưu ý: Nếu user đang dùng link Reset Pass, họ cần vào /change-password, 
+  // nhưng thường link đó đã qua /auth/callback rồi nên user đã có session.
+  if (user && isAuthPage) {
+    // Nếu là admin thì về admin, không thì về dashboard
+    // Ở đây mình tạm thời đẩy về /dashboard vì đó là trục chính
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return response
