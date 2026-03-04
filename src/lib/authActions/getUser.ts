@@ -1,5 +1,7 @@
+// src/lib/authSctions/getUser.ts
+// lấy thông tin user để hiển thị lên dashboard
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { getMyProfile } from '@/lib/sqlQueries/profiles'; // Đường dẫn đến file chứa hàm của bạn
+import { getMyProfile } from '@/lib/sqlQueries/profiles';
 
 export async function getCurrentUser() {
   const supabase = await createSupabaseServerClient();
