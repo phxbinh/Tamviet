@@ -1,4 +1,6 @@
 // src/lib/dataQueries/profiles.ts
+// Lấy thông tin user khi đăng nhập để hiển thị lên
+// đashboard route
 import { sqlApp } from '../neon/sql';
 
 export type Profile = {
