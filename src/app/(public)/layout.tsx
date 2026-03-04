@@ -13,6 +13,7 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
+const [isOpen, setIsOpen] = useState(false);
   return <>          <div className="flex h-full w-full overflow-hidden bg-background">
             
             {/* CỘT 1: SIDEBAR */}
