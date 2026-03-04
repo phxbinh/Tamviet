@@ -29,17 +29,16 @@ export async function withUserContext<T>(
   userId: string,
   queryFn: (tx: any) => Promise<T>
 ): Promise<T> {
-  return sqlApp.transaction(async (tx) => {
+  const result = await sqlApp.transaction(async (tx) => {
     await tx`
       SELECT set_config('app.user_id', ${userId}, true)
     `;
     
     return queryFn(tx);
   });
+
+  return result as T;
 }
-
-
-
 
 
 
