@@ -27,7 +27,7 @@ const DAILY_DATA: ScheduleItem[] = [
 
 export default function DailyReportSchedule({ selectedDate }: { selectedDate: Date }) {
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-3xl rounded-[3rem] p-8 border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)]">
+    <div className="w-full max-w-2xl mx-auto bg-white/5 backdrop-blur-3xl rounded-[3rem] p-4 border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)]">
       
       {/* Header Profile/Date */}
       <div className="flex justify-between items-end mb-12 px-2">
