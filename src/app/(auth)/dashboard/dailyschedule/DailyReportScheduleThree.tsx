@@ -137,11 +137,18 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
                   }
                 `}>
                   {/* THANH CẢNH BÁO: Nằm sát mép trên bên TRONG thẻ */}
+{/*
+                  {isUrgent && (
+                    <div className="w-full h-1.5 bg-red-600 shadow-[0_2px_10px_rgba(220,38,38,0.3)]" />
+                  )}
+*/}
+                  <div className="p-6">
+
+    {/* THANH CẢNH BÁO: Nằm sát mép trên bên TRONG thẻ */}
                   {isUrgent && (
                     <div className="w-full h-1.5 bg-red-600 shadow-[0_2px_10px_rgba(220,38,38,0.3)]" />
                   )}
 
-                  <div className="p-6">
                     {/* Meta Info */}
                     <div className="flex justify-between items-center mb-4">
                       <div className="flex items-center gap-3">
