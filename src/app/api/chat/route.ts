@@ -2,16 +2,26 @@
 import { streamText } from 'ai';
 import { google } from '@ai-sdk/google';
 
-export const maxDuration = 60; // cho response dài
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  try {
+    const { messages } = await req.json();
 
-  const result = await streamText({
-    model: google('gemini-2.0-flash-001'), // hoặc gemini-2.0-pro-exp, claude-...
-    system: `Bạn là trợ lý AI thông minh, trả lời tự nhiên, hữu ích bằng tiếng Việt. Trả lời ngắn gọn nhưng đầy đủ.`,
-    messages,
-  });
+    const result = await streamText({
+      model: google('gemini-2.5-flash'), // ← sửa ở đây
+      system: `Bạn là trợ lý AI thông minh, trả lời tự nhiên, hữu ích bằng tiếng Việt. Trả lời ngắn gọn nhưng đầy đủ.`,
+      messages,
+      // temperature: 0.7,   // thêm nếu muốn điều chỉnh độ sáng tạo
+      // maxTokens: 2048,    // tùy chọn
+    });
 
-  return result.toDataStreamResponse();
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error('Lỗi ở /api/chat:', error);
+    return new Response(
+      JSON.stringify({ error: 'Lỗi khi gọi model' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }
