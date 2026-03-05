@@ -59,6 +59,7 @@ interface CalendarEvent {
   type: string;
   color: string;
   time?: string; // Dấu ? cho phép trường này có thể trống
+  isCompleted: boolean;
 }
 
 // 2. CHUẨN HÓA MOCK DATA
