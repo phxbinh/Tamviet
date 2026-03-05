@@ -18,6 +18,7 @@
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.453.0",
     "zustand": "^5.0.0",
+    "date-fns": "^4.1.0",
     "@neondatabase/serverless": "^0.9.5",
     "@supabase/supabase-js": "^2.33.0",
     "@supabase/ssr": "^0.4.0",
