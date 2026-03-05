@@ -11,7 +11,7 @@ export function UserAvatar({ email, avatarUrl, size = "md" }: { email: string; a
   };
 
   return (
-    <div className={`${sizeClasses[size]} rounded-xl overflow-hidden border border-border bg-card shadow-inner shrink-0`}>
+    <div className={`${sizeClasses[size]} rounded-xl overflow-hidden border border-border rounded-full bg-card shadow-inner shrink-0`}>
       {avatarUrl ? (
         <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
       ) : (
