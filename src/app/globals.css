@@ -88,16 +88,32 @@
     30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
     40%, 60% { transform: translate3d(4px, 0, 0); }
   }
-  
-  /* Dùng ở alertBreath */
-  @keyframes breathe {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.02); }
 }
-.animate-breathe-slow { animation: breathe 3s infinite ease-in-out; }
-.animate-breathe-fast { animation: breathe 1.5s infinite ease-in-out; }
-.animate-breathe-danger { animation: breathe 0.6s infinite ease-in-out; }
 
+
+
+@theme {
+  /* Dùng ở alertBreath */
   
+  @keyframes breathe {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.02); }
+  }
+
+  /* --- Các biến Animation (Sửa tại đây) --- */
+  --animate-shake: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+  
+  /* Thay vì dùng dấu chấm (.), hãy dùng gạch ngang (--) để định nghĩa biến */
+  --animate-breathe-slow: breathe 3s infinite ease-in-out;
+  --animate-breathe-fast: breathe 1.5s infinite ease-in-out;
+  --animate-breathe-danger: breathe 0.6s infinite ease-in-out;
 }
+
+
+
+
+
+
+
+
 
