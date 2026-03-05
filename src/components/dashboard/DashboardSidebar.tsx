@@ -21,6 +21,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
     { icon: Calendar, label: 'Lịch biểu', href: '/dashboard/calendar' },
     { icon: Calendar, label: 'Lịch multi day', href: '/dashboard/multiday' },
     { icon: Calendar, label: 'Alert breathe', href: '/dashboard/alertBreath' },
+    { icon: Calendar, label: 'Daily schedule', href: '/dashboard/dailyschedule' },
     { icon: Settings, label: 'Cài đặt', href: '/dashboard/settings' },
   ];
 
