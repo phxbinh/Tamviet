@@ -11,6 +11,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 //<UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="sm" />
 
