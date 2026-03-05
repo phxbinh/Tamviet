@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldCheck, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
 
@@ -21,7 +21,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
     { icon: Calendar, label: 'Lịch biểu', href: '/dashboard/calendar' },
     { icon: Calendar, label: 'Lịch multi day', href: '/dashboard/multiday' },
     { icon: Calendar, label: 'Alert breathe', href: '/dashboard/alertBreath' },
-    { icon: Calendar, label: 'Daily schedule', href: '/dashboard/dailyschedule' },
+    { icon: ChartArea, label: 'Daily reports', href: '/dashboard/dailyschedule' },
     { icon: Settings, label: 'Cài đặt', href: '/dashboard/settings' },
   ];
 
