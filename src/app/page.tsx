@@ -20,6 +20,7 @@ export default function Home() {
 */
 
 // app/page.tsx
+/*
 import { Hero } from "@/components/Hero";
 import { Features } from "@/components/Features";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -27,15 +28,31 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export default function Home() {
   return (
     <div className="relative flex flex-col gap-10 min-h-screen">
-
-      {/* Hero Section */}
       <Hero />
 
-      {/* Features Section */}
       <Features />
 
-        <div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>
+      <div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>
 
     </div>
   );
 }
+*/
+
+
+// app/page.tsx
+import Link  from "next/link";
+export default function AppPage() {
+  return (
+    <div className="relative flex flex-col gap-10 min-h-screen">
+        <Link href="/public">Public route</Link>
+        <Link href="/auth">Auth route</Link>
+    </div>
+  );
+}
+
+
+
+
+
+
