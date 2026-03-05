@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+//<UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="sm" />
+
 interface WelcomeClientProps {
   user: any;
 }
