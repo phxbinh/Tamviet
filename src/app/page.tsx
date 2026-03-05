@@ -22,6 +22,7 @@ export default function Home() {
 // app/page.tsx
 import { Hero } from "@/components/Hero";
 import { Features } from "@/components/Features";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
   return (
