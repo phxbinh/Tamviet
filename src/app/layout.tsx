@@ -17,7 +17,7 @@ export default function RootLayout({
       <body className={`${inter.className} h-full`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
-          <div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>
+          {/*<div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>*/}
         </ThemeProvider>
       </body>
     </html>
