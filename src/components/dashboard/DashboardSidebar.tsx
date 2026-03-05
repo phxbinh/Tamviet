@@ -20,6 +20,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
     { icon: CheckCircle2, label: 'Nhiệm vụ', href: '/dashboard/tasks' },
     { icon: Calendar, label: 'Lịch biểu', href: '/dashboard/calendar' },
     { icon: Calendar, label: 'Lịch multi day', href: '/dashboard/multiday' },
+    { icon: Calendar, label: 'Alert breathe', href: '/dashboard/alertBreath' },
     { icon: Settings, label: 'Cài đặt', href: '/dashboard/settings' },
   ];
 
