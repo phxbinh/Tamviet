@@ -57,7 +57,7 @@ export default function ChatPage() {
 }
 */
 
-
+/*
 'use client';
 
 import { useChat } from '@ai-sdk/react';
@@ -85,7 +85,14 @@ export default function ChatPage() {
     </div>
   );
 }
+*/
 
+
+'use client';
+
+export default function ChatPage() {
+  return <div>CHAT PAGE OK</div>;
+}
 
 
 
