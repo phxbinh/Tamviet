@@ -42,6 +42,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href}
+              onClick={() => onNavigate?.()}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
                 ${isActive ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground hover:bg-foreground/5'}
               `}
@@ -71,6 +72,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
           {/* BACK TO APP LINK - UI SYNCED */}
           <Link 
             href="/"
+            onClick={() => onNavigate?.()}
             className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-xl transition-all group"
           >
             <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
