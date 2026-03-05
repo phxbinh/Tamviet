@@ -9,7 +9,7 @@ import {
 import { vi } from 'date-fns/locale';
 import { 
   ChevronLeft, ChevronRight, Calendar as CalendarIcon, 
-  Clock, Plus, AlertCircle, CheckCircle2, Circle
+  Clock, Plus, AlertCircle, CheckCircle2, Circle, Tag
 } from 'lucide-react';
 
 
