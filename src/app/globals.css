@@ -88,5 +88,16 @@
     30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
     40%, 60% { transform: translate3d(4px, 0, 0); }
   }
+  
+  /* Dùng ở alertBreath */
+  @keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.02); }
+}
+.animate-breathe-slow { animation: breathe 3s infinite ease-in-out; }
+.animate-breathe-fast { animation: breathe 1.5s infinite ease-in-out; }
+.animate-breathe-danger { animation: breathe 0.6s infinite ease-in-out; }
+
+  
 }
 
