@@ -133,7 +133,7 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
                 `}>
                   {/* Cảnh báo đỏ cho Urgent */}
                   {isUrgent && (
-                    <div className="absolute top-0 left-0 w-full h-1 bg-red-500 rounded-t-full" />
+                    <div className="absolute top-6 md:top-8 left-0 w-full h-1 bg-red-500 rounded-t-full" />
                   )}
 
                   <div className="flex justify-between items-center mb-4">
