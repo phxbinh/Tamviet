@@ -8,7 +8,7 @@ export default function DailySchedulePage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-2 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-black uppercase tracking-widest text-neon-cyan">
           Báo cáo công việc
