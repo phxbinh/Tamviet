@@ -1,4 +1,5 @@
 // app/api/chat/route.ts
+/*
 import { streamText } from 'ai';
 import { google } from '@ai-sdk/google';
 
@@ -25,3 +26,25 @@ export async function POST(req: Request) {
     );
   }
 }
+*/
+
+
+// app/api/chat/route.ts
+import { streamText } from 'ai';
+import { google } from '@ai-sdk/google';
+
+export const maxDuration = 60;
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = await streamText({
+    model: google('models/gemini-2.5-flash'),
+    system:
+      'Bạn là trợ lý AI thông minh, trả lời tự nhiên, hữu ích bằng tiếng Việt.',
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+
