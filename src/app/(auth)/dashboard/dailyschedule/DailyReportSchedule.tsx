@@ -14,6 +14,7 @@ interface ScheduleItem {
   status: 'done' | 'pending' | 'urgent';
   priority: 'high' | 'medium' | 'low';
   progress: number;
+  
 }
 
 const DAILY_DATA: ScheduleItem[] = [
@@ -87,17 +88,21 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
                   {item.title}
                 </h4>
                 
-                {item.description && !item.isCompleted && (
+                {/* Sửa isCompleted thành status !== 'done' */}
+                {item.description && item.status !== 'done' && (
                   <p className="text-xs text-muted-foreground leading-relaxed mb-4 line-clamp-2">
                     {item.description}
                   </p>
                 )}
 
-                {/* Progress Bar & Footer */}
-                {!item.isCompleted && item.progress > 0 && (
+                {/* Progress Bar & Footer - Sửa isCompleted thành status !== 'done' */}
+                {item.status !== 'done' && item.progress > 0 && (
                   <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-4">
                     <div className="flex-1 h-[3px] bg-white/5 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${item.progress}%` }} />
+                      <div 
+                        className="h-full bg-blue-500 transition-all duration-1000" 
+                        style={{ width: `${item.progress}%` }} 
+                      />
                     </div>
                     <span className="text-[10px] font-black text-muted-foreground">{item.progress}%</span>
                     <div className="flex -space-x-2">
@@ -106,6 +111,7 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
                     </div>
                   </div>
                 )}
+
               </div>
             </div>
           ))}
