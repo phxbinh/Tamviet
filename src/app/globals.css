@@ -51,6 +51,19 @@
   }
 }
 
+/* Fix size cho input để không bị zoom khi click vào */
+@layer base {
+  /* Fix tự động zoom trên Mobile */
+  @media screen and (max-width: 768px) {
+    input, 
+    select, 
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
