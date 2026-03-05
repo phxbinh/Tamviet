@@ -90,9 +90,26 @@ export default function ChatPage() {
 
 'use client';
 
-export default function ChatPage() {
-  return <div>CHAT PAGE OK</div>;
-}
+import { useChat } from '@ai-sdk/react';
 
+export default function ChatPage() {
+  const { messages } = useChat({
+    api: '/api/chat',
+  });
+
+  return (
+    <div>
+      <h1>Chat</h1>
+
+      {messages.length === 0 && <div>Chưa có message</div>}
+
+      {messages.map((m) => (
+        <div key={m.id}>
+          {m.role}: {m.content}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 
