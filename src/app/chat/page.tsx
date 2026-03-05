@@ -93,7 +93,7 @@ export default function ChatPage() {
 import { useChat } from '@ai-sdk/react';
 
 export default function ChatPage() {
-  const { messages } = useChat({
+  const { messages, input, handleInputChange, handleSubmit } = useChat({
     api: '/api/chat',
   });
 
@@ -108,6 +108,15 @@ export default function ChatPage() {
           {m.role}: {m.content}
         </div>
       ))}
+
+      <form onSubmit={handleSubmit}>
+        <input
+          value={input}
+          onChange={handleInputChange}
+          placeholder="Nhập câu hỏi..."
+        />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 }
