@@ -132,9 +132,19 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
                   }
                 `}>
                   {/* Cảnh báo đỏ cho Urgent */}
+{/*
                   {isUrgent && (
-                    <div className="absolute top-6 md:top-8 left-0 w-full h-1 bg-red-500 rounded-t-full" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-red-500 rounded-t-full" />
                   )}
+*/}
+
+{/* Cảnh báo đỏ cho Urgent dạng tai thỏ (Notch) */}
+{isUrgent && (
+  <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none">
+    <div className="h-[6px] w-32 bg-red-500 rounded-b-2xl shadow-[0_2px_10px_rgba(239,68,68,0.4)] animate-breathe-danger" />
+  </div>
+)}
+
 
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-3">
