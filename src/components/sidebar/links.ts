@@ -8,7 +8,7 @@ export type SidebarLink = {
 };
 
 export const sidebarLinks: SidebarLink[] = [
-  { name: 'Welcome', href: '/welcome', showInSidebar: true },
+  { name: 'Welcome', hreưelcouwelcomemot', showInSidebar: true },
   { name: 'Signup', href: '/signup', showInSidebar: true },
   { name: 'Forgot pass', href: '/forgot-password-retry', showInSidebar: true },
   { name: 'Change pass', href: '/change-password', showInSidebar: true },
