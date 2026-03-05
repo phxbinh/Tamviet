@@ -12,13 +12,25 @@ import {
   Clock, Plus, Tag, AlertCircle, CheckCircle2 
 } from 'lucide-react';
 
-// --- CHUẨN HÓA MOCK DATA (Multi-day support) ---
-const MOCK_EVENTS = [
+// 1. ĐỊNH NGHĨA KIỂU DỮ LIỆU (Fix Type Error)
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  type: string;
+  color: string;
+  time?: string; // Dấu ? cho phép trường này có thể trống
+}
+
+// 2. CHUẨN HÓA MOCK DATA
+const MOCK_EVENTS: CalendarEvent[] = [
   {
     id: '1',
     title: 'Họp chiến lược Tâm Việt',
     start: new Date(2026, 2, 5, 10, 0), 
     end: new Date(2026, 2, 5, 11, 30),
+    time: '10:00 - 11:30',
     type: 'meeting',
     color: 'neon-purple'
   },
@@ -28,7 +40,8 @@ const MOCK_EVENTS = [
     start: new Date(2026, 2, 9),  
     end: new Date(2026, 2, 13),    
     type: 'project',
-    color: 'neon-cyan'
+    color: 'neon-cyan',
+    time: 'Cả tuần'
   },
   {
     id: 'multi-2',
@@ -43,7 +56,7 @@ const MOCK_EVENTS = [
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [events] = useState(MOCK_EVENTS);
+  const [events] = useState<CalendarEvent[]>(MOCK_EVENTS);
 
   // Logic lọc sự kiện cho cột chi tiết bên phải
   const selectedDayEvents = useMemo(() => {
@@ -94,16 +107,14 @@ export default function CalendarPage() {
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
-        {/* --- LEFT: CALENDAR GRID (9 COLUMNS) --- */}
+        {/* --- LEFT: CALENDAR GRID --- */}
         <div className="xl:col-span-9">
-          {/* Days Label */}
           <div className="grid grid-cols-7 mb-4">
             {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'].map((day) => (
               <div key={day} className="text-center text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">{day}</div>
             ))}
           </div>
 
-          {/* Grid Cells */}
           <div className="grid grid-cols-7 border border-border/40 rounded-[2.5rem] overflow-hidden bg-card/10 backdrop-blur-sm shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]">
             {eachDayOfInterval({
               start: startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 }),
@@ -128,7 +139,6 @@ export default function CalendarPage() {
                     ${isSelected && !isToday ? 'bg-foreground text-background' : 'text-muted-foreground'}
                   `}>{format(day, 'd')}</span>
 
-                  {/* Multi-day Bars Logic */}
                   <div className="flex flex-col gap-1.5 w-full">
                     {dayEvents.slice(0, 3).map(event => {
                       const isStart = isSameDay(day, event.start);
@@ -153,9 +163,6 @@ export default function CalendarPage() {
                         </div>
                       );
                     })}
-                    {dayEvents.length > 3 && (
-                      <div className="text-[8px] text-neon-cyan font-black pl-2 tracking-tighter italic">+{dayEvents.length - 3} sự kiện khác</div>
-                    )}
                   </div>
                 </div>
               );
@@ -163,7 +170,7 @@ export default function CalendarPage() {
           </div>
         </div>
 
-        {/* --- RIGHT: SIDEBAR DETAILS (3 COLUMNS) --- */}
+        {/* --- RIGHT: SIDEBAR DETAILS --- */}
         <div className="xl:col-span-3 space-y-6">
           <div className="bg-card/40 backdrop-blur-3xl border border-border/60 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden group border-t-neon-cyan/30">
              <div className="absolute -top-10 -right-10 w-32 h-32 bg-neon-cyan/10 blur-[50px] rounded-full group-hover:bg-neon-cyan/20 transition-all duration-700" />
@@ -196,7 +203,7 @@ export default function CalendarPage() {
                       <div className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center mb-4 text-muted-foreground/30">
                         <AlertCircle size={24} />
                       </div>
-                      <p className="text-xs text-muted-foreground font-medium italic">Không có kế hoạch nào cho ngày này</p>
+                      <p className="text-xs text-muted-foreground font-medium italic">Không có kế hoạch nào</p>
                     </div>
                   )}
                </div>
@@ -206,16 +213,6 @@ export default function CalendarPage() {
                   TẠO LỊCH TRÌNH MỚI
                </button>
              </div>
-          </div>
-
-          <div className="p-6 rounded-[2rem] bg-linear-to-br from-neon-purple/20 to-neon-cyan/20 border border-white/5 backdrop-blur-lg">
-             <div className="flex items-center gap-2 mb-3">
-                <CheckCircle2 size={14} className="text-emerald-500" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Mẹo năng suất</span>
-             </div>
-             <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
-                Bạn có thể nhấn vào bất kỳ sự kiện nào để xem chi tiết hoặc thay đổi thời gian bằng cách kéo thả trực tiếp (đang phát triển).
-             </p>
           </div>
         </div>
       </div>
