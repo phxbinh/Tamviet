@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import WelcomeClient from './WelcomeClient';
+import WelcomeClient from './WelcomeClientGpt';
 
 export default async function WelcomePage() {
   const supabase = await createSupabaseServerClient();
