@@ -12,7 +12,7 @@ import {
   Clock, Plus, AlertCircle, CheckCircle2, Circle, Tag
 } from 'lucide-react';
 
-
+/*
 // 1. Interface đầy đủ
 interface CalendarEvent {
   id: string;
@@ -47,6 +47,73 @@ const MOCK_EVENTS: CalendarEvent[] = [
     isCompleted: false
   }
 ];
+*/
+
+
+// 1. ĐỊNH NGHĨA KIỂU DỮ LIỆU (Fix Type Error)
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  type: string;
+  color: string;
+  time?: string; // Dấu ? cho phép trường này có thể trống
+}
+
+// 2. CHUẨN HÓA MOCK DATA
+const MOCK_EVENTS: CalendarEvent[] = [
+  {
+    id: '1',
+    title: 'Họp chiến lược Tâm Việt',
+    start: new Date(2026, 2, 5, 10, 0), 
+    end: new Date(2026, 2, 5, 11, 30),
+    time: '10:00 - 11:30',
+    type: 'meeting',
+    color: 'neon-purple',
+    isCompleted: false
+  },
+  {
+    id: 'multi-1',
+    title: '🚀 Sprint: Hoàn thiện Dashboard',
+    start: new Date(2026, 2, 9),  
+    end: new Date(2026, 2, 13),    
+    type: 'project',
+    color: 'neon-cyan',
+    time: 'Cả tuần',
+    isCompleted: false
+  },
+  {
+    id: 'multi-2',
+    title: '🏝️ Nghỉ phép năm',
+    start: new Date(2026, 2, 14), 
+    end: new Date(2026, 2, 16),   
+    type: 'vacation',
+    color: 'red-500',
+    isCompleted: false
+  },
+  {
+    id: '2',
+    title: 'Họp chiến lược Tâm Việt',
+    start: new Date(2026, 2, 5, 10, 0), 
+    end: new Date(2026, 2, 5, 11, 30),
+    time: '10:00 - 11:30',
+    type: 'meeting',
+    color: 'neon-purple',
+    isCompleted: false
+  },
+  {
+    id: 'multi-11',
+    title: '🚀 Sprint: Hoàn thiện Dashboard',
+    start: new Date(2026, 2, 1),  
+    end: new Date(2026, 2, 6), // Gần deadline
+    type: 'project',
+    color: 'neon-cyan',
+    isCompleted: false
+  }
+];
+
+
 
 
 export default function CalendarPage() {
