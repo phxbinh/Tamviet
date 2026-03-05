@@ -84,7 +84,7 @@ export default function WelcomeClient({ user }: WelcomeClientProps) {
 
                 <div className="relative flex items-center justify-center w-full h-full rounded-full bg-linear-to-br from-neon-cyan to-neon-purple text-white shadow-xl">
                   {/*<UserCircle size={48} strokeWidth={1.5} />*/}
-                  <UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="xl" />
+                  <UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="lg" />
                 </div>
 
                 <div className="absolute bottom-0 right-0 w-6 h-6 bg-background border-2 border-emerald-500 rounded-full flex items-center justify-center">
