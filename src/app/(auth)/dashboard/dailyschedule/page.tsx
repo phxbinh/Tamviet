@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import DailyReportSchedule from './DailyReportScheduleOne'; // Đường dẫn tới component bạn vừa tạo
+import DailyReportSchedule from './DailyReportScheduleThree'; // Đường dẫn tới component bạn vừa tạo
 
 export default function DailySchedulePage() {
   // Page quản lý state tập trung ở đây
