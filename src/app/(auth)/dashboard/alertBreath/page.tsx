@@ -67,8 +67,8 @@ const MOCK_EVENTS: CalendarEvent[] = [
   {
     id: '1',
     title: 'Họp chiến lược Tâm Việt',
-    start: new Date(2026, 2, 5, 10, 0), 
-    end: new Date(2026, 2, 5, 11, 30),
+    start: new Date(2026, 2, 6, 10, 0), 
+    end: new Date(2026, 2, 6, 11, 30),
     time: '10:00 - 11:30',
     type: 'meeting',
     color: 'neon-purple',
@@ -94,8 +94,8 @@ const MOCK_EVENTS: CalendarEvent[] = [
     isCompleted: false
   },
   {
-    id: '2',
-    title: 'Họp chiến lược Tâm Việt',
+    id: 'multi-3',
+    title: 'Họp chiến lược Việt',
     start: new Date(2026, 2, 5, 10, 0), 
     end: new Date(2026, 2, 5, 11, 30),
     time: '10:00 - 11:30',
@@ -104,8 +104,8 @@ const MOCK_EVENTS: CalendarEvent[] = [
     isCompleted: false
   },
   {
-    id: 'multi-11',
-    title: '🚀 Sprint: Hoàn thiện Dashboard',
+    id: 'multi-4',
+    title: '🚀 Sprint: Hoàn thiện',
     start: new Date(2026, 2, 1),  
     end: new Date(2026, 2, 6), // Gần deadline
     type: 'project',
