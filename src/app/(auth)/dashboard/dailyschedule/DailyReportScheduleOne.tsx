@@ -10,43 +10,43 @@ import {
   Flag, 
   Clock, 
   Check, 
-  MoreHorizontal,
-  User
+  User,
+  ShieldCheck
 } from 'lucide-react';
 
-// --- CHUẨN HOÁ INTERFACE THEO DATABASE SCHEMA ---
+// --- 1. CHUẨN HOÁ INTERFACE (DATABASE SCHEMA) ---
 export interface DailyReportItem {
   id: string;
   userId: string;
   userName: string;
   title: string;
   description: string;
-  startTime: string; // HH:mm
-  endTime: string;   // HH:mm
+  startTime: string; // Định dạng HH:mm
+  endTime: string;   // Định dạng HH:mm
   status: 'pending' | 'in_progress' | 'done' | 'blocked';
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  progress: number;  // 0-100
+  progress: number;  // Giá trị từ 0 - 100
   adminComment?: string;
   isApproved: boolean;
   avatar?: string;
   tags?: string[];
 }
 
-// --- MOCK DATA CHUẨN HOÁ ---
+// --- 2. MOCK DATA (DỮ LIỆU MẪU CHUẨN) ---
 const MOCK_DAILY_REPORTS: DailyReportItem[] = [
   {
     id: 'rpt-001',
     userId: 'user-01',
     userName: 'Nguyễn Văn A',
     title: 'Nghiên cứu thị trường AI',
-    description: 'Phân tích các đối thủ cạnh tranh trong mảng giáo dục kỹ năng sống và tâm lý học đường.',
+    description: 'Phân tích các đối thủ cạnh tranh trong mảng giáo dục kỹ năng sống và tâm lý học đường tại Việt Nam.',
     startTime: '08:00',
     endTime: '10:00',
     status: 'done',
     priority: 'medium',
     progress: 100,
     isApproved: true,
-    adminComment: 'Dữ liệu rất chi tiết, cần phát huy trong các báo cáo sau.',
+    adminComment: 'Dữ liệu rất chi tiết, cần bổ sung thêm phần dự báo tài chính cho quý tới.',
     avatar: 'https://i.pravatar.cc/150?u=1',
     tags: ['Nghiên cứu', 'AI']
   },
@@ -55,14 +55,14 @@ const MOCK_DAILY_REPORTS: DailyReportItem[] = [
     userId: 'user-01',
     userName: 'Nguyễn Văn A',
     title: 'Thiết kế Dashboard Tâm Việt',
-    description: 'Hoàn thiện UI/UX cho tính năng Daily Report Schedule và hệ thống cảnh báo nhịp thở.',
+    description: 'Hoàn thiện UI/UX cho tính năng Daily Report Schedule và tích hợp hệ thống cảnh báo nhịp thở.',
     startTime: '10:30',
     endTime: '12:30',
     status: 'in_progress',
     priority: 'urgent',
     progress: 65,
     isApproved: false,
-    adminComment: 'Cần đẩy nhanh phần Animation để kịp buổi Demo chiều nay với Ban lãnh đạo.',
+    adminComment: 'Cần đẩy nhanh phần Animation để kịp buổi Demo chiều nay.',
     avatar: 'https://i.pravatar.cc/150?u=1',
     tags: ['Design', 'Tâm Việt']
   },
@@ -71,7 +71,7 @@ const MOCK_DAILY_REPORTS: DailyReportItem[] = [
     userId: 'user-01',
     userName: 'Nguyễn Văn A',
     title: 'Họp Team Kỹ thuật',
-    description: 'Thống nhất cấu trúc Database và quy trình Deploy lên Vercel.',
+    description: 'Thống nhất cấu trúc Database và quy trình tự động hóa báo cáo định kỳ.',
     startTime: '14:00',
     endTime: '15:30',
     status: 'pending',
@@ -84,7 +84,7 @@ const MOCK_DAILY_REPORTS: DailyReportItem[] = [
 
 export default function DailyReportSchedule({ selectedDate }: { selectedDate: Date }) {
   
-  // Hàm bổ trợ render màu sắc theo Priority
+  // Hàm xử lý style cho Priority Label
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case 'urgent': return 'text-red-500 border-red-500/20 bg-red-500/10';
@@ -95,142 +95,146 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-[#0a0a0a]/60 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-white/5 shadow-2xl">
+    <div className="w-full max-w-3xl mx-auto bg-[#080808]/80 backdrop-blur-3xl rounded-[3.5rem] p-10 border border-white/5 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)]">
       
-      {/* HEADER: DATE & USER INFO */}
+      {/* HEADER: DATE & ADMIN MONITORING */}
       <div className="flex justify-between items-start mb-16 px-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500 mb-3">Hệ thống báo cáo</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-500 mb-3 underline underline-offset-8">Report System</p>
           <h2 className="text-5xl font-bold tracking-tighter text-white">
-            {format(selectedDate, 'dd')} <span className="text-muted-foreground/40 font-light">tháng</span> {format(selectedDate, 'MM')}
+            {format(selectedDate, 'dd')} <span className="text-white/20 font-thin italic">tháng</span> {format(selectedDate, 'MM')}
           </h2>
         </div>
         <div className="flex flex-col items-end gap-3">
-          <div className="flex -space-x-3">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600 border-4 border-[#121212] flex items-center justify-center shadow-xl">
-              <User size={20} className="text-white" />
-            </div>
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 border-4 border-[#121212] flex items-center justify-center shadow-2xl shadow-blue-500/20">
+            <ShieldCheck size={24} className="text-white" />
           </div>
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Admin Monitoring</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em]">Identity Verified</span>
         </div>
       </div>
 
-      {/* SCHEDULE TIMELINE */}
+      {/* SCHEDULE TIMELINE LIST */}
       <div className="relative">
-        {/* Central Vertical Line */}
+        {/* Đường kẻ dọc Timeline */}
         <div className="absolute left-[3.45rem] top-0 bottom-0 w-[1px] bg-linear-to-b from-transparent via-white/10 to-transparent" />
 
         <div className="space-y-12">
-          {MOCK_DAILY_REPORTS.map((item) => (
-            <div key={item.id} className="relative flex items-start gap-10 group">
-              
-              {/* Left Side: Start Time */}
-              <div className="w-12 pt-1 text-right">
-                <span className="text-[11px] font-black text-muted-foreground/40 tabular-nums">
-                  {item.startTime}
-                </span>
-              </div>
+          {MOCK_DAILY_REPORTS.map((item) => {
+            const isDone = item.status === 'done';
+            const isUrgent = item.priority === 'urgent' && !isDone;
 
-              {/* Center: Status Indicator */}
-              <div className="relative z-10 pt-1">
-                {item.status === 'done' ? (
-                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-transform group-hover:scale-125">
-                    <Check size={12} className="text-black stroke-[4px]" />
-                  </div>
-                ) : (
-                  <div className={`w-5 h-5 rounded-full border-2 bg-[#0a0a0a] transition-all duration-500 
-                    ${item.status === 'urgent' ? 'border-red-500 animate-breathe-danger' : 'border-white/20 group-hover:border-blue-500'}`} 
-                  />
-                )}
-              </div>
+            return (
+              <div key={item.id} className="relative flex items-start gap-10 group">
+                
+                {/* Thời gian bắt đầu (Bên trái) */}
+                <div className="w-12 pt-1 text-right">
+                  <span className="text-[11px] font-black text-white/30 tabular-nums tracking-tighter">
+                    {item.startTime}
+                  </span>
+                </div>
 
-              {/* Right Side: Content Card */}
-              <div className={`flex-1 p-8 rounded-[2.5rem] transition-all duration-500 border relative overflow-hidden
-                ${item.status === 'done' 
-                  ? 'bg-white/[0.02] border-transparent opacity-40 scale-[0.97]' 
-                  : 'bg-white/[0.04] border-white/5 hover:bg-white/[0.07] hover:border-white/10 shadow-2xl hover:-translate-y-1'
-                }
-              `}>
-                {/* Status Bar for High Priority */}
-                {item.priority === 'urgent' && item.status !== 'done' && (
-                  <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-red-600 to-transparent" />
-                )}
-
-                {/* Top Row: Meta Info */}
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black text-blue-500 tracking-widest uppercase">
-                      {item.startTime} — {item.endTime}
-                    </span>
-                    <span className={`text-[8px] font-black px-2 py-0.5 rounded-md border ${getPriorityStyle(item.priority)} uppercase`}>
-                      {item.priority}
-                    </span>
-                  </div>
-                  {item.isApproved && (
-                    <div className="flex items-center gap-1.5 text-emerald-400 text-[9px] font-black bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
-                      <CheckCircle2 size={10} /> APPROVED
+                {/* Nút thắt Timeline (Trạng thái) */}
+                <div className="relative z-10 pt-1">
+                  {isDone ? (
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all group-hover:scale-110">
+                      <Check size={12} className="text-black stroke-[4px]" />
                     </div>
+                  ) : (
+                    <div className={`w-5 h-5 rounded-full border-2 bg-[#080808] transition-all duration-700 
+                      ${isUrgent ? 'border-red-500 animate-breathe-danger shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'border-white/20 group-hover:border-blue-500'}`} 
+                    />
                   )}
                 </div>
 
-                {/* Title & Description */}
-                <h4 className={`text-lg font-bold tracking-tight mb-2 ${item.status === 'done' ? 'line-through text-muted-foreground' : 'text-white'}`}>
-                  {item.title}
-                </h4>
-                <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6">
-                  {item.description}
-                </p>
+                {/* Thẻ Nội dung Báo cáo (Task Card) */}
+                <div className={`flex-1 p-8 rounded-[2.5rem] transition-all duration-500 border relative overflow-hidden
+                  ${isDone 
+                    ? 'bg-white/[0.02] border-transparent opacity-40 grayscale hover:grayscale-0 transition-all' 
+                    : 'bg-white/[0.04] border-white/5 hover:bg-white/[0.08] hover:border-white/10 shadow-2xl'
+                  }
+                `}>
+                  {/* Cảnh báo đỏ cho Task Khẩn cấp */}
+                  {isUrgent && (
+                    <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-red-600 via-red-400 to-transparent" />
+                  )}
 
-                {/* Admin Feedback Section (Mục tiêu quan trọng cho Quản lý) */}
-                {item.adminComment && (
-                  <div className="mb-6 p-4 rounded-2xl bg-blue-600/5 border border-blue-600/10 flex gap-4 items-start">
-                    <div className="p-2 rounded-lg bg-blue-600/10 text-blue-500">
-                      <MessageSquare size={14} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">Phản hồi từ Admin</p>
-                      <p className="text-[11px] italic text-blue-100/70 leading-snug">"{item.adminComment}"</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Bottom Row: Progress & Assignee */}
-                <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
-                  <div className="flex-1 max-w-[200px]">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-[9px] font-black text-muted-foreground uppercase">Progress</span>
-                      <span className="text-[9px] font-black text-white">{item.progress}%</span>
-                    </div>
-                    <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-1000 ${item.status === 'done' ? 'bg-emerald-500' : 'bg-blue-600'}`}
-                        style={{ width: `${item.progress}%` }} 
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Tag Display */}
-                  <div className="flex gap-2">
-                    {item.tags?.map(tag => (
-                      <span key={tag} className="text-[8px] font-bold text-muted-foreground/40 border border-white/5 px-2 py-1 rounded-lg italic">
-                        #{tag}
+                  {/* Header của Card */}
+                  <div className="flex justify-between items-center mb-5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-blue-400 tracking-widest uppercase flex items-center gap-1.5">
+                        <Clock size={10} /> {item.startTime} — {item.endTime}
                       </span>
-                    ))}
+                      <span className={`text-[8px] font-black px-2.5 py-1 rounded-md border ${getPriorityStyle(item.priority)} uppercase tracking-tighter`}>
+                        {item.priority}
+                      </span>
+                    </div>
+                    {item.isApproved && (
+                      <div className="flex items-center gap-1.5 text-emerald-400 text-[9px] font-black bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+                        <CheckCircle2 size={10} /> APPROVED
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tiêu đề & Mô tả */}
+                  <h4 className={`text-xl font-bold tracking-tight mb-2 ${isDone ? 'line-through text-white/40' : 'text-white'}`}>
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-white/50 leading-relaxed mb-6 font-medium">
+                    {item.description}
+                  </p>
+
+                  {/* Phần Admin Comment (Dành cho quản lý phê duyệt) */}
+                  {item.adminComment && (
+                    <div className="mb-6 p-5 rounded-3xl bg-blue-600/5 border border-blue-600/10 flex gap-4 items-start group/comment">
+                      <div className="p-2.5 rounded-xl bg-blue-600/10 text-blue-500 group-hover/comment:scale-110 transition-transform">
+                        <MessageSquare size={16} />
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black text-blue-500 uppercase tracking-[0.2em] mb-1.5 flex items-center gap-2">
+                           Feedback <span className="w-1 h-1 rounded-full bg-blue-500/40" /> Manager
+                        </p>
+                        <p className="text-[12px] italic text-blue-100/60 leading-relaxed font-medium">"{item.adminComment}"</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Footer Card: Tiến độ & Tags */}
+                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
+                    <div className="flex-1 max-w-[220px]">
+                      <div className="flex justify-between items-center mb-2.5 px-1">
+                        <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">Progress</span>
+                        <span className="text-[10px] font-black text-white italic">{item.progress}%</span>
+                      </div>
+                      <div className="h-1.5 bg-white/5 rounded-full overflow-hidden p-[1px]">
+                        <div 
+                          className={`h-full rounded-full transition-all duration-1000 ease-out ${isDone ? 'bg-emerald-500' : 'bg-linear-to-r from-blue-600 to-cyan-400 shadow-[0_0_10px_rgba(37,99,235,0.5)]'}`}
+                          style={{ width: `${item.progress}%` }} 
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      {item.tags?.map(tag => (
+                        <span key={tag} className="text-[8px] font-black text-white/20 border border-white/5 px-3 py-1.5 rounded-xl uppercase tracking-tighter hover:text-white transition-colors cursor-default">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* FOOTER ACTION */}
-      <div className="mt-16 flex gap-4">
-        <button className="flex-1 py-5 rounded-[1.5rem] bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] hover:bg-blue-500 hover:text-white transition-all shadow-xl active:scale-95">
-          Tạo báo cáo mới
+      {/* FOOTER ACTION BUTTONS */}
+      <div className="mt-20 flex gap-5">
+        <button className="flex-[3] py-6 rounded-3xl bg-white text-black font-black text-[11px] uppercase tracking-[0.25em] hover:bg-blue-600 hover:text-white transition-all shadow-2xl hover:-translate-y-1 active:scale-95">
+          Gửi báo cáo hôm nay
         </button>
-        <button className="px-6 rounded-[1.5rem] bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-white/10 transition-all">
-          <Clock size={18} />
+        <button className="flex-1 rounded-3xl bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-white/10 transition-all hover:rotate-12 active:scale-90 shadow-xl">
+          <Clock size={20} />
         </button>
       </div>
     </div>
