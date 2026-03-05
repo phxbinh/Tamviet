@@ -68,6 +68,7 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
           <button onClick={() => signOut()} className="flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
             <LogOut size={16} /> Đăng xuất
           </button>
+          <Link href="/">Back App page</Link>
         </div>
       </div>
     </aside>
