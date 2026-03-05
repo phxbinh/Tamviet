@@ -12,7 +12,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Signup', href: '/signup', showInSidebar: true },
   { name: 'Forgot pass', href: '/forgot-password-retry', showInSidebar: true },
   { name: 'Change pass', href: '/change-password', showInSidebar: true },
-  //{ name: 'Dashboard', href: '/dashboard', showInSidebar: true },
+  { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
     name: 'Todos',
