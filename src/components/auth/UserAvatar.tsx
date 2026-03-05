@@ -6,8 +6,7 @@ export function UserAvatar({ email, avatarUrl, size = "md" }: { email: string; a
   const sizeClasses = {
     sm: "w-8 h-8 text-xs",
     md: "w-10 h-10 text-sm",
-    lg: "w-24 h-24 text-base",
-    xl: "w-24 h-24 text-lg"
+    lg: "w-24 h-24 text-base"
   };
 
   return (
