@@ -216,7 +216,7 @@ export default function CalendarPage() {
                   Ngày {format(selectedDate, 'dd')} THÁNG {format(selectedDate, 'MM')}
                </h2>
 
-               <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+               <div className="space-y-4 max-h-[500px] overflow-y-auto py-6 pr-2 custom-scrollbar">
                   {selectedDayEvents.length > 0 ? (
                     selectedDayEvents.map(event => {
                       const urgency = getUrgency(event);
