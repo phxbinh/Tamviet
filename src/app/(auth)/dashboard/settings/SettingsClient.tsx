@@ -92,7 +92,7 @@ export default function SettingsClient({ user }: { user: any }) {
                 <input 
                   type="text" 
                   placeholder="Nhập tên của bạn..." 
-                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-sm focus:border-neon-cyan outline-none transition-colors" 
+                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-base md:text-sm focus:border-neon-cyan outline-none transition-colors" 
                 />
               </div>
               <div className="space-y-2">
@@ -100,7 +100,7 @@ export default function SettingsClient({ user }: { user: any }) {
                 <input 
                   type="text" 
                   placeholder="+84..." 
-                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-sm focus:border-neon-cyan outline-none transition-colors" 
+                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-base md:text-sm focus:border-neon-cyan outline-none transition-colors" 
                 />
               </div>
             </div>
