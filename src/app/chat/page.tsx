@@ -1,4 +1,5 @@
 // app/chat/page.tsx
+/*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -54,3 +55,37 @@ export default function ChatPage() {
     </div>
   );
 }
+*/
+
+
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+
+export default function ChatPage() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({
+      api: '/api/chat',
+    });
+
+  return (
+    <div className="flex flex-col h-screen max-w-3xl mx-auto p-4">
+      <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+        {messages.map((m) => (
+          <div key={m.id}>
+            <b>{m.role}:</b> {m.content}
+          </div>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <input value={input} onChange={handleInputChange} />
+        <button disabled={isLoading}>Send</button>
+      </form>
+    </div>
+  );
+}
+
+
+
+
