@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldCheck, ChevronLeft } from 'lucide-react';
 import { UserAvatar } from './UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
 
@@ -68,9 +68,42 @@ export default function DashboardSidebar({ user, onNavigate }: DashboardSidebarP
           <button onClick={() => signOut()} className="flex items-center gap-3 px-3 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
             <LogOut size={16} /> Đăng xuất
           </button>
-          <Link href="/">Back App page</Link>
+          {/* BACK TO APP LINK - UI SYNCED */}
+          <Link 
+            href="/"
+            className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-xl transition-all group"
+          >
+            <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+            Quay lại trang chủ
+          </Link>
         </div>
       </div>
     </aside>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
