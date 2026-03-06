@@ -220,7 +220,7 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto bg-card text-foreground rounded-[2.5rem] p-6 md:p-10 border border-border shadow-2xl transition-all duration-300">
+    <div className="w-full max-w-3xl mx-auto bg-card text-foreground rounded-[2.5rem] p-3 md:p-5 border border-border shadow-2xl transition-all duration-300">
       
       {/* HEADER: Adaptable to Theme */}
       <div className="flex justify-between items-start mb-12 px-2">
