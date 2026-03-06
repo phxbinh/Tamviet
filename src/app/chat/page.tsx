@@ -223,7 +223,8 @@ export default function ChatPage() {
             value={input}
             onChange={handleInputChange}
             placeholder="Type your message..."
-            className="flex-1 bg-transparent border-none focus:ring-0 px-4 py-3 text-[15px] placeholder:opacity-40"
+            className="flex-1 bg-transparent border-none focus:ring-0 px-4 py-3 text-[15px] placeholder:opacity-40 focus:outline-none 
+         focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           />
 
           <button
