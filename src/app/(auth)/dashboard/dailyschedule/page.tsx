@@ -1,4 +1,4 @@
-
+'use client'
 import React, { useState } from 'react';
 import DailyReportSchedule from './DailyReportScheduleFour'; // Đường dẫn tới component bạn vừa tạo
 
