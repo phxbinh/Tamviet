@@ -67,8 +67,8 @@ const MOCK_DB_REPORT: DBDailyReport = {
       reporter_note: 'Đã tối ưu lại CSS cho Mobile, còn phần Animation đang xử lý.',
       start_time: '2024-05-06T13:30:00Z',
       end_time: '2024-05-06T16:30:00Z',
-      status: 'in_progress',
-      priority: 'done',
+      status: 'done',
+      priority: 'high',
       progress: 76,
     }
   ]
