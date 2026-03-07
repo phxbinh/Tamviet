@@ -77,7 +77,7 @@ export default function ChangePasswordPage() {
 }
 */
 
-
+import { Lock, Loader2, ShieldCheck, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import ChangePasswordForm from './ChangePasswordForm';
 
 export default function ChangePasswordPage() {
