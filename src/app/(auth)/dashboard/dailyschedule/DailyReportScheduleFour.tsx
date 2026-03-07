@@ -68,7 +68,7 @@ const MOCK_DB_REPORT: DBDailyReport = {
       start_time: '2024-05-06T13:30:00Z',
       end_time: '2024-05-06T16:30:00Z',
       status: 'in_progress',
-      priority: 'urgent',
+      priority: 'done',
       progress: 76,
     }
   ]
