@@ -47,6 +47,7 @@ export const sidebarLinks: SidebarLink[] = [
   },
 
   { name: 'About', href: '/about', showInSidebar: true },
+  { name: 'Road map', href: '/roadmap', showInSidebar: true },
 
   { name: 'Profile', href: '/profile', showInSidebar: true },
   { name: 'Settings', href: '/settings', showInSidebar: true },
