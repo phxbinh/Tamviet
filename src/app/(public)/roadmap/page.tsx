@@ -291,7 +291,7 @@ export default function Roadmap() {
     /* Vì html/body bị overflow: hidden, ta cần thẻ main này chiếm trọn màn hình 
       và tự quản lý việc cuộn (custom-scrollbar)
     */
-    <main className="h-screen w-full overflow-y-auto custom-scrollbar bg-background">
+
       <div className="max-w-3xl mx-auto py-24 px-6">
         
         <header className="text-center mb-24 space-y-4">
@@ -316,7 +316,7 @@ export default function Roadmap() {
           </button>
         </footer>
       </div>
-    </main>
+
   );
 }
 
