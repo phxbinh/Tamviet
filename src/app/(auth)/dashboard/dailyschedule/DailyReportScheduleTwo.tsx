@@ -6,57 +6,68 @@ import {
   CheckCircle2, 
   MessageSquare, 
   Clock, 
+  Check, 
   ShieldCheck,
-  LayoutGrid
+  MoreHorizontal
 } from 'lucide-react';
 
-// --- ĐỊNH NGHĨA KIỂU DỮ LIỆU KHỚP SQL ---
+// --- 1. INTERFACE KHỚP CHÍNH XÁC VỚI SCHEMA SQL ---
 export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'blocked';
 export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface DBTask {
   id: string;
+  daily_report_id: string;
   title: string;
   contents: string | null;
-  start_time: string; // ISO string từ DB
-  end_time: string;   // ISO string từ DB
+  start_time: string; // ISO String: 2024-05-06T08:00:00Z
+  end_time: string;   // ISO String: 2024-05-06T10:00:00Z
+  duration_minutes: number;
   status: TaskStatus;
   priority: TaskPriority;
-  progress: number; 
+  progress: number; // Đã thêm để khớp UI thanh phần trăm
 }
 
 export interface DBDailyReport {
   id: string;
+  user_id: string;
   report_date: string;
   manager_comment: string | null;
+  manager_reviewed: boolean;
   tasks: DBTask[];
 }
 
-// Giả lập dữ liệu fetch từ DB (đã qua join bảng)
-const MOCK_DB_DATA: DBDailyReport = {
-  id: 'report-123',
+// --- 2. MOCK DATA THEO CẤU TRÚC MỚI ---
+const MOCK_DB_REPORT: DBDailyReport = {
+  id: 'report-001',
+  user_id: 'user-123',
   report_date: '2024-05-06',
-  manager_comment: "Cần đẩy nhanh Animation để kịp buổi Demo chiều nay.",
+  manager_reviewed: false,
+  manager_comment: 'Cần đẩy nhanh Animation để kịp buổi Demo.',
   tasks: [
     {
-      id: 'task-1',
+      id: 'task-01',
+      daily_report_id: 'report-001',
       title: 'Thiết kế Dashboard Task',
       contents: 'Hoàn thiện giao diện Schedule với hệ thống theme và nhịp thở.',
       start_time: '2024-05-06T10:30:00Z',
       end_time: '2024-05-06T12:30:00Z',
+      duration_minutes: 120,
       status: 'in_progress',
       priority: 'urgent',
-      progress: 65
+      progress: 65,
     },
     {
-      id: 'task-2',
+      id: 'task-02',
+      daily_report_id: 'report-001',
       title: 'Nghiên cứu thị trường AI',
-      contents: 'Phân tích đối thủ cạnh tranh mảng giáo dục.',
+      contents: 'Phân tích đối thủ cạnh tranh mảng giáo dục kỹ năng sống.',
       start_time: '2024-05-06T08:00:00Z',
       end_time: '2024-05-06T10:00:00Z',
+      duration_minutes: 120,
       status: 'done',
       priority: 'medium',
-      progress: 100
+      progress: 100,
     }
   ]
 };
@@ -67,125 +78,136 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
     switch (priority) {
       case 'urgent': return 'text-red-500 bg-red-500/10 border-red-500/20';
       case 'high': return 'text-orange-500 bg-orange-500/10 border-orange-500/20';
-      case 'medium': return 'text-blue-500 bg-blue-500/10 border-blue-500/20';
+      case 'medium': return 'text-neon-cyan bg-neon-cyan/10 border-neon-cyan/20';
       default: return 'text-muted-foreground bg-foreground/5 border-border';
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-card text-foreground rounded-[3rem] p-6 border border-border shadow-2xl flex flex-col h-full max-h-[95vh]">
+    <div className="w-full max-w-3xl mx-auto bg-card text-foreground rounded-[2.5rem] p-5 border border-border shadow-2xl transition-all duration-300">
       
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-10 shrink-0">
-        <button className="w-12 h-12 rounded-full bg-foreground/5 flex items-center justify-center border border-border hover:bg-foreground/10 transition-all">
-          <LayoutGrid size={20} />
-        </button>
-        <div className="text-center">
-          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-1">
-            {format(selectedDate, 'MMMM')}
-          </p>
-          <h2 className="text-2xl font-black tracking-tight italic">Today</h2>
+      <div className="flex justify-between items-start mb-12 px-2">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-2">Tâm Việt Schedule</p>
+          <h2 className="text-4xl font-bold tracking-tighter">
+            {format(selectedDate, 'dd')} <span className="text-muted-foreground/40 font-light">tháng</span> {format(selectedDate, 'MM')}
+          </h2>
         </div>
-        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-inner">
-          <ShieldCheck size={20} className="text-primary" />
+        <div className="flex flex-col items-end gap-2">
+          <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+            <ShieldCheck size={22} className="text-white" />
+          </div>
+          <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Verified Report</span>
         </div>
       </div>
 
-      {/* TIMELINE CONTENT */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 relative">
-        <div className="absolute left-[3.45rem] top-0 bottom-0 w-[1px] bg-border/60" />
+      {/* TIMELINE BODY */}
+      <div className="relative">
+        <div className="absolute left-[2.95rem] top-0 bottom-0 w-[1px] bg-border" />
 
-        <div className="space-y-8 pb-10">
-          {MOCK_DB_DATA.tasks.map((task) => {
+        <div className="space-y-10">
+          {MOCK_DB_REPORT.tasks.map((task) => {
             const isDone = task.status === 'done';
             const isUrgent = task.priority === 'urgent' && !isDone;
-            
-            // Format lại giờ từ ISO String của DB
-            const sTime = format(new Date(task.start_time), 'HH:mm');
-            const eTime = format(new Date(task.end_time), 'HH:mm');
+
+            // Xử lý hiển thị thời gian từ ISO String
+            const displayStart = task.start_time ? format(new Date(task.start_time), 'HH:mm') : '--:--';
+            const displayEnd = task.end_time ? format(new Date(task.end_time), 'HH:mm') : '--:--';
 
             return (
-              <div key={task.id} className="relative flex items-start gap-8 group animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div key={task.id} className="relative flex items-start gap-6 md:gap-10 group">
                 
-                {/* 1. Time Label */}
-                <div className="w-10 pt-6 text-right shrink-0">
-                  <span className="text-[11px] font-bold text-muted-foreground/40 tabular-nums uppercase">
-                    {sTime}
+                {/* Cột thời gian */}
+                <div className="w-10 pt-1 text-right">
+                  <span className="text-[10px] font-bold text-muted-foreground/50 tabular-nums">
+                    {displayStart}
                   </span>
                 </div>
 
-                {/* 2. Status Dot */}
-                <div className="relative z-10 pt-[1.55rem] shrink-0">
-                   <div className={`w-4 h-4 rounded-full border-2 bg-card transition-all duration-700 
-                      ${isDone ? 'bg-primary border-primary' : isUrgent ? 'border-red-500 animate-breathe-danger shadow-[0_0_10px_rgba(239,68,68,0.4)]' : 'border-border'}`} 
+                {/* Nút thắt Timeline */}
+                <div className="relative z-10 pt-1">
+                  {isDone ? (
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                      <Check size={12} className="text-white stroke-[4px]" />
+                    </div>
+                  ) : (
+                    <div className={`w-5 h-5 rounded-full border-2 bg-card transition-all duration-500 
+                      ${isUrgent ? 'border-red-500 animate-breathe-danger' : 'border-border group-hover:border-primary'}`} 
                     />
+                  )}
                 </div>
 
-                {/* 3. Task Card */}
-                <div className={`flex-1 rounded-[2.2rem] border relative overflow-hidden transition-all duration-300
-                  ${isDone ? 'bg-foreground/[0.02] border-transparent opacity-50' : 'bg-[#0f172a] border-white/5 shadow-2xl'}
+                {/* Thẻ Card nội dung */}
+                <div className={`flex-1 p-6 md:p-8 rounded-[2rem] transition-all duration-300 border relative
+                  ${isDone 
+                    ? 'bg-foreground/[0.02] border-transparent opacity-50 scale-[0.98]' 
+                    : 'bg-card border-border hover:border-primary/30 hover:shadow-xl shadow-sm'
+                  }
                 `}>
                   
-                  {/* TAI THỎ URGENT (Notch) */}
+                  {/* TAI THỎ CẢNH BÁO (NOTCH) */}
                   {isUrgent && (
-                    <div className="absolute top-0 left-0 right-0 flex justify-center">
-                      <div className="h-[6px] w-32 bg-red-600 rounded-b-2xl shadow-[0_2px_12px_rgba(220,38,38,0.6)] animate-breathe-danger" />
+                    <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none">
+                      <div className="h-[6px] w-32 bg-red-500 rounded-b-2xl shadow-[0_2px_10px_rgba(239,68,68,0.4)] animate-breathe-danger" />
                     </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-4 pt-2">
-                      <div className="flex items-center gap-2">
-                        <Clock size={14} className="text-blue-400" />
-                        <span className="text-[11px] font-bold text-blue-400 tracking-tight">
-                          {sTime} — {eTime}
-                        </span>
-                        {isUrgent && (
-                          <span className="text-[9px] font-black px-2 py-0.5 rounded bg-red-500/10 text-red-500 border border-red-500/30 uppercase tracking-tighter">
-                            URGENT
-                          </span>
-                        )}
-                      </div>
-                      {isDone && <CheckCircle2 size={16} className="text-emerald-500" />}
+                  {/* Header của Card */}
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-primary tracking-widest flex items-center gap-1">
+                        <Clock size={12} /> {displayStart} — {displayEnd}
+                      </span>
+                      <span className={`text-[8px] font-black px-2 py-0.5 rounded border uppercase ${getPriorityClasses(task.priority)}`}>
+                        {task.priority}
+                      </span>
                     </div>
-
-                    <h4 className={`text-xl font-bold tracking-tight mb-2 text-white ${isDone ? 'line-through opacity-40' : ''}`}>
-                      {task.title}
-                    </h4>
-                    <p className="text-[13px] text-white/50 mb-6 leading-relaxed line-clamp-2 italic">
-                      {task.contents}
-                    </p>
-
-                    {/* Manager Feedback lấy từ bảng daily_reports */}
-                    {MOCK_DB_DATA.manager_comment && !isDone && (
-                      <div className="mb-6 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex gap-3">
-                        <MessageSquare size={14} className="text-blue-500 mt-1 shrink-0" />
-                        <div>
-                          <p className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">Admin Feedback</p>
-                          <p className="text-[12px] italic text-white/70">"{MOCK_DB_DATA.manager_comment}"</p>
-                        </div>
+                    {isDone && (
+                      <div className="flex items-center gap-1 text-emerald-500 text-[9px] font-black bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 uppercase">
+                        <CheckCircle2 size={10} /> Done
                       </div>
                     )}
+                  </div>
 
-                    {/* Progress Bar & Avatars */}
-                    <div className="pt-5 border-t border-white/5 flex items-center justify-between">
-                       <div className="flex-1 max-w-[160px]">
-                          <div className="flex justify-between mb-1.5 px-0.5 text-[9px] font-bold uppercase tracking-widest">
-                             <span className="text-white/20">Tiến độ</span>
-                             <span className="text-blue-400 font-black">{task.progress}%</span>
-                          </div>
-                          <div className="h-1 bg-white/5 rounded-full overflow-hidden p-[0.5px]">
-                             <div 
-                                className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.6)] transition-all duration-1000" 
-                                style={{ width: `${task.progress}%` }} 
-                             />
-                          </div>
-                       </div>
-                       
-                       <div className="flex -space-x-2.5">
-                          <div className="w-8 h-8 rounded-full bg-cyan-500 border-2 border-[#0f172a] flex items-center justify-center text-[9px] font-black text-white hover:-translate-y-1 transition-transform">TV</div>
-                          <div className="w-8 h-8 rounded-full bg-purple-500 border-2 border-[#0f172a] flex items-center justify-center text-[9px] font-black text-white hover:-translate-y-1 transition-transform shadow-lg">AD</div>
-                       </div>
+                  {/* Tiêu đề & Nội dung (contents thay cho description) */}
+                  <h4 className={`text-lg font-bold tracking-tight mb-2 ${isDone ? 'line-through text-muted-foreground' : ''}`}>
+                    {task.title}
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-6 line-clamp-2">
+                    {task.contents}
+                  </p>
+
+                  {/* Phản hồi Admin (manager_comment từ report cha) */}
+                  {MOCK_DB_REPORT.manager_comment && !isDone && (
+                    <div className="mb-6 p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-3 items-start animate-in fade-in slide-in-from-top-2">
+                      <MessageSquare size={14} className="text-primary mt-1 shrink-0" />
+                      <div>
+                        <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-0.5">Admin Feedback</p>
+                        <p className="text-[11px] italic opacity-80 leading-relaxed font-medium">
+                          "{MOCK_DB_REPORT.manager_comment}"
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Footer: Tiến độ & Assignees */}
+                  <div className="flex items-center justify-between mt-auto pt-6 border-t border-border">
+                    <div className="flex-1 max-w-[200px]">
+                      <div className="flex justify-between items-center mb-2 px-1">
+                        <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Tiến độ</span>
+                        <span className="text-[10px] font-bold text-primary">{task.progress}%</span>
+                      </div>
+                      <div className="h-1 bg-foreground/10 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full transition-all duration-1000 ${isDone ? 'bg-emerald-500' : 'bg-primary'}`}
+                          style={{ width: `${task.progress}%` }} 
+                        />
+                      </div>
+                    </div>
+                    <div className="flex -space-x-2">
+                       <div className="w-7 h-7 rounded-full bg-neon-cyan border-2 border-card flex items-center justify-center text-[8px] font-black text-white shadow-sm">TV</div>
+                       <div className="w-7 h-7 rounded-full bg-neon-purple border-2 border-card flex items-center justify-center text-[8px] font-black text-white shadow-sm">AD</div>
                     </div>
                   </div>
                 </div>
@@ -195,11 +217,14 @@ export default function DailyReportSchedule({ selectedDate }: { selectedDate: Da
         </div>
       </div>
 
-      {/* FIXED FOOTER BUTTON */}
-      <div className="pt-6 shrink-0">
-         <button className="w-full py-4 rounded-2xl bg-primary text-white font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 hover:brightness-110 active:scale-[0.97] transition-all">
-            Gửi báo cáo mới
-         </button>
+      {/* FOOTER ACTIONS */}
+      <div className="mt-12 flex gap-4">
+        <button className="flex-1 py-4 rounded-2xl bg-primary text-white font-black text-[11px] uppercase tracking-[0.2em] shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all">
+          Gửi báo cáo mới
+        </button>
+        <button className="px-5 rounded-2xl border border-border bg-card hover:bg-foreground/5 transition-all active:scale-90">
+          <MoreHorizontal size={20} />
+        </button>
       </div>
     </div>
   );
