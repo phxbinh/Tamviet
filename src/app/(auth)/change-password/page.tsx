@@ -2,6 +2,7 @@
 // src/app/(auth)/change-password/page.tsx
 // Sử dụng cho thay đổi password -
 
+/*
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
@@ -74,3 +75,38 @@ export default function ChangePasswordPage() {
     </div>
   );
 }
+*/
+
+
+import ChangePasswordForm from './ChangePasswordForm';
+
+export default function ChangePasswordPage() {
+  return (
+    <div className="h-full flex items-center justify-center p-6">
+      <div className="w-full max-w-[420px] relative animate-in fade-in slide-in-from-bottom-4">
+        <div className="bg-card/40 backdrop-blur-2xl border border-border/50 rounded-3xl p-8 shadow-2xl">
+
+          <div className="flex flex-col items-center mb-8 space-y-3 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20">
+              Thiết lập mật mã
+            </div>
+
+            <h1 className="text-2xl font-bold tracking-tight">
+              Thiết lập mật mã mới
+            </h1>
+
+            <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-bold">
+              An toàn & Bảo mật tuyệt đối
+            </p>
+          </div>
+
+          <ChangePasswordForm />
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
