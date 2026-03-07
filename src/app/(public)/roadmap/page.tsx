@@ -83,7 +83,7 @@ export default function Roadmap() {
 }
 */
 
-{/*
+/*
 "use client";
 
 import React from 'react';
@@ -206,7 +206,7 @@ export default function RoadmapPage() {
     </main>
   );
 }
-*/}
+*/
 
 
 "use client";
