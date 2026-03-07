@@ -215,6 +215,7 @@ import React from 'react';
 import { Database, Lock, Map, Rocket, Search } from 'lucide-react';
 import { useElementOnScreen } from '@/hooks/useElementOnScreen';
 
+/*
 const steps = [
   {
     title: "Khởi tạo Next.js 15",
@@ -253,6 +254,55 @@ const steps = [
   }
 ];
 
+*/
+
+const steps = [
+  {
+    title: "Khởi tạo Next.js 15",
+    desc: "Sử dụng cấu trúc App Router, tối ưu hóa Hydration và React 19 Actions.",
+    icon: <Rocket className="w-6 h-6" />,
+    // Primary: Dùng màu xanh thương hiệu của bạn, ép text-white để không mất màu icon
+    color: "bg-primary text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]",
+    accent: "border-primary"
+  },
+  {
+    title: "Auth với Supabase",
+    desc: "Triển khai Middleware để bảo vệ Route và quản lý Session người dùng.",
+    icon: <Lock className="w-6 h-6" />,
+    // Purple: Màu đặc trưng của Supabase/Auth
+    color: "bg-neon-purple text-white shadow-[0_0_15px_rgba(168,85,247,0.5)]",
+    accent: "border-neon-purple"
+  },
+  {
+    title: "Database tại Neon",
+    desc: "Kết nối PostgreSQL serverless, tận dụng tính năng Auto-scaling và Branching.",
+    icon: <Database className="w-6 h-6" />,
+    // Cyan: Màu xanh Neon cực rực rỡ
+    color: "bg-neon-cyan text-[#020617] shadow-[0_0_15px_rgba(34,211,238,0.6)]",
+    accent: "border-neon-cyan"
+  },
+  {
+    title: "Sitemap & SEO",
+    desc: "Tự động tạo sitemap.xml và robots.txt để Google Index nhanh hơn.",
+    icon: <Search className="w-6 h-6" />,
+    // Orange: Màu Google/SEO truyền thống
+    color: "bg-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.4)]",
+    accent: "border-orange-500"
+  },
+  {
+    title: "Vercel Deployment",
+    desc: "CI/CD tự động, tối ưu hóa Edge Runtime và phân phối qua Global CDN.",
+    icon: <Map className="w-6 h-6" />,
+    // Fix: Dùng màu đen/trắng tĩnh (static) để không bị đảo ngược khi đổi theme
+    color: "bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-lg",
+    accent: "border-slate-950 dark:border-white"
+  }
+];
+
+
+
+
+
 const RoadmapStep = ({ step, index }: { step: any, index: number }) => {
   const [containerRef, isVisible] = useElementOnScreen({ 
     threshold: 0.3, 
@@ -273,8 +323,11 @@ const RoadmapStep = ({ step, index }: { step: any, index: number }) => {
 
       <div className="ml-8 border-l-2 border-border pl-10 pb-2 relative">
         {/* Dấu chấm trên đường kẻ */}
+{/*
         <div className={`absolute top-6 -left-[9px] w-4 h-4 bg-card border-2 rounded-full ${step.accent}`} />
-        
+        */}
+<div className={`absolute top-6 -left-[9px] w-4 h-4 bg-card border-2 rounded-full shadow-[0_0_8px_currentColor] ${step.accent}`} />
+
         <h3 className="text-2xl font-bold tracking-tight text-foreground uppercase italic">
           {step.title}
         </h3>
