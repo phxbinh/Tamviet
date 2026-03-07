@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState, RefObject } from 'react';
 
+// 1. Định nghĩa Interface mở rộng để TS hiểu 'freezeOnceVisible'
+interface UseElementOptions extends IntersectionObserverInit {
+  freezeOnceVisible?: boolean;
+}
+
 export function useElementOnScreen(
-  options: IntersectionObserverInit = { threshold: 0.1 }
+  options: UseElementOptions = { threshold: 0.1 }
 ): [RefObject<HTMLDivElement | null>, boolean] {
-  // Khởi tạo ref với kiểu HTMLDivElement hoặc null
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -12,16 +16,27 @@ export function useElementOnScreen(
     if (!target) return;
 
     const observer = new IntersectionObserver(([entry]) => {
-      setIsVisible(entry.isIntersecting);
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        
+        // 2. Nếu có cờ freezeOnceVisible, ta ngắt kết nối luôn sau khi thấy
+        if (options.freezeOnceVisible) {
+          observer.unobserve(target);
+        }
+      } else {
+        // Nếu không freeze thì mới set về false khi ra ngoài màn hình
+        if (!options.freezeOnceVisible) {
+          setIsVisible(false);
+        }
+      }
     }, options);
 
     observer.observe(target);
 
-    // Cleanup: Ngừng quan sát khi component bị hủy (unmount)
     return () => {
       if (target) observer.unobserve(target);
     };
-  }, [options]);
+  }, [options]); // Effect sẽ chạy lại nếu options thay đổi
 
   return [containerRef, isVisible];
 }
