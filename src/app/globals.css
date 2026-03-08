@@ -30,6 +30,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   /* KHÓA CỨNG tầng ngoài cùng */
   html, body {
     height: 100%;
@@ -49,7 +52,22 @@
   .dark body {
     background-image: radial-gradient(at top left, #020617, #0f172a, #020617);
   }
+  /* Khoảng cách dừng lại phía trên heading khi click link */
+[id] {
+  scroll-margin-top: 100px;
 }
+
+}
+
+
+
+
+
+
+
+
+
+
 
 /* Fix size cho input để không bị zoom khi click vào */
 @layer base {
