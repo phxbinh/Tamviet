@@ -1,4 +1,5 @@
 // src/lib/md/markdown.ts
+/*
 import { marked } from 'marked';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
@@ -18,3 +19,21 @@ export async function parseMarkdown(content: string) {
 
   return sanitizedHtml;
 }
+*/
+
+import { marked } from 'marked';
+import DOMPurify from 'isomorphic-dompurify';
+
+export async function parseMarkdown(content: string) {
+  // marked.parse có thể là đồng bộ hoặc bất đồng bộ tùy phiên bản
+  const rawHtml = await marked.parse(content);
+  
+  // DOMPurify tự động nhận biết môi trường
+  return DOMPurify.sanitize(rawHtml);
+}
+
+
+
+
+
+
