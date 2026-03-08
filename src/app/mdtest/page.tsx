@@ -78,6 +78,60 @@ export default function MarkdownTest() {
     );
   }
 
+return (
+  <div className="max-w-6xl mx-auto py-6 px-4">
+    {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
+    <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
+      
+      {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
+      <aside className="lg:hidden w-full mb-8">
+        <details className="group bg-card/30 border border-border rounded-xl overflow-hidden">
+          <summary className="list-none p-4 cursor-pointer flex justify-between items-center bg-card/50">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary">Mục lục nội dung</span>
+            <div className="transition-transform group-open:rotate-180">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+          </summary>
+          <div className="p-2 border-t border-border/50">
+            <TableOfContents htmlContent={htmlContent} />
+          </div>
+        </details>
+      </aside>
+
+      {/* 2. NỘI DUNG CHÍNH */}
+      <article className="min-w-0 w-full">
+        <header className="mb-8">
+           <h1 className="text-2xl font-black italic uppercase text-foreground leading-tight">
+             {/* Tiêu đề */}
+           </h1>
+        </header>
+
+        <div 
+          className="markdown-body text-sm md:text-base ..." 
+          dangerouslySetInnerHTML={{ __html: htmlContent }} 
+        />
+      </article>
+
+      {/* 3. TOC CHO DESKTOP (Vẫn giữ sticky) */}
+      <aside className="hidden lg:block sticky top-24 self-start">
+        <TableOfContents htmlContent={htmlContent} />
+      </aside>
+
+    </div>
+  </div>
+);
+}
+
+
+
+
+
+
+
+
+
+
+/*
   return (
 
           
@@ -89,9 +143,9 @@ export default function MarkdownTest() {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
   
 
-          {/* VÙNG HIỂN THỊ NỘI DUNG CHÍNH */}
+        
           <article className="min-w-0 w-full">
-            {/* Header giả định cho bài viết */}
+            
             <header className="mb-12 border-b border-border pb-8">
               <h1 className="text-4xl lg:text-5xl font-black italic text-foreground uppercase tracking-tighter mb-4">
                 Tài liệu kỹ thuật <span className="text-neon-cyan">2026</span>
@@ -102,7 +156,7 @@ export default function MarkdownTest() {
               </div>
             </header>
 
-            {/* Render Markdown Content */}
+         
             <div 
               className="markdown-body text-foreground/80 leading-relaxed font-medium
                 [&_h1]:hidden 
@@ -124,3 +178,4 @@ export default function MarkdownTest() {
       </div>
   );
 }
+*/
