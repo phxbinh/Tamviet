@@ -84,7 +84,7 @@ export default function MarkdownTest() {
         </article>
 
         {/* MỤC LỤC (STIKY) */}
-        <aside className="hidden lg:block">
+        <aside className="block">
           <div className="sticky top-30">
             <TableOfContents htmlContent={htmlContent} />
           </div>
@@ -94,3 +94,9 @@ export default function MarkdownTest() {
 
   );
 }
+
+
+
+/*
+hidden lg:block
+*/
