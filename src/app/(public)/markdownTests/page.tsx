@@ -216,7 +216,7 @@ export default function MarkdownTest() {
           </article>
 
           {/* MỤC LỤC (SIDEBAR) */}
-          <aside className="sticky top-24 self-start">
+          <aside className="sticky top-mt-32 self-start">
             <div className="bg-card/50 backdrop-blur-sm p-2 rounded-2xl border border-border shadow-xl shadow-black/5">
               <TableOfContents htmlContent={htmlContent} />
             </div>
