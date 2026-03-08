@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { parseMarkdown } from '@/lib/md/markdown';
-import TableOfContents from '@/components/md/TableOfContents';
+import TableOfContents from '@/components/md/TableOfContentsMD';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
 const MOCK_MARKDOWN = `
@@ -81,19 +81,10 @@ export default function MarkdownTest() {
 return (
   <div className="max-w-6xl mx-auto py-6 px-4">
       {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
-      <aside className="lg:hidden w-full mb-8">
-        <details className="group bg-card/30 border border-border rounded-xl overflow-hidden">
-          <summary className="list-none p-4 cursor-pointer flex justify-between items-center bg-card/50">
-            <span className="text-xs font-bold uppercase tracking-widest text-primary">Mục lục nội dung</span>
-            <div className="transition-transform group-open:rotate-180">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-          </summary>
-          <div className="p-2 border-t border-border/50">
-            <TableOfContents htmlContent={htmlContent} />
-          </div>
-        </details>
-      </aside>
+  {/* MOBILE TOC: Hiện ở trên bài viết khi màn hình nhỏ */}
+  <div className="lg:hidden w-full sticky top-16 z-20 mb-4"> 
+    <TableOfContents htmlContent={htmlContent} />
+  </div>
     {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
     <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
       
