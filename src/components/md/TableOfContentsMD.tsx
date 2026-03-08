@@ -84,9 +84,6 @@ function TableOfContents_({ htmlContent }: { htmlContent: string }) {
 
 
 
-"use client";
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { ChevronDown, ListTree } from 'lucide-react';
 
 interface TocItem {
   id: string;
