@@ -11,7 +11,7 @@ const slugify = (text: string) => {
     .replace(/\s+/g, '-');
 };
 
-export default  function TableOfContents({ htmlContent }: { htmlContent: string }) {
+function TableOfContents_({ htmlContent }: { htmlContent: string }) {
   const [toc, setToc] = useState<{ id: string; text: string; level: number }[]>([]);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ interface TocItem {
   level: number;
 }
 
-function TableOfContents__({ htmlContent }: { htmlContent: string }) {
+export default function TableOfContents({ htmlContent }: { htmlContent: string }) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [activeId, setActiveId] = useState<string>("");
   const [readProgress, setReadProgress] = useState(0);
