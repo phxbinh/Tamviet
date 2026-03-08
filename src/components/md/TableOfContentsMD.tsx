@@ -271,7 +271,7 @@ export default function TableOfContents({ htmlContent }: { htmlContent: string }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -298,66 +298,89 @@ export default function TableOfContents({ htmlContent }: { htmlContent: string }
   if (toc.length === 0) return null;
 
   return (
-    /* Fix 1: Thêm relative và min-h để giữ khung hình ổn định */
-    <div className="relative w-full mb-6"> 
+    // FIX CHÍNH: Container bọc ngoài có height ổn định hoặc overflow controlled
+    <div className="w-full my-8 block-content-toc"> 
       <details 
         ref={detailsRef}
-        className="group w-full bg-card/30 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl"
+        className="group w-full bg-card/30 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl transition-[max-height] duration-500 ease-in-out"
         open={isOpen}
         onToggle={(e) => setIsOpen(e.currentTarget.open)}
+        style={{ scrollMarginTop: '100px' }} // Đảm bảo khi scroll đến ToC không bị Header che
       >
-        <summary className="list-none cursor-pointer p-5 flex items-center justify-between select-none hover:bg-white/5 transition-all focus-visible:outline-none">
+        <summary className="list-none cursor-pointer p-5 flex items-center justify-between select-none hover:bg-white/5 transition-colors focus:visible:outline-none focus:outline-none appearance-none [&::-webkit-details-marker]:hidden">
           <div className="flex items-center gap-4">
-            <div className="relative">
-               <div className="absolute inset-0 bg-cyan-500/40 blur-md rounded-full" />
-               <div className="relative p-2 rounded-xl bg-black/40 text-cyan-400 border border-cyan-500/50">
+            <div className="relative flex-shrink-0">
+               <div className="absolute inset-0 bg-cyan-500/30 blur-lg rounded-full" />
+               <div className="relative p-2 rounded-xl bg-black/60 text-cyan-400 border border-cyan-500/30">
                   <ListTree size={20} />
                </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90">Mục lục</span>
-              <div className="flex items-center gap-2 mt-0.5">
-                 <div className="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70 leading-none mb-1">Navigation</span>
+              <div className="flex items-center gap-2">
+                 <div className="w-16 h-1 bg-white/10 rounded-full overflow-hidden">
                     <div className="h-full bg-cyan-500 transition-all duration-300" style={{ width: `${readProgress}%` }} />
                  </div>
-                 <span className="text-cyan-400 text-[9px] font-mono font-bold">{Math.round(readProgress)}%</span>
+                 <span className="text-cyan-400 text-[10px] font-mono font-bold leading-none">{Math.round(readProgress)}%</span>
               </div>
             </div>
           </div>
-          <ChevronDown size={18} className="text-white/40 transition-transform duration-500 group-open:rotate-180" />
+          <ChevronDown size={18} className="text-white/40 transition-transform duration-500 group-open:rotate-180 flex-shrink-0" />
         </summary>
 
-        {/* Fix 2: Bọc nav trong một div có hiệu ứng transition để tránh nhảy vị trí đột ngột */}
-        <nav className="px-4 pb-6 pt-2 border-t border-white/5 bg-black/20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
-          <ul className="space-y-2 relative list-none m-0 p-0">
-            <div className="absolute left-[19px] top-2 bottom-2 w-[1px] bg-white/5 rounded-full" />
-            <div 
-              className="absolute left-[19px] top-2 w-[2px] bg-gradient-to-b from-cyan-400 to-transparent shadow-[0_0_12px_#06b6d4] transition-all duration-300 ease-out rounded-full"
-              style={{ height: `${readProgress}%` }}
-            />
-            
-            {toc.map((item, idx) => {
-              const isActive = activeId === item.id;
-              return (
-                <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
-                  <a 
-                    href={`#${item.id}`} 
-                    onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
-                    className={`group/item flex items-center gap-4 py-2 px-4 text-sm transition-all duration-300 rounded-xl relative ${isActive ? 'text-white' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
-                  >
-                    <div className="relative flex items-center justify-center">
-                      {isActive && <span className="absolute w-4 h-4 bg-cyan-500/20 animate-ping rounded-full" />}
-                      <span className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-500 z-20 ${isActive ? 'bg-cyan-400 border-cyan-400 shadow-[0_0_15px_#22d3ee] scale-110' : 'bg-black border-white/20'}`} />
-                    </div>
-                    <span className={`truncate transition-all duration-300 ${isActive ? 'font-bold' : 'font-medium'}`}>{item.text}</span>
-                    {isActive && <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-transparent rounded-xl border-l-2 border-cyan-500 -z-10" />}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        {/* FIX HIỆU ỨNG TRƯỢT: Sử dụng Grid Fr để animate mượt mà không nhảy layout */}
+        <div className="grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out">
+          <nav className="min-h-[0] overflow-hidden border-t border-white/5 bg-black/20 px-4">
+            <ul className="py-6 space-y-3 relative list-none m-0 p-0">
+              {/* Thanh tiến trình dọc */}
+              <div className="absolute left-[19px] top-4 bottom-4 w-[1px] bg-white/5 rounded-full" />
+              <div 
+                className="absolute left-[19px] top-4 w-[2px] bg-gradient-to-b from-cyan-400 to-transparent shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-all duration-300 ease-out rounded-full"
+                style={{ height: `${readProgress}%` }}
+              />
+              
+              {toc.map((item, idx) => {
+                const isActive = activeId === item.id;
+                return (
+                  <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
+                    <a 
+                      href={`#${item.id}`} 
+                      onClick={(e) => {
+                        if (window.innerWidth < 1024) setIsOpen(false);
+                      }}
+                      className={`group/item flex items-center gap-4 py-1.5 px-4 text-[13px] transition-all duration-300 rounded-xl relative ${isActive ? 'text-white' : 'text-white/40 hover:text-white/80'}`}
+                    >
+                      <div className="relative flex-shrink-0 flex items-center justify-center">
+                        {isActive && <span className="absolute w-4 h-4 bg-cyan-500/20 animate-ping rounded-full" />}
+                        <span className={`w-2 h-2 rounded-full border-2 transition-all duration-500 z-20 ${isActive ? 'bg-cyan-400 border-cyan-400 shadow-[0_0_10px_#22d3ee]' : 'bg-transparent border-white/20'}`} />
+                      </div>
+                      <span className={`truncate transition-all duration-300 ${isActive ? 'font-bold' : 'font-medium'}`}>{item.text}</span>
+                      {isActive && <div className="absolute inset-y-0 left-0 right-0 bg-cyan-500/5 rounded-xl border-l-2 border-cyan-500 -z-10" />}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </div>
       </details>
+      
+      {/* CSS fix cho các trình duyệt không hỗ trợ Grid Animate */}
+      <style jsx>{`
+        summary::-webkit-details-marker {
+          display: none;
+        }
+        summary {
+          list-style: none;
+        }
+        details[open] summary ~ * {
+          animation: sweep .5s ease-in-out;
+        }
+        @keyframes sweep {
+          0%    {opacity: 0; transform: translateY(-10px)}
+          100%  {opacity: 1; transform: translateY(0)}
+        }
+      `}</style>
     </div>
   );
 }
