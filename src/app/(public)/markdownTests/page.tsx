@@ -99,12 +99,11 @@ export default function MarkdownTest() {
 */
 
 
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { parseMarkdown } from '@/lib/md/markdown';
-import TableOfContents from '@/components/md/TableOfContents';
+import TableOfContents from '@/components/md/TableOfContentsMD';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
 const MOCK_MARKDOWN = `
@@ -180,15 +179,21 @@ export default function MarkdownTest() {
     );
   }
 
-  return (
-    /* Sử dụng class custom-scrollbar từ globals.css để đồng bộ */
+return (
+  <div className="max-w-6xl mx-auto py-2 px-4">
 
-    
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
-          
-          {/* VÙNG HIỂN THỊ NỘI DUNG CHÍNH */}
+    {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
+    <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
+            {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
+  {/* MOBILE TOC: Hiện ở trên bài viết khi màn hình nhỏ */}
+  <div className="lg:hidden w-full sticky top-2 z-20 mb-4"> 
+    <TableOfContents htmlContent={htmlContent} />
+  </div>
+
+
+      {/* 2. NỘI DUNG CHÍNH */}
           <article className="min-w-0 w-full">
-            {/* Header giả định cho bài viết */}
+            
             <header className="mb-12 border-b border-border pb-8">
               <h1 className="text-4xl lg:text-5xl font-black italic text-foreground uppercase tracking-tighter mb-4">
                 Tài liệu kỹ thuật <span className="text-neon-cyan">2026</span>
@@ -199,7 +204,7 @@ export default function MarkdownTest() {
               </div>
             </header>
 
-            {/* Render Markdown Content */}
+         
             <div 
               className="markdown-body text-foreground/80 leading-relaxed font-medium
                 [&_h1]:hidden 
@@ -215,20 +220,14 @@ export default function MarkdownTest() {
             />
           </article>
 
-          {/* MỤC LỤC (SIDEBAR) */}
-          <aside className="hidden lg:block sticky top-32 self-start">
-            <div className="bg-card/50 backdrop-blur-sm p-2 rounded-2xl border border-border shadow-xl shadow-black/5">
-              <TableOfContents htmlContent={htmlContent} />
-            </div>
-            
-            {/* Quảng cáo hoặc Info thêm bên dưới TOC */}
-            <div className="mt-6 p-6 rounded-2xl bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 border border-border italic text-xs text-foreground/50">
-              Cảm ơn bạn đã đọc tài liệu. Chúc bạn một ngày code hiệu quả!
-            </div>
-          </aside>
-        </div>
+      {/* 3. TOC CHO DESKTOP (Vẫn giữ sticky) */}
+      <aside className="hidden lg:block sticky top-24 self-start">
+        <TableOfContents htmlContent={htmlContent} />
+      </aside>
 
-  );
+    </div>
+  </div>
+);
 }
 
 
