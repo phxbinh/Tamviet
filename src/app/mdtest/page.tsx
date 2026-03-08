@@ -79,8 +79,7 @@ export default function MarkdownTest() {
   }
 
   return (
-    /* Sử dụng class custom-scrollbar từ globals.css để đồng bộ */
-                  {/* MỤC LỤC (SIDEBAR) */}
+
            <TableOfContents htmlContent={htmlContent} />
 
     <main className="min-h-screen w-full overflow-y-auto custom-scrollbar bg-background selection:bg-neon-cyan selection:text-slate-900">
