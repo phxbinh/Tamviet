@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -7,46 +5,7 @@ import { parseMarkdown } from '@/lib/md/markdown';
 import TableOfContents from '@/components/md/TableOfContents';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
-const MOCK_MARKDOWN = `
-# Hướng dẫn Next.js 15 & Tailwind 4
-
-Chào mừng bạn đến với bài viết kỹ thuật. Đây là nội dung test cho trình render Markdown.
-
-## 1. Khởi tạo dự án
-Đầu tiên, bạn cần chạy lệnh sau để khởi tạo:
-\`\`\`bash
-npx create-next-app@latest --ts
-\`\`\`
-
-## 2. Cấu hình Supabase Auth
-Hệ thống xác thực giúp bảo vệ ứng dụng của bạn.
-
-### 2.1 Cài đặt SDK
-Sử dụng npm để cài đặt thư viện chính thức.
-
-### 2.2 Middleware Setup
-Bảo vệ các route nhạy cảm phía Server.
-
-## 3. Database với Neon
-Kết nối PostgreSQL Serverless cực nhanh.
-
-### 3.1 Tạo bảng
-Sử dụng SQL Editor trên Dashboard của Neon.
-
----
-
-## 4. Kiểm tra bảo mật (XSS Test)
-Dưới đây là một đoạn mã độc hại giả lập:
-<img src=x onerror=alert('XSS_ATTACKED') />
-<script>console.log('Virus đang chạy...')</script>
-*Nếu bạn không thấy thông báo alert, nghĩa là DOMPurify đang làm việc tốt!*
-
----
-
-## 5. Kết luận
-Chúc mừng bạn đã hoàn thành lộ trình!
-`;
-
+const MOCK_MARKDOWN = `...`; 
 
 export default function MarkdownTest() {
   const [htmlContent, setHtmlContent] = useState<string>('');
@@ -82,8 +41,8 @@ export default function MarkdownTest() {
 
   return (
     /* Sử dụng class custom-scrollbar từ globals.css để đồng bộ */
-
-    
+    <main className="min-h-screen w-full overflow-y-auto custom-scrollbar bg-background selection:bg-neon-cyan selection:text-slate-900">
+      <div className="max-w-6xl mx-auto py-16 px-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
           
           {/* VÙNG HIỂN THỊ NỘI DUNG CHÍNH */}
@@ -116,7 +75,7 @@ export default function MarkdownTest() {
           </article>
 
           {/* MỤC LỤC (SIDEBAR) */}
-          <aside className="hidden lg:block sticky top-32 self-start">
+          <aside className="hidden lg:block sticky top-24 self-start">
             <div className="bg-card/50 backdrop-blur-sm p-2 rounded-2xl border border-border shadow-xl shadow-black/5">
               <TableOfContents htmlContent={htmlContent} />
             </div>
@@ -126,11 +85,9 @@ export default function MarkdownTest() {
               Cảm ơn bạn đã đọc tài liệu. Chúc bạn một ngày code hiệu quả!
             </div>
           </aside>
-        </div>
 
+        </div>
+      </div>
+    </main>
   );
 }
-
-
-
-
