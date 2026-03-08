@@ -34,7 +34,7 @@
   html, body {
     height: 100%;
     width: 100%;
-    overflow: hidden !important; /* Tuyệt đối không cho scroll ở đây */
+    /*overflow: hidden !important; /* Tuyệt đối không cho scroll ở đây */
     margin: 0;
     padding: 0;
   }
