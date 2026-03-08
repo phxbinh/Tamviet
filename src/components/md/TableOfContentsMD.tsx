@@ -91,7 +91,7 @@ interface TocItem {
   level: number;
 }
 
-export default function TableOfContents({ htmlContent }: { htmlContent: string }) {
+function TableOfContents__({ htmlContent }: { htmlContent: string }) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [activeId, setActiveId] = useState<string>("");
   const [readProgress, setReadProgress] = useState(0);
@@ -232,6 +232,133 @@ export default function TableOfContents({ htmlContent }: { htmlContent: string }
         </ul>
       </nav>
     </details>
+  );
+}
+
+
+
+////////////////
+export default function TableOfContents({ htmlContent }: { htmlContent: string }) {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [activeId, setActiveId] = useState<string>("");
+  const [readProgress, setReadProgress] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toc = useMemo(() => {
+    if (typeof window === 'undefined' || !htmlContent) return [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const headings = Array.from(doc.querySelectorAll('h2, h3'));
+    return headings.map((heading, index) => ({
+      text: heading.textContent?.trim() || "",
+      id: heading.id || `section-${index}`,
+      level: parseInt(heading.tagName[1])
+    }));
+  }, [htmlContent]);
+
+  useEffect(() => {
+    if (window.innerWidth > 1024) setIsOpen(true);
+
+    const handleScroll = () => {
+      const winScroll = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      if (height > 0) setReadProgress((winScroll / height) * 100);
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (detailsRef.current?.open && !detailsRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { rootMargin: '-10% 0px -70% 0px', threshold: 0.1 }
+    );
+    toc.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [toc]);
+
+  if (toc.length === 0) return null;
+
+  return (
+    /* Fix 1: Thêm relative và min-h để giữ khung hình ổn định */
+    <div className="relative w-full mb-6"> 
+      <details 
+        ref={detailsRef}
+        className="group w-full bg-card/30 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl"
+        open={isOpen}
+        onToggle={(e) => setIsOpen(e.currentTarget.open)}
+      >
+        <summary className="list-none cursor-pointer p-5 flex items-center justify-between select-none hover:bg-white/5 transition-all focus-visible:outline-none">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+               <div className="absolute inset-0 bg-cyan-500/40 blur-md rounded-full" />
+               <div className="relative p-2 rounded-xl bg-black/40 text-cyan-400 border border-cyan-500/50">
+                  <ListTree size={20} />
+               </div>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/90">Mục lục</span>
+              <div className="flex items-center gap-2 mt-0.5">
+                 <div className="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-cyan-500 transition-all duration-300" style={{ width: `${readProgress}%` }} />
+                 </div>
+                 <span className="text-cyan-400 text-[9px] font-mono font-bold">{Math.round(readProgress)}%</span>
+              </div>
+            </div>
+          </div>
+          <ChevronDown size={18} className="text-white/40 transition-transform duration-500 group-open:rotate-180" />
+        </summary>
+
+        {/* Fix 2: Bọc nav trong một div có hiệu ứng transition để tránh nhảy vị trí đột ngột */}
+        <nav className="px-4 pb-6 pt-2 border-t border-white/5 bg-black/20 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+          <ul className="space-y-2 relative list-none m-0 p-0">
+            <div className="absolute left-[19px] top-2 bottom-2 w-[1px] bg-white/5 rounded-full" />
+            <div 
+              className="absolute left-[19px] top-2 w-[2px] bg-gradient-to-b from-cyan-400 to-transparent shadow-[0_0_12px_#06b6d4] transition-all duration-300 ease-out rounded-full"
+              style={{ height: `${readProgress}%` }}
+            />
+            
+            {toc.map((item, idx) => {
+              const isActive = activeId === item.id;
+              return (
+                <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
+                  <a 
+                    href={`#${item.id}`} 
+                    onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
+                    className={`group/item flex items-center gap-4 py-2 px-4 text-sm transition-all duration-300 rounded-xl relative ${isActive ? 'text-white' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}`}
+                  >
+                    <div className="relative flex items-center justify-center">
+                      {isActive && <span className="absolute w-4 h-4 bg-cyan-500/20 animate-ping rounded-full" />}
+                      <span className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-500 z-20 ${isActive ? 'bg-cyan-400 border-cyan-400 shadow-[0_0_15px_#22d3ee] scale-110' : 'bg-black border-white/20'}`} />
+                    </div>
+                    <span className={`truncate transition-all duration-300 ${isActive ? 'font-bold' : 'font-medium'}`}>{item.text}</span>
+                    {isActive && <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-transparent rounded-xl border-l-2 border-cyan-500 -z-10" />}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </details>
+    </div>
   );
 }
 
