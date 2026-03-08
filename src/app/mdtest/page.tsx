@@ -5,7 +5,46 @@ import { parseMarkdown } from '@/lib/md/markdown';
 import TableOfContents from '@/components/md/TableOfContents';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
-const MOCK_MARKDOWN = `...`; 
+const MOCK_MARKDOWN = `
+# Hướng dẫn Next.js 15 & Tailwind 4
+
+Chào mừng bạn đến với bài viết kỹ thuật. Đây là nội dung test cho trình render Markdown.
+
+## 1. Khởi tạo dự án
+Đầu tiên, bạn cần chạy lệnh sau để khởi tạo:
+\`\`\`bash
+npx create-next-app@latest --ts
+\`\`\`
+
+## 2. Cấu hình Supabase Auth
+Hệ thống xác thực giúp bảo vệ ứng dụng của bạn.
+
+### 2.1 Cài đặt SDK
+Sử dụng npm để cài đặt thư viện chính thức.
+
+### 2.2 Middleware Setup
+Bảo vệ các route nhạy cảm phía Server.
+
+## 3. Database với Neon
+Kết nối PostgreSQL Serverless cực nhanh.
+
+### 3.1 Tạo bảng
+Sử dụng SQL Editor trên Dashboard của Neon.
+
+---
+
+## 4. Kiểm tra bảo mật (XSS Test)
+Dưới đây là một đoạn mã độc hại giả lập:
+<img src=x onerror=alert('XSS_ATTACKED') />
+<script>console.log('Virus đang chạy...')</script>
+*Nếu bạn không thấy thông báo alert, nghĩa là DOMPurify đang làm việc tốt!*
+
+---
+
+## 5. Kết luận
+Chúc mừng bạn đã hoàn thành lộ trình!
+`;
+
 
 export default function MarkdownTest() {
   const [htmlContent, setHtmlContent] = useState<string>('');
