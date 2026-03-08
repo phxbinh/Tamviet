@@ -160,6 +160,26 @@ select:focus-visible {
 
 
 
+/* 1. Xóa mũi tên trên Chrome, Edge, Firefox */
+summary {
+  list-style: none;
+}
+
+/* 2. Xóa mũi tên trên Safari (quan trọng cho mobile) */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* 3. Đảm bảo flexbox hoạt động đúng để icon mới của bạn căn giữa */
+summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+
+
 
 
 
