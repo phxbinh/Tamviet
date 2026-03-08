@@ -79,7 +79,7 @@ export default function MarkdownTest() {
   }
 
   return (
-
+<>
            <TableOfContents htmlContent={htmlContent} />
 
     <main className="min-h-screen w-full overflow-y-auto custom-scrollbar bg-background selection:bg-neon-cyan selection:text-slate-900">
@@ -121,5 +121,6 @@ export default function MarkdownTest() {
         </div>
       </div>
     </main>
+</>
   );
 }
