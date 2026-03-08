@@ -21,6 +21,7 @@ export async function parseMarkdown(content: string) {
 }
 */
 
+/*
 import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
 
@@ -35,6 +36,43 @@ export async function parseMarkdown(content: string) {
     }
   });
 }
+*/
+
+
+import { marked } from 'marked';
+import sanitizeHtml from 'sanitize-html';
+
+export async function parseMarkdown(content: string) {
+  // 1. Cấu hình Renderer để tự tạo ID cho heading
+  const renderer = new marked.Renderer();
+  renderer.heading = ({ text, depth }) => {
+    // Tạo slug từ text: "Chào bạn" -> "chao-ban"
+    const escapedText = text.toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Xóa ký tự đặc biệt
+      .replace(/\s+/g, '-');    // Thay khoảng trắng bằng dấu gạch ngang
+
+    return `<h${depth} id="${escapedText}">${text}</h${depth}>`;
+  };
+
+  // 2. Parse Markdown với Renderer vừa tạo
+  const rawHtml = await marked.parse(content, { renderer });
+  
+  // 3. Sanitize (Quan trọng: Cho phép thuộc tính 'id' để TOC hoạt động)
+  return sanitizeHtml(rawHtml, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3']),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      // Cho phép 'id' trên TẤT CẢ các thẻ (hoặc chỉ cụ thể h1, h2, h3)
+      '*': ['id', 'class'], 
+    }
+  });
+}
+
+
+
+
+
 
 
 
