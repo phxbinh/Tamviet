@@ -183,7 +183,7 @@ export default function MarkdownTest() {
   return (
     /* Sử dụng class custom-scrollbar từ globals.css để đồng bộ */
 
-      <div className="max-w-6xl mx-auto py-16 px-6 overflow-y-auto">
+    
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
           
           {/* VÙNG HIỂN THỊ NỘI DUNG CHÍNH */}
@@ -216,7 +216,7 @@ export default function MarkdownTest() {
           </article>
 
           {/* MỤC LỤC (SIDEBAR) */}
-          <aside className="sticky top-mt-32 self-start">
+          <aside className="hidden lg:block sticky top-32 self-start">
             <div className="bg-card/50 backdrop-blur-sm p-2 rounded-2xl border border-border shadow-xl shadow-black/5">
               <TableOfContents htmlContent={htmlContent} />
             </div>
@@ -226,9 +226,7 @@ export default function MarkdownTest() {
               Cảm ơn bạn đã đọc tài liệu. Chúc bạn một ngày code hiệu quả!
             </div>
           </aside>
-
         </div>
-      </div>
 
   );
 }
