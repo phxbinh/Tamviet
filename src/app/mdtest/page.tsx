@@ -80,9 +80,6 @@ export default function MarkdownTest() {
 
 return (
   <div className="max-w-6xl mx-auto py-6 px-4">
-    {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
-    <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
-      
       {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
       <aside className="lg:hidden w-full mb-8">
         <details className="group bg-card/30 border border-border rounded-xl overflow-hidden">
@@ -97,6 +94,10 @@ return (
           </div>
         </details>
       </aside>
+    {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
+    <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
+      
+
 
       {/* 2. NỘI DUNG CHÍNH */}
           <article className="min-w-0 w-full">
