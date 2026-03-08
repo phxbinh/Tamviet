@@ -183,7 +183,7 @@ export default function MarkdownTest() {
   return (
     /* Sử dụng class custom-scrollbar từ globals.css để đồng bộ */
 
-      <div className="max-w-6xl mx-auto py-16 px-6">
+      <div className="max-w-6xl mx-auto py-16 px-6 overflow-y-auto">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
           
           {/* VÙNG HIỂN THỊ NỘI DUNG CHÍNH */}
