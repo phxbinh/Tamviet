@@ -22,16 +22,19 @@ export async function parseMarkdown(content: string) {
 */
 
 import { marked } from 'marked';
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 export async function parseMarkdown(content: string) {
-  // marked.parse có thể là đồng bộ hoặc bất đồng bộ tùy phiên bản
   const rawHtml = await marked.parse(content);
   
-  // DOMPurify tự động nhận biết môi trường
-  return DOMPurify.sanitize(rawHtml);
+  return sanitizeHtml(rawHtml, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      '*': ['id', 'class'] // Giữ lại ID để làm TOC
+    }
+  });
 }
-
 
 
 
