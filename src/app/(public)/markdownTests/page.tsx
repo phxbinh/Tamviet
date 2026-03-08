@@ -66,7 +66,7 @@ export default function MarkdownTest() {
   );
 
   return (
-    <main className="h-screen w-full overflow-y-auto custom-scrollbar bg-background">
+
       <div className="max-w-6xl mx-auto py-16 px-6 grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12">
         
         {/* VÙNG HIỂN THỊ NỘI DUNG */}
@@ -91,6 +91,6 @@ export default function MarkdownTest() {
         </aside>
 
       </div>
-    </main>
+
   );
 }
