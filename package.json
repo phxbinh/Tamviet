@@ -37,7 +37,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@tailwindcss/typography": "^0.5.10",
     
-    "dompurify": "^3.2.4",
+    "isomorphic-dompurify": "^2.20.0",
     "jsdom": "^26.0.0",
     "marked": "^15.0.7"
   },
@@ -49,6 +49,7 @@
     "eslint-config-next": "^15.0.0"
   }
 }
+
 
 
 
