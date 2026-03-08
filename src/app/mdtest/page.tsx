@@ -80,9 +80,10 @@ export default function MarkdownTest() {
 
   return (
 <>
-           <TableOfContents htmlContent={htmlContent} />
+          
 
     <main className="min-h-screen w-full overflow-y-auto custom-scrollbar bg-background selection:bg-neon-cyan selection:text-slate-900">
+ <TableOfContents htmlContent={htmlContent} />
       <div className="max-w-6xl mx-auto py-16 px-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
   
