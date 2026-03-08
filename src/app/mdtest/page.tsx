@@ -79,10 +79,10 @@ export default function MarkdownTest() {
   }
 
 return (
-  <div className="max-w-6xl mx-auto py-6 px-4">
+  <div className="max-w-6xl mx-auto py-2 px-4">
       {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
   {/* MOBILE TOC: Hiện ở trên bài viết khi màn hình nhỏ */}
-  <div className="lg:hidden w-full sticky top-16 z-20 mb-4"> 
+  <div className="lg:hidden w-full sticky top-2 z-20 mb-4"> 
     <TableOfContents htmlContent={htmlContent} />
   </div>
     {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
