@@ -99,18 +99,33 @@ return (
       </aside>
 
       {/* 2. NỘI DUNG CHÍNH */}
-      <article className="min-w-0 w-full">
-        <header className="mb-8">
-           <h1 className="text-2xl font-black italic uppercase text-foreground leading-tight">
-             {/* Tiêu đề */}
-           </h1>
-        </header>
+          <article className="min-w-0 w-full">
+            
+            <header className="mb-12 border-b border-border pb-8">
+              <h1 className="text-4xl lg:text-5xl font-black italic text-foreground uppercase tracking-tighter mb-4">
+                Tài liệu kỹ thuật <span className="text-neon-cyan">2026</span>
+              </h1>
+              <div className="flex gap-2">
+                <span className="px-3 py-1 bg-neon-purple/10 text-neon-purple text-xs font-bold rounded-full border border-neon-purple/20">NEXT.JS 15</span>
+                <span className="px-3 py-1 bg-neon-cyan/10 text-neon-cyan text-xs font-bold rounded-full border border-neon-cyan/20">TAILWIND 4</span>
+              </div>
+            </header>
 
-        <div 
-          className="markdown-body text-sm md:text-base ..." 
-          dangerouslySetInnerHTML={{ __html: htmlContent }} 
-        />
-      </article>
+         
+            <div 
+              className="markdown-body text-foreground/80 leading-relaxed font-medium
+                [&_h1]:hidden 
+                [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-12 [&_h2]:mb-6 [&_h2]:text-primary [&_h2]:italic [&_h2]:scroll-mt-32
+                [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-neon-purple [&_h3]:scroll-mt-32
+                [&_p]:mb-6 [&_p]:text-lg
+                [&_code]:bg-card [&_code]:text-neon-cyan [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-sm
+                [&_pre]:bg-slate-950 [&_pre]:p-6 [&_pre]:rounded-2xl [&_pre]:text-slate-100 [&_pre]:mb-8 [&_pre]:overflow-x-auto [&_pre]:border [&_pre]:border-border
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-6 [&_ul]:space-y-2
+                [&_blockquote]:border-l-4 [&_blockquote]:border-neon-purple [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:my-8 [&_blockquote]:text-foreground/60
+                [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-50"
+              dangerouslySetInnerHTML={{ __html: htmlContent }} 
+            />
+          </article>
 
       {/* 3. TOC CHO DESKTOP (Vẫn giữ sticky) */}
       <aside className="hidden lg:block sticky top-24 self-start">
