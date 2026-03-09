@@ -3,7 +3,7 @@
 My business
 
 ### Cấu trúc folders và files cho dự án
-```js
+```plaintext
 my-app/
 ├── src/                        # (khuyến nghị cho dự án > nhỏ)
 │   ├── app/                    # ← Tất cả routing + layouts ở đây
