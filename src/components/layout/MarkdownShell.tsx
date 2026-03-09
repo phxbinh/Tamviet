@@ -73,7 +73,7 @@ const [isOpen, setIsOpen] = useState(false);
               System Terminal
             </div>
           </header>
-<>        {children} </>
+<main>        {children} </main>
         </div>
       </div>
 
