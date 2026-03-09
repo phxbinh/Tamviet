@@ -136,3 +136,45 @@
     to { opacity: 1; transform: translateY(0); }
   }
 }
+
+
+
+@layer base {
+  /* 1. Container bao quanh ảnh và chú thích (được tạo bởi hàm Regex) */
+  .markdown-body .img-container {
+    @apply flex flex-col items-center my-12 w-full transition-all duration-500;
+  }
+
+  /* 2. Định dạng thẻ ảnh chính */
+  .markdown-body .img-container img {
+    @apply rounded-2xl border border-border/40 shadow-2xl;
+    @apply transition-all duration-500 ease-in-out;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* 3. Hiệu ứng khi Hover vào cả cụm ảnh */
+  .markdown-body .img-container:hover img {
+    @apply scale-[1.01] border-neon-purple/50 shadow-[0_0_30px_rgba(168,85,247,0.2)];
+  }
+
+  /* 4. Định dạng Chú thích (Caption) lấy từ Alt text */
+  .markdown-body .img-caption {
+    @apply mt-4 text-sm font-medium italic tracking-wide;
+    @apply text-muted-foreground/60; /* Màu mặc định hơi mờ */
+    @apply border-l-2 border-neon-purple/30 pl-4 py-0.5;
+    @apply transition-all duration-300;
+    max-width: 85%;
+    text-align: center;
+  }
+
+  /* 5. Hiệu ứng Hover cho chú thích */
+  .markdown-body .img-container:hover .img-caption {
+    @apply text-neon-purple/90 border-neon-purple/100 translate-x-1;
+  }
+}
+
+
+
+
+
