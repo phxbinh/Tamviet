@@ -149,7 +149,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                       if (target && contentRef.current) {
                         const container = contentRef.current.closest('.overflow-y-auto');
                         container?.scrollTo({
-                          top: target.offsetTop - 80,
+                          top: target.offsetTop - 120,
                           behavior: 'smooth'
                         });
                       }
