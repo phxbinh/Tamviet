@@ -66,8 +66,9 @@ types/
  └ product.type.ts
 
 index.ts
-```
-
+internal.ts
+```  
+#### index.ts -> export cho bên ngoài features/products sử dụng
 ```ts
 /* Trong index.ts */
 // features/products/index.ts
@@ -81,6 +82,18 @@ export * from './components/ProductCard'
 export * from './queries/getProducts'
 export * from './actions/createProduct'
 
-/* Cấch gọi các export ở index.ts
+/* Cách gọi các export ở index.ts */
 import { getProducts, ProductCard } from '@/features/products'
 ```
+
+#### internal.ts -> export cho nội bộ features/products sử dụng
+```ts
+/* Trong internal.ts */
+// features/products/internal.ts
+export { formatProduct } from './utils/formatProduct'
+export { productSchema } from './validators/productSchema'
+
+/* Cách gọi các export ở internal.ts */
+import { productSchema } from '../internal'
+```
+  
