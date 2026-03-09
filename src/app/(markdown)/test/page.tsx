@@ -114,7 +114,7 @@ return (
           <div 
             className="markdown-body text-foreground/80 leading-relaxed
               [&_h1]:hidden 
-              [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-6 [&_h2]:text-primary [&_h2]:text-primary [&_h2]:text-lg [&_h2]:italic [&_h2]:scroll-mt-28
+              [&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-6 [&_h2]:text-primary [&_h2]:text-primary [&_h2]:text-xl [&_h2]:italic [&_h2]:scroll-mt-28
               [&_h3]:text-2xl [&_h3]:font-semibold [&_h3]:mt-5 [&_h3]:mb-4 [&_h3]:text-neon-purple [&_h3]:text-base [&_h3]:scroll-mt-28
               [&_p]:mb-6 [&_p]:text-lg [&_p]:leading-7
               [&_code]:bg-card [&_code]:text-neon-cyan [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-[0.9em]
