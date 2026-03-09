@@ -11,10 +11,9 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [activeId, setActiveId] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Khóa logic highlight khi đang đóng/mở menu để tránh nhảy loạn
   const isLock = useRef(false);
 
+  // 1. Trích xuất mục lục từ HTML
   const toc = useMemo(() => {
     if (typeof window === 'undefined' || !htmlContent) return [];
     const parser = new DOMParser();
@@ -27,17 +26,11 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
     }));
   }, [htmlContent]);
 
-  const handleToggle = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
-    isLock.current = true;
-    setIsOpen(e.currentTarget.open);
-    // Đợi layout ổn định sau 400ms mới cho phép highlight lại
-    setTimeout(() => { isLock.current = false; }, 400);
-  };
-
+  // 2. Đồng bộ ID và Logic Highlight chuẩn xác
   useEffect(() => {
     if (!contentRef.current) return;
     
-    // Đồng bộ ID giữa Menu và Nội dung bài viết
+    // Gán ID cho các thẻ heading trong bài viết để khớp với TOC
     const allHeadings = contentRef.current.querySelectorAll('h2, h3');
     toc.forEach((item, index) => {
       if (allHeadings[index]) allHeadings[index].id = item.id;
@@ -45,35 +38,53 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
 
     if (window.innerWidth > 1024) setIsOpen(true);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (isLock.current) return;
+    const handleScroll = () => {
+      // Nếu đang trong quá trình đóng/mở menu thì tạm dừng tính toán để tránh nhảy loạn
+      if (isLock.current || !contentRef.current) return;
 
-        // Tìm heading gần với đỉnh màn hình nhất (vùng đọc chính)
-        const visibleEntry = entries.find(entry => 
-          entry.isIntersecting && 
-          entry.boundingClientRect.top > -20 && 
-          entry.boundingClientRect.top < 250
-        );
+      const headings = Array.from(contentRef.current.querySelectorAll('h2, h3')) as HTMLElement[];
+      const scrollPos = window.scrollY + 120; // Khoảng cách bù trừ cho Header cố định
 
-        if (visibleEntry) {
-          setActiveId(visibleEntry.target.id);
-        }
-      },
-      { 
-        rootMargin: '-80px 0px -70% 0px', 
-        threshold: [0, 1] 
+      // TH1: Nếu cuộn đến cuối bài viết -> Luôn highlight mục cuối cùng
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
+      if (isAtBottom && headings.length > 0) {
+        setActiveId(headings[headings.length - 1].id);
+        return;
       }
-    );
 
-    allHeadings.forEach(el => observer.observe(el));
-    return () => observer.disconnect();
-  }, [toc, contentRef]);
+      // TH2: Tìm mục gần nhất với vị trí cuộn
+      let currentId = "";
+      for (const heading of headings) {
+        if (heading.offsetTop <= scrollPos) {
+          currentId = heading.id;
+        } else {
+          break; // Đã tìm thấy mục sát nhất, dừng vòng lặp
+        }
+      }
+      
+      if (currentId !== activeId) {
+        setActiveId(currentId);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Chạy ngay khi mount
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [toc, contentRef, activeId]);
+
+  // 3. Xử lý Toggle có bảo vệ vị trí
+  const handleToggle = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
+    isLock.current = true;
+    setIsOpen(e.currentTarget.open);
+    // Khóa 400ms để trình duyệt ổn định layout sau khi đóng/mở
+    setTimeout(() => { isLock.current = false; }, 400);
+  };
 
   if (toc.length === 0) return null;
 
   return (
-    <div className="w-full my-4">
+    <div className="w-full my-6">
       <details 
         ref={detailsRef}
         open={isOpen}
@@ -82,51 +93,42 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
       >
         <summary className="list-none cursor-pointer p-4 flex items-center justify-between select-none hover:bg-neon-cyan/5 focus:outline-none appearance-none [&::-webkit-details-marker]:hidden">
           <div className="flex items-center gap-4">
-            <div className="p-2.5 rounded-xl bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+            <div className="p-2.5 rounded-xl bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20">
               <ListTree size={20} />
             </div>
-            <span className="text-sm font-bold tracking-wider text-foreground/90 uppercase">Mục lục</span>
+            <span className="text-sm font-bold tracking-widest text-foreground/90 uppercase">Mục lục bài viết</span>
           </div>
           <ChevronDown size={18} className="text-muted-foreground transition-transform duration-500 group-open:rotate-180" />
         </summary>
 
-        <nav className="px-4 pb-6 pt-2 border-t border-border/30 bg-black/5 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
+        <nav className="px-4 pb-6 pt-2 border-t border-border/30 bg-black/5 overflow-hidden">
           <ul className="space-y-1 relative list-none m-0 p-0 pt-2">
-            
-            {/* Đường kẻ dọc tĩnh (Không chạy progress) */}
+            {/* Đường kẻ dọc trang trí tĩnh */}
             <div className="absolute left-[19px] top-4 bottom-4 w-[1px] bg-border/20 rounded-full" />
             
             {toc.map((item, idx) => {
               const isActive = activeId === item.id;
               return (
-                <li 
-                  key={`${item.id}-${idx}`} 
-                  style={{ paddingLeft: `${(item.level - 2) * 20}px` }}
-                  className="relative z-10"
-                >
+                <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
                   <a 
                     href={`#${item.id}`} 
-                    onClick={() => {
+                    onClick={(e) => {
                       if (window.innerWidth < 1024) setIsOpen(false);
+                      // Có thể thêm logic smooth scroll thủ công tại đây nếu cần
                     }}
                     className={`
                       group/item flex items-center gap-4 py-2 px-4 text-[13px] transition-all duration-300 rounded-xl relative
-                      ${isActive 
-                        ? 'text-neon-cyan font-bold translate-x-1' 
-                        : 'text-foreground/50 hover:text-foreground/80 hover:bg-white/5'}
+                      ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}
                     `}
                   >
-                    {/* Dot indicator tĩnh */}
                     <div className="relative flex items-center justify-center">
                       <span className={`
                         w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
-                        ${isActive ? 'border-neon-cyan scale-125 bg-neon-cyan shadow-[0_0_8px_#06b6d4]' : 'border-border'}
+                        ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
                       `} />
                     </div>
-
-                    <span className="truncate">{item.text}</span>
+                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
                     
-                    {/* Nền highlight khi active */}
                     {isActive && (
                       <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
                     )}
