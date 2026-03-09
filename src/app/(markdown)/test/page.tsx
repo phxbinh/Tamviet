@@ -95,6 +95,17 @@ Chúc mừng bạn đã hoàn thành lộ trình!
 
 
 
+const enhanceMarkdownContent = (html: string) => {
+  if (!html) return "";
+  // Bọc ảnh vào container và trích xuất Alt làm Caption
+  return html.replace(
+    /<img src="([^"]+)" alt="([^"]+)"([^>]*)>/g,
+    `<span class="img-container">
+      <img src="$1" alt="$2" $3 />
+      <span class="img-caption">$2</span>
+    </span>`
+  );
+};
 
 
 export default function MarkdownTest() {
@@ -161,6 +172,7 @@ return (
         </header>
 
         {/* Nội dung Markdown */}
+{/*
         <div ref={contentRef} className="prose lg:prose-xl max-w-none">
           <div 
             className="markdown-body text-foreground/80 leading-relaxed
@@ -186,6 +198,42 @@ return (
             dangerouslySetInnerHTML={{ __html: htmlContent }} 
           />
         </div>
+*/}
+
+{/* Container chính bọc nội dung */}
+<div ref={contentRef} className="prose lg:prose-xl max-w-none">
+  <div 
+    className="markdown-body text-foreground/80 leading-relaxed
+      /* 1. TYPOGRAPHY (Tiêu đề & Chữ) */
+      [&_h1]:hidden 
+      [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-12 [&_h2]:mb-6 [&_h2]:text-primary [&_h2]:italic [&_h2]:scroll-mt-28
+      [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-4 [&_h3]:text-neon-purple [&_h3]:scroll-mt-28
+      [&_p]:mb-6 [&_p]:text-[17px] [&_p]:leading-8 [&_p]:text-foreground/90
+      
+      /* 2. CODE & PRE (Mã nguồn) */
+      [&_code]:bg-card [&_code]:text-neon-cyan [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:font-mono [&_code]:text-[0.9em]
+      [&_pre]:bg-slate-950 [&_pre]:p-6 [&_pre]:rounded-2xl [&_pre]:mb-8 [&_pre]:border [&_pre]:border-border/50 [&_pre]:shadow-2xl
+      
+      /* 3. LISTS & QUOTES (Danh sách & Trích dẫn) */
+      [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-6 [&_ul]:space-y-3
+      [&_blockquote]:border-l-4 [&_blockquote]:border-neon-purple [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:my-10 [&_blockquote]:bg-neon-purple/5 [&_blockquote]:py-4 [&_blockquote]:rounded-r-xl
+      
+      /* 4. IMAGES & CAPTION (Ảnh - Xử lý theo Container mới) */
+      [&_.img-container]:flex [&_.img-container]:flex-col [&_.img-container]:items-center [&_.img-container]:my-12 [&_.img-container]:w-full
+      [&_img]:rounded-2xl [&_img]:border [&_img]:border-border/40 [&_img]:shadow-2xl [&_img]:transition-all [&_img]:duration-500
+      [&_.img-container:hover_img]:scale-[1.01] [&_.img-container:hover_img]:border-neon-purple/50 [&_.img-container:hover_img]:shadow-[0_0_30px_rgba(168,85,247,0.2)]
+      
+      /* Caption style */
+      [&_.img-caption]:mt-4 [&_.img-caption]:text-sm [&_.img-caption]:italic [&_.img-caption]:text-muted-foreground/60
+      [&_.img-caption]:border-l-2 [&_.img-caption]:border-neon-purple/30 [&_.img-caption]:pl-4 [&_.img-caption]:transition-all
+      [&_.img-container:hover_.img-caption]:text-neon-purple [&_.img-container:hover_.img-caption]:translate-x-1
+      
+      /* 5. OTHERS (Kẻ ngang) */
+      [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-30"
+    dangerouslySetInnerHTML={{ __html: enhanceMarkdownContent(htmlContent) }} 
+  />
+</div>
+
       </article>
 
       {/* 3. TOC CHO DESKTOP
