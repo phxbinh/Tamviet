@@ -103,7 +103,7 @@ export default function MarkdownTest() {
 
 import React, { useState, useEffect } from 'react';
 import { parseMarkdown } from '@/lib/md/markdown';
-import TableOfContents from '@/components/md/TableOfContentsMD';
+import TableOfContents from '@/components/md/TableOfContentsMDF';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
 const MOCK_MARKDOWN = `
