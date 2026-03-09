@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Update */
 /* 1. ĐỊNH NGHĨA BIẾN MÀU SẮC (CSS VARIABLES) */
 @layer base {
   :root {
