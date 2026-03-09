@@ -8,7 +8,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import { SidebarHeader } from "@/components/sidebar/SideBarHeaderMarkdown"; // Import mới
 import { Menu } from "lucide-react";
 
-export default function PublicShell({
+export default function MarkdownShell({
   children,
 }: {
   children: React.ReactNode;
