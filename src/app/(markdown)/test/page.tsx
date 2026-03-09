@@ -88,10 +88,12 @@ return (
       {/* 1. TOC CHO MOBILE
           - top-[72px]: Để nó nằm ngay dưới Header của Shell (64px + 8px gap)
           - z-30: Đảm bảo nằm trên content nhưng dưới Sidebar mobile của Shell
-      */}
+      */} {/*
       <div className="lg:hidden w-full sticky top-0 z-30 mb-8 transition-all duration-300"> 
         <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
-      </div>
+      </div> */}
+
+        <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
 
       {/* 2. NỘI DUNG CHÍNH 
           - min-w-0: Cực kỳ quan trọng để code blocks không làm vỡ grid
