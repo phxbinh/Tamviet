@@ -89,7 +89,7 @@ return (
           - top-[72px]: Để nó nằm ngay dưới Header của Shell (64px + 8px gap)
           - z-30: Đảm bảo nằm trên content nhưng dưới Sidebar mobile của Shell
       */}
-      <div className="lg:hidden w-full sticky top-[72px] z-30 mb-8 transition-all duration-300"> 
+      <div className="lg:hidden w-full sticky top-0 z-30 mb-8 transition-all duration-300"> 
         <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
       </div>
 
