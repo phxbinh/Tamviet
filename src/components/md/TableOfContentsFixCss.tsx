@@ -177,7 +177,21 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                 <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
                   <a 
                     href={`#${item.id}`} 
-                    onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
+                    onClick={(e) => {
+                          e.preventDefault();
+                          const target = document.getElementById(item.id);
+                          if (target && contentRef.current) {
+                            const container = contentRef.current.closest('.overflow-y-auto');
+                            const tocHeight = containerRef.current?.getBoundingClientRect().height || 0;
+                            const scrollTarget = target.offsetTop - (tocHeight + 20);
+
+                            container?.scrollTo({
+                              top: scrollTarget,
+                              behavior: 'smooth'
+                            });
+                          }
+                          setIsOpen(false);
+                        }}
                     className={`
                       group/item flex items-center gap-4 py-2 px-4 text-[13px] transition-all duration-300 rounded-xl relative
                       ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}
