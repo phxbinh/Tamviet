@@ -166,7 +166,24 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                       >
 {/*
                         <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-neon-cyan transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 -left-2'}`} /> */}
-                        {item.text}
+                        {/*{item.text} */}
+
+    <div className="relative flex items-center justify-center">
+                      <span className={`
+                        w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
+                        ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
+                      `} />
+                    </div>
+                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
+                    )}
+
+
+
+
+
+
                       </a>
                     </li>
                   );
@@ -179,3 +196,26 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
     </div>
   );
 }
+
+
+/*
+    <div className="relative flex items-center justify-center">
+                      <span className={`
+                        w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
+                        ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
+                      `} />
+                    </div>
+                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
+                    )}
+
+
+
+*/
+
+
+
+
+
+
