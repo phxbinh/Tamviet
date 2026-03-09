@@ -5,7 +5,7 @@ import { parseMarkdown } from '@/lib/md/markdown';
 import TableOfContents from '@/components/markdown/TableOfContents';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
-const MOCK_MARKDOWN = `
+const _MOCK_MARKDOWN = `
 # Hướng dẫn Next.js 15 & Tailwind 4
 
 Chào mừng bạn đến với bài viết kỹ thuật. Đây là nội dung test cho trình render Markdown.
@@ -44,6 +44,57 @@ Dưới đây là một đoạn mã độc hại giả lập:
 ## 5. Kết luận
 Chúc mừng bạn đã hoàn thành lộ trình!
 `;
+
+
+
+const MOCK_MARKDOWN = `
+# Hướng dẫn Next.js 15 & Tailwind 4
+
+Chào mừng bạn đến với bài viết kỹ thuật. Đây là nội dung test cho trình render Markdown.
+
+![Next.js and Tailwind Header](https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=2000&auto=format&fit=crop)
+
+## 1. Khởi tạo dự án
+Đầu tiên, bạn cần chạy lệnh sau để khởi tạo:
+\`\`\`bash
+npx create-next-app@latest --ts
+\`\`\`
+
+## 2. Cấu hình Supabase Auth
+Hệ thống xác thực giúp bảo vệ ứng dụng của bạn.
+
+![Supabase Auth Diagram](https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2060&auto=format&fit=crop)
+
+### 2.1 Cài đặt SDK
+Sử dụng npm để cài đặt thư viện chính thức.
+
+### 2.2 Middleware Setup
+Bảo vệ các route nhạy cảm phía Server.
+
+## 3. Database với Neon
+Kết nối PostgreSQL Serverless cực nhanh.
+
+![Database Concept](https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop)
+
+### 3.1 Tạo bảng
+Sử dụng SQL Editor trên Dashboard của Neon.
+
+---
+
+## 4. Kiểm tra bảo mật (XSS Test)
+Dưới đây là một đoạn mã độc hại giả lập:
+<img src=x onerror=alert('XSS_ATTACKED') />
+<script>console.log('Virus đang chạy...')</script>
+*Nếu bạn không thấy thông báo alert, nghĩa là DOMPurify đang làm việc tốt!*
+
+---
+
+## 5. Kết luận
+Chúc mừng bạn đã hoàn thành lộ trình!
+`;
+
+
+
 
 
 export default function MarkdownTest() {
@@ -122,6 +173,16 @@ return (
               [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-6 [&_ul]:space-y-3
               [&_blockquote]:border-l-4 [&_blockquote]:border-neon-purple [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:my-8 [&_blockquote]:bg-neon-purple/5 [&_blockquote]:py-4 [&_blockquote]:rounded-r-xl
               [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-30"
+    [&_img]:rounded-2xl 
+    [&_img]:shadow-[0_0_20px_rgba(168,85,247,0.15)] 
+    [&_img]:my-10 
+    [&_img]:mx-auto 
+    [&_img]:border 
+    [&_img]:border-neon-purple/20 
+    [&_img]:transition-all 
+    [&_img]:duration-500
+    [&_img:hover]:shadow-[0_0_30px_rgba(168,85,247,0.3)]
+    [&_img:hover]:border-neon-purple/50"
             dangerouslySetInnerHTML={{ __html: htmlContent }} 
           />
         </div>
@@ -140,4 +201,27 @@ return (
   </div>
 );
 }
+
+
+/*
+<div 
+  className="markdown-body text-foreground/80 leading-relaxed
+    ... (giữ nguyên h1, h2, h3 cũ) ...
+    //Style cho Ảnh
+    [&_img]:rounded-2xl 
+    [&_img]:shadow-[0_0_20px_rgba(168,85,247,0.15)] 
+    [&_img]:my-10 
+    [&_img]:mx-auto 
+    [&_img]:border 
+    [&_img]:border-neon-purple/20 
+    [&_img]:transition-all 
+    [&_img]:duration-500
+    [&_img:hover]:shadow-[0_0_30px_rgba(168,85,247,0.3)]
+    [&_img:hover]:border-neon-purple/50"
+  dangerouslySetInnerHTML={{ __html: htmlContent }} 
+/>
+*/
+
+
+
 
