@@ -3,6 +3,7 @@
 My business
 
 # Cấu trúc folders và files cho dự án
+```js
 my-app/
 ├── src/                        # (khuyến nghị cho dự án > nhỏ)
 │   ├── app/                    # ← Tất cả routing + layouts ở đây
@@ -38,3 +39,4 @@ my-app/
 ├── public/
 ├── next.config.js
 └── tailwind.config.ts
+```
