@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { parseMarkdown } from '@/lib/md/markdown';
-import TableOfContents from '@/components/md/TableOfContents';
+import TableOfContents from '@/components/markdown/TableOfContents';
 
 // Giả định MOCK_MARKDOWN đã được import hoặc định nghĩa bên trên
 const MOCK_MARKDOWN = `
