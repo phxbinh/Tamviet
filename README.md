@@ -2,7 +2,7 @@
 # Tamviet
 My business
 
-# Cấu trúc folders và files cho dự án
+### Cấu trúc folders và files cho dự án
 ```js
 my-app/
 ├── src/                        # (khuyến nghị cho dự án > nhỏ)
