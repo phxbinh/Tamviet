@@ -1,7 +1,7 @@
 // src/components/markdown/TableOfContents.tsx
 "use client";
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { ChevronDown, ListTree } from 'lucide-material-react'; // Đảm bảo đúng thư viện của bạn
+import { ChevronDown, ListTree } from 'lucide-react'; // Đảm bảo đúng thư viện của bạn
 
 interface TocProps {
   htmlContent: string;
