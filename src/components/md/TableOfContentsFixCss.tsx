@@ -133,6 +133,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
           <nav className="overflow-hidden bg-gradient-to-b from-transparent to-accent/5">
             <div className={`px-4 pb-5 pt-2 border-t border-border/30 max-h-[60vh] overflow-y-auto custom-scrollbar transition-all duration-700 delay-100 ${isOpen ? 'blur-0 translate-y-0' : 'blur-md -translate-y-4'}`}>
               <ul className="space-y-1">
+{/*
                 {toc.map((item) => {
                   const isActive = activeId === item.id;
                   return (
@@ -169,6 +170,33 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                     </li>
                   );
                 })}
+*/}
+       {toc.map((item, idx) => {
+              const isActive = activeId === item.id;
+              return (
+                <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
+                  <a 
+                    href={`#${item.id}`} 
+                    onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
+                    className={`
+                      group/item flex items-center gap-4 py-2 px-4 text-[13px] transition-all duration-300 rounded-xl relative
+                      ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}
+                    `}
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <span className={`
+                        w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
+                        ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
+                      `} />
+                    </div>
+                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
+                    {isActive && (
+                      <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
+                    )}
+                  </a>
+                </li>
+              );
+            })}
               </ul>
             </div>
           </nav>
