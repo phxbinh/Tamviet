@@ -172,7 +172,7 @@ return (
               [&_pre]:bg-slate-950 [&_pre]:p-6 [&_pre]:rounded-2xl [&_pre]:mb-8 [&_pre]:border [&_pre]:border-border/50 [&_pre]:shadow-2xl
               [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-6 [&_ul]:space-y-3
               [&_blockquote]:border-l-4 [&_blockquote]:border-neon-purple [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:my-8 [&_blockquote]:bg-neon-purple/5 [&_blockquote]:py-4 [&_blockquote]:rounded-r-xl
-              [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-30"
+              [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-30
     [&_img]:rounded-2xl 
     [&_img]:shadow-[0_0_20px_rgba(168,85,247,0.15)] 
     [&_img]:my-10 
