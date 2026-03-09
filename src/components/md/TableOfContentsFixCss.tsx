@@ -164,26 +164,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                             : 'text-muted-foreground hover:text-foreground hover:translate-x-1'
                         }`}
                       >
-{/*
-                        <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-neon-cyan transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 -left-2'}`} /> */}
-                        {/*{item.text} */}
-
-    <div className="relative flex items-center justify-center">
-                      <span className={`
-                        w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
-                        ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
-                      `} />
-                    </div>
-                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
-                    {isActive && (
-                      <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
-                    )}
-
-
-
-
-
-
+                        {item.text}
                       </a>
                     </li>
                   );
@@ -199,7 +180,19 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
 
 
 /*
-    <div className="relative flex items-center justify-center">
+       {toc.map((item, idx) => {
+              const isActive = activeId === item.id;
+              return (
+                <li key={`${item.id}-${idx}`} style={{ paddingLeft: `${(item.level - 2) * 20}px` }} className="relative z-10">
+                  <a 
+                    href={`#${item.id}`} 
+                    onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
+                    className={`
+                      group/item flex items-center gap-4 py-2 px-4 text-[13px] transition-all duration-300 rounded-xl relative
+                      ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}
+                    `}
+                  >
+                    <div className="relative flex items-center justify-center">
                       <span className={`
                         w-2 h-2 rounded-full border-2 transition-all duration-500 bg-background
                         ${isActive ? 'border-neon-cyan bg-neon-cyan scale-125 shadow-[0_0_8px_#06b6d4]' : 'border-border'}
@@ -209,7 +202,10 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                     {isActive && (
                       <div className="absolute inset-0 bg-neon-cyan/5 rounded-xl border-l-2 border-neon-cyan -z-10" />
                     )}
-
+                  </a>
+                </li>
+              );
+            })}
 
 
 */
