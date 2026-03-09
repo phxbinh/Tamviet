@@ -85,7 +85,7 @@ return (
     {/* GRID: Trên mobile là 1 cột, trên desktop (lg) là 2 cột */}
     <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-8 items-start relative">
       {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
-      <div className="lg:hidden w-[80%] fixed top-2 z-20 mb-4"> 
+      <div className="lg:hidden fixed top-2 z-20 mb-4"> 
         <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
       </div>
 
