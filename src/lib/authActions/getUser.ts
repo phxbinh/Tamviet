@@ -1,4 +1,4 @@
-// src/lib/authSctions/getUser.ts
+// src/lib/authActions/getUser.ts
 // lấy thông tin user để hiển thị lên dashboard
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getMyProfile } from '@/lib/sqlQueries/profiles';
@@ -16,7 +16,7 @@ export async function getCurrentUser() {
   try {
     // 2. Sử dụng hàm getMyProfile của bạn để lấy data từ Neon
     const profile = await getMyProfile(user.id);
-    console.log("profileData: ",profile)
+    //console.log("profileData: ",profile)
 
     // Trả về một object gộp cả Email (từ Auth) và Profile (từ Neon)
     return {
