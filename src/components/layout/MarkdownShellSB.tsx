@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { SidebarHeader } from "./SideBarHeaderMarkdown"; // Import mới
+import { SidebarHeader } from "./SiderBarHeaderMarkdown"; // Import mới
 import { Menu } from "lucide-react";
 
 export default function MarkdownShell({
