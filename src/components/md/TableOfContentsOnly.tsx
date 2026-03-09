@@ -12,12 +12,15 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   
+  const detailsRef = useRef<HTMLDetailsElement>(null);
   const lastScrollY = useRef(0);
-  const accumulativeScroll = useRef(0); // Biến tích lũy quãng đường cuộn
+  const accumulativeScrollUp = useRef(0);
+  const accumulativeScrollDown = useRef(0);
   const isLock = useRef(false);
 
-  // Ngưỡng cuộn (pixels) - Cuộn lên ít nhất 40px mới hiện menu
-  const SCROLL_UP_THRESHOLD = 40; 
+  // Cấu hình ngưỡng cuộn để tăng độ mượt
+  const SCROLL_UP_THRESHOLD = 40;   // Cuộn lên 40px mới hiện
+  const SCROLL_DOWN_THRESHOLD = 50; // Cuộn xuống 50px mới ẩn
 
   const toc = useMemo(() => {
     if (typeof window === 'undefined' || !htmlContent) return [];
@@ -42,25 +45,29 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
       const currentY = window.scrollY;
       const diff = currentY - lastScrollY.current;
 
-      // --- LOGIC ẨN/HIỆN THÔNG MINH ---
+      // --- LOGIC ẨN/HIỆN VỚI NGƯỠNG ĐỆM ---
       if (!isOpen) {
-        if (diff > 0) { 
-          // Đang cuộn xuống: Ẩn ngay và reset bộ tích lũy cuộn lên
-          if (currentY > 200) setIsVisible(false);
-          accumulativeScroll.current = 0;
-        } else {
-          // Đang cuộn lên: Tích lũy quãng đường cuộn lên
-          accumulativeScroll.current += Math.abs(diff);
+        if (diff > 0) {
+          // Đang cuộn xuống
+          accumulativeScrollDown.current += diff;
+          accumulativeScrollUp.current = 0; // Reset bộ tích lũy cuộn lên
           
-          // Chỉ hiện khi tổng quãng đường cuộn lên vượt ngưỡng
-          if (accumulativeScroll.current > SCROLL_UP_THRESHOLD || currentY < 50) {
+          if (accumulativeScrollDown.current > SCROLL_DOWN_THRESHOLD && currentY > 200) {
+            setIsVisible(false);
+          }
+        } else {
+          // Đang cuộn lên
+          accumulativeScrollUp.current += Math.abs(diff);
+          accumulativeScrollDown.current = 0; // Reset bộ tích lũy cuộn xuống
+          
+          if (accumulativeScrollUp.current > SCROLL_UP_THRESHOLD || currentY < 50) {
             setIsVisible(true);
           }
         }
       }
       lastScrollY.current = currentY;
 
-      // --- LOGIC HIGHLIGHT (GIỮ NGUYÊN) ---
+      // --- LOGIC HIGHLIGHT ---
       if (isLock.current) return;
       const headings = Array.from(allHeadings) as HTMLElement[];
       const scrollPos = currentY + 120;
@@ -78,13 +85,27 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
       setActiveId(currentId);
     };
 
+    // --- LOGIC CLICK OUTSIDE (Đóng menu khi nhấn ngoài) ---
+    const handleClickOutside = (event: MouseEvent) => {
+      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [toc, contentRef, isOpen, activeId]);
 
   const toggleMenu = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
+    const target = e.currentTarget;
     isLock.current = true;
-    setIsOpen(e.currentTarget.open);
+    setIsOpen(target.open);
+    // Timeout để layout ổn định sau khi đóng/mở
     setTimeout(() => { isLock.current = false; }, 400);
   };
 
@@ -93,6 +114,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
   return (
     <div className={`w-full transition-all duration-500 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
       <details 
+        ref={detailsRef}
         open={isOpen} 
         onToggle={toggleMenu}
         className="group w-full bg-card/90 backdrop-blur-xl border border-border rounded-2xl shadow-2xl overflow-hidden"
@@ -107,7 +129,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
           <ChevronDown size={18} className="text-muted-foreground transition-transform duration-300 group-open:rotate-180" />
         </summary>
 
-        <nav className="px-4 pb-6 pt-2 border-t border-border/30 max-h-[50vh] overflow-y-auto">
+        <nav className="px-4 pb-6 pt-2 border-t border-border/30 max-h-[50vh] overflow-y-auto custom-scrollbar">
           <ul className="space-y-1 relative list-none m-0 p-0">
             <div className="absolute left-4 top-2 bottom-2 w-px bg-border/20" />
             {toc.map((item) => {
@@ -120,7 +142,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                     className={`flex items-center gap-3 py-1.5 px-3 text-[13px] transition-all rounded-lg ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}`}
                   >
                     <span className={`w-2 h-2 rounded-full border-2 transition-colors ${isActive ? 'border-neon-cyan bg-neon-cyan shadow-[0_0_8px_#06b6d4]' : 'border-border'}`} />
-                    <span className="truncate">{item.text}</span>
+                    <span className="truncate whitespace-normal leading-snug">{item.text}</span>
                   </a>
                 </li>
               );
