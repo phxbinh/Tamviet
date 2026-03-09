@@ -164,7 +164,8 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                             : 'text-muted-foreground hover:text-foreground hover:translate-x-1'
                         }`}
                       >
-                        <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-neon-cyan transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 -left-2'}`} />
+{/*
+                        <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-neon-cyan transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 -left-2'}`} /> */}
                         {item.text}
                       </a>
                     </li>
