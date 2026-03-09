@@ -1,9 +1,9 @@
-/* src/app/globals.css */
 @import "tailwindcss";
 
+/* 1. ĐỊNH NGHĨA BIẾN MÀU SẮC (CSS VARIABLES) */
 @layer base {
   :root {
-    --background: 210 40% 98%; /* Light mode background nhạt */
+    --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --primary: 221.2 83.2% 53.3%;
@@ -19,7 +19,9 @@
   }
 }
 
+/* 2. CẤU HÌNH THEME (TAILWIND CONFIG) */
 @theme {
+  /* Màu sắc */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -27,17 +29,36 @@
   --color-border: hsl(var(--border));
   --color-neon-cyan: #22d3ee;
   --color-neon-purple: #a855f7;
+
+  /* Keyframes cho Animations */
+  @keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.02); }
+  }
+
+  /* Biến Animation tiện ích */
+  --animate-shake: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+  --animate-breathe-slow: breathe 3s infinite ease-in-out;
+  --animate-breathe-fast: breathe 1.5s infinite ease-in-out;
+  --animate-breathe-danger: breathe 0.6s infinite ease-in-out;
 }
 
+/* 3. ĐỊNH DẠNG BASE (HTML, BODY, TYPOGRAPHY) */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
-  /* KHÓA CỨNG tầng ngoài cùng */
+
   html, body {
     height: 100%;
     width: 100%;
-    /*overflow: hidden !important; /* Tuyệt đối không cho scroll ở đây */
     margin: 0;
     padding: 0;
   }
@@ -48,41 +69,52 @@
     @apply transition-colors duration-300;
   }
 
-  /* Gradient cho Dark Mode - Bỏ background-attachment: fixed để tránh bug scroll */
   .dark body {
     background-image: radial-gradient(at top left, #020617, #0f172a, #020617);
   }
-  /* Khoảng cách dừng lại phía trên heading khi click link */
-[id] {
-  scroll-margin-top: 100px;
-}
 
-}
+  /* Định dạng mặc định cho nội dung Render từ Markdown */
+  .markdown-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    /* Aspect-ratio giúp tránh hiện tượng nhảy layout khi ảnh đang load */
+    aspect-ratio: attr(width) / attr(height); 
+  }
 
+  /* Scroll margin cho Heading khi click link neo */
+  [id] {
+    scroll-margin-top: 100px;
+  }
 
+  /* Loại bỏ mũi tên mặc định của thẻ details/summary */
+  summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
 
-
-
-
-
-
-
-
-
-/* Fix size cho input để không bị zoom khi click vào */
-@layer base {
-  /* Fix tự động zoom trên Mobile */
+  /* Tắt hiệu ứng zoom input trên Mobile (iOS) */
   @media screen and (max-width: 768px) {
-    input, 
-    select, 
-    textarea {
+    input, select, textarea {
       font-size: 16px !important;
     }
   }
+
+  /* Tắt outline mặc định cho input/textarea */
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    @apply ring-0;
+  }
 }
 
-
+/* 4. CÁC TIỆN ÍCH TÙY CHỈNH (UTILITIES) */
 @layer utilities {
+  /* Thanh cuộn tùy chỉnh */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
@@ -93,11 +125,8 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #22d3ee80;
   }
-}
 
-/* Cho chatbot */
-@layer utilities {
-  /* Hiệu ứng hiện chữ mượt mà cho stream */
+  /* Hiệu ứng mượt cho Chatbot streaming */
   .prose-stream span {
     animation: fade-in 0.2s ease-in-out forwards;
   }
@@ -107,80 +136,3 @@
     to { opacity: 1; transform: translateY(0); }
   }
 }
-
-
-
-/* Quản lý rung nhẹ khi nhập sai password */
-@theme {
-  /* ... các biến khác giữ nguyên ... */
-  --animate-shake: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
-
-  @keyframes shake {
-    10%, 90% { transform: translate3d(-1px, 0, 0); }
-    20%, 80% { transform: translate3d(2px, 0, 0); }
-    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-    40%, 60% { transform: translate3d(4px, 0, 0); }
-  }
-}
-
-
-
-@theme {
-  /* Dùng ở alertBreath */
-  
-  @keyframes breathe {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.02); }
-  }
-
-  /* --- Các biến Animation (Sửa tại đây) --- */
-  --animate-shake: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
-  
-  /* Thay vì dùng dấu chấm (.), hãy dùng gạch ngang (--) để định nghĩa biến */
-  --animate-breathe-slow: breathe 3s infinite ease-in-out;
-  --animate-breathe-fast: breathe 1.5s infinite ease-in-out;
-  --animate-breathe-danger: breathe 0.6s infinite ease-in-out;
-}
-
-
-/* Tắt outline ngoài input */
-input:focus,
-textarea:focus,
-select:focus {
-  @apply outline-none ring-0;
-}
-
-/* Hoặc dùng CSS thuần */
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: none;
-  box-shadow: none;
-}
-
-
-
-/* 1. Xóa mũi tên trên Chrome, Edge, Firefox */
-summary {
-  list-style: none;
-}
-
-/* 2. Xóa mũi tên trên Safari (quan trọng cho mobile) */
-summary::-webkit-details-marker {
-  display: none;
-}
-
-/* 3. Đảm bảo flexbox hoạt động đúng để icon mới của bạn căn giữa */
-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-
-
-
-
-
-
-
