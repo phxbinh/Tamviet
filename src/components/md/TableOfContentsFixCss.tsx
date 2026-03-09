@@ -19,8 +19,8 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
   const isLock = useRef(false);
 
   // Cấu hình ngưỡng cuộn
-  const SCROLL_UP_THRESHOLD = 60;   
-  const SCROLL_DOWN_THRESHOLD = 100; 
+  const SCROLL_UP_THRESHOLD = 40;   
+  const SCROLL_DOWN_THRESHOLD = 40; 
 
   const toc = useMemo(() => {
     if (typeof window === 'undefined' || !htmlContent) return [];
