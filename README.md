@@ -72,12 +72,12 @@ internal.ts
 ```ts
 /* Trong index.ts */
 // features/products/index.ts
-// Cách 1. export những cái được chọn
+// ✅ Cách 1. export những cái được chọn
 export { ProductCard } from './components/ProductCard'
 export { getProducts } from './queries/getProducts'
 export { createProduct } from './actions/createProduct'
 
-// Cách 2: export tất cả
+// ❌ Cách 2: export tất cả
 export * from './components/ProductCard'
 export * from './queries/getProducts'
 export * from './actions/createProduct'
