@@ -123,7 +123,7 @@ return (
 
       {/* 3. TOC CHO DESKTOP (Vẫn giữ sticky) */}
       <aside className="hidden lg:block sticky top-24 self-start">
-        <TableOfContents htmlContent={htmlContent} />
+        <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
       </aside>
 
     </div>
