@@ -95,9 +95,6 @@ import { ChevronDown, ListTree } from 'lucide-react';
 */
 
 
-"use client";
-import { useEffect, useRef, useState, useMemo } from 'react';
-import { ChevronDown, ListTree } from 'lucide-react';
 
 // FIX: Thêm contentRef vào interface này
 interface TocProps {
