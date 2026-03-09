@@ -1,5 +1,5 @@
 // src/app/(markdwon)/layout.tsx
-import MarkdownShell from "@/components/layout/MarkdownShellSB";
+import MarkdownShell from "@/components/layout/MarkdownShell";
 
 export default function MarkdownLayout({
   children,
