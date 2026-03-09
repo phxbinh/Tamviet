@@ -40,3 +40,47 @@ my-app/
 ├── next.config.js
 └── tailwind.config.ts
 ```
+
+### Cấu trúc để export các logic & components
+```plaintext
+features/products/
+
+components/
+ ├ ProductCard.tsx
+ ├ ProductList.tsx
+ └ ProductForm.tsx
+
+actions/
+ ├ createProduct.ts
+ ├ updateProduct.ts
+ └ deleteProduct.ts
+
+queries/
+ ├ getProducts.ts
+ └ getProductById.ts
+
+validators/
+ └ productSchema.ts
+
+types/
+ └ product.type.ts
+
+index.ts
+```
+
+```ts
+/* Trong index.ts */
+// features/products/index.ts
+// Cách 1. export những cái được chọn
+export { ProductCard } from './components/ProductCard'
+export { getProducts } from './queries/getProducts'
+export { createProduct } from './actions/createProduct'
+
+// Cách 2: export tất cả
+export * from './components/ProductCard'
+export * from './queries/getProducts'
+export * from './actions/createProduct'
+
+/* Cấch gọi các export ở index.ts
+import { getProducts, ProductCard } from '@/features/products'
+```
