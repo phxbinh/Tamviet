@@ -160,6 +160,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
     };
   }, [toc, contentRef]);
 
+/*
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -177,6 +178,38 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
 
     return () => observer.disconnect();
   }, [toc]);
+*/
+
+  useEffect(() => {
+    // Chỉ chạy nếu đã có contentRef để đảm bảo quét đúng vùng bài viết
+    if (!contentRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Khi tiêu đề lọt vào vùng quét, cập nhật ActiveId ngay
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { 
+        /* Giải thích rootMargin:
+           -20% ở trên: Bỏ qua vùng Header dính (sticky)
+           -60% ở dưới: Chỉ active khi tiêu đề nằm ở nửa trên màn hình (UX chuẩn)
+        */
+        rootMargin: '-20% 0px -60% 0px', 
+        threshold: 0 
+      }
+    );
+
+    // Lấy tất cả heading thực tế nằm TRONG bài viết
+    const headings = contentRef.current.querySelectorAll('h2, h3');
+    headings.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [toc, contentRef]); // Thêm contentRef vào dependency để đồng bộ
+
 
   if (toc.length === 0) return null;
 
