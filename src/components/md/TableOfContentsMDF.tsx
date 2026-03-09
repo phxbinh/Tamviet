@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { ChevronDown, ListTree } from 'lucide-react';
 
-export default function TableOfContents({ htmlContent, contentRef }: { 
+ function TableOfContents__({ htmlContent, contentRef }: { 
   htmlContent: string, 
   contentRef: React.RefObject<HTMLDivElement> // Thêm Ref của vùng bài viết
 }) {
@@ -85,3 +85,175 @@ export default function TableOfContents({ htmlContent, contentRef }: {
     </div>
   );
 }
+
+
+
+/*
+"use client";
+import { useEffect, useRef, useState, useMemo } from 'react';
+import { ChevronDown, ListTree } from 'lucide-react';
+*/
+
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
+
+export default function TableOfContents({ htmlContent }: { htmlContent: string }) {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [activeId, setActiveId] = useState<string>("");
+  const [readProgress, setReadProgress] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 1. Trích xuất mục lục và xử lý Slug ID
+  const toc = useMemo(() => {
+    if (typeof window === 'undefined' || !htmlContent) return [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const headings = Array.from(doc.querySelectorAll('h2, h3'));
+    
+    return headings.map((heading, index) => {
+      const text = heading.textContent?.trim() || "";
+      // Tạo ID duy nhất nếu heading chưa có ID
+      const id = heading.id || `toc-head-${index}`;
+      return { text, id, level: parseInt(heading.tagName[1]) };
+    });
+  }, [htmlContent]);
+
+  useEffect(() => {
+    // 2. QUAN TRỌNG: Gán ngược ID vào DOM thực tế để Scroll Spy hoạt động
+    // Vì htmlContent render ra ngoài thường không có ID tương ứng với toc mượn
+    toc.forEach((item, index) => {
+      const allHeadings = document.querySelectorAll('h2, h3');
+      if (allHeadings[index] && !allHeadings[index].id) {
+        allHeadings[index].id = item.id;
+      }
+    });
+
+    if (window.innerWidth > 1024) setIsOpen(true);
+
+    const handleScroll = () => {
+      const winScroll = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      if (height > 0) setReadProgress((winScroll / height) * 100);
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (detailsRef.current?.open && !detailsRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [toc]);
+
+  // 3. Scroll Spy: Highlight mục đang đọc
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-10% 0px -70% 0px', threshold: 0.1 }
+    );
+
+    toc.forEach((item) => {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [toc]);
+
+  if (toc.length === 0) return null;
+
+  return (
+    <div className="w-full my-6">
+      <details 
+        ref={detailsRef}
+        className="group w-full bg-card/40 backdrop-blur-md border border-border rounded-xl overflow-hidden shadow-xl"
+        open={isOpen}
+        onToggle={(e) => setIsOpen((e.target as HTMLDetailsElement).open)}
+      >
+        <summary className="list-none cursor-pointer p-4 flex items-center justify-between select-none hover:bg-neon-cyan/5 focus:outline-none">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-neon-cyan/10 text-neon-cyan shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+              <ListTree size={18} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-black uppercase tracking-[0.15em] text-foreground/90 leading-tight">Mục lục</span>
+              <div className="flex items-center gap-2 mt-1">
+                 <div className="w-16 h-1 bg-border/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-neon-cyan transition-all duration-300" style={{ width: `${readProgress}%` }} />
+                 </div>
+                 <span className="text-neon-cyan/60 text-[9px] font-mono leading-none">{Math.round(readProgress)}%</span>
+              </div>
+            </div>
+          </div>
+          <ChevronDown 
+            size={16} 
+            className="text-muted-foreground transition-transform duration-500 group-open:rotate-180" 
+          />
+        </summary>
+
+        {/* Phần danh mục */}
+        <nav className="px-3 pb-5 pt-2 border-t border-border/30 bg-black/10 transition-all">
+          <ul className="space-y-1 relative list-none m-0 p-0">
+            {/* Đường kẻ tiến trình dọc */}
+            <div className="absolute left-[14px] top-2 bottom-2 w-[1px] bg-border/20 rounded-full" />
+            <div 
+              className="absolute left-[14px] top-2 w-[1.5px] bg-neon-cyan shadow-[0_0_8px_#06b6d4] transition-all duration-300"
+              style={{ height: `${readProgress}%` }}
+            />
+            
+            {toc.map((item, idx) => {
+              const isActive = activeId === item.id;
+              return (
+                <li 
+                  key={`${item.id}-${idx}`} 
+                  style={{ paddingLeft: `${(item.level - 2) * 16}px` }}
+                  className="relative z-10"
+                >
+                  <a 
+                    href={`#${item.id}`} 
+                    onClick={() => { 
+                      if (window.innerWidth < 1024) setIsOpen(false); 
+                    }}
+                    className={`
+                      group/item flex items-center gap-3 py-1.5 px-3 text-sm transition-all duration-300 rounded-lg relative
+                      ${isActive ? 'text-neon-cyan font-bold translate-x-1' : 'text-foreground/50 hover:text-foreground/80'}
+                    `}
+                  >
+                    <span className={`
+                      w-2 h-2 rounded-full border-2 transition-all duration-300 z-20 bg-background
+                      ${isActive ? 'border-neon-cyan scale-125 shadow-[0_0_5px_#06b6d4]' : 'border-border'}
+                    `} />
+                    <span className="truncate">{item.text}</span>
+                    {isActive && <div className="absolute inset-0 bg-neon-cyan/5 rounded-lg border-l-2 border-neon-cyan -z-10" />}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  );
+}
+
+
+
+
+
+
+
