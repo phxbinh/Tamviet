@@ -40,7 +40,6 @@ export async function withUserContext<T>(
     tx`SELECT set_config('app.user_id', ${userId}, true)`,
     queryFn(tx),
   ])
-  //console.log("userId: ", userId);
   return results[1] as T
 }
 
