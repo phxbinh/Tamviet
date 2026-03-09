@@ -77,7 +77,6 @@ export default function MarkdownTest() {
         </div>
       </div>
     );
-  }
 
 return (
   /* Container chính: Thêm padding-top nếu cần để không dính sát header */
