@@ -173,7 +173,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
       const container = contentRef.current.closest('.overflow-y-auto');
       
       // 1. Chiều cao của Header (cố định là 64px - h-16)
-      const HEADER_HEIGHT = 64; 
+      const HEADER_HEIGHT = 0; 
       
       // 2. Lấy chiều cao thực tế của TOC hiện tại (bao gồm cả border/margin)
       // detailsRef.current sẽ cho chúng ta biết TOC đang cao bao nhiêu 
