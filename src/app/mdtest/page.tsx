@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { parseMarkdown } from '@/lib/md/markdown';
 import TableOfContents from '@/components/md/TableOfContentsMD';
 
@@ -49,6 +49,7 @@ Chúc mừng bạn đã hoàn thành lộ trình!
 export default function MarkdownTest() {
   const [htmlContent, setHtmlContent] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function loadContent() {
@@ -86,7 +87,7 @@ return (
             {/* 1. TOC CHO MOBILE (Hiện đầu trang bài viết) */}
   {/* MOBILE TOC: Hiện ở trên bài viết khi màn hình nhỏ */}
   <div className="lg:hidden w-full sticky top-2 z-20 mb-4"> 
-    <TableOfContents htmlContent={htmlContent} />
+    <TableOfContents htmlContent={htmlContent} contentRef={contentRef} />
   </div>
 
 
@@ -103,7 +104,7 @@ return (
               </div>
             </header>
 
-         
+            <div ref={contentRef} className="prose lg:prose-xl">
             <div 
               className="markdown-body text-foreground/80 leading-relaxed font-medium
                 [&_h1]:hidden 
@@ -117,6 +118,7 @@ return (
                 [&_hr]:border-border [&_hr]:my-12 [&_hr]:opacity-50"
               dangerouslySetInnerHTML={{ __html: htmlContent }} 
             />
+            </div>
           </article>
 
       {/* 3. TOC CHO DESKTOP (Vẫn giữ sticky) */}
