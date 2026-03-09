@@ -20,7 +20,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
 
   // Cấu hình ngưỡng cuộn để tăng độ mượt
   const SCROLL_UP_THRESHOLD = 40;   // Cuộn lên 40px mới hiện
-  const SCROLL_DOWN_THRESHOLD = 50; // Cuộn xuống 50px mới ẩn
+  const SCROLL_DOWN_THRESHOLD = 80; // Cuộn xuống 50px mới ẩn
 
   const toc = useMemo(() => {
     if (typeof window === 'undefined' || !htmlContent) return [];
