@@ -80,7 +80,7 @@ export default function MarkdownTest() {
   }
 return (
   /* Container chính: Thêm padding-top nếu cần để không dính sát header */
-  <div className="max-w-6xl mx-auto py-8 px-4">
+  <div className="max-w-6xl mx-auto pb-8 px-4">
 
     {/* Layout chính: Sử dụng Items-start để sticky hoạt động đúng */}
     <div className="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-12 items-start relative">
