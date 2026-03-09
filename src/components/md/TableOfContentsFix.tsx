@@ -141,7 +141,7 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                   key={item.id} 
                   style={{ paddingLeft: `${(item.level - 2) * 12}px` }}
                 >
-                  <a 
+                  {/*<a 
                     href={`#${item.id}`} 
                     onClick={(e) => {
                       e.preventDefault();
@@ -160,7 +160,53 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
                     }`}
                   >
                     {item.text}
-                  </a>
+                  </a> */}
+
+
+<a 
+  href={`#${item.id}`} 
+  onClick={(e) => {
+    e.preventDefault();
+    const target = document.getElementById(item.id);
+    
+    if (target && contentRef.current) {
+      const container = contentRef.current.closest('.overflow-y-auto');
+      
+      // 1. Chiều cao của Header (cố định là 64px - h-16)
+      const HEADER_HEIGHT = 64; 
+      
+      // 2. Lấy chiều cao thực tế của TOC hiện tại (bao gồm cả border/margin)
+      // detailsRef.current sẽ cho chúng ta biết TOC đang cao bao nhiêu 
+      const tocHeight = detailsRef.current?.getBoundingClientRect().height || 0;
+      
+      // 3. Khoảng đệm thêm (padding) để nhìn cho thoáng (ví dụ 16px)
+      const spacing = 16;
+
+      // 4. Tính toán vị trí cuộn: 
+      // Vị trí mục tiêu = offsetTop của phần tử - (Header + TOC + Spacing)
+      const scrollTarget = target.offsetTop - (HEADER_HEIGHT + tocHeight + spacing);
+
+      container?.scrollTo({
+        top: scrollTarget,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Đóng menu sau khi click
+    setIsOpen(false);
+  }}
+  className={`block py-1 text-xs transition-colors ${
+    isActive ? 'text-neon-cyan font-medium' : 'text-muted-foreground hover:text-foreground'
+  }`}
+>
+  {item.text}
+</a>
+
+
+
+
+
+
                 </li>
               );
             })}
@@ -170,3 +216,54 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
     </div>
   );
 }
+
+
+
+/*
+
+// ... bên trong toc.map((item) => { ...
+<a 
+  href={`#${item.id}`} 
+  onClick={(e) => {
+    e.preventDefault();
+    const target = document.getElementById(item.id);
+    
+    if (target && contentRef.current) {
+      const container = contentRef.current.closest('.overflow-y-auto');
+      
+      // 1. Chiều cao của Header (cố định là 64px - h-16)
+      const HEADER_HEIGHT = 64; 
+      
+      // 2. Lấy chiều cao thực tế của TOC hiện tại (bao gồm cả border/margin)
+      // detailsRef.current sẽ cho chúng ta biết TOC đang cao bao nhiêu 
+      const tocHeight = detailsRef.current?.getBoundingClientRect().height || 0;
+      
+      // 3. Khoảng đệm thêm (padding) để nhìn cho thoáng (ví dụ 16px)
+      const spacing = 16;
+
+      // 4. Tính toán vị trí cuộn: 
+      // Vị trí mục tiêu = offsetTop của phần tử - (Header + TOC + Spacing)
+      const scrollTarget = target.offsetTop - (HEADER_HEIGHT + tocHeight + spacing);
+
+      container?.scrollTo({
+        top: scrollTarget,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Đóng menu sau khi click
+    setIsOpen(false);
+  }}
+  className={`block py-1 text-xs transition-colors ${
+    isActive ? 'text-neon-cyan font-medium' : 'text-muted-foreground hover:text-foreground'
+  }`}
+>
+  {item.text}
+</a>
+
+*/
+
+
+
+
+
