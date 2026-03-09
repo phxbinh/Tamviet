@@ -386,11 +386,12 @@ export default function TableOfContents({ htmlContent, contentRef }: TocProps) {
           <ul className="space-y-1 relative list-none m-0 p-0">
             {/* Thanh dọc nối các mục */}
             <div className="absolute left-[19px] top-2 bottom-2 w-[1.5px] bg-border/20 rounded-full" />
+{/* Close progress bar vertical on left side of menu
             <div 
               className="absolute left-[19px] top-2 w-[2px] bg-neon-cyan shadow-[0_0_12px_#06b6d4] transition-all duration-300 ease-out rounded-full"
               style={{ height: `${readProgress}%` }}
             />
-            
+            */}
             {toc.map((item, idx) => {
               const isActive = activeId === item.id;
               return (
