@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Toast } from "@/components/Toast";
 
 
-export default function PublicShell({
+export default function MarkdownShell({
   children,
 }: {
   children: React.ReactNode;
