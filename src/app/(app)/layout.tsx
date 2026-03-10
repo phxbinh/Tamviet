@@ -1,29 +1,18 @@
+// app/(app)/layout.tsx
 
-// src/app/(auth)/dashboard/layout.tsx
-// làm việc trên tài khoản của user
+import { Toast } from "@/components/Toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
-import { getCurrentUser } from '@/lib/authActions/getUser';
-import DashboardShell from '@/components/dashboard/DashboardShell';
-
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await getCurrentUser();
-
-  // Ở đây không truyền hàm, chỉ truyền dữ liệu (Data)
+export default async function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <DashboardShell user={user}>
+    <>
       {children}
-    </DashboardShell>
+      <div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>
+      <Toast/>
+    </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
