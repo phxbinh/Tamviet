@@ -74,6 +74,7 @@ export async function POST(req: Request) {
   }
 }
 
+/*
 export async function GET() {
   try {
     //await assertAdmin()
@@ -99,6 +100,37 @@ export async function GET() {
     )
   }
 }
+*/
+
+export async function GET() {
+  try {
+    const result = await sql`
+      select
+        p.id,
+        p.name,
+        p.slug,
+        p.status,
+        p.created_at,
+        pt.id   as product_type_id,
+        pt.name as product_type_name,
+        pt.code as product_type_code
+      from products p
+      left join product_types pt
+      on pt.id = p.product_type_id
+      order by p.created_at desc
+    `
+
+    return NextResponse.json(result)
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    )
+  }
+}
+
+
 
 
 
