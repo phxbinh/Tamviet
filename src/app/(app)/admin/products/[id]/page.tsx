@@ -206,8 +206,8 @@ export default function ProductDetailPage() {
                   value={product.product_type || ""}
                   onChange={handleChange}
                   className="w-full bg-background border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] focus:border-primary outline-none cursor-pointer"
-                >
-                  <option value="">UNCATEGORIZED</option>
+                > {/* UNCATEGORIZED */}
+                  <option value="">{product.product_type}</option>
                   {types.map((type) => (
                     <option key={type.id} value={type.code}>{type.name.toUpperCase()}</option>
                   ))}
