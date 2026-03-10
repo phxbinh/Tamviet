@@ -78,7 +78,7 @@ export default async function ProductsPage({
             <thead>
               <tr className="bg-muted/10 text-muted-foreground border-b border-border">
                 {/* STICKY COLUMN */}
-                <th className="sticky left-0 z-20 bg-card p-4 w-[300px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
+                <th className="left-0 z-20 bg-card p-4 w-[200px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
                   Designation
                 </th>
                 <th className="p-4 w-[200px] text-[10px] font-black uppercase tracking-[0.2em]">Slug ID</th>
@@ -91,7 +91,7 @@ export default async function ProductsPage({
             <tbody className="divide-y divide-border">
               {filteredProducts.map((product) => (
                 <tr key={product.id} className="group hover:bg-primary/[0.03] transition-all">
-                  <td className="sticky left-0 z-10 bg-card group-hover:bg-[#121214] p-4 shadow-[inset_-1px_0_0_0_#27272a] transition-colors">
+                  <td className="left-0 z-10 bg-card group-hover:bg-[#121214] p-4 shadow-[inset_-1px_0_0_0_#27272a] transition-colors">
                     <Link
                       href={`/admin/products/${product.id}`}
                       className="font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2 uppercase tracking-tight truncate"
