@@ -2,9 +2,12 @@
 import { NextResponse } from "next/server"
 import { sql } from '@/lib/neon/sql';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { assertAdmin } from '@/lib/authActions/assertAdmin';
+
 import slugify from "slugify"
 
 export async function POST(req: Request) {
+
   try {
     const supabase = await createSupabaseServerClient()
 
@@ -15,6 +18,9 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
+
+    // Kiểm tra quyền admin
+    await assertAdmin(user.id);
 
     const body = await req.json()
 
