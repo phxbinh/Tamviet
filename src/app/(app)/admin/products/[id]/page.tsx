@@ -33,6 +33,7 @@ interface Product {
   name: string
   slug: string
   product_type_id: string
+  product_type_name: string
   short_description: string | null
   description: string | null
   status: "draft" | "active" | "archived"
