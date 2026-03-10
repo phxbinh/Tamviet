@@ -5,7 +5,7 @@ import { User, Lock, Palette, ShieldCheck } from 'lucide-react';
 import ProfilesTab from './ProfilesTab';
 import SecurityTab from './SecurityTab';
 
-export default function SettingsClient({ user }: { user: any }) {
+export default function SettingsAdmin({ user }: { user: any }) {
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'appearance'>('profile');
 
   return (
