@@ -77,7 +77,7 @@ export default async function ProductsPage() {
         </div>
 
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse">
+          {/*<table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-muted/10 text-muted-foreground border-b border-border">
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Designation</th>
@@ -86,7 +86,35 @@ export default async function ProductsPage() {
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Op. Status</th>
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em] text-right">Timestamp</th>
               </tr>
-            </thead>
+            </thead>*/}
+
+
+  <table className="w-full text-left border-collapse table-fixed"> {/* Thêm table-fixed để kiểm soát width chính xác */}
+    <thead>
+      <tr className="bg-muted/10 text-muted-foreground border-b border-border">
+        {/* Cột chính: Chiếm nhiều diện tích nhất */}
+        <th className="p-4 w-[35%] min-w-[200px] text-[10px] font-black uppercase tracking-[0.2em]">
+          Designation
+        </th>
+        
+        {/* Cột ID/Slug: Cần độ rộng vừa phải, dùng font mono */}
+        <th className="p-4 w-[20%] min-w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">
+          Slug ID
+        </th>
+        
+        <th className="p-4 w-[15%] min-w-[120px] text-[10px] font-black uppercase tracking-[0.2em]">
+          Class
+        </th>
+        
+        <th className="p-4 w-[15%] min-w-[120px] text-[10px] font-black uppercase tracking-[0.2em]">
+          Op. Status
+        </th>
+        
+        <th className="p-4 w-[15%] min-w-[100px] text-[10px] font-black uppercase tracking-[0.2em] text-right">
+          Timestamp
+        </th>
+      </tr>
+    </thead>
 
             <tbody className="divide-y divide-border">
               {products.map((product) => (
