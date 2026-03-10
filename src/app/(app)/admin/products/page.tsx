@@ -89,7 +89,7 @@ export default async function ProductsPage() {
             </thead>*/}
 
 
-  <table className="w-full text-left border-collapse table-fixed"> {/* Thêm table-fixed để kiểm soát width chính xác */}
+  <table className="w-full text-left border-collapse table-fixed min-w-[800px]"> {/* Thêm table-fixed để kiểm soát width chính xác */}
     <thead>
       <tr className="bg-muted/10 text-muted-foreground border-b border-border">
         {/* Cột chính: Chiếm nhiều diện tích nhất */}
