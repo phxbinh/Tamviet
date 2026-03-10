@@ -17,6 +17,7 @@ import {
   AlertTriangle 
 } from "lucide-react"
 
+/*
 interface Product {
   id: string
   name: string
@@ -26,6 +27,21 @@ interface Product {
   description: string | null
   status: "draft" | "active" | "archived"
 }
+*/
+interface Product {
+  id: string
+  name: string
+  slug: string
+  product_type_id: string
+  short_description: string | null
+  description: string | null
+  status: "draft" | "active" | "archived"
+}
+
+
+
+
+
 
 type ProductType = {
   id: string
@@ -201,17 +217,36 @@ export default function ProductDetailPage() {
 
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Product Classification</label>
-                <select
+                {/*<select
                   name="product_type"
                   value={product.product_type || ""}
                   onChange={handleChange}
                   className="w-full bg-background border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] focus:border-primary outline-none cursor-pointer"
-                > {/* UNCATEGORIZED */}
+                > 
                   <option value="">{product.product_type}</option>
                   {types.map((type) => (
                     <option key={type.id} value={type.code}>{type.name.toUpperCase()}</option>
                   ))}
-                </select>
+                </select>*/}
+
+<select
+  name="product_type_id"
+  value={product.product_type_id || ""}
+  onChange={handleChange}
+  className="w-full bg-background border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] focus:border-primary outline-none cursor-pointer"
+>
+  <option value="" disabled>
+    {product.product_type_name}
+  </option>
+
+  {types.map((type) => (
+    <option key={type.id} value={type.id}>
+      {type.name.toUpperCase()}
+    </option>
+  ))}
+</select>
+
+
               </div>
             </div>
           </section>
