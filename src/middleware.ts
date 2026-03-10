@@ -158,8 +158,9 @@ export async function middleware(request: NextRequest) {
 */
 
 
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
+import { repuireAdmin } from '@/lib/authActions/RequireAdmin';
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -212,7 +213,7 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    const isAdmin = profile?.role === 'admin'
+    const isAdmin = await repuireAdmin(user.id) === 'admin'
 
     // Nếu đã login mà cố vào trang Guest (Login/Signup)
     if (isGuestOnlyPage) {
