@@ -1,7 +1,7 @@
 //src/app/api/admin/products/[id]/route.ts
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { assertAdmin } from '@/lib/auth/assertAdmin';
+import { assertAdmin } from '@/lib/authActions/assertAdmin';
 import { sql } from '@/lib/neon/sql';
 import { ForbiddenError } from '@/lib/errors';
 
