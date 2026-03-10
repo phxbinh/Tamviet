@@ -14,6 +14,13 @@ import {
   Loader2
 } from "lucide-react"
 
+type ProductType = {
+  id: string
+  code: string
+  name: string
+  created_at: string
+}
+
 export default function ProductTypesPage() {
   const [data, setData] = useState<ProductType[]>([])
   const [loading, setLoading] = useState(true)
