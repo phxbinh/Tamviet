@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/authActions/getUser';
-import SettingsClient from './SettingsClientOne';
+import SettingsAdmin from './SettingAdmin';
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -13,7 +13,7 @@ export default async function SettingsPage() {
         </p>
       </div>
       
-      <SettingsClient user={user} />
+      <SettingsAdmin user={user} />
     </div>
   );
 }
