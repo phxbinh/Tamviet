@@ -117,8 +117,22 @@ export async function PATCH(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
+
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { message: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
   try {
-    await assertAdmin()
+    await assertAdmin(user.id)
 
     const { id } = await context.params
     const body = await req.json()
