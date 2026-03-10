@@ -118,7 +118,7 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // await assertAdmin()
+    await assertAdmin()
 
     const { id } = await context.params
     const body = await req.json()
