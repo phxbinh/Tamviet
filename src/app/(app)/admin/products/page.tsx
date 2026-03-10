@@ -102,11 +102,11 @@ export default async function ProductsPage() {
           Slug ID
         </th>
         
-        <th className="p-4 w-[15%] min-w-[200px] text-[10px] font-black uppercase tracking-[0.2em]">
+        <th className="p-4 w-[15%] min-w-[120px] text-[10px] font-black uppercase tracking-[0.2em]">
           Class
         </th>
         
-        <th className="p-4 w-[15%] min-w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">
+        <th className="p-4 w-[15%] min-w-[120px] text-[10px] font-black uppercase tracking-[0.2em]">
           Op. Status
         </th>
         
