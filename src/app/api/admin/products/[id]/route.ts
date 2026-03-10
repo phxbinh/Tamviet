@@ -61,6 +61,7 @@ export async function GET(
   }
 }
 
+/*
 export async function PATCH(
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -110,6 +111,60 @@ export async function PATCH(
     )
   }
 }
+*/
+
+export async function PATCH(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    // await assertAdmin()
+
+    const { id } = await context.params
+    const body = await req.json()
+
+    const {
+      name,
+      slug,
+      product_type_id,
+      short_description,
+      description,
+      status
+    } = body
+
+    if (!name || !slug || !status) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
+    }
+
+    const result = await sql`
+      UPDATE products
+      SET
+        name = ${name},
+        slug = lower(${slug}),
+        product_type_id = ${product_type_id},
+        short_description = ${short_description},
+        description = ${description},
+        status = ${status},
+        updated_at = now()
+      WHERE id = ${id}
+      RETURNING *
+    `
+
+    return NextResponse.json(result[0])
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json(
+      { error: "Update failed" },
+      { status: 500 }
+    )
+  }
+}
+
+
+
 
 
 
