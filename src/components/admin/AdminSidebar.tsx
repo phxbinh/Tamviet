@@ -18,7 +18,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', href: '/admin' },
     { icon: CheckCircle2, label: 'Profiles', href: '/admin/profiles' },
-    { icon: Settings, label: 'Cài đặt', href: '/admin/settings' },
+    { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
   return (
