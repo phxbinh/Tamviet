@@ -1,5 +1,5 @@
 
-// src/app/(auth)/dashboard/layout.tsx
+// src/app/(app)/admin/layout.tsx
 // làm việc trên tài khoản của user
 
 import { getCurrentUser } from '@/lib/authActions/getUser';
