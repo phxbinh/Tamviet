@@ -1,5 +1,5 @@
 
-import { requireAdmin } from './requireAdmin';
+import { requireAdmin } from './RequireAdmin';
 import { ForbiddenError } from '../errors';
 
 // lib/auth/assertAdmin.ts
