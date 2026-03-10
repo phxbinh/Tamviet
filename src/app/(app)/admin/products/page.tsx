@@ -77,11 +77,11 @@ export default async function ProductsPage() {
         </div>
 
         <div className="w-full overflow-x-auto rounded-md border border-border bg-background">
-  <table className="w-full text-left border-collapse table-fixed min-w-[900px]">
+  <table className="w-full text-left border-collapse table-fixed min-w-[800px]">
     <thead>
       <tr className="bg-muted/5 text-muted-foreground border-b border-border">
         {/* CỘT STICKY: Cố định cột quan trọng nhất */}
-        <th className="sticky left-0 z-20 bg-background p-4 w-[280px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
+        <th className="sticky left-0 z-20 bg-background p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
           Designation
         </th>
         
