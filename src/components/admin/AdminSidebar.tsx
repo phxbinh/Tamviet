@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, CheckCircle2, Calendar, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
-import { UserAvatar } from './UserAvatar';
+import { UserAvatar } from '../dashboard/UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
 
 interface AdminSidebarProps {
