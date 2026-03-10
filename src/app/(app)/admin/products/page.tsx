@@ -76,81 +76,65 @@ export default async function ProductsPage() {
           <Activity className="w-3 h-3 text-neon-cyan animate-pulse" />
         </div>
 
-        <div className="w-full overflow-x-auto rounded-md border border-border bg-background">
-  <table className="w-full text-left border-collapse table-fixed min-w-[800px]">
-    <thead>
-      <tr className="bg-muted/5 text-muted-foreground border-b border-border">
-        {/* CỘT STICKY: Cố định cột quan trọng nhất */}
-        <th className="sticky left-0 z-20 bg-background p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
-          Designation
-        </th>
-        
-        {/* CÁC CỘT CÒN LẠI: Định nghĩa width rõ ràng */}
-        <th className="p-4 w-[180px] text-[10px] font-black uppercase tracking-[0.2em]">
-          Slug ID
-        </th>
-        <th className="p-4 w-[160px] text-[10px] font-black uppercase tracking-[0.2em]">
-          Class
-        </th>
-        <th className="p-4 w-[140px] text-[10px] font-black uppercase tracking-[0.2em]">
-          Op. Status
-        </th>
-        <th className="p-4 w-[140px] text-[10px] font-black uppercase tracking-[0.2em] text-right">
-          Timestamp
-        </th>
-      </tr>
-    </thead>
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-muted/10 text-muted-foreground border-b border-border">
+                <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Designation</th>
+                <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Slug ID</th>
+                <th className="p-4 w-[135px] text-[10px] font-black uppercase tracking-[0.2em]">Class</th>
+                <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Op. Status</th>
+                <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em] text-right">Timestamp</th>
+              </tr>
+            </thead>
 
-    <tbody className="divide-y divide-border">
-      {products.map((product) => (
-        <tr
-          key={product.id}
-          className="group hover:bg-primary/[0.02] transition-colors duration-200"
-        >
-          {/* CỘT STICKY TRONG BODY: Phải cùng màu nền với row hoặc dùng bg-background */}
-          <td className="sticky left-0 z-10 bg-background group-hover:bg-[#0c0c0e] p-4 shadow-[inset_-1px_0_0_0_#27272a] transition-colors">
-            <Link
-              href={`/admin/products/${product.id}`}
-              className="font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2 uppercase tracking-tight truncate"
-            >
-              <span className="truncate">{product.name}</span>
-              <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition-all -translate-x-1 group-hover:translate-x-0" />
-            </Link>
-          </td>
+            <tbody className="divide-y divide-border">
+              {products.map((product) => (
+                <tr
+                  key={product.id}
+                  className="group hover:bg-primary/[0.03] transition-all duration-300"
+                >
+                  <td className="p-4">
+                    <Link
+                      href={`/admin/products/${product.id}`}
+                      className="font-bold text-foreground group-hover:text-primary transition-colors flex items-center gap-2 uppercase tracking-tight"
+                    >
+                      {product.name}
+                      <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+                    </Link>
+                  </td>
 
-          <td className="p-4 font-mono text-[11px] text-muted-foreground opacity-60 truncate">
-            /{product.slug}
-          </td>
+                  <td className="p-4 font-mono text-[11px] text-muted-foreground opacity-60">
+                    /{product.slug}
+                  </td>
 
-          <td className="p-4">
-            <span className="text-[9px] font-bold uppercase tracking-widest bg-muted/50 px-2 py-1 rounded-[2px] border border-border/50">
-              {product.product_type_name ?? "UNCATEGORIZED"}
-            </span>
-          </td>
+                  <td className="p-4">
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-border/40 px-2 py-1 rounded-sm">
+                      {product.product_type_name ?? "UNCATEGORIZED"}
+                    </span>
+                  </td>
 
-          <td className="p-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-1.5 h-1.5 rounded-full ${
-                product.status === "active" ? "bg-neon-cyan shadow-[0_0_8px_#22d3ee]" : 
-                product.status === "draft" ? "bg-yellow-500" : "bg-muted-foreground"
-              }`} />
-              <span className={`text-[10px] font-black uppercase tracking-[0.1em] ${
-                product.status === "active" ? "text-foreground" : "text-muted-foreground"
-              }`}>
-                {product.status}
-              </span>
-            </div>
-          </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-1.5 h-1.5 rounded-full ${
+                        product.status === "active" ? "bg-neon-cyan shadow-[0_0_8px_#22d3ee]" : 
+                        product.status === "draft" ? "bg-yellow-500" : "bg-muted-foreground"
+                      }`} />
+                      <span className={`text-[10px] font-black uppercase tracking-[0.1em] ${
+                        product.status === "active" ? "text-foreground" : "text-muted-foreground"
+                      }`}>
+                        {product.status}
+                      </span>
+                    </div>
+                  </td>
 
-          <td className="p-4 text-right font-mono text-[10px] text-muted-foreground uppercase whitespace-nowrap">
-            {new Date(product.created_at).toLocaleDateString('en-GB')}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-
-
+                  <td className="p-4 text-right font-mono text-[10px] text-muted-foreground uppercase">
+                    {new Date(product.created_at).toLocaleDateString('en-GB')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
           {products.length === 0 && (
             <div className="p-20 text-center flex flex-col items-center justify-center gap-4">
