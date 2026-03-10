@@ -4,16 +4,6 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 import { Package, Plus, ExternalLink, Activity, Database, AlertCircle } from 'lucide-react';
 
-/*
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  status: "draft" | "active" | "archived";
-  product_type: string;
-  created_at: string;
-}
-*/
 interface Product {
   id: string
   name: string
@@ -23,10 +13,6 @@ interface Product {
   product_type_name: string | null
   created_at: string
 }
-
-
-
-
 
 async function getProducts(): Promise<Product[]> {
   const h = await headers();
