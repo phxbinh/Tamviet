@@ -205,15 +205,8 @@ export async function middleware(request: NextRequest) {
 
   // TH2: Đã đăng nhập
   if (user) {
-    // Lấy Role từ Database (Bảng profiles hoặc tương đương)
-    // Giả sử bạn có bảng 'profiles' với cột 'role'
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const isAdmin = await repuireAdmin(user.id) === 'admin'
+    // Check user.role === admin
+     const isAdmin = await repuireAdmin(user.id);
 
     // Nếu đã login mà cố vào trang Guest (Login/Signup)
     if (isGuestOnlyPage) {
