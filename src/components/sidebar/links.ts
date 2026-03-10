@@ -15,6 +15,14 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
+    name: 'Admin',
+    showInSidebar: true,
+    children: [
+      { name: 'Profiles user', href: '/admin/profiles' },
+    ],
+  },
+
+  {
     name: 'Todos',
     showInSidebar: true,
     children: [
