@@ -78,13 +78,13 @@ export default async function ProductsPage({
             <thead>
               <tr className="bg-muted/10 text-muted-foreground border-b border-border">
                 {/* STICKY COLUMN */}
-                <th className="left-0 z-20 bg-card p-4 w-[200px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
+                <th className="left-0 z-20 bg-card p-4 w-[250px] text-[10px] font-black uppercase tracking-[0.2em] shadow-[inset_-1px_0_0_0_#27272a]">
                   Designation
                 </th>
-                <th className="p-4 w-[200px] text-[10px] font-black uppercase tracking-[0.2em]">Slug ID</th>
-                <th className="p-4 w-[180px] text-[10px] font-black uppercase tracking-[0.2em]">Class</th>
-                <th className="p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">Op. Status</th>
-                <th className="p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em] text-right">Timestamp</th>
+                <th className="p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">Slug ID</th>
+                <th className="p-4 w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">Class</th>
+                <th className="p-4 w-[100px] text-[10px] font-black uppercase tracking-[0.2em]">Op. Status</th>
+                <th className="p-4 w-[100px] text-[10px] font-black uppercase tracking-[0.2em] text-right">Timestamp</th>
               </tr>
             </thead>
 
