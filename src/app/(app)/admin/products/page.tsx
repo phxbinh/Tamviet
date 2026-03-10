@@ -82,7 +82,7 @@ export default async function ProductsPage() {
               <tr className="bg-muted/10 text-muted-foreground border-b border-border">
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Designation</th>
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Slug ID</th>
-                <th className="p-4 w-[135px] text-[10px] font-black uppercase tracking-[0.2em]">Class</th>
+                <th className="p-4 min-w-[150px] text-[10px] font-black uppercase tracking-[0.2em]">Class</th>
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em]">Op. Status</th>
                 <th className="p-4 text-[10px] font-black uppercase tracking-[0.2em] text-right">Timestamp</th>
               </tr>
