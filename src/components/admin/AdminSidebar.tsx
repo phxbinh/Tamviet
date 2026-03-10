@@ -19,6 +19,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: LayoutDashboard, label: 'Tổng quan', href: '/admin' },
     { icon: CheckCircle2, label: 'Profiles', href: '/admin/profiles' },
     { icon: Boxes, label: 'Products', href: '/admin/products' },
+    { icon: Box, label: 'Product test', href: '/admin/product-test' },
     { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
