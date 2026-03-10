@@ -15,14 +15,6 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
-    name: 'Admin',
-    showInSidebar: true,
-    children: [
-      { name: 'Profiles user', href: '/admin/profiles' },
-    ],
-  },
-
-  {
     name: 'Todos',
     showInSidebar: true,
     children: [
@@ -58,8 +50,6 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Markdown', href: '/test', showInSidebar: true },
 
-  { name: 'Profile', href: '/profile', showInSidebar: true },
-  { name: 'Settings', href: '/settings', showInSidebar: true },
 ];
 
 
