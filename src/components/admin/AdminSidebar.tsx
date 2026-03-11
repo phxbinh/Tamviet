@@ -18,9 +18,10 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
   const menuItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', href: '/admin' },
     { icon: CheckCircle2, label: 'Profiles', href: '/admin/profiles' },
+    { icon: Tag, label: 'Product types', href: '/admin/product-types' },
     { icon: Boxes, label: 'Products', href: '/admin/products' },
     { icon: Box, label: 'Product test', href: '/admin/product-test' },
-    { icon: Tag, label: 'Product types', href: '/admin/product-types' },
+    { icon: Tag, label: 'Attributes', href: '/admin/attributes' },
     { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
