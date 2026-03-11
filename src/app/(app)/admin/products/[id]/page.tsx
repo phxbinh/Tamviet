@@ -61,21 +61,11 @@ async function getProducts(): Promise<Product[]> {
 
 
 async function getProduct(id: string): Promise<Product> {
-/*
+
   const h = await headers();
-
   const host = h.get('host')!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-  const res = await fetch(`${protocol}://${host}/api/admin/products`, {
-    cache: 'no-store',
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    },
-  });
-*/
-  const host = (await headers()).get("host")!;
+  //const host = (await headers()).get("host")!;
   const protocol =
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
@@ -92,45 +82,54 @@ async function getProduct(id: string): Promise<Product> {
 }
 
 async function getAttributes(id: string): Promise<Attribute[]> {
-  const host = (await headers()).get("host");
+  //const host = (await headers()).get("host");
+  const h = await headers();
+  const host = h.get('host')!;
   const protocol =
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attributes`,
     { cache: "no-store", 
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    }, }
+      headers: {
+        cookie: h.get('cookie') ?? '',
+      },
+    }
   );
 
   return res.json();
 }
 
 async function getAttributeValues(id: string): Promise<AttributeValues[]> {
-  const host = (await headers()).get("host");
+  //const host = (await headers()).get("host");
+  const h = await headers();
+  const host = h.get('host')!;
   const protocol =
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attribute-values`,
     { cache: "no-store", 
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    }, }
+      headers: {
+        cookie: h.get('cookie') ?? '',
+      },
+    }
   );
 
   return res.json();
 }
 
 async function getVariantMatrix(id: string): Promise<Variant[]> {
-  const host = (await headers()).get("host");
+  //const host = (await headers()).get("host");
+  const h = await headers();
+  const host = h.get('host')!;
   const protocol =
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/variant-matrix`,
     { cache: "no-store", 
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    }, }
+      headers: {
+        cookie: h.get('cookie') ?? '',
+      },
+    }
   );
 
   return res.json();
