@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
 
 interface Product {
   id: string;
@@ -24,6 +25,104 @@ async function getProducts(): Promise<Product[]> {
 }
 
 export default async function ProductsPage() {
+  const products = await getProducts();
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-6 py-16 space-y-12 animate-fade-in">
+      
+      {/* ELEGANT HEADER */}
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex items-center gap-2 text-primary tracking-[0.4em] text-[10px] font-black uppercase italic">
+          <Sparkles className="w-3 h-3" />
+          Curated Collection
+        </div>
+        <h1 className="text-4xl md:text-5xl font-light tracking-tighter text-foreground">
+          The <span className="font-black italic">Signature</span> Series
+        </h1>
+        <div className="h-1 w-20 bg-primary/20 rounded-full" />
+      </div>
+
+      {/* PRODUCT GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+        {products.map((p) => (
+          <Link
+            key={p.id}
+            href={`/products/${p.id}`}
+            className="group block relative"
+          >
+            {/* IMAGE CONTAINER */}
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#F8F8F8] rounded-2xl transition-all duration-700 ease-out group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
+              {p.thumbnail_url ? (
+                <img
+                  src={p.thumbnail_url}
+                  alt={p.name}
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground/20">
+                  <ShoppingBag className="w-12 h-12 stroke-[1]" />
+                </div>
+              )}
+
+              {/* OVERLAY BUTTON (DESKTOP) */}
+              <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                 <span className="bg-white text-black px-6 py-3 text-[10px] font-black uppercase tracking-widest shadow-2xl flex items-center gap-2 whitespace-nowrap rounded-full">
+                   View Details <ArrowRight className="w-3 h-3" />
+                 </span>
+              </div>
+            </div>
+
+            {/* PRODUCT INFO */}
+            <div className="mt-6 space-y-2 text-center px-2">
+              <h3 className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors duration-300 tracking-tight">
+                {p.name}
+              </h3>
+              
+              <div className="flex flex-col items-center gap-1">
+                {p.price_min ? (
+                  <p className="text-lg font-black tracking-tighter text-foreground">
+                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price_min)}
+                  </p>
+                ) : (
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                    Contact for valuation
+                  </p>
+                )}
+                
+                {/* Dấu gạch trang trí nhỏ dưới giá */}
+                <div className="w-0 group-hover:w-8 h-[1.5px] bg-primary/40 transition-all duration-500 mx-auto" />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* FOOTER: Quality Assurance */}
+      <div className="pt-20 flex flex-col items-center opacity-30 gap-4">
+        <div className="flex gap-8">
+            <div className="flex flex-col items-center gap-1">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em]">Pure Quality</span>
+                <div className="w-1 h-1 rounded-full bg-foreground" />
+            </div>
+            <div className="flex flex-col items-center gap-1">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em]">Direct Delivery</span>
+                <div className="w-1 h-1 rounded-full bg-foreground" />
+            </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+//export default
+async function ProductsPage_() {
   const products = await getProducts();
 
   return (
