@@ -256,12 +256,12 @@ export default async function ProductsPage() {
 
                   <td className="p-5 text-right">
                     <div className={`inline-flex items-center gap-2 px-3 py-1 border text-[9px] font-black uppercase tracking-widest ${
-                      product.is_active 
+                      product.status 
                         ? 'bg-green-500/5 border-green-500/20 text-green-600' 
                         : 'bg-red-500/5 border-red-500/20 text-red-500'
                     }`}>
-                      <div className={`w-1.5 h-1.5 rounded-full ${product.is_active ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                      {product.is_active ? "Active" : "Draft"}
+                      <div className={`w-1.5 h-1.5 rounded-full ${product.status ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                      {product.status ? "Active" : "Draft"}
                     </div>
                   </td>
                 </tr>
