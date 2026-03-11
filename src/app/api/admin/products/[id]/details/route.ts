@@ -95,7 +95,7 @@ export async function GET(
         slug: product.slug,
         description: product.description,
         category_id: product.category_id,
-        is_active: product.is_active,
+        status: product.status,
         created_at: product.created_at,
         updated_at: product.updated_at,
       },
