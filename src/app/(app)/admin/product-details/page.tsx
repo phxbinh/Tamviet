@@ -134,7 +134,7 @@ export default async function ProductsPage() {
                     key={product.id} 
                     className="group hover:bg-primary/[0.02] transition-all duration-300"
                   >
-{/*
+
                     <td className="p-5">
                       <Link
                         href={`/admin/product-details/${product.id}`}
@@ -144,40 +144,18 @@ export default async function ProductsPage() {
                           {product.name}
                           <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
                         </span>
-                        <span className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-tighter">
-                          ID: {product.id.split('-')[0]}
-                        </span>
+                        
+                        <div className="flex items-center gap-2">
+                          {/* Label loại sản phẩm - Nhìn rất kỹ thuật và chuyên nghiệp */}
+                          <span className="text-[8px] font-black text-primary border border-primary/20 px-1 py-0.5 uppercase tracking-[0.1em] bg-primary/5">
+                            {product.product_type_name || 'System.Generic'}
+                          </span>
+                          <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-tighter">
+                            ID: {product.id.split('-')[0]}
+                          </span>
+                        </div>
                       </Link>
                     </td>
-*/}
-
-
-<td className="p-5">
-  <Link
-    href={`/admin/product-details/${product.id}`}
-    className="flex flex-col gap-1 group/link"
-  >
-    <span className="text-sm font-black uppercase tracking-tight group-hover/link:text-primary transition-colors flex items-center gap-2">
-      {product.name}
-      <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
-    </span>
-    
-    <div className="flex items-center gap-2">
-      {/* Label loại sản phẩm - Nhìn rất kỹ thuật và chuyên nghiệp */}
-      <span className="text-[8px] font-black text-primary border border-primary/20 px-1 py-0.5 uppercase tracking-[0.1em] bg-primary/5">
-        {product.product_type_name || 'System.Generic'}
-      </span>
-      <span className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-tighter">
-        ID: {product.id.split('-')[0]}
-      </span>
-    </div>
-  </Link>
-</td>
-
-
-
-
-
 
                     <td className="p-5">
                       <span className="text-[10px] font-mono opacity-50 lowercase tracking-tighter">
