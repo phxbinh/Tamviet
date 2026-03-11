@@ -32,7 +32,7 @@ async function GET_() {
   }
 }
 
-export async function GET() {
+async function GET__() {
   try {
     const result = await sql`
       select
@@ -68,7 +68,8 @@ export async function GET() {
 }
 
 
- async function GET__(req: Request) {
+export async function GET(req: Request) {
+  // 1. Lấy searchParams từ URL
   const { searchParams } = new URL(req.url);
   const typeId = searchParams.get('type');
   const status = searchParams.get('status');
@@ -76,7 +77,11 @@ export async function GET() {
   try {
     const result = await sql`
       select
-        p.id, p.name, p.slug, p.status, p.created_at,
+        p.id,
+        p.name,
+        p.slug,
+        p.status,
+        p.created_at,
         pt.name as product_type_name,
         coalesce(sum(v.stock), 0) as total_stock,
         coalesce(min(v.price), 0) as min_price,
@@ -85,15 +90,26 @@ export async function GET() {
       from products p
       left join product_types pt on pt.id = p.product_type_id
       left join product_variants v on v.product_id = p.id
+      
+      -- 2. Thêm logic lọc động
       where 1=1
-        ${typeId ? sql`and p.product_type_id = ${typeId}` : sql``}
-        ${status ? sql`and p.status = ${status}` : sql``}
+      ${typeId ? sql`and p.product_type_id = ${typeId}` : sql``}
+      ${status ? sql`and p.status = ${status}` : sql``}
+      
       group by p.id, pt.name
       order by p.created_at desc
     `;
+
     return NextResponse.json(result);
-  } catch (err) { /* ... error handling ... */ }
+  } catch (err) {
+    console.error("Admin products fetch error:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
 }
+
 
 
 
