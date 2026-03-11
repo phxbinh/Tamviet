@@ -1,5 +1,3 @@
-
-// src/app/(app)/admin/product-variants/[id]/variants/[variantId]/pqge.tsx
 // src/app/(app)/admin/product-variants/[id]/variants/[variantId]/page.tsx
 import VariantForm from "@/components/product-variants/VariantForm";
 import { ChevronLeft, Edit3 } from "lucide-react";
