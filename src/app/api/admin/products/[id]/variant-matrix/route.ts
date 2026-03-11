@@ -1,4 +1,5 @@
 // src/app/api/admin/products/[id]/variant-matrix/route.ts
+
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
@@ -7,13 +8,6 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "product id is required" },
-      { status: 400 }
-    );
-  }
 
   try {
     const rows = await sql`
@@ -32,7 +26,8 @@ export async function GET(
       join attributes a
         on a.id = av.attribute_id
       where v.product_id = ${id}
-      order by v.id
+      and v.is_active = true
+      order by v.created_at, a.name
     `;
 
     const map = new Map();
@@ -52,14 +47,12 @@ export async function GET(
         row.attribute_value;
     }
 
-    const result = Array.from(map.values());
-
-    return NextResponse.json(result);
+    return NextResponse.json(Array.from(map.values()));
   } catch (err) {
-    console.error(err);
+    console.error("variant-matrix error:", err);
 
     return NextResponse.json(
-      { error: "Failed to fetch variant matrix" },
+      { error: "Failed to fetch variants" },
       { status: 500 }
     );
   }
