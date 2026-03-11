@@ -1,4 +1,4 @@
-// src/app/api/admin/products/product-join/route.ts
+// src/app/api/admin/products/detail-join/route.ts
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
