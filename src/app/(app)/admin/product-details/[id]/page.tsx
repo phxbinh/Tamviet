@@ -5,14 +5,14 @@ import { redirect } from 'next/navigation';
 
 
 
-async function getProductFull(id: string) {
+async function getProductFullDetails(id: string) {
   const h = await headers();
 
   const host = h.get('host')!;
   const protocol =
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/full`, {
+  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/details`, {
     cache: 'no-store',
     headers: {
       cookie: h.get('cookie') ?? '',
@@ -35,7 +35,7 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
 
-  const data = await getProductFull(id);
+  const data = await getProductFullDetails(id);
 
   return (
 
