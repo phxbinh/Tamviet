@@ -142,7 +142,7 @@ async function getProducts() {
 }
 
 // export default async
-function ProductsPage_() {
+async function ProductsPage_() {
   const products = await getProducts();
 
   return (
