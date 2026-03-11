@@ -24,7 +24,7 @@ export const sidebarLinks: SidebarLink[] = [
       { name: 'TodoImageGrok', href: '/todoImageGrok' },
     ],
   },
-
+/*
   {
     name: 'Products Management',
     showInSidebar: true,
@@ -45,7 +45,7 @@ export const sidebarLinks: SidebarLink[] = [
       { name: 'All Attributes', href: '/admin/attributes' },
     ],
   },
-
+*/
   { name: 'About', href: '/about', showInSidebar: true },
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Markdown', href: '/test', showInSidebar: true },
