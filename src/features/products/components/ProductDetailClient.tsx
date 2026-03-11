@@ -54,7 +54,211 @@ interface ProductFull {
   images: ProductImage[];
 }
 
+
+// --- INTERFACES (Giữ nguyên cấu trúc DNA dữ liệu) ---
+/*
+interface AttributeValue { id: string; value: string; }
+interface Attribute { id: string; name: string; values: AttributeValue[]; }
+interface Variant { id: string; sku: string; price: number; stock: number; attributes: Record<string, string>; }
+interface ProductImage { id: string; url: string; is_thumbnail: boolean; }
+interface Product { id: string; name: string; description?: string; }
+interface ProductFull { product: Product; attributes: Attribute[]; variants: Variant[]; images: ProductImage[]; }
+*/
+
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
+  const { product, attributes, variants, images } = data;
+  const [selected, setSelected] = useState<Record<string, string>>({});
+  const [isAdding, setIsAdding] = useState(false);
+
+  const selectedVariant = useMemo(() => {
+    if (Object.keys(selected).length < attributes.length) return null;
+    return variants.find((variant) =>
+      Object.entries(selected).every(([key, value]) => variant.attributes[key] === value)
+    );
+  }, [selected, variants, attributes.length]);
+
+  const mainImage = useMemo(() => {
+    return images.find(img => img.is_thumbnail)?.url || images[0]?.url;
+  }, [images]);
+
+  const selectAttribute = (attrName: string, value: string) => {
+    setSelected((prev) => ({ ...prev, [attrName]: value }));
+  };
+
+  const allSelected = Object.keys(selected).length === attributes.length;
+
+  return (
+    <div className="max-w-[1300px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 py-12 px-6 animate-fade-in custom-scrollbar">
+      
+      {/* LEFT: VISUAL MASTERPIECE */}
+      <div className="lg:col-span-7">
+        <div className="sticky top-12 space-y-6">
+          <div className="aspect-[4/5] bg-card rounded-[2.5rem] overflow-hidden relative group border border-border shadow-sm">
+            <div className="absolute top-8 left-8 z-10">
+              <span className="bg-background/80 backdrop-blur-md text-foreground px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-border shadow-sm flex items-center gap-2">
+                <Zap className="w-3 h-3 text-primary animate-pulse" /> Premium Edition
+              </span>
+            </div>
+
+            {mainImage ? (
+              <img 
+                src={mainImage} 
+                alt={product.name} 
+                className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-border">
+                <ShoppingBag className="w-32 h-32 stroke-[0.5]" />
+              </div>
+            )}
+
+            <div className="absolute right-8 top-8 space-y-4 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+              <button className="p-4 bg-background text-foreground border border-border rounded-full shadow-2xl hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                <Heart className="w-5 h-5" />
+              </button>
+              <button className="p-4 bg-background text-foreground border border-border rounded-full shadow-2xl hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: CONFIGURATION & CONVERSION */}
+      <div className="lg:col-span-5 space-y-10">
+        
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+            <Star className="w-3 h-3 fill-current" /> Authentic Registry
+          </div>
+          <h1 className="text-5xl font-black tracking-tighter uppercase italic text-foreground leading-[0.95]">
+            {product.name}
+          </h1>
+          
+          <div className="flex items-baseline gap-4 pt-4 border-t border-border">
+            {selectedVariant ? (
+              <div className="animate-fade-in">
+                <span className="text-4xl font-black tracking-tighter text-foreground">
+                  {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
+                </span>
+                <span className="ml-2 text-sm font-bold opacity-40 italic tracking-widest text-foreground uppercase">VND</span>
+              </div>
+            ) : (
+              <p className="text-lg font-medium italic text-muted-foreground opacity-60">
+                Lựa chọn cấu hình để nhận báo giá...
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* ATTRIBUTE SELECTORS */}
+        <div className="space-y-8">
+          {attributes.map((attr) => (
+            <div key={attr.id} className="space-y-4">
+              <span className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground/40">
+                {attr.name}
+              </span>
+
+              <div className="flex gap-3 flex-wrap">
+                {attr.values.map((v) => {
+                  const active = selected[attr.name] === v.value;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => selectAttribute(attr.name, v.value)}
+                      className={`
+                        min-w-[70px] px-6 py-4 text-[11px] font-black uppercase tracking-widest transition-all duration-300 rounded-2xl border
+                        ${active 
+                          ? "bg-foreground text-background border-foreground shadow-xl -translate-y-1" 
+                          : "bg-card border-border text-foreground/60 hover:border-primary hover:text-primary"
+                        }
+                      `}
+                    >
+                      {v.value}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ACTION HUB */}
+        <div className="space-y-6 pt-8 border-t border-border">
+          {selectedVariant && (
+            <div className="flex items-center justify-between px-6 py-4 bg-card rounded-2xl border border-border animate-fade-in">
+              <div className="flex flex-col">
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Serial / SKU</span>
+                <span className="text-xs font-mono font-bold text-foreground">{selectedVariant.sku}</span>
+              </div>
+              <div className="text-right">
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Reserves</span>
+                <p className={`text-xs font-bold ${selectedVariant.stock < 10 ? 'text-red-500 animate-breathe-danger' : 'text-primary'}`}>
+                  {selectedVariant.stock < 10 ? `Critical: ${selectedVariant.stock}` : `Stock: ${selectedVariant.stock}`}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-4">
+            <button
+              disabled={!selectedVariant || isAdding}
+              onClick={() => {
+                setIsAdding(true);
+                setTimeout(() => setIsAdding(false), 2000);
+              }}
+              className={`
+                group relative w-full py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] transition-all duration-500
+                ${selectedVariant 
+                  ? "bg-primary text-white hover:shadow-[0_20px_40px_rgba(var(--primary),0.3)] active:scale-95" 
+                  : "bg-border text-foreground/20 cursor-not-allowed"
+                }
+              `}
+            >
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                {isAdding ? "Processing..." : "Secure Selection"}
+                <ArrowRight className={`w-4 h-4 transition-transform duration-500 ${selectedVariant && 'group-hover:translate-x-2'}`} />
+              </div>
+            </button>
+            
+            {!allSelected && (
+              <p className="text-center text-[9px] font-black uppercase tracking-[0.2em] text-primary animate-breathe-slow italic">
+                Chưa hoàn tất cấu hình DNA sản phẩm
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* TRUST SIGNALS */}
+        <div className="grid grid-cols-2 gap-4 pt-6">
+          {[
+            { icon: Truck, title: "Swift Logistic", desc: "Express Delivery" },
+            { icon: ShieldCheck, title: "Global Warranty", desc: "Authentic Only" }
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col gap-3 p-6 rounded-[2rem] bg-card border border-border group hover:border-primary transition-all duration-500">
+               <item.icon className="w-5 h-5 text-primary" />
+               <div className="space-y-1">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-foreground">{item.title}</p>
+                 <p className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">{item.desc}</p>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+//export default
+function ProductDetailClient_({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
 
   // 1. State quản lý cấu hình đã chọn
