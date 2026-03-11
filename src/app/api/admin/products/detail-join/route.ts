@@ -32,7 +32,7 @@ async function GET_() {
   }
 }
 
-export async function GET() {
+async function GET__() {
   try {
     const result = await sql`
       select
@@ -68,6 +68,32 @@ export async function GET() {
 }
 
 
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const typeId = searchParams.get('type');
+  const status = searchParams.get('status');
+
+  try {
+    const result = await sql`
+      select
+        p.id, p.name, p.slug, p.status, p.created_at,
+        pt.name as product_type_name,
+        coalesce(sum(v.stock), 0) as total_stock,
+        coalesce(min(v.price), 0) as min_price,
+        coalesce(max(v.price), 0) as max_price,
+        count(v.id) as variant_count
+      from products p
+      left join product_types pt on pt.id = p.product_type_id
+      left join product_variants v on v.product_id = p.id
+      where 1=1
+        ${typeId ? sql`and p.product_type_id = ${typeId}` : sql``}
+        ${status ? sql`and p.status = ${status}` : sql``}
+      group by p.id, pt.name
+      order by p.created_at desc
+    `;
+    return NextResponse.json(result);
+  } catch (err) { /* ... error handling ... */ }
+}
 
 
 
