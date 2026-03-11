@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
+/*
 export async function GET(
   req: Request,
   context: { params: Promise<{ id: string }> }
@@ -42,3 +43,5 @@ const { id } = await context.params
     );
   }
 }
+
+*/
