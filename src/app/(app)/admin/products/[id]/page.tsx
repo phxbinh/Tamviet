@@ -81,6 +81,9 @@ async function getProduct(id: string): Promise<Product> {
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}`, {
     cache: "no-store",
+    headers: {
+      cookie: h.get('cookie') ?? '',
+    },
   });
 
   if (!res.ok) throw new Error("Failed to fetch product");
@@ -94,7 +97,10 @@ async function getAttributes(id: string): Promise<Attribute[]> {
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attributes`,
-    { cache: "no-store" }
+    { cache: "no-store", 
+    headers: {
+      cookie: h.get('cookie') ?? '',
+    }, }
   );
 
   return res.json();
@@ -106,7 +112,10 @@ async function getAttributeValues(id: string): Promise<AttributeValues[]> {
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attribute-values`,
-    { cache: "no-store" }
+    { cache: "no-store", 
+    headers: {
+      cookie: h.get('cookie') ?? '',
+    }, }
   );
 
   return res.json();
@@ -118,7 +127,10 @@ async function getVariantMatrix(id: string): Promise<Variant[]> {
     process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/variant-matrix`,
-    { cache: "no-store" }
+    { cache: "no-store", 
+    headers: {
+      cookie: h.get('cookie') ?? '',
+    }, }
   );
 
   return res.json();
