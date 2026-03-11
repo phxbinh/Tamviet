@@ -4,7 +4,7 @@ import { sql } from "@/lib/neon/sql";
 async function GET_() {
   try {
     // Truy vấn kết hợp bảng products và product_variants
-    /*const result = await sql`
+    const result = await sql`
       select
         p.id,
         p.name,
@@ -20,29 +20,7 @@ async function GET_() {
       left join product_variants v on v.product_id = p.id
       group by p.id
       order by p.created_at desc
-    `;*/
-
-
-// Sửa lại phần WHERE trong file API route.ts
-const result = await sql`
-  select
-    p.id, p.name, p.slug, p.status, p.created_at,
-    pt.name as product_type_name,
-    coalesce(sum(v.stock), 0) as total_stock,
-    coalesce(min(v.price), 0) as min_price,
-    coalesce(max(v.price), 0) as max_price,
-    count(v.id) as variant_count
-  from products p
-  left join product_types pt on pt.id = p.product_type_id
-  left join product_variants v on v.product_id = p.id
-  where 
-    (${typeId}::text is null or p.product_type_id = ${typeId})
-    and (${status}::text is null or p.status = ${status})
-  group by p.id, pt.name
-  order by p.created_at desc
-`;
-
-
+    `;
 
     return NextResponse.json(result);
   } catch (err) {
@@ -89,7 +67,7 @@ async function GET__() {
   }
 }
 
-
+/*
 export async function GET(req: Request) {
   // 1. Lấy searchParams từ URL
   const { searchParams } = new URL(req.url);
@@ -118,6 +96,48 @@ export async function GET(req: Request) {
       ${typeId ? sql`and p.product_type_id = ${typeId}` : sql``}
       ${status ? sql`and p.status = ${status}` : sql``}
       
+      group by p.id, pt.name
+      order by p.created_at desc
+    `;
+
+    return NextResponse.json(result);
+  } catch (err) {
+    console.error("Admin products fetch error:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+*/
+
+
+export async function GET(req: Request) {
+  // 1. PHẢI CÓ DÒNG NÀY: Lấy tham số từ URL
+  const { searchParams } = new URL(req.url);
+  const typeId = searchParams.get('type');   // <-- Khai báo typeId ở đây
+  const status = searchParams.get('status'); // <-- Khai báo status ở đây
+
+  try {
+    // 2. Bây giờ biến typeId và status mới tồn tại để dùng trong này
+    const result = await sql`
+      select
+        p.id,
+        p.name,
+        p.slug,
+        p.status,
+        p.created_at,
+        pt.name as product_type_name,
+        coalesce(sum(v.stock), 0) as total_stock,
+        coalesce(min(v.price), 0) as min_price,
+        coalesce(max(v.price), 0) as max_price,
+        count(v.id) as variant_count
+      from products p
+      left join product_types pt on pt.id = p.product_type_id
+      left join product_variants v on v.product_id = p.id
+      where 
+        (${typeId}::text is null or p.product_type_id = ${typeId})
+        and (${status}::text is null or p.status = ${status})
       group by p.id, pt.name
       order by p.created_at desc
     `;
