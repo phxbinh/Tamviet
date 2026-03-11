@@ -141,7 +141,8 @@ async function getProducts() {
   return res.json();
 }
 
-export default async function ProductsPage() {
+// export default async
+function ProductsPage_() {
   const products = await getProducts();
 
   return (
@@ -279,3 +280,148 @@ export default async function ProductsPage() {
     </div>
   );
 }
+
+
+
+
+
+export default async function ProductsPage() {
+  const products = await getProducts();
+
+  // Helper function để định nghĩa style cho từng trạng thái
+  const getStatusConfig = (status: string) => {
+    const s = status?.toLowerCase();
+    switch (s) {
+      case 'active':
+        return {
+          label: 'Active',
+          container: 'bg-emerald-500/5 border-emerald-500/20 text-emerald-600',
+          dot: 'bg-emerald-500 animate-pulse'
+        };
+      case 'draft':
+        return {
+          label: 'Draft',
+          container: 'bg-amber-500/5 border-amber-500/20 text-amber-600',
+          dot: 'bg-amber-500'
+        };
+      case 'archived':
+        return {
+          label: 'Archived',
+          container: 'bg-slate-500/5 border-slate-500/20 text-slate-500',
+          dot: 'bg-slate-400'
+        };
+      default:
+        return {
+          label: status || 'Unknown',
+          container: 'bg-muted border-border text-muted-foreground',
+          dot: 'bg-muted-foreground'
+        };
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in py-2">
+      {/* ... Header Section giữ nguyên ... */}
+
+      {/* PRODUCT MATRIX TABLE */}
+      <div className="bg-card border border-border shadow-2xl overflow-hidden relative">
+        {/* ... Info Bar giữ nguyên ... */}
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-muted/10 border-b border-border text-muted-foreground">
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em]">Designation (Name)</th>
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em]">Slug Path</th>
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em]">Reserves</th>
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em]">Valuation Range</th>
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em]">Clusters</th>
+                <th className="p-5 text-[9px] font-black uppercase tracking-[0.3em] text-right">Operational Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {products.map((product: any) => {
+                const statusStyle = getStatusConfig(product.status);
+                
+                return (
+                  <tr 
+                    key={product.id} 
+                    className="group hover:bg-primary/[0.02] transition-all duration-300"
+                  >
+                    <td className="p-5">
+                      <Link
+                        href={`/admin/product-details/${product.id}`}
+                        className="flex flex-col gap-1 group/link"
+                      >
+                        <span className="text-sm font-black uppercase tracking-tight group-hover/link:text-primary transition-colors flex items-center gap-2">
+                          {product.name}
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                        </span>
+                        <span className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-tighter">
+                          ID: {product.id.split('-')[0]}
+                        </span>
+                      </Link>
+                    </td>
+
+                    <td className="p-5">
+                      <span className="text-[10px] font-mono opacity-50 lowercase tracking-tighter">
+                        /{product.slug}
+                      </span>
+                    </td>
+
+                    <td className="p-5">
+                      <div className="flex items-center gap-2 font-mono font-bold text-xs">
+                         <Box className="w-3 h-3 opacity-30" />
+                         {product.total_stock?.toString().padStart(3, '0') || '000'}
+                      </div>
+                    </td>
+
+                    <td className="p-5">
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-black tracking-tighter">
+                          {new Intl.NumberFormat('vi-VN').format(product.min_price || 0)} 
+                          <span className="mx-1 opacity-30">→</span>
+                          {new Intl.NumberFormat('vi-VN').format(product.max_price || 0)}
+                        </span>
+                        <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">Currency: VND</span>
+                      </div>
+                    </td>
+
+                    <td className="p-5">
+                      <div className="inline-flex items-center gap-2 px-2 py-1 bg-muted/50 border border-border text-[10px] font-black">
+                        <Layers className="w-3 h-3 opacity-50" />
+                        {product.variant_count}
+                      </div>
+                    </td>
+
+                    <td className="p-5 text-right">
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 border text-[9px] font-black uppercase tracking-widest transition-all duration-500 ${statusStyle.container}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.1)] ${statusStyle.dot}`} />
+                        {statusStyle.label}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* SYSTEM FOOTER */}
+      <div className="flex items-center justify-between opacity-30 px-2 pt-4">
+        <p className="text-[9px] font-black uppercase tracking-[0.4em]">Strategic Registry Interface v4.0</p>
+        <PackageSearch className="w-4 h-4" />
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
