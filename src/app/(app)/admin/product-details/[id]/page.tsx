@@ -108,15 +108,46 @@ import {
   ShieldCheck,
   Zap,
   DollarSign,
-  Archive
+  Archive,
+  Activity
 } from "lucide-react";
+
+// Helper function đồng bộ style status
+const getStatusConfig = (status: string) => {
+  const s = status?.toLowerCase();
+  switch (s) {
+    case 'active':
+      return {
+        label: 'Operational: Active',
+        container: 'border-emerald-500 text-emerald-500 bg-emerald-500/5',
+        dot: 'bg-emerald-500 animate-pulse'
+      };
+    case 'draft':
+      return {
+        label: 'System: Draft',
+        container: 'border-amber-500 text-amber-500 bg-amber-500/5',
+        dot: 'bg-amber-500'
+      };
+    case 'archived':
+      return {
+        label: 'State: Archived',
+        container: 'border-slate-500 text-slate-500 bg-slate-500/5',
+        dot: 'bg-slate-400'
+      };
+    default:
+      return {
+        label: `State: ${status || 'Unknown'}`,
+        container: 'border-muted text-muted-foreground bg-muted/5',
+        dot: 'bg-muted-foreground'
+      };
+  }
+};
 
 async function getProductFullDetails(id: string) {
   const h = await headers();
   const host = h.get('host')!;
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-  // Chú ý: URL API khớp với cấu trúc route bạn đã cung cấp: /api/admin/products/[id]/details
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/details`, {
     cache: 'no-store',
     headers: {
@@ -142,6 +173,7 @@ export default async function ProductDetailPage({
   if (!data) return <div className="p-20 text-center font-black uppercase tracking-widest text-red-500">Critical Error: Data Retrieval Failed</div>;
 
   const { product, summary, variants, attributes, images } = data;
+  const statusStyle = getStatusConfig(product.status);
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8 py-8 px-4 sm:px-6 animate-fade-in custom-scrollbar">
@@ -150,7 +182,7 @@ export default async function ProductDetailPage({
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border pb-8">
         <div className="space-y-3">
           <Link 
-            href="/admin/product-variants" 
+            href="/admin/products" // Cập nhật lại route danh sách chính xác của bạn
             className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground hover:text-primary transition-all"
           >
             <ChevronLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> 
@@ -160,15 +192,16 @@ export default async function ProductDetailPage({
             <h1 className="text-4xl font-black tracking-tighter uppercase italic text-foreground leading-none">
               {product.name}
             </h1>
-            <div className="flex items-center gap-4 mt-3">
+            <div className="flex items-center gap-4 mt-4">
               <span className="text-[10px] bg-primary text-white px-2 py-0.5 font-bold uppercase tracking-widest">
                 ID: {product.id.split('-')[0]}
               </span>
-              <span className={`text-[10px] px-2 py-0.5 font-bold border uppercase tracking-widest ${
-                product.status ? 'border-green-500 text-green-500 bg-green-500/5' : 'border-red-500 text-red-500 bg-red-500/5'
-              }`}>
-                {product.status ? 'Status: Active' : 'Status: Inactive'}
-              </span>
+              
+              {/* STATUS BADGE FIXED */}
+              <div className={`flex items-center gap-2 px-3 py-0.5 border text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${statusStyle.container}`}>
+                <div className={`w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
+                {statusStyle.label}
+              </div>
             </div>
           </div>
         </div>
@@ -185,7 +218,7 @@ export default async function ProductDetailPage({
         {[
           { label: 'Total Inventory', value: summary.total_stock, icon: Box, color: 'text-primary' },
           { label: 'Variant Clusters', value: summary.variant_count, icon: Layers, color: 'text-blue-500' },
-          { label: 'Min Valuation', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(summary.min_price), icon: DollarSign, color: 'text-green-500' },
+          { label: 'Min Valuation', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(summary.min_price), icon: DollarSign, color: 'text-emerald-500' },
           { label: 'Max Valuation', value: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(summary.max_price), icon: BarChart3, color: 'text-orange-500' },
         ].map((stat, i) => (
           <div key={i} className="bg-card border border-border p-6 shadow-sm group hover:border-primary transition-all relative overflow-hidden">
@@ -305,11 +338,15 @@ export default async function ProductDetailPage({
       <div className="flex items-center justify-between opacity-30 pt-10">
         <p className="text-[9px] font-black uppercase tracking-[0.5em]">Global Asset Management Protocol v4.0</p>
         <div className="h-[1px] flex-grow mx-8 bg-muted-foreground opacity-20" />
-        <p className="text-[9px] font-black uppercase tracking-[0.5em]">Synchronized: {new Date(product.updated_at).toLocaleDateString()}</p>
+        <p className="text-[9px] font-black uppercase tracking-[0.5em]">
+            <Activity className="w-3 h-3 inline mr-2" />
+            Last Sync: {new Date(product.updated_at).toLocaleDateString('vi-VN')}
+        </p>
       </div>
     </div>
   );
 }
+
 
 
 
