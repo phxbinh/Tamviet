@@ -9,6 +9,7 @@ Chỉ chạy với:
 // src/app/(app)/admin/products/[id]/page.tsx
 import { headers } from "next/headers";
 import Link from "next/link";
+import CopySkusButton from "../_components/CopySkusButton";
 import { 
   ChevronLeft, 
   Package, 
@@ -102,6 +103,7 @@ export default async function ProductDetailPage({
   const data = await getProductFull(id);
   const { product, attributes, variants, images } = data;
   const attributeNames = attributes.map((a) => a.name);
+  const allSkus = variants.map(v => v.sku);
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-10 py-8 px-6 animate-fade-in custom-scrollbar">
@@ -210,7 +212,14 @@ export default async function ProductDetailPage({
               <span className="text-[11px] font-black uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
                 <Layers className="w-4 h-4" /> Variant Matrix Output
               </span>
-              <span className="text-[9px] font-mono font-bold opacity-40">INSTANCES: {variants.length}</span>
+
+    <div className="flex items-center gap-4">
+      <span className="text-[9px] font-mono font-bold opacity-40">INSTANCES: {variants.length}</span>
+      <div className="h-4 w-[1px] bg-border mx-2" />
+      <CopySkusButton skus={allSkus} />
+    </div>
+
+              {/*<span className="text-[9px] font-mono font-bold opacity-40">INSTANCES: {variants.length}</span>*/}
             </div>
 
             <div className="overflow-x-auto">
