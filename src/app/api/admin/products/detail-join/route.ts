@@ -32,7 +32,7 @@ async function GET_() {
   }
 }
 
-async function GET__() {
+export async function GET() {
   try {
     const result = await sql`
       select
@@ -68,7 +68,7 @@ async function GET__() {
 }
 
 
-export async function GET(req: Request) {
+ async function GET__(req: Request) {
   const { searchParams } = new URL(req.url);
   const typeId = searchParams.get('type');
   const status = searchParams.get('status');
