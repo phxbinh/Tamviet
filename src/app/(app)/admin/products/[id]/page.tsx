@@ -8,129 +8,53 @@ interface Product {
   name: string;
   slug: string;
   status: string;
+  description?: string;
+  short_description?: string;
+}
+
+interface AttributeValue {
+  id: string;
+  value: string;
 }
 
 interface Attribute {
   id: string;
   name: string;
-}
-
-interface AttributeValues {
-  attribute_id: string;
-  attribute_name: string;
-  values: {
-    id: string;
-    value: string;
-  }[];
+  values: AttributeValue[];
 }
 
 interface Variant {
-  variant_id: string;
+  id: string;
   sku: string;
   price: number;
   stock: number;
   attributes: Record<string, string>;
 }
 
-
-
-
-/*
-import { headers } from 'next/headers';
-
-async function getProducts(): Promise<Product[]> {
-
-  const h = await headers();
-
-  const host = h.get('host')!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
-  const res = await fetch(`${protocol}://${host}/api/admin/products`, {
-    cache: 'no-store',
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    },
-  });
-
-
-*/
-
-
-
-
-
-async function getProduct(id: string): Promise<Product> {
-
-  const h = await headers();
-  const host = h.get('host')!;
-
-  //const host = (await headers()).get("host")!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
-  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}`, {
-    cache: "no-store",
-    headers: {
-      cookie: h.get('cookie') ?? '',
-    },
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch product");
-
-  return res.json();
+interface Image {
+  id: string;
+  url: string;
+  is_thumbnail: boolean;
 }
 
-async function getAttributes(id: string): Promise<Attribute[]> {
-  //const host = (await headers()).get("host");
-  const h = await headers();
-  const host = h.get('host')!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
-  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attributes`,
-    { cache: "no-store", 
-      headers: {
-        cookie: h.get('cookie') ?? '',
-      },
-    }
-  );
-
-  return res.json();
+interface ProductFullResponse {
+  product: Product;
+  attributes: Attribute[];
+  variants: Variant[];
+  images: Image[];
 }
 
-async function getAttributeValues(id: string): Promise<AttributeValues[]> {
-  //const host = (await headers()).get("host");
-  const h = await headers();
-  const host = h.get('host')!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
+async function getProductFull(id: string): Promise<ProductFullResponse> {
+  const host = (await headers()).get("host");
 
-  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attribute-values`,
-    { cache: "no-store", 
-      headers: {
-        cookie: h.get('cookie') ?? '',
-      },
-    }
+  const res = await fetch(
+    `http://${host}/api/admin/products/${id}/full`,
+    { cache: "no-store" }
   );
 
-  return res.json();
-}
-
-async function getVariantMatrix(id: string): Promise<Variant[]> {
-  //const host = (await headers()).get("host");
-  const h = await headers();
-  const host = h.get('host')!;
-  const protocol =
-    process.env.NODE_ENV === 'development' ? 'http' : 'https';
-
-  const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/variant-matrix`,
-    { cache: "no-store", 
-      headers: {
-        cookie: h.get('cookie') ?? '',
-      },
-    }
-  );
+  if (!res.ok) {
+    throw new Error("Failed to fetch product");
+  }
 
   return res.json();
 }
@@ -142,13 +66,9 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
 
-  const [product, attributes, attributeValues, variants] =
-    await Promise.all([
-      getProduct(id),
-      getAttributes(id),
-      getAttributeValues(id),
-      getVariantMatrix(id),
-    ]);
+  const data = await getProductFull(id);
+
+  const { product, attributes, variants, images } = data;
 
   const attributeNames = attributes.map((a) => a.name);
 
@@ -162,65 +82,84 @@ export default async function ProductDetailPage({
         ← Back to products
       </Link>
 
-      {/* Product Info */}
+      {/* PRODUCT INFO */}
       <section>
         <h1 className="text-2xl font-bold">{product.name}</h1>
 
-        <div className="mt-3 text-sm text-gray-600 space-y-1">
+        <div className="mt-2 text-sm text-gray-600 space-y-1">
           <p>Slug: {product.slug}</p>
           <p>Status: {product.status}</p>
         </div>
+
+        {product.short_description && (
+          <p className="mt-4 text-gray-700">
+            {product.short_description}
+          </p>
+        )}
       </section>
 
-      {/* Attributes */}
+      {/* IMAGES */}
       <section>
-        <h2 className="text-xl font-semibold mb-3">Attributes used</h2>
+        <h2 className="text-xl font-semibold mb-3">Images</h2>
 
-        <div className="flex gap-3">
-          {attributes.map((attr) => (
-            <span
-              key={attr.id}
-              className="px-3 py-1 rounded bg-gray-200 text-sm"
-            >
-              {attr.name}
-            </span>
-          ))}
-        </div>
-      </section>
+        <div className="flex gap-4 flex-wrap">
+          {images.map((img) => (
+            <div key={img.id} className="w-32">
 
-      {/* Attribute values */}
-      <section>
-        <h2 className="text-xl font-semibold mb-3">Attribute values</h2>
+              <img
+                src={img.url}
+                alt=""
+                className="rounded border"
+              />
 
-        <div className="space-y-4">
-          {attributeValues.map((attr) => (
-            <div key={attr.attribute_id}>
-              <p className="font-medium">{attr.attribute_name}</p>
+              {img.is_thumbnail && (
+                <p className="text-xs text-green-600 mt-1">
+                  Thumbnail
+                </p>
+              )}
 
-              <div className="flex gap-2 mt-1">
-                {attr.values.map((v) => (
-                  <span
-                    key={v.id}
-                    className="px-2 py-1 text-sm rounded bg-gray-100"
-                  >
-                    {v.value}
-                  </span>
-                ))}
-              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Variants table */}
+      {/* ATTRIBUTES */}
+      <section>
+        <h2 className="text-xl font-semibold mb-3">Attributes</h2>
+
+        <div className="space-y-4">
+          {attributes.map((attr) => (
+            <div key={attr.id}>
+
+              <p className="font-medium">{attr.name}</p>
+
+              <div className="flex gap-2 mt-1 flex-wrap">
+                {attr.values.map((v) => (
+                  <span
+                    key={v.id}
+                    className="px-2 py-1 text-sm bg-gray-100 rounded"
+                  >
+                    {v.value}
+                  </span>
+                ))}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* VARIANTS TABLE */}
       <section>
         <h2 className="text-xl font-semibold mb-3">Variants</h2>
 
         <div className="overflow-x-auto border rounded">
 
           <table className="w-full text-sm">
+
             <thead className="bg-gray-100">
               <tr>
+
                 {attributeNames.map((name) => (
                   <th key={name} className="p-2 text-left">
                     {name}
@@ -230,31 +169,39 @@ export default async function ProductDetailPage({
                 <th className="p-2 text-left">SKU</th>
                 <th className="p-2 text-left">Price</th>
                 <th className="p-2 text-left">Stock</th>
+
               </tr>
             </thead>
 
             <tbody>
+
               {variants.map((v) => (
-                <tr key={v.variant_id} className="border-t">
+                <tr key={v.id} className="border-t">
 
                   {attributeNames.map((attr) => (
                     <td key={attr} className="p-2">
-                      {v.attributes[attr]}
+                      {v.attributes[attr] ?? "-"}
                     </td>
                   ))}
 
                   <td className="p-2">{v.sku}</td>
-                  <td className="p-2">{v.price}</td>
+
+                  <td className="p-2">
+                    {v.price.toLocaleString()}
+                  </td>
+
                   <td className="p-2">{v.stock}</td>
 
                 </tr>
               ))}
+
             </tbody>
 
           </table>
 
         </div>
       </section>
+
     </div>
   );
 }
