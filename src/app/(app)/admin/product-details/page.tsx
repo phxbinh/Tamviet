@@ -19,7 +19,7 @@ async function getProducts() {
   const host = h.get('host')!;
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
-  const res = await fetch(`${protocol}://${host}/api/admin/products`, {
+  const res = await fetch(`${protocol}://${host}/api/admin/products/detail-join`, {
     cache: 'no-store',
     headers: {
       cookie: h.get('cookie') ?? '',
@@ -158,7 +158,8 @@ export default async function ProductsPage() {
                     <td className="p-5">
                       <div className="flex items-center gap-2 font-mono font-bold text-xs">
                          <Box className="w-3 h-3 opacity-30" />
-                         {product.total_stock?.toString().padStart(3, '0') || '000'}
+                         {/* Ép kiểu Number để padStart hoạt động chính xác */}
+                         {Number(product.total_stock).toString().padStart(3, '0') || '000'}
                       </div>
                     </td>
 
