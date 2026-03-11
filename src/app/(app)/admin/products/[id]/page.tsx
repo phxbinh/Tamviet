@@ -119,16 +119,17 @@ async function getVariantMatrix(id: string): Promise<Variant[]> {
 export default async function ProductDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const id = params.id;
+  const { id } = await params;
 
-  const [product, attributes, attributeValues, variants] = await Promise.all([
-    getProduct(id),
-    getAttributes(id),
-    getAttributeValues(id),
-    getVariantMatrix(id),
-  ]);
+  const [product, attributes, attributeValues, variants] =
+    await Promise.all([
+      getProduct(id),
+      getAttributes(id),
+      getAttributeValues(id),
+      getVariantMatrix(id),
+    ]);
 
   const attributeNames = attributes.map((a) => a.name);
 
