@@ -39,7 +39,7 @@ async function getProducts() {
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link from "next/link";
-import ProductSearch from "@/components/admin/ProductSearch";
+import ProductSearch from "./_components/ProductSearch";
 import { 
   PackageSearch, 
   ArrowUpRight,
