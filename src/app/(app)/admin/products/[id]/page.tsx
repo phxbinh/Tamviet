@@ -76,6 +76,8 @@ async function getProduct(id: string): Promise<Product> {
   });
 */
   const host = (await headers()).get("host")!;
+  const protocol =
+    process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}`, {
     cache: "no-store",
@@ -88,6 +90,8 @@ async function getProduct(id: string): Promise<Product> {
 
 async function getAttributes(id: string): Promise<Attribute[]> {
   const host = (await headers()).get("host");
+  const protocol =
+    process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attributes`,
     { cache: "no-store" }
@@ -98,6 +102,8 @@ async function getAttributes(id: string): Promise<Attribute[]> {
 
 async function getAttributeValues(id: string): Promise<AttributeValues[]> {
   const host = (await headers()).get("host");
+  const protocol =
+    process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/attribute-values`,
     { cache: "no-store" }
@@ -108,6 +114,8 @@ async function getAttributeValues(id: string): Promise<AttributeValues[]> {
 
 async function getVariantMatrix(id: string): Promise<Variant[]> {
   const host = (await headers()).get("host");
+  const protocol =
+    process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
   const res = await fetch(`${protocol}://${host}/api/admin/products/${id}/variant-matrix`,
     { cache: "no-store" }
