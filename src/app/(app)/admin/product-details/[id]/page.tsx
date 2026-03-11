@@ -165,9 +165,9 @@ export default async function ProductDetailPage({
                 ID: {product.id.split('-')[0]}
               </span>
               <span className={`text-[10px] px-2 py-0.5 font-bold border uppercase tracking-widest ${
-                product.is_active ? 'border-green-500 text-green-500 bg-green-500/5' : 'border-red-500 text-red-500 bg-red-500/5'
+                product.status ? 'border-green-500 text-green-500 bg-green-500/5' : 'border-red-500 text-red-500 bg-red-500/5'
               }`}>
-                {product.is_active ? 'Status: Active' : 'Status: Inactive'}
+                {product.status ? 'Status: Active' : 'Status: Inactive'}
               </span>
             </div>
           </div>
