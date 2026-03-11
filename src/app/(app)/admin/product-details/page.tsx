@@ -322,10 +322,48 @@ export default async function ProductsPage() {
   return (
     <div className="space-y-8 animate-fade-in py-2">
       {/* ... Header Section giữ nguyên ... */}
+      {/* STRATEGIC HEADER */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border pb-8">
+        <div className="border-l-4 border-primary pl-6">
+          <h1 className="text-3xl font-black tracking-tighter uppercase italic flex items-center gap-3">
+            <LayoutDashboard className="w-8 h-8 text-primary" />
+            Global Product Registry
+          </h1>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em] mt-1 italic">
+            Hệ thống quản trị tài sản và danh mục sản phẩm tổng thể
+          </p>
+        </div>
+
+        <div className="flex gap-4">
+          <Link
+            href="/admin/product-variants"
+            className="group inline-flex items-center gap-2 px-6 py-3 bg-muted/50 border border-border text-[10px] font-black uppercase tracking-widest hover:border-primary transition-all"
+          >
+            <Layers className="w-4 h-4 text-primary" />
+            Manage Variants
+            <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+          </Link>
+          <button className="bg-primary text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95 flex items-center gap-2">
+            <PlusCircle className="w-4 h-4" /> Add Asset
+          </button>
+        </div>
+      </div>
 
       {/* PRODUCT MATRIX TABLE */}
       <div className="bg-card border border-border shadow-2xl overflow-hidden relative">
-        {/* ... Info Bar giữ nguyên ... */}
+        <div className="bg-muted/30 px-6 py-3 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-6">
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+               <Database className="w-3 h-3 text-primary" /> 
+               Total Assets: {products.length}
+             </span>
+             <div className="h-4 w-[1px] bg-border" />
+             <span className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+               <Activity className="w-3 h-3 text-green-500 animate-pulse" /> 
+               System: Operational
+             </span>
+          </div>
+        </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
