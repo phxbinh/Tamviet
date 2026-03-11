@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CheckCircle2, Boxes, Box, Tag, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
+import { LayoutDashboard, CheckCircle2, Boxes, Box, Tag, Package, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
 import { UserAvatar } from '../dashboard/UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
 
@@ -23,6 +23,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Box, label: 'Product test', href: '/admin/product-test' },
     { icon: Tag, label: 'Attributes', href: '/admin/attributes' },
     { icon: Tag, label: 'Product type attributes', href: '/admin/product-type-attributes' },
+    { icon: Package, label: 'Product variants', href: '/admin/product-variants' },
     { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
