@@ -112,7 +112,8 @@ import { redirect } from 'next/navigation';
 import Link from "next/link";
 import { 
   PackageSearch, 
-  ArrowUpRight, 
+  ArrowUpRight,
+  Box, 
   Layers, 
   Activity, 
   Database, 
