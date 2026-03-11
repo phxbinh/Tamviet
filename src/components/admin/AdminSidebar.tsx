@@ -24,6 +24,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Tag, label: 'Attributes', href: '/admin/attributes' },
     { icon: Tag, label: 'Product type attributes', href: '/admin/product-type-attributes' },
     { icon: Package, label: 'Product variants', href: '/admin/product-variants' },
+    { icon: Package, label: 'Details all products', href: '/admin/product-details' },
     { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
