@@ -368,11 +368,95 @@ export default function ProductImageUploader({
   images: ImageItem[];
   onUploaded: () => void;
 }) {
+  
   const [uploading, setUploading] = useState(false);
 
-  // --- LOGIC GIỮ NGUYÊN (handleUpload, handleDelete, setThumbnail) ---
-  // Giả định các hàm logic đã được copy từ code cũ của bạn
+  async function handleUpload(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
+    setUploading(true);
+
+    // PRECHECK
+    const check = await fetch("/api/products/images/precheck", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId,
+        variantId,
+      }),
+    });
+
+    if (!check.ok) {
+      alert("Không có quyền upload");
+      setUploading(false);
+      return;
+    }
+
+    const uploaded: string[] = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) continue;
+
+      const path = productId
+        ? `products/${productId}/${crypto.randomUUID()}-${file.name}`
+        : `variants/${variantId}/${crypto.randomUUID()}-${file.name}`;
+
+      const { error } = await supabase.storage
+        .from("products-images")
+        .upload(path, file);
+
+      if (error) {
+        console.error(error);
+        alert(error.message);
+      } else {
+        uploaded.push(path);
+      }
+    }
+
+    // INSERT DB
+    if (uploaded.length) {
+      await fetch("/api/products/images", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId,
+          variantId,
+          paths: uploaded,
+        }),
+      });
+
+      onUploaded();
+    }
+
+    setUploading(false);
+    e.target.value = "";
+  }
+
+  async function handleDelete(id: string) {
+    const ok = confirm("Xóa ảnh này?");
+    if (!ok) return;
+
+    await fetch(`/api/products/images/${id}`, {
+      method: "DELETE",
+    });
+
+    onUploaded();
+  }
+
+  async function setThumbnail(id: string) {
+    await fetch(`/api/products/images/${id}/thumbnail`, {
+      method: "PATCH",
+    });
+
+    onUploaded();
+  }
   return (
     <div className="space-y-8 animate-fade-in">
       
