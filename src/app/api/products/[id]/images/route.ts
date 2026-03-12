@@ -4,12 +4,15 @@ import { sql } from "@/lib/neon/sql";
 /**
  * GET: Lấy danh sách hình ảnh của sản phẩm theo ID
  */
+
+
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: Request,
+  context: { params: Promise<{ productId: string }> }
 ) {
+  
   try {
-    const { id } = params;
+    const { productId } = await context.params
 
     // Sử dụng cú pháp sql của Neon tương tự như bạn đã gửi
     const rows = await sql`
@@ -20,7 +23,7 @@ export async function GET(
         display_order,
         is_thumbnail
       FROM product_images
-      WHERE product_id = ${id}
+      WHERE product_id = ${productId}
         AND is_active = true
       ORDER BY display_order ASC
     `;
@@ -38,12 +41,14 @@ export async function GET(
 /**
  * POST: Upload và lưu thông tin ảnh mới
  */
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ productId: string }> }
 ) {
+  
   try {
-    const { id } = params;
+    const { productId } = await context.params
+
     const { imageUrl, altText } = await req.json();
 
     if (!imageUrl) {
