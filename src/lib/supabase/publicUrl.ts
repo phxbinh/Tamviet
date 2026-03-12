@@ -1,6 +1,6 @@
 // src/lib/supabase/publicURL.ts
 
-const BUCKET = "product-images";
+const BUCKET = "products-images";
 
 export function getPublicImageUrl(path: string) {
   if (!path) return "";
