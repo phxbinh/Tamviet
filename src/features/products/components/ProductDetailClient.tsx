@@ -137,7 +137,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
         {/* 2. Attributes (Flex-wrap with consistent gap) */}
-        <div className="space-y-8 min-h-[300px]">
+        <div className="space-y-8 ">
 {attributes.map((attr) => (
   <div key={attr.id} className="space-y-3">
     <div className="flex justify-between items-center h-5">
