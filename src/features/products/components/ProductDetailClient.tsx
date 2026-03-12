@@ -207,7 +207,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
               disabled={!selectedVariant || isAdding}
               onClick={() => { setIsAdding(true); setTimeout(() => setIsAdding(false), 2000); }}
               className={`
-                w-full py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] transition-all duration-500
+                w-full py-2 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] transition-all duration-500
                 ${selectedVariant 
                   ? "bg-primary text-white hover:shadow-xl active:scale-95" 
                   : "bg-border text-foreground/10 cursor-not-allowed"
