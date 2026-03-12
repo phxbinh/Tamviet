@@ -30,7 +30,7 @@ export async function DELETE(
 
   // 1️⃣ lấy path ảnh
   const images = await sql`
-    select image_path
+    select image_url
     from product_images
     where id = ${id}
   `
@@ -39,7 +39,7 @@ export async function DELETE(
     return Response.json({ error: "Image not found" }, { status: 404 })
   }
 
-  const imagePath = images[0].image_path
+  const imagePath = images[0].image_url
 
   // 2️⃣ xoá file trong storage
   const { error } = await supabase.storage
