@@ -178,7 +178,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
         {/* 3. Conversion Hub (Fixed Heights for Status) */}
-        <div className="space-y-6 pt-8 border-t border-border mt-auto">
+        <div className="space-y-3 pt-8 border-t border-border mt-auto">
           {/* Inventory Status - Chiều cao cố định 64px */}
           <div className="h-12">
             {selectedVariant ? (
@@ -218,7 +218,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
             </button>
             
             {/* Warning text với h-4 cố định */}
-            <div className="h-4 flex justify-center">
+            <div className="h-4 mt-1 flex justify-center">
               {!allSelected && (
                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary animate-breathe-slow italic">
                   Vui lòng hoàn tất cấu hình để mở khóa
