@@ -122,10 +122,10 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           </h1>
           
           {/* Vùng giá cố định chiều cao để tránh nhảy UI khi chọn variant */}
-          <div className="h-16 flex items-center border-t border-border mt-4">
+          <div className="h-12 flex items-center border-t border-border mt-4">
             {selectedVariant ? (
               <div className="flex items-baseline gap-2 animate-fade-in">
-                <span className="text-4xl font-black tracking-tighter text-foreground">
+                <span className="text-2xl font-black tracking-tighter text-foreground">
                   {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
                 </span>
                 <span className="text-xs font-bold opacity-40 uppercase italic tracking-widest text-foreground">VND</span>
@@ -137,7 +137,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
         {/* 2. Attributes (Flex-wrap with consistent gap) */}
-        <div className="space-y-8 ">
+        <div className="space-y-2 ">
 {attributes.map((attr) => (
   <div key={attr.id} className="space-y-3">
     <div className="flex justify-between items-center h-5">
@@ -160,7 +160,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
             type="button" // Luôn thêm type="button" để tránh submit form ngoài ý muốn
             onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
             className={`
-              min-w-[70px] px-5 py-1 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
+              min-w-[70px] px-5 py-1 md:py-2 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
               ${active 
                 ? "bg-foreground text-background border-foreground shadow-lg -translate-y-1" 
                 : "bg-card border-border text-foreground/60 hover:border-primary"
