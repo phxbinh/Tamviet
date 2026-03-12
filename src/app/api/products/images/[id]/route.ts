@@ -50,6 +50,7 @@ export async function DELETE(
     .remove([imagePath])
 
   if (error) {
+    console.log('err-mes: ',error.message)
     return Response.json({ error: error.message }, { status: 500 })
   }
 
