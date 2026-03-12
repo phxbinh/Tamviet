@@ -4,7 +4,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase/clientSupabase'
+import { supabase } from '@/lib/supabase/server'
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 
 /*
