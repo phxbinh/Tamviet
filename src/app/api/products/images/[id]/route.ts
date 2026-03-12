@@ -1,7 +1,5 @@
 // src/app/api/products/images/route.ts
 import { sql } from "@/lib/neon/sql"
-import { supabase } from '@/lib/supabase/clientSupabase';
-
 import { supabaseServer } from '@/lib/supabase/server';
 
 
@@ -21,7 +19,6 @@ export async function DELETE(
   return Response.json({ ok: true })
 }
 */
-
 
 
 
