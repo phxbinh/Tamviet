@@ -15,7 +15,7 @@ import {
   Star
 } from "lucide-react";
 
-
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 
 
 // --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
@@ -91,9 +91,10 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
               </span>
             </div>
 
+
             {mainImage ? (
               <img 
-                src={mainImage} 
+                src={mainImage ? getPublicImageUrl(mainImage) : undefined} 
                 alt={product.name} 
                 className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
               />
