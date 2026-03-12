@@ -151,7 +151,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
       )}
     </div>
 
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-1 md:gap-2 flex-wrap">
       {attr.values.map((v) => {
         const active = selected[attr.name] === v.value;
         return (
@@ -160,7 +160,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
             type="button" // Luôn thêm type="button" để tránh submit form ngoài ý muốn
             onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
             className={`
-              min-w-[70px] px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
+              min-w-[70px] px-5 py-1 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
               ${active 
                 ? "bg-foreground text-background border-foreground shadow-lg -translate-y-1" 
                 : "bg-card border-border text-foreground/60 hover:border-primary"
