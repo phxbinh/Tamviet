@@ -262,7 +262,7 @@ interface ProductFull { product: Product; attributes: Attribute[]; variants: Var
 */
 
 //export default
-function ProductDetailClient_({ data }: { data: ProductFull }) {
+function ProductDetailClient__({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
