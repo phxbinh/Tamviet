@@ -49,13 +49,13 @@ export default async function ProductsPage() {
       {/* PRODUCT GRID: 2 cột trên mobile, 3-4 cột trên desktop */}
       <main className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
         {products.map((p) => (
-          const src = getPublicImageUrl(p.thumbnail_url);
+          /*const src = getPublicImageUrl(p.thumbnail_url);*/
           <ProductCard 
             key={p.id}
             id={p.id}
             name={p.name}
             /*thumbnail_url={p.thumbnail_url} */
-            thumbnail_url={src}
+            thumbnail_url={getPublicImageUrl(p.thumbnail_url)}
             price_min={p.price_min}
           />
         ))}
