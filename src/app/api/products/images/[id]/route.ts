@@ -2,6 +2,9 @@
 import { sql } from "@/lib/neon/sql"
 import { supabase } from '@/lib/supabase/clientSupabase';
 
+import { supabaseServer } from '@/lib/supabase/server';
+
+
 /*
 export async function DELETE(
   req: Request,
@@ -42,7 +45,7 @@ export async function DELETE(
   const imagePath = images[0].image_url
 
   // 2️⃣ xoá file trong storage
-  const { error } = await supabase.storage
+  const { error } = await supabaseServer.storage
     .from("products-images")
     .remove([imagePath])
 
