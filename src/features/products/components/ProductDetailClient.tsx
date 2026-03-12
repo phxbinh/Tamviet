@@ -15,6 +15,9 @@ import {
   Star
 } from "lucide-react";
 
+
+
+
 // --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
 interface AttributeValue {
   id: string;
@@ -55,6 +58,195 @@ interface ProductFull {
 }
 
 
+
+export default function ProductDetailClient({ data }: { data: ProductFull }) {
+  const { product, attributes, variants, images } = data;
+  const [selected, setSelected] = useState<Record<string, string>>({});
+  const [isAdding, setIsAdding] = useState(false);
+
+  const selectedVariant = useMemo(() => {
+    if (Object.keys(selected).length < attributes.length) return null;
+    return variants.find((variant) =>
+      Object.entries(selected).every(([key, value]) => variant.attributes[key] === value)
+    );
+  }, [selected, variants, attributes.length]);
+
+  const mainImage = useMemo(() => {
+    return images.find(img => img.is_thumbnail)?.url || images[0]?.url;
+  }, [images]);
+
+  const allSelected = Object.keys(selected).length === attributes.length;
+
+  return (
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 py-12 px-6 animate-fade-in custom-scrollbar items-start">
+      
+      {/* LEFT: VISUAL (Fixed Aspect Ratio 4/5) */}
+      <div className="lg:col-span-7 w-full">
+        <div className="sticky top-12 space-y-6">
+          <div className="relative aspect-[4/5] bg-card rounded-[2rem] overflow-hidden border border-border shadow-sm group">
+             {/* Badge cố định góc - Không ảnh hưởng layout */}
+            <div className="absolute top-6 left-6 z-10">
+              <span className="bg-background/80 backdrop-blur-md text-foreground px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-border flex items-center gap-2">
+                <Zap className="w-3 h-3 text-primary animate-pulse" /> Limited Edition
+              </span>
+            </div>
+
+            {mainImage ? (
+              <img 
+                src={mainImage} 
+                alt={product.name} 
+                className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-border"><ShoppingBag className="w-24 h-24 stroke-[0.5]" /></div>
+            )}
+            
+            {/* Buttons tuyệt đối - Không gây nhảy UI */}
+            <div className="absolute right-6 top-6 space-y-3 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+              <button className="p-4 bg-background border border-border rounded-full hover:bg-primary hover:text-white transition-all shadow-xl"><Heart className="w-5 h-5" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: CONFIGURATION (Fixed Structure) */}
+      <div className="lg:col-span-5 flex flex-col h-full space-y-10">
+        
+        {/* 1. Identity & Fixed Price Area */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+            <Star className="w-3 h-3 fill-current" /> Authentic Registry
+          </div>
+          <h1 className="text-4xl xl:text-5xl font-black tracking-tighter uppercase italic text-foreground leading-tight min-h-[2.5em] flex items-center">
+            {product.name}
+          </h1>
+          
+          {/* Vùng giá cố định chiều cao để tránh nhảy UI khi chọn variant */}
+          <div className="h-16 flex items-center border-t border-border mt-4">
+            {selectedVariant ? (
+              <div className="flex items-baseline gap-2 animate-fade-in">
+                <span className="text-4xl font-black tracking-tighter text-foreground">
+                  {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
+                </span>
+                <span className="text-xs font-bold opacity-40 uppercase italic tracking-widest text-foreground">VND</span>
+              </div>
+            ) : (
+              <p className="text-sm font-medium italic text-muted-foreground opacity-40">Lựa chọn thông số để hiển thị giá...</p>
+            )}
+          </div>
+        </div>
+
+        {/* 2. Attributes (Flex-wrap with consistent gap) */}
+        <div className="space-y-8 min-h-[300px]">
+          {attributes.map((attr) => (
+            <div key={attr.id} className="space-y-3">
+              <div className="flex justify-between items-center h-5"> {/* Fixed height label */}
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/40">{attr.name}</span>
+                {selected[attr.name] && (
+                  <span className="text-[10px] font-black text-primary uppercase italic tracking-widest animate-fade-in">
+                    <Check className="inline w-3 h-3 mr-1" /> {selected[attr.name]}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex gap-2 flex-wrap">
+                {attr.values.map((v) => {
+                  const active = selected[attr.name] === v.value;
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => setSelected(prev => ({ ...prev, [attrName: attr.name]: v.value }))}
+                      className={`
+                        min-w-[70px] px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
+                        ${active 
+                          ? "bg-foreground text-background border-foreground shadow-lg -translate-y-1" 
+                          : "bg-card border-border text-foreground/60 hover:border-primary"
+                        }
+                      `}
+                    >
+                      {v.value}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 3. Conversion Hub (Fixed Heights for Status) */}
+        <div className="space-y-6 pt-8 border-t border-border mt-auto">
+          {/* Inventory Status - Chiều cao cố định 64px */}
+          <div className="h-16">
+            {selectedVariant ? (
+              <div className="flex items-center justify-between px-6 py-4 bg-card rounded-xl border border-border animate-fade-in">
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-black uppercase opacity-40 tracking-widest">Serial Code</span>
+                  <span className="text-[10px] font-mono font-bold">{selectedVariant.sku}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[8px] font-black uppercase opacity-40 tracking-widest">Availability</span>
+                  <p className={`text-[10px] font-black ${selectedVariant.stock < 10 ? 'text-red-500 animate-breathe-danger' : 'text-primary'}`}>
+                    {selectedVariant.stock < 10 ? `ONLY ${selectedVariant.stock} LEFT` : `RESERVES: ${selectedVariant.stock}`}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-full border border-dashed border-border rounded-xl flex items-center justify-center">
+                 <span className="text-[9px] font-black uppercase opacity-20 tracking-widest italic">Waiting for Configuration...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Button CTA */}
+          <div className="space-y-3">
+            <button
+              disabled={!selectedVariant || isAdding}
+              onClick={() => { setIsAdding(true); setTimeout(() => setIsAdding(false), 2000); }}
+              className={`
+                w-full py-6 rounded-2xl font-black text-[11px] uppercase tracking-[0.4em] transition-all duration-500
+                ${selectedVariant 
+                  ? "bg-primary text-white hover:shadow-xl active:scale-95" 
+                  : "bg-border text-foreground/10 cursor-not-allowed"
+                }
+              `}
+            >
+              {isAdding ? "PROCESSING DNA..." : "SECURE SELECTION"}
+            </button>
+            
+            {/* Warning text với h-4 cố định */}
+            <div className="h-4 flex justify-center">
+              {!allSelected && (
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary animate-breathe-slow italic">
+                  Vui lòng hoàn tất cấu hình để mở khóa
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Footer Trust (Fixed Grid) */}
+        <div className="grid grid-cols-2 gap-4 pt-4">
+          {[
+            { icon: Truck, title: "Swift Logistic" },
+            { icon: ShieldCheck, title: "Pure Registry" }
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col gap-2 p-5 rounded-2xl bg-card border border-border group hover:border-primary transition-all">
+               <item.icon className="w-4 h-4 text-primary" />
+               <p className="text-[9px] font-black uppercase tracking-widest text-foreground">{item.title}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
 // --- INTERFACES (Giữ nguyên cấu trúc DNA dữ liệu) ---
 /*
 interface AttributeValue { id: string; value: string; }
@@ -65,7 +257,8 @@ interface Product { id: string; name: string; description?: string; }
 interface ProductFull { product: Product; attributes: Attribute[]; variants: Variant[]; images: ProductImage[]; }
 */
 
-export default function ProductDetailClient({ data }: { data: ProductFull }) {
+//export default
+function ProductDetailClient_({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [isAdding, setIsAdding] = useState(false);
