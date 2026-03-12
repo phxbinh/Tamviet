@@ -1,12 +1,6 @@
-// src/app/(app)/admin/products/[id]/page.tsx
-
-/*
-Chỉ chạy với admin/products/[id]/route.ts
-*/
-
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
 import { 
@@ -18,9 +12,13 @@ import {
   Activity, 
   ShieldCheck, 
   Loader2, 
-  AlertTriangle 
+  AlertTriangle,
+  Image as ImageIcon,
+  LayoutDashboard
 } from "lucide-react"
 
+// 🔸 Import Image Uploader từ Số 1
+import ProductImageUploader from "@/features/products/components/ProductImageUploader"
 
 interface Product {
   id: string
@@ -42,25 +40,53 @@ type ProductType = {
 export default function ProductDetailPage() {
   const router = useRouter()
   const { id } = useParams<{ id: string }>()
+  
+  // States
   const [product, setProduct] = useState<Product | null>(null)
   const [types, setTypes] = useState<ProductType[]>([])
+  const [images, setImages] = useState<any[]>([]) // 🔸 State lưu trữ ảnh
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // 🔸 Hàm load ảnh từ API
+  const loadImages = useCallback(async () => {
+    if (!id) return
+    try {
+      // Endpoint này cần khớp với Route Handler bạn đã viết
+      const res = await fetch(`/api/products/variants/${variantId}/images`)
+      if (res.ok) {
+        const data = await res.json()
+        setImages(data)
+      }
+    } catch (err) {
+      console.error("Failed to sync images:", err)
+    }
+  }, [id])
 
-  // Fetch Product
+  // Fetch Toàn bộ dữ liệu ban đầu
   useEffect(() => {
     if (!id) return
 
-    const fetchProduct = async () => {
+    const initData = async () => {
       try {
-        const res = await fetch(`/api/admin/products/${id}`)
+        setLoading(true)
+        const [prodRes, typeRes] = await Promise.all([
+          fetch(`/api/admin/products/${id}`),
+          fetch("/api/admin/product-types")
+        ])
 
-        if (!res.ok) throw new Error("Failed to fetch product")
+        if (!prodRes.ok) throw new Error("Failed to fetch product data")
+        
+        const prodData = await prodRes.json()
+        const typeData = await typeRes.json()
 
-        const data = await res.json()
-        setProduct(data)
+        setProduct(prodData)
+        setTypes(typeData)
+        
+        // Load ảnh đi kèm
+        await loadImages()
+        
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -68,29 +94,8 @@ export default function ProductDetailPage() {
       }
     }
 
-    fetchProduct()
-  }, [id])
-
-  // Fetch Product Types
-  useEffect(() => {
-    const fetchTypes = async () => {
-      try {
-        const res = await fetch("/api/admin/product-types")
-
-        const data = await res.json()
-
-        if (!res.ok)
-          throw new Error(data.error || "Failed to load product types")
-
-        setTypes(data)
-      } catch (err: any) {
-        setError(err.message)
-      }
-    }
-
-    fetchTypes()
-  }, [])
-
+    initData()
+  }, [id, loadImages])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     if (!product) return
@@ -110,7 +115,7 @@ export default function ProductDetailPage() {
       if (!res.ok) throw new Error("Synchronization failed")
       const updated = await res.json()
       setProduct(updated)
-      // Thay thế alert bằng hiệu ứng nhẹ nhàng hơn hoặc thông báo hệ thống
+      // Có thể thêm toast notification ở đây
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -150,7 +155,7 @@ export default function ProductDetailPage() {
               ID: {product.id.slice(0, 8)}
             </span>
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              <Activity className="w-3 h-3 text-neon-cyan" /> System Active
+              <Activity className="w-3 h-3 text-emerald-500" /> System Active
             </span>
           </div>
         </div>
@@ -176,6 +181,29 @@ export default function ProductDetailPage() {
             </div>
           )}
 
+          {/* 🔸 SECTION: VISUAL ASSETS (MỚI TÍCH HỢP) */}
+          <section className="bg-card border border-border p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-6 border-l-4 border-primary pl-4">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.3em]">Visual Assets / Thumbnail</h2>
+              <ImageIcon className="w-4 h-4 opacity-40" />
+            </div>
+            
+            <div className="bg-muted/5 border border-dashed border-border p-4 rounded-sm">
+              <ProductImageUploader
+                productId={product.id}
+                images={images}
+                onUploaded={loadImages}
+              />
+            </div>
+            <div className="mt-4 flex items-start gap-2">
+               <div className="w-1.5 h-1.5 bg-primary mt-1 shrink-0" />
+               <p className="text-[9px] text-muted-foreground uppercase leading-relaxed font-bold">
+                 Primary thumbnail used for grid displays and hardware catalogs. Supports PNG, WEBP, JPG.
+               </p>
+            </div>
+          </section>
+
+          {/* SECTION: IDENTIFICATION */}
           <section className="bg-card border border-border p-6 shadow-sm relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
               <Cpu className="w-20 h-20" />
@@ -198,8 +226,8 @@ export default function ProductDetailPage() {
                   <input
                     name="slug"
                     value={product.slug}
-                    onChange={handleChange}
-                    className="w-full bg-muted/20 border border-border px-4 py-3 text-xs font-mono text-muted-foreground outline-none"
+                    readOnly
+                    className="w-full bg-muted/20 border border-border px-4 py-3 text-xs font-mono text-muted-foreground outline-none cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -212,11 +240,6 @@ export default function ProductDetailPage() {
                   onChange={handleChange}
                   className="w-full bg-background border border-border px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] focus:border-primary outline-none cursor-pointer"
                 >
-                {/*
-                  <option value="" disabled>
-                    {product.product_type_name}
-                  </option>*/}
-                
                   {types.map((type) => (
                     <option key={type.id} value={type.id}>
                       {type.name.toUpperCase()}
@@ -227,6 +250,7 @@ export default function ProductDetailPage() {
             </div>
           </section>
 
+          {/* SECTION: DESCRIPTIONS */}
           <section className="bg-card border border-border p-6 shadow-sm">
             <h2 className="text-[11px] font-black uppercase tracking-[0.3em] mb-8 border-l-4 border-primary pl-4">Tactical Descriptions</h2>
             <div className="space-y-6">
@@ -265,7 +289,7 @@ export default function ProductDetailPage() {
                   value={product.status}
                   onChange={handleChange}
                   className={`w-full border px-4 py-4 text-[10px] font-black uppercase tracking-[0.3em] outline-none cursor-pointer transition-all ${
-                    product.status === 'active' ? 'bg-neon-cyan/5 border-neon-cyan text-neon-cyan' : 
+                    product.status === 'active' ? 'bg-emerald-500/5 border-emerald-500 text-emerald-500' : 
                     product.status === 'draft' ? 'bg-yellow-500/5 border-yellow-500/50 text-yellow-600' : 
                     'bg-muted/20 border-border text-muted-foreground'
                   }`}
