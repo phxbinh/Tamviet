@@ -138,39 +138,43 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
         {/* 2. Attributes (Flex-wrap with consistent gap) */}
         <div className="space-y-8 min-h-[300px]">
-          {attributes.map((attr) => (
-            <div key={attr.id} className="space-y-3">
-              <div className="flex justify-between items-center h-5"> {/* Fixed height label */}
-                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/40">{attr.name}</span>
-                {selected[attr.name] && (
-                  <span className="text-[10px] font-black text-primary uppercase italic tracking-widest animate-fade-in">
-                    <Check className="inline w-3 h-3 mr-1" /> {selected[attr.name]}
-                  </span>
-                )}
-              </div>
+{attributes.map((attr) => (
+  <div key={attr.id} className="space-y-3">
+    <div className="flex justify-between items-center h-5">
+      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground/40">
+        {attr.name}
+      </span>
+      {selected[attr.name] && (
+        <span className="text-[10px] font-black text-primary uppercase italic tracking-widest animate-fade-in">
+          <Check className="inline w-3 h-3 mr-1" /> {selected[attr.name]}
+        </span>
+      )}
+    </div>
 
-              <div className="flex gap-2 flex-wrap">
-                {attr.values.map((v) => {
-                  const active = selected[attr.name] === v.value;
-                  return (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelected(prev => ({ ...prev, [attrName: attr.name]: v.value }))}
-                      className={`
-                        min-w-[70px] px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
-                        ${active 
-                          ? "bg-foreground text-background border-foreground shadow-lg -translate-y-1" 
-                          : "bg-card border-border text-foreground/60 hover:border-primary"
-                        }
-                      `}
-                    >
-                      {v.value}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+    <div className="flex gap-2 flex-wrap">
+      {attr.values.map((v) => {
+        const active = selected[attr.name] === v.value;
+        return (
+          <button
+            key={v.id}
+            type="button" // Luôn thêm type="button" để tránh submit form ngoài ý muốn
+            onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
+            className={`
+              min-w-[70px] px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-300 rounded-xl border
+              ${active 
+                ? "bg-foreground text-background border-foreground shadow-lg -translate-y-1" 
+                : "bg-card border-border text-foreground/60 hover:border-primary"
+              }
+            `}
+          >
+            {v.value}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+))}
+
         </div>
 
         {/* 3. Conversion Hub (Fixed Heights for Status) */}
