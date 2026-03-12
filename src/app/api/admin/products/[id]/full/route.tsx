@@ -155,7 +155,8 @@ export async function GET(
 */
 
 
-// Test
+// ✅ CHẠY ĐƯỢC
+// -> Có lọc với status: chi lấy sản phẩm có status là active
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
