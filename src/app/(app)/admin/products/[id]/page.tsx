@@ -54,7 +54,7 @@ export default function ProductDetailPage() {
     if (!id) return
     try {
       // Endpoint này cần khớp với Route Handler bạn đã viết
-      const res = await fetch(`/api/products/${id}/images`)
+      const res = await fetch(`/api/admin/products/${id}/images`)
       if (res.ok) {
         const data = await res.json()
         setImages(data)
