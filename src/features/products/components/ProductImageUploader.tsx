@@ -231,7 +231,7 @@ export default function ProductImageUploader({
         : `variants/${variantId}/${crypto.randomUUID()}-${file.name}`;
 
       const { error } = await supabase.storage
-        .from("products-images")
+        .from("todo-images")
         .upload(path, file);
 
       if (error) {
