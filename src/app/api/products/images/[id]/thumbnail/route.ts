@@ -33,6 +33,18 @@ export async function PATCH(
       where id = ${id}
     `
 
+  // cập nhật thumbnail_url trong bảng products
+  await sql`
+    update products
+    set thumbnail_url = (
+      select image_url
+      from product_images
+      where id = ${id}
+    )
+    where id = ${img.product_id}
+  `
+
+
   } else {
 
     await sql`
