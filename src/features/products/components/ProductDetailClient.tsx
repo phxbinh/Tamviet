@@ -182,7 +182,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           {/* Inventory Status - Chiều cao cố định 64px */}
           <div className="h-10">
             {selectedVariant ? (
-              <div className="flex items-center justify-between px-6 py-4 bg-card rounded-xl border border-border animate-fade-in">
+              <div className="flex items-center justify-between px-6 py-1 bg-card rounded-xl border border-border animate-fade-in">
                 <div className="flex flex-col">
                   <span className="text-[8px] font-black uppercase opacity-40 tracking-widest">Serial Code</span>
                   <span className="text-[10px] font-mono font-bold">{selectedVariant.sku}</span>
