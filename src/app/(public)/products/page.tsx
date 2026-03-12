@@ -3,6 +3,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 
 interface Product {
   id: string;
@@ -48,11 +49,13 @@ export default async function ProductsPage() {
       {/* PRODUCT GRID: 2 cột trên mobile, 3-4 cột trên desktop */}
       <main className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
         {products.map((p) => (
+          const src = getPublicImageUrl(p.thumbnail_url);
           <ProductCard 
             key={p.id}
             id={p.id}
             name={p.name}
-            thumbnail_url={p.thumbnail_url}
+            /*thumbnail_url={p.thumbnail_url} */
+            thumbnail_url={src}
             price_min={p.price_min}
           />
         ))}
