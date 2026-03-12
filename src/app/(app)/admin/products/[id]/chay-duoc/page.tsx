@@ -9,7 +9,7 @@ Chỉ chạy với:
 // src/app/(app)/admin/products/[id]/page.tsx
 import { headers } from "next/headers";
 import Link from "next/link";
-import CopySkusButton from "../_components/CopySkusButton";
+import CopySkusButton from "../../_components/CopySkusButton";
 import { 
   ChevronLeft, 
   Package, 
