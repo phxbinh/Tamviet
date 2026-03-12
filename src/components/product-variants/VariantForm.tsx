@@ -14,6 +14,9 @@ import {
   RefreshCcw
 } from "lucide-react";
 
+// 🔸Thêm vào để uploade ảnh
+import ProductImageUploader from "@/features/products/components/ProductImageUploader";
+
 export default function VariantForm({
   productId,
   variantId,
@@ -30,6 +33,17 @@ export default function VariantForm({
     stock: "",
   });
 
+// 🔸Thêm vào upload anh
+const [images, setImages] = useState<any[]>([]);
+async function loadImages() {
+  if (!variantId) return;
+
+  const res = await fetch(`/api/products/variants/${variantId}/images`);
+  const data = await res.json();
+
+  setImages(data);
+}
+
   useEffect(() => {
     if (!variantId) return;
     setFetching(true);
@@ -43,6 +57,11 @@ export default function VariantForm({
         });
       })
       .finally(() => setFetching(false));
+
+// 🔸Gọi upload ảnh
+loadImages();
+
+
   }, [variantId]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -142,6 +161,23 @@ export default function VariantForm({
           </div>
         </div>
       </div>
+
+
+{/* 🔸VARIANT IMAGES */}
+<div className="bg-card border border-border p-6 shadow-sm space-y-4">
+
+  <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
+    Variant Image Assets
+  </h2>
+
+  <ProductImageUploader
+    variantId={variantId}
+    images={images}
+    onUploaded={loadImages}
+  />
+
+</div>
+
 
       {/* ACTION BUTTONS */}
       <div className="flex items-center gap-4">
