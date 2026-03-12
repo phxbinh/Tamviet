@@ -1,6 +1,8 @@
+// src/app/(app)/products/page.tsx
 import Link from "next/link";
 import { headers } from "next/headers";
 import { ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
+import { ProductCard } from "@/components/shop/ProductCard";
 
 interface Product {
   id: string;
@@ -24,7 +26,56 @@ async function getProducts(): Promise<Product[]> {
   return res.json();
 }
 
+
 export default async function ProductsPage() {
+  const products = await getProducts();
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 md:px-6 py-10 md:py-16 space-y-10 md:space-y-16 animate-fade-in">
+      
+      {/* HEADER SECTION */}
+      <header className="flex flex-col items-center text-center space-y-3">
+        <div className="flex items-center gap-2 text-primary tracking-[0.3em] text-[9px] md:text-[10px] font-black uppercase italic">
+          <Sparkles className="w-3 h-3" />
+          The Registry
+        </div>
+        <h1 className="text-3xl md:text-5xl font-light tracking-tighter text-foreground leading-none">
+          The <span className="font-black italic">Signature</span> Series
+        </h1>
+        <div className="h-0.5 w-12 bg-primary/30 rounded-full" />
+      </header>
+
+      {/* PRODUCT GRID: 2 cột trên mobile, 3-4 cột trên desktop */}
+      <main className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
+        {products.map((p) => (
+          <ProductCard 
+            key={p.id}
+            id={p.id}
+            name={p.name}
+            thumbnail_url={p.thumbnail_url}
+            price_min={p.price_min}
+          />
+        ))}
+      </main>
+
+      {/* MINIMAL FOOTER INFO */}
+      <footer className="pt-16 border-t border-border/50 flex flex-col items-center gap-6 opacity-40 grayscale">
+        <div className="flex gap-6 md:gap-12">
+            {["Pure Quality", "Direct Delivery", "Global Warranty"].map((text) => (
+              <div key={text} className="flex flex-col items-center gap-2">
+                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">{text}</span>
+                <div className="w-1 h-1 rounded-full bg-foreground" />
+              </div>
+            ))}
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+
+//export default
+async function ProductsPage__() {
   const products = await getProducts();
 
   return (
