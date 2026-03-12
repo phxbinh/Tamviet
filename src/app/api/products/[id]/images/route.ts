@@ -72,43 +72,4 @@ export async function POST(req: Request) {
     inserted: rows.length
   })
 }
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ productId: string }> }
-) {
-  
-  try {
-    const { productId } = await context.params
 
-    const { imageUrl, altText } = await req.json();
-
-    if (!imageUrl) {
-      return Response.json({ error: "Image URL is required" }, { status: 400 });
-    }
-
-    // Thực hiện chèn dữ liệu mới vào PostgreSQL
-    const result = await sql`
-      INSERT INTO product_images (
-        product_id, 
-        image_url, 
-        alt_text, 
-        is_active
-      )
-      VALUES (
-        ${id}, 
-        ${imageUrl}, 
-        ${altText || 'Product Image'}, 
-        true
-      )
-      RETURNING id, image_url, alt_text
-    `;
-
-    return Response.json(result[0]);
-  } catch (error) {
-    console.error("[PRODUCT_IMAGES_POST_ERROR]", error);
-    return Response.json(
-      { error: "Failed to synchronize image data" },
-      { status: 500 }
-    );
-  }
-}
