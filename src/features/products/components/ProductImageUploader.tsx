@@ -4,9 +4,18 @@
 'use client'
 
 import { useState } from 'react'
-//import { supabase } from '@/lib/supabase/server'
 import { supabase } from '@/lib/supabase/clientSupabase';
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
+import { 
+  UploadCloud, 
+  Trash2, 
+  Image as ImageIcon, 
+  CheckCircle2, 
+  Loader2, 
+  Plus 
+} from "lucide-react";
+
+
 
 /*
 export interface ProductImage {
@@ -182,7 +191,8 @@ interface ImageItem {
   is_thumbnail: boolean;
 }
 
-export default function ProductImageUploader({
+//export default 
+function ProductImageUploader_({
   productId,
   variantId,
   images,
@@ -342,4 +352,140 @@ export default function ProductImageUploader({
     </div>
   );
 }
+
+
+
+
+
+export default function ProductImageUploader({
+  productId,
+  variantId,
+  images,
+  onUploaded,
+}: {
+  productId?: string;
+  variantId?: string;
+  images: ImageItem[];
+  onUploaded: () => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+
+  // --- LOGIC GIỮ NGUYÊN (handleUpload, handleDelete, setThumbnail) ---
+  // Giả định các hàm logic đã được copy từ code cũ của bạn
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      
+      {/* 1. SMART UPLOAD ZONE */}
+      <div className="relative">
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          disabled={uploading}
+          onChange={handleUpload}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 disabled:cursor-not-allowed"
+          id="file-upload"
+        />
+        <label 
+          htmlFor="file-upload"
+          className={`
+            flex flex-col items-center justify-center w-full py-12 border-2 border-dashed 
+            rounded-[2rem] transition-all duration-300 group
+            ${uploading 
+              ? "bg-muted/50 border-primary/20" 
+              : "bg-card border-border hover:border-primary/50 hover:bg-muted/30"
+            }
+          `}
+        >
+          {uploading ? (
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Synchronizing Assets...</span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-3">
+              <div className="p-4 bg-background rounded-full shadow-sm group-hover:scale-110 transition-transform">
+                <UploadCloud className="w-6 h-6 text-muted-foreground group-hover:text-primary" />
+              </div>
+              <div className="text-center">
+                <p className="text-[11px] font-black uppercase tracking-widest text-foreground">Drop product assets here</p>
+                <p className="text-[9px] font-medium text-muted-foreground mt-1 uppercase">PNG, JPG, WEBP up to 5MB</p>
+              </div>
+            </div>
+          )}
+        </label>
+      </div>
+
+      {/* 2. IMAGE REGISTRY GRID */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {images.map((img) => {
+          const src = getPublicImageUrl(img.image_url);
+
+          return (
+            <div
+              key={img.id}
+              className="group relative aspect-[4/5] bg-muted rounded-3xl overflow-hidden border border-border shadow-sm hover:shadow-xl transition-all duration-500"
+            >
+              <img
+                src={src}
+                alt={img.alt_text ?? ""}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+
+              {/* OVERLAY: STATUS & ACTIONS */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                
+                {/* Top Action: Set Thumbnail */}
+                <div className="flex justify-end">
+                  {!img.is_thumbnail && (
+                    <button
+                      onClick={() => setThumbnail(img.id)}
+                      className="p-2 bg-white/10 backdrop-blur-md hover:bg-white text-white hover:text-black rounded-full transition-all"
+                      title="Set as Main Image"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Bottom Action: Delete */}
+                <div className="flex justify-between items-center translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="text-[9px] font-black text-white/60 uppercase tracking-tighter">
+                    Order: {img.display_order}
+                  </span>
+                  <button
+                    onClick={() => handleDelete(img.id)}
+                    className="p-2 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white backdrop-blur-md rounded-lg transition-all"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* THUMBNAIL INDICATOR (Luôn hiện nếu là thumbnail) */}
+              {img.is_thumbnail && (
+                <div className="absolute top-4 left-4 bg-primary text-white text-[9px] font-black px-3 py-1.5 rounded-full shadow-lg flex items-center gap-2 animate-fade-in border border-white/20">
+                  <ImageIcon className="w-3 h-3" />
+                  PRIMARY ASSET
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Placeholder for "Add more" vibe */}
+        {images.length > 0 && (
+           <label htmlFor="file-upload" className="aspect-[4/5] border-2 border-dashed border-border/50 rounded-3xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/20 transition-all opacity-40 hover:opacity-100">
+             <Plus className="w-6 h-6" />
+             <span className="text-[9px] font-black uppercase tracking-widest">Add Asset</span>
+           </label>
+        )}
+      </div>
+
+    </div>
+  );
+}
+
+
 
