@@ -53,6 +53,7 @@ export default function ProductDetailPage() {
   const loadImages = useCallback(async () => {
     if (!id) return
     try {
+      alert('loadImage: '+id)
       // Endpoint này cần khớp với Route Handler bạn đã viết
       const res = await fetch(`/api/admin/products/${id}/images`)
       if (res.ok) {
@@ -137,6 +138,8 @@ export default function ProductDetailPage() {
       <Link href="/admin/products" className="text-primary underline text-xs mt-4 block uppercase font-bold tracking-widest">Return to Fleet</Link>
     </div>
   )
+
+alert('loadImage: '+product.id)
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 animate-fade-in custom-scrollbar">
