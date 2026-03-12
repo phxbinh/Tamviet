@@ -96,4 +96,15 @@ export { productSchema } from './validators/productSchema'
 /* Cách gọi các export ở internal.ts */
 import { productSchema } from '../internal'
 ```
+
+
+#### Cấu trúc api cho upload ảnh
+```plaintext
+GET    /api/products/variants/[variantId]/images
+POST   /api/products/images
+DELETE /api/products/images/[id]
+PATCH  /api/products/images/[id]/thumbnail
+PATCH  /api/products/images/reorder
+POST   /api/products/images/precheck
+```
   
