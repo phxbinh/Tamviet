@@ -180,7 +180,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         {/* 3. Conversion Hub (Fixed Heights for Status) */}
         <div className="space-y-6 pt-8 border-t border-border mt-auto">
           {/* Inventory Status - Chiều cao cố định 64px */}
-          <div className="h-16">
+          <div className="h-10">
             {selectedVariant ? (
               <div className="flex items-center justify-between px-6 py-4 bg-card rounded-xl border border-border animate-fade-in">
                 <div className="flex flex-col">
