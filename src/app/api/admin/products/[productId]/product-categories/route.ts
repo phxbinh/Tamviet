@@ -5,7 +5,7 @@ export async function GET(
   req: Request,
   context: { params: Promise<{ productId: string }> }
 ) {
-  const { id } = await context.params;
+  const { productId } = await context.params;
 
   const rows = await sql`
     select
