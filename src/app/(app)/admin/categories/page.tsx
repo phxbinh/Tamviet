@@ -20,7 +20,7 @@ export default async function CategoriesPage() {
         <h1 className="text-2xl font-bold">Categories</h1>
 
         <Link
-          href="/admin/products/categories/new"
+          href="/admin/categories/new"
           className="bg-black text-white px-4 py-2 rounded"
         >
           New Category
