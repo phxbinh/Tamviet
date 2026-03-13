@@ -10,9 +10,12 @@ export default function ProductCategorySelector({ id }: { id: string }) {
     loadCategories();
   }, []);
 
+
+//src/app/api/admin/products/[id]/product-categories/route.ts
+
   async function loadCategories() {
 
-    const res = await fetch(`/api/products/${id}/product-categories`);
+    const res = await fetch(`/api/admin/products/${id}/product-categories`);
     const json = await res.json();
 
     setCategories(json.data);
@@ -33,7 +36,7 @@ export default function ProductCategorySelector({ id }: { id: string }) {
       .filter((c) => c.selected)
       .map((c) => c.id);
 
-    await fetch(`/api/products/${id}/product-categories`, {
+    await fetch(`/api/admin/products/${id}/product-categories`, {
       method: "PUT",
       body: JSON.stringify({
         category_ids: selected
