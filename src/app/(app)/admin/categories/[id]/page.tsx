@@ -433,7 +433,7 @@ export default function Page() {
           </div>
 
           {/* Status Switch Card */}
-          <div 
+          {/*<div 
             onClick={() => update("is_active", !form.is_active)}
             className={`flex items-center justify-between p-8 rounded-[2rem] border transition-all duration-500 cursor-pointer group
               ${form.is_active ? 'bg-primary/[0.03] border-primary/20 shadow-xl shadow-primary/[0.02]' : 'bg-muted/10 border-border'}
@@ -454,7 +454,36 @@ export default function Page() {
             <div className={`w-14 h-7 rounded-full p-1.5 transition-colors duration-500 ${form.is_active ? 'bg-primary' : 'bg-foreground/10'}`}>
               <div className={`w-4 h-4 bg-white rounded-full transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] ${form.is_active ? 'translate-x-7 shadow-lg scale-110' : 'translate-x-0'}`} />
             </div>
-          </div>
+          </div>*/}
+{/* Status Switch Card */}
+<div 
+  onClick={() => update("is_active", !form.is_active)}
+  className={`flex items-center justify-between p-8 rounded-[2rem] border transition-all duration-500 cursor-pointer group
+    ${form.is_active ? 'bg-primary/[0.03] border-primary/20 shadow-xl shadow-primary/[0.02]' : 'bg-muted/10 border-border'}
+  `}
+>
+  <div className="flex items-center gap-4">
+    <div className={`p-3 rounded-2xl transition-colors duration-500 ${form.is_active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-foreground/10 text-foreground/30'}`}>
+      <Activity className="w-5 h-5" />
+    </div>
+    <div className="space-y-1">
+      <p className="text-[12px] font-black uppercase tracking-widest text-foreground">Active Status</p>
+      <p className="text-[10px] text-foreground/30 font-bold uppercase tracking-tighter italic">
+        {form.is_active ? "Currently visible to customers" : "Hidden from main storefront"}
+      </p>
+    </div>
+  </div>
+  
+  {/* Switch Control - Đã Fix lỗi tràn */}
+  <div className={`relative w-12 h-7 rounded-full p-1 transition-colors duration-500 flex items-center ${form.is_active ? 'bg-primary' : 'bg-foreground/10'}`}>
+    <div 
+      className={`w-5 h-5 bg-white rounded-full shadow-md transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
+        ${form.is_active ? 'translate-x-5' : 'translate-x-0'}
+      `} 
+    />
+  </div>
+</div>
+
 
           {/* Action Button */}
           <div className="pt-6">
