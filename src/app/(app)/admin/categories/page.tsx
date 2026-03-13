@@ -197,42 +197,7 @@ export default async function CategoriesPage() {
 
             <tbody className="divide-y divide-border/50">
               {data.length > 0 ? data.map((c) => (
-                <CategoryRow category={c} />
-              )) : (
-                <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <p className="text-sm font-bold text-foreground/20 uppercase tracking-[0.3em] animate-breathe-slow">
-                      Chưa có danh mục nào được khởi tạo
-                    </p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-
-          </table>
-        </div>
-
-        {/* Footer Table */}
-        <div className="p-6 bg-muted/20 border-t border-border flex justify-between items-center">
-           <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-[0.2em]">
-             Total: {data.length} units
-           </span>
-           <div className="flex gap-1">
-              <div className="w-8 h-1 bg-primary rounded-full" />
-              <div className="w-2 h-1 bg-primary/20 rounded-full" />
-              <div className="w-1 h-1 bg-primary/10 rounded-full" />
-           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-
-
-              /*<tr key={c.id} className="group hover:bg-primary/[0.02] transition-colors duration-300">
+              <tr key={c.id} className="group hover:bg-primary/[0.02] transition-colors duration-300">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-3">
                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:scale-150 transition-transform" />
@@ -272,7 +237,42 @@ export default async function CategoriesPage() {
                        </Link>
                     </div>
                   </td>
-                </tr> */
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={4} className="px-8 py-20 text-center">
+                    <p className="text-sm font-bold text-foreground/20 uppercase tracking-[0.3em] animate-breathe-slow">
+                      Chưa có danh mục nào được khởi tạo
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+
+          </table>
+        </div>
+
+        {/* Footer Table */}
+        <div className="p-6 bg-muted/20 border-t border-border flex justify-between items-center">
+           <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-[0.2em]">
+             Total: {data.length} units
+           </span>
+           <div className="flex gap-1">
+              <div className="w-8 h-1 bg-primary rounded-full" />
+              <div className="w-2 h-1 bg-primary/20 rounded-full" />
+              <div className="w-1 h-1 bg-primary/10 rounded-full" />
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
 
 
 
