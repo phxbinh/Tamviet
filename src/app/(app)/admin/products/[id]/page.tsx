@@ -19,6 +19,8 @@ import {
 
 // 🔸 Import Image Uploader từ Số 1
 import ProductImageUploader from "@/features/products/components/ProductImageUploader"
+import ProductCategorySelector
+from "@/features/products/components/ProductCategorySelector";
 
 interface Product {
   id: string
@@ -204,6 +206,10 @@ export default function ProductDetailPage() {
                  Primary thumbnail used for grid displays and hardware catalogs. Supports PNG, WEBP, JPG.
                </p>
             </div>
+          </section>
+
+          <section className="bg-card border border-border p-6 shadow-sm">
+            <ProductCategorySelector productId={product.id} />
           </section>
 
           {/* SECTION: IDENTIFICATION */}
