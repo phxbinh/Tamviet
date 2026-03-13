@@ -17,6 +17,11 @@ export interface Category {
   updated_at: string;
 }
 
+interface CategoriesResponse {
+  success: boolean;
+  data: Category[];
+}
+
 async function getCategories(): Promise<Category[]> {
   const h = await headers();
   const host = h.get('host')!;
@@ -33,7 +38,7 @@ async function getCategories(): Promise<Category[]> {
   if (res.status === 403) redirect('/403');
   if (!res.ok) throw new Error('Failed to fetch categories');
 
-  const json = await res.json();
+  const json: CategoriesResponse = await res.json();
 
   return json.data; // 👈 quan trọng
 }
