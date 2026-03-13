@@ -13,7 +13,7 @@ export default function NewCategoryPage() {
   async function handleSubmit(e: any) {
     e.preventDefault();
 
-    await fetch("/api/categories", {
+    await fetch("/api/admin/categories", {
       method: "POST",
       body: JSON.stringify({
         name,
