@@ -31,3 +31,56 @@ export async function GET() {
     );
   }
 }
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    const {
+      name,
+      slug,
+      parent_id,
+      display_order,
+      is_active
+    } = body;
+
+    const rows = await sql`
+      insert into categories (
+        name,
+        slug,
+        parent_id,
+        display_order,
+        is_active
+      )
+      values (
+        ${name},
+        ${slug},
+        ${parent_id ?? null},
+        ${display_order ?? 0},
+        ${is_active ?? true}
+      )
+      returning *
+    `;
+
+    return NextResponse.json({
+      success: true,
+      data: rows[0]
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { success: false, error: "Create category failed" },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
+
+
+
