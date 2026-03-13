@@ -2,7 +2,7 @@ import Link from "next/link";
 
 async function getCategories() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/products/categories`,
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/admin/categories`,
     { cache: "no-store" }
   );
 
