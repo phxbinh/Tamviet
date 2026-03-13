@@ -35,7 +35,7 @@ export async function fetchWithRetry(
 
 
 
-/* Cách sử dụng
+/* Cách sử dụng ở trang products
 import { fetchWithRetry } from "@/lib/fetchWithRetry"
 
 const res = await fetchWithRetry(
@@ -43,5 +43,21 @@ const res = await fetchWithRetry(
 )
 
 const products = await res.json()
-
 */
+
+
+/* Cách dùng trong component
+useEffect(() => {
+  async function load() {
+    const res = await fetchWithRetry("/api/products")
+    const data = await res.json()
+    setProducts(data)
+  }
+
+  load()
+}, [])
+*/
+
+
+
+
