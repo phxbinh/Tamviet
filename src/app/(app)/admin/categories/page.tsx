@@ -2,7 +2,22 @@ import Link from "next/link";
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-async function getCategories(): Promise<Product[]> {
+
+export interface Category {
+  id: string;
+  parent_id: string | null;
+
+  name: string;
+  slug: string;
+
+  is_active: boolean;
+  display_order: number;
+
+  created_at: string;
+  updated_at: string;
+}
+
+async function getCategories(): Promise<Category[]> {
   const h = await headers();
   const host = h.get('host')!;
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
@@ -34,7 +49,7 @@ async function getCategories() {
 
 export default async function CategoriesPage() {
 
-  const { data } = await getCategories();
+  const data  = await getCategories();
 
   return (
     <div className="p-6">
