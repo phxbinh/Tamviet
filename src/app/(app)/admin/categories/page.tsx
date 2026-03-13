@@ -109,6 +109,7 @@ import Link from "next/link";
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Plus, Edit3, Layers, Circle, ChevronRight } from "lucide-react";
+import { CategoryRow } from '_components/CategoryRow';
 
 export interface Category {
   id: string;
@@ -193,9 +194,13 @@ export default async function CategoriesPage() {
               </tr>
             </thead>
 
+
+
+
+
             <tbody className="divide-y divide-border/50">
               {data.length > 0 ? data.map((c) => (
-                <tr key={c.id} className="group hover:bg-primary/[0.02] transition-colors duration-300">
+                {/*<tr key={c.id} className="group hover:bg-primary/[0.02] transition-colors duration-300">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-3">
                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:scale-150 transition-transform" />
@@ -235,7 +240,8 @@ export default async function CategoriesPage() {
                        </Link>
                     </div>
                   </td>
-                </tr>
+                </tr> */}
+  <CategoryRow key={c.id} category={c} />
               )) : (
                 <tr>
                   <td colSpan={4} className="px-8 py-20 text-center">
