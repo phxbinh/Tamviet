@@ -475,7 +475,7 @@ export default function Page() {
   </div>
   
   {/* Switch Control - Đã Fix lỗi tràn */}
-  <div className={`relative w-12 h-7 rounded-full p-1 transition-colors duration-500 flex items-center ${form.is_active ? 'bg-primary' : 'bg-foreground/10'}`}>
+  <div className={`relative w-14 h-7 rounded-full p-1 transition-colors duration-500 flex items-center ${form.is_active ? 'bg-primary' : 'bg-foreground/10'}`}>
     <div 
       className={`w-5 h-5 bg-white rounded-full shadow-md transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
         ${form.is_active ? 'translate-x-5' : 'translate-x-0'}
