@@ -31,21 +31,14 @@ async function getCategories(): Promise<Category[]> {
 
   if (res.status === 401) redirect('/login');
   if (res.status === 403) redirect('/403');
-  if (!res.ok) throw new Error('Failed to fetch assets');
+  if (!res.ok) throw new Error('Failed to fetch categories');
 
-  return res.json();
+  const json = await res.json();
+
+  return json.data; // 👈 quan trọng
 }
 
-/*
-async function getCategories() {
-  const res = await fetch(
-    `/api/admin/categories`,
-    { cache: "no-store" }
-  );
 
-  return res.json();
-}
-*/
 
 export default async function CategoriesPage() {
 
@@ -78,7 +71,7 @@ export default async function CategoriesPage() {
 
         <tbody>
 
-          {data.map((c: any) => (
+          {data.map((c: Category) => (
             <tr key={c.id} className="border-t">
 
               <td>{c.name}</td>
