@@ -109,7 +109,8 @@ import Link from "next/link";
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { Plus, Edit3, Layers, Circle, ChevronRight } from "lucide-react";
-import { CategoryRow } from '_components/CategoryRow';
+import { CategoryRow } from './_compnents/CategoryRow';
+//src/app/(app)/admin/categories/_compnents/CategoryRow.tsx
 
 export interface Category {
   id: string;
