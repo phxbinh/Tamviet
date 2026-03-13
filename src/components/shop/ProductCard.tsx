@@ -13,7 +13,7 @@ export function ProductCard_({ id, name, thumbnail_url, price_min }: ProductCard
   return (
     <Link href={`/products/${id}`} className="group block w-full">
       {/* Container Ảnh: Tỉ lệ 4/5 chuẩn High-end */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-card rounded-2xl border border-border/50 shadow-sm transition-all duration-500 group-hover:shadow-md">
+      <div className="relative aspect-[4/5] overflow-hidden bg-card rounded-md border border-border/50 shadow-sm transition-all duration-500 group-hover:shadow-md">
         {thumbnail_url ? (
           <img
             src={thumbnail_url}
