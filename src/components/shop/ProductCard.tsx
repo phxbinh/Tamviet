@@ -147,7 +147,7 @@ export function ProductCard__({ id, name, thumbnail_url, price_min }: ProductCar
 }
 
 // src/components/shop/ProductCard.tsx
-export function ProductCard({ id, name, thumbnail_url, price_min }: ProductCardProps) {
+export function ProductCard___({ id, name, thumbnail_url, price_min }: ProductCardProps) {
   return (
     <Link href={`/products/${id}`} className="group block w-full relative overflow-hidden rounded-[2.5rem] border border-border/40 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:border-primary/20 hover:shadow-[0_40px_80px_rgba(var(--primary),0.1)] hover:-translate-y-2 bg-background">
       
@@ -204,6 +204,75 @@ export function ProductCard({ id, name, thumbnail_url, price_min }: ProductCardP
     </Link>
   );
 }
+
+
+
+
+
+
+
+export function ProductCard({ id, name, thumbnail_url, price_min }: ProductCardProps) {
+  return (
+    <Link href={`/products/${id}`} className="group block w-full relative overflow-hidden rounded-[2.5rem] border border-border/30 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:border-primary/20 hover:shadow-[0_40px_80px_rgba(var(--primary),0.1)] hover:-translate-y-2 bg-background">
+      
+      {/* Container Ảnh: Tỉ lệ 4/5 chuẩn High-end Fashion */}
+      <div className="relative aspect-[4/5] overflow-hidden">
+        {thumbnail_url ? (
+          <img
+            src={thumbnail_url}
+            alt={name}
+            className="w-full h-full object-cover transition-transform duration-[1.8s] ease-[cubic-bezier(0.2,1,0.2,1)] group-hover:scale-110 group-hover:rotate-1"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-muted/20 text-muted-foreground/10">
+            <ShoppingBag className="w-12 h-12 stroke-[0.5]" />
+          </div>
+        )}
+
+        {/* Overlay mờ dần khi hover: Đậm hơn ở dưới để tôn giá tiền */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+        {/* Nút View Detail - Hiệu ứng bứt phá từ cạnh dưới */}
+        <div className="hidden md:flex absolute bottom-0 left-0 right-0 items-center justify-center p-6">
+          <div className="w-full bg-white/10 backdrop-blur-2xl border border-white/20 text-white py-4 text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl flex items-center justify-center gap-3 rounded-xl translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]">
+            Explore Collection <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1.5 transition-transform duration-500" />
+          </div>
+        </div>
+      </div>
+
+      {/* Thông tin sản phẩm: Giờ nó là một phần của khối rounded lớn */}
+      <div className="p-6 pt-5 space-y-2.5 bg-card/60 backdrop-blur-lg border-t border-border/40">
+        <h3 className="text-[12px] md:text-sm font-semibold text-foreground/80 line-clamp-1 tracking-tight group-hover:text-primary transition-colors duration-300">
+          {name}
+        </h3>
+        
+        <div className="flex items-baseline gap-2 overflow-hidden">
+          {price_min ? (
+            <p className="text-xl md:text-2xl font-black tracking-tighter text-foreground tabular-nums flex items-baseline">
+              {new Intl.NumberFormat('vi-VN').format(price_min)}
+              <span className="ml-1 text-[11px] font-bold opacity-30">VND</span>
+            </p>
+          ) : (
+            <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/40 italic">
+              Valuation Required
+            </p>
+          )}
+          
+          {/* Thanh progress trang trí: Chạy ngang khi hover - Hào hứng hơn */}
+          <div className="flex-1 h-[1px] bg-border/20 relative overflow-hidden hidden md:block mt-2">
+            <div className="absolute inset-0 bg-primary -translate-x-full group-hover:translate-x-0 transition-transform duration-700 ease-in-out" />
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+
+
+
+
 
 
 
