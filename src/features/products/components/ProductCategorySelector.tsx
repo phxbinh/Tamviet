@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function ProductCategorySelector({ productId }: { productId: string }) {
+export default function ProductCategorySelector({ id }: { id: string }) {
 
   const [categories, setCategories] = useState<any[]>([]);
 
@@ -12,7 +12,7 @@ export default function ProductCategorySelector({ productId }: { productId: stri
 
   async function loadCategories() {
 
-    const res = await fetch(`/api/products/${productId}/product-categories`);
+    const res = await fetch(`/api/products/${id}/product-categories`);
     const json = await res.json();
 
     setCategories(json.data);
@@ -33,7 +33,7 @@ export default function ProductCategorySelector({ productId }: { productId: stri
       .filter((c) => c.selected)
       .map((c) => c.id);
 
-    await fetch(`/api/products/${productId}/product-categories`, {
+    await fetch(`/api/products/${id}/product-categories`, {
       method: "PUT",
       body: JSON.stringify({
         category_ids: selected
