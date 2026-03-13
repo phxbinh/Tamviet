@@ -33,7 +33,7 @@ export default function ProductCategorySelector({ productId }: { productId: stri
       .filter((c) => c.selected)
       .map((c) => c.id);
 
-    await fetch(`/api/products/${productId}/categories`, {
+    await fetch(`/api/products/${productId}/product-categories`, {
       method: "PUT",
       body: JSON.stringify({
         category_ids: selected
