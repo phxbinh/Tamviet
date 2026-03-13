@@ -209,7 +209,7 @@ export default function ProductDetailPage() {
           </section>
 
           <section className="bg-card border border-border p-6 shadow-sm">
-            <ProductCategorySelector {id} />
+            <ProductCategorySelector id={id} />
           </section>
 
           {/* SECTION: IDENTIFICATION */}
