@@ -1,5 +1,27 @@
 import Link from "next/link";
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
+async function getCategories(): Promise<Product[]> {
+  const h = await headers();
+  const host = h.get('host')!;
+  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+
+  const res = await fetch(`${protocol}://${host}/api/admin/categories`, {
+    cache: 'no-store',
+    headers: {
+      cookie: h.get('cookie') ?? '',
+    },
+  });
+
+  if (res.status === 401) redirect('/login');
+  if (res.status === 403) redirect('/403');
+  if (!res.ok) throw new Error('Failed to fetch assets');
+
+  return res.json();
+}
+
+/*
 async function getCategories() {
   const res = await fetch(
     `/api/admin/categories`,
@@ -8,6 +30,7 @@ async function getCategories() {
 
   return res.json();
 }
+*/
 
 export default async function CategoriesPage() {
 
