@@ -81,12 +81,33 @@ export async function GET(
     `;
 
     // 4️⃣ Product images (nếu có table)
+/*
     const images = await sql`
       select *
       from product_images
       where product_id = ${id}
       order by sort_order asc, created_at asc
     `;
+*/
+
+const images = await sql`
+    select
+      id,
+      image_url,
+      alt_text,
+      display_order,
+      is_thumbnail
+    from product_images
+    where product_id = ${id}
+      and is_active = true
+    order by display_order
+  `
+
+
+
+
+
+
 
     return NextResponse.json({
       product: {
