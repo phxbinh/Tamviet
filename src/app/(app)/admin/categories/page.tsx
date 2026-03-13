@@ -2,7 +2,7 @@ import Link from "next/link";
 
 async function getCategories() {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/categories`,
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/products/categories`,
     { cache: "no-store" }
   );
 
@@ -20,7 +20,7 @@ export default async function CategoriesPage() {
         <h1 className="text-2xl font-bold">Categories</h1>
 
         <Link
-          href="/admin/categories/new"
+          href="/admin/products/categories/new"
           className="bg-black text-white px-4 py-2 rounded"
         >
           New Category
