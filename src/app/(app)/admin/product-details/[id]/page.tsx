@@ -19,6 +19,10 @@ import {
   Activity
 } from "lucide-react";
 
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
+
+
+
 // Helper function đồng bộ style status
 const getStatusConfig = (status: string) => {
   const s = status?.toLowerCase();
@@ -152,7 +156,10 @@ export default async function ProductDetailPage({
             <div className="p-4 grid grid-cols-2 gap-2">
               {images.length > 0 ? images.map((img: any) => (
                 <div key={img.id} className="aspect-square bg-muted relative group overflow-hidden border border-border">
-                  <img src={img.url} alt="Product" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
+                  <img src={
+              img.url ? getPublicImageUrl(img.url) : undefined
+             alt="Product" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
+{/*       <img src={ img.url alt="Product" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />*/}
                 </div>
               )) : (
                 <div className="col-span-2 py-10 text-center text-[10px] font-bold uppercase opacity-20 italic">No assets linked</div>
