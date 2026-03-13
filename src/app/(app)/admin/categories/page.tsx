@@ -241,7 +241,7 @@ export default async function CategoriesPage() {
                     </div>
                   </td>
                 </tr> */}
-  <CategoryRow key={c.id} category={c} />
+  <CategoryRow category={c} />
               )) : (
                 <tr>
                   <td colSpan={4} className="px-8 py-20 text-center">
