@@ -50,6 +50,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'About', href: '/about', showInSidebar: true },
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Markdown', href: '/test', showInSidebar: true },
+  { name: 'Test UI', href: '/testUI', showInSidebar: true },
 
 ];
 
