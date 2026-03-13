@@ -81,15 +81,16 @@ export async function GET(
     `;
 
     // 4️⃣ Product images (nếu có table)
-/*
+//* Lấy tất cả các ảnh của product trong
     const images = await sql`
       select *
       from product_images
       where product_id = ${id}
       order by sort_order asc, created_at asc
     `;
-*/
+//*/
 
+/* Chỉ lấy ảnh được 1 chọn làm thumbnail
 const images = await sql`
     select
       id,
@@ -102,7 +103,7 @@ const images = await sql`
       and is_active = true
     order by display_order
   `
-
+*/
 
 
 
