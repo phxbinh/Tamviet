@@ -376,7 +376,46 @@ export default function CategoryDetailPage() {
           </div>
 
           {/* ... Các trường Parent ID, Display Order, Active Switch giữ nguyên như bản trước ... */}
-          
+                   {/* Parent & Order Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                <LayoutGrid className="w-3 h-3" /> Danh mục cha
+              </label>
+              <input
+                placeholder="UUID hoặc null"
+                className="w-full bg-background border border-border px-5 py-4 rounded-2xl text-[11px] font-mono focus:ring-8 focus:ring-primary/5 focus:border-primary/40 outline-none transition-all"
+                value={form.parent_id ?? ""}
+                onChange={(e) => updateField("parent_id", e.target.value || null)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-foreground/40">
+                Display Order
+              </label>
+              <input
+                type="number"
+                className="w-full bg-background border border-border px-5 py-4 rounded-2xl text-sm font-black focus:ring-8 focus:ring-primary/5 focus:border-primary/40 outline-none transition-all tabular-nums"
+                value={form.display_order}
+                onChange={(e) => updateField("display_order", Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          {/* Active Switch */}
+          <div 
+            onClick={() => updateField("is_active", !form.is_active)}
+            className="flex items-center justify-between p-6 rounded-3xl border border-border bg-background/50 cursor-pointer hover:border-primary/20 transition-all group"
+          >
+            <div className="space-y-1">
+              <p className="text-[11px] font-black uppercase tracking-widest">Trạng thái hoạt động</p>
+              <p className="text-[10px] text-foreground/30 font-medium">Hiện/Ẩn danh mục này trên giao diện người dùng</p>
+            </div>
+            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-500 ${form.is_active ? 'bg-primary' : 'bg-foreground/10'}`}>
+              <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-500 ${form.is_active ? 'translate-x-6' : 'translate-x-0'}`} />
+            </div>
+          </div>
           <div className="pt-8 border-t border-border/50">
             <button
               onClick={save}
@@ -394,12 +433,6 @@ export default function CategoryDetailPage() {
     </div>
   );
 }
-
-
-
-
-
-
 
 
 
