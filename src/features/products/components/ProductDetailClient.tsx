@@ -78,12 +78,12 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const allSelected = Object.keys(selected).length === attributes.length;
 
   return (
-    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-20 py-12 px-6 animate-fade-in custom-scrollbar items-start">
+    <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-20 py-12 px-6 animate-fade-in custom-scrollbar items-start">
       
       {/* LEFT: VISUAL (Fixed Aspect Ratio 4/5) */}
       <div className="lg:col-span-7 w-full">
         <div className="sticky top-12 space-y-6">
-          <div className="relative aspect-[4/5] bg-card rounded-[2rem] overflow-hidden border border-border shadow-sm group">
+          <div className="relative aspect-[4/5] bg-card rounded-[0.5rem] overflow-hidden border border-border shadow-sm group">
              {/* Badge cố định góc - Không ảnh hưởng layout */}
             <div className="absolute top-6 left-6 z-10">
               <span className="bg-background/80 backdrop-blur-md text-foreground px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-border flex items-center gap-2">
