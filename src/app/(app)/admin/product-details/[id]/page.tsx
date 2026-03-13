@@ -157,7 +157,7 @@ export default async function ProductDetailPage({
               {images.length > 0 ? images.map((img: any) => (
                 <div key={img.id} className="aspect-square bg-muted relative group overflow-hidden border border-border">
                   <img src={
-              img.url ? getPublicImageUrl(img.url) : undefined
+              img.url ? getPublicImageUrl(img.url) : undefined}
              alt="Product" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
 {/*       <img src={ img.url alt="Product" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />*/}
                 </div>
