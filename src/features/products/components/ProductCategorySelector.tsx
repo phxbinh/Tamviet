@@ -12,7 +12,7 @@ export default function ProductCategorySelector({ productId }: { productId: stri
 
   async function loadCategories() {
 
-    const res = await fetch(`/api/products/${productId}/categories`);
+    const res = await fetch(`/api/products/${productId}/product-categories`);
     const json = await res.json();
 
     setCategories(json.data);
