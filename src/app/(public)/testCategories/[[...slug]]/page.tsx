@@ -1,10 +1,9 @@
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { headers } from "next/headers";
-import { ProductCard } from "@/components/shop/ProductCard"; // Import từ Số 1
+import { ProductCard } from "@/components/shop/ProductCard";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
-import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory } from "@/lib/db/products";
 import { getCategoriesTree } from "@/lib/db/categories";
 
