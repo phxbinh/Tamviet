@@ -105,7 +105,7 @@ const [products, categories] = await Promise.all([
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
             
             <Link
-              href="/testCategories"
+              href="/testCategories" prefetch={false}
               className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
                 !path 
                 ? "bg-foreground text-background border-foreground shadow-lg" 
@@ -118,7 +118,7 @@ const [products, categories] = await Promise.all([
             {categories.map((cat: any) => (
               <Link
                 key={cat.id}
-                href={`/testCategories/${cat.category_path}`}
+                href={`/testCategories/${cat.category_path}`} prefetch={false}
                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
                   path === cat.category_path
                   ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
