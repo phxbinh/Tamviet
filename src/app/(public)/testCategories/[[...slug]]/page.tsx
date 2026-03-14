@@ -6,60 +6,23 @@ import { ProductCard } from "@/components/shop/ProductCard"; // Import từ Số
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 import { getProductsByCategory } from "@/lib/db/products";
-
-
 import { getCategoriesTree } from "@/lib/db/categories";
 
-async function getCategories() {
-  return await getCategoriesTree();
-}
 
 async function getProducts(path?: string) {
   return await getProductsByCategory(path);
 }
 
-
-
-// --- API Helpers (Giữ nguyên logic nhưng tối ưu hóa Fetch) ---
-/*
-async function getCategories() {
-  const host = (await headers()).get("host");
-  const res = await fetch(`http://${host}/api/admin/categories/tree`, { cache: "no-store" });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data;
-}
-
-async function getProducts(path?: string) {
-  const host = (await headers()).get("host");
-  const url = path
-    ? `http://${host}/api/products/categories?category=${path}`
-    : `http://${host}/api/products/categories`;
-//: `http://${host}/api/products/categories`
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data;
-}
-*/
-
-
 export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
   const slugArray = slug ?? [];
   const path = slugArray.join("/");
-/*
+
   const [products, categories] = await Promise.all([
-    getProducts(path),
-    getCategories()
+    getProductsByCategory(path),
+    getCategoriesTree()
   ]);
-*/
-
-const [products, categories] = await Promise.all([
-  getProductsByCategory(path),
-  getCategoriesTree()
-]);
-
+  
   if (products === null) notFound();
 
   // Tìm tên category hiện tại để làm Title cho "Hào hứng"
