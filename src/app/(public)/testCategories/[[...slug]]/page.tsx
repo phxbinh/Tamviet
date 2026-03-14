@@ -48,11 +48,17 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
   const { slug } = await params;
   const slugArray = slug ?? [];
   const path = slugArray.join("/");
-
+/*
   const [products, categories] = await Promise.all([
     getProducts(path),
     getCategories()
   ]);
+*/
+
+const [products, categories] = await Promise.all([
+  getProductsByCategory(path),
+  getCategoriesTree()
+]);
 
   if (products === null) notFound();
 
