@@ -25,6 +25,7 @@ export async function GET() {
 export async function GET() {
   try {
 
+/*
     const rows = await sql`
       select
         id,
@@ -34,6 +35,18 @@ export async function GET() {
       from categories
       order by category_path
     `;
+*/
+
+const rows = await sql`
+  select
+    id,
+    name,
+    parent_id,
+    category_path,
+    category_depth
+  from categories
+  order by category_path
+`;
 
     return NextResponse.json({
       success: true,
