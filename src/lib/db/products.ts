@@ -1,7 +1,8 @@
 // src/lib/db/products.ts
 import { sql } from "@/lib/neon/sql";
+import { cache } from "react";
 
-export async function getProductsByCategory(slug?: string) {
+async function getProductsByCategoryCached(slug?: string) {
 
   // CASE 1: không có category
   if (!slug) {
@@ -81,3 +82,9 @@ export async function getProductsByCategory(slug?: string) {
 
   return rows;
 }
+
+export const getProductsByCategory = cache(getProductsByCategoryCached);
+
+
+
+
