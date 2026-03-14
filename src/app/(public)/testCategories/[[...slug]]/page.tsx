@@ -10,7 +10,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ProductCard } from "@/components/shop/ProductCard"; // Import từ Số 1
-import { LayoutGrid, Filter, ChevronRight, Sparkles } from "lucide-react";
+import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 
 
@@ -238,6 +238,18 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
   // Tìm tên category hiện tại để làm Title cho "Hào hứng"
   const currentCategory = categories.find((c: any) => c.category_path === path);
 
+// Hàm phụ để nhóm các con vào cha (chỉ lấy đến level 1 để tránh quá sâu)
+const categoryTree = categories
+  .filter((c: any) => c.category_depth === 0)
+  .map((parent: any) => ({
+    ...parent,
+    children: categories.filter((child: any) => child.parent_id === parent.id)
+  }));
+
+
+
+
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
@@ -266,7 +278,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
       <div className="max-w-7xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
         
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        {/*<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
             
             <Link
@@ -296,12 +308,85 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
             ))}
           </div>
 
-          {/* Quick Stats */}
+
           <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
             <LayoutGrid className="w-3.5 h-3.5" />
             Showing {products.length} Results
           </div>
-        </div>
+        </div>*/}
+
+
+{/* 2. CATEGORY TOOLBAR: Scroll + Dropdown Hybrid */}
+<div className="flex flex-col gap-4 mb-10">
+  <div className="relative group w-full overflow-hidden">
+    <div className="flex items-center gap-2 p-1.5 bg-card/40 backdrop-blur-2xl rounded-full border border-border/40 overflow-x-auto no-scrollbar scroll-smooth">
+      
+      {/* Nút ALL mặc định */}
+      <Link
+        href="/testCategories"
+        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 border ${
+          !path ? "bg-foreground text-background border-foreground shadow-sm" : "border-transparent text-foreground/40 hover:bg-foreground/5"
+        }`}
+      >
+        All
+      </Link>
+
+      {categoryTree.map((parent: any) => {
+        const hasChildren = parent.children.length > 0;
+        const isActive = path === parent.category_path || path.startsWith(parent.category_path + "/");
+
+        return (
+          <div key={parent.id} className="relative group/dropdown">
+            {/* Nút Cha */}
+            <Link
+              href={`/testCategories/${parent.category_path}`}
+              className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 border whitespace-nowrap ${
+                isActive
+                ? "bg-primary text-white border-primary shadow-[0_8px_15px_rgba(var(--primary),0.2)]"
+                : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
+              }`}
+            >
+              {parent.name}
+              {hasChildren && (
+                <ChevronDown className={`w-3 h-3 transition-transform duration-500 group-hover/dropdown:rotate-180 ${isActive ? 'text-white' : 'text-primary/40'}`} />
+              )}
+            </Link>
+
+            {/* Dropdown Mini cho Sub-categories */}
+            {hasChildren && (
+              <div className="absolute top-full left-0 mt-2 min-w-[160px] p-2 bg-card/95 backdrop-blur-2xl border border-border/50 rounded-[1.5rem] shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:pointer-events-auto transition-all duration-500 z-[100]">
+                {parent.children.map((child: any) => (
+                  <Link
+                    key={child.id}
+                    href={`/testCategories/${child.category_path}`}
+                    className={`block px-4 py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all ${
+                      path === child.category_path 
+                      ? "bg-primary/10 text-primary" 
+                      : "text-foreground/40 hover:bg-foreground/5 hover:text-foreground"
+                    }`}
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Mask báo hiệu còn nội dung */}
+    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
+  </div>
+</div>
+
+
+
+
+
+
+
+
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
