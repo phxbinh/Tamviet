@@ -34,13 +34,17 @@ async function getProducts(path?:string){
   return json.data
 }
 
+
+
 export default async function Page({
   params
 }:{
-  params:{ slug?:string[] }
+  params: Promise<{ slug?:string[] }>
 }){
 
-  const slugArray = params.slug ?? []
+  const { slug } = await params
+
+  const slugArray = slug ?? []
 
   const path = slugArray.join("/")
 
