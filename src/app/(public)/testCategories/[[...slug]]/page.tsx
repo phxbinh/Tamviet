@@ -87,7 +87,7 @@ Products
 <div className="flex flex-wrap gap-3">
 
 <Link
-href="/testCategories"
+href="/testCategories" prefetch={false}
 className={`px-4 py-2 border rounded ${
   !path ? "bg-black text-white":""
 }`}
@@ -101,7 +101,7 @@ All
 
 <Link
 key={cat.id}
-href={`/testCategories/${cat.category_path}`}
+href={`/testCategories/${cat.category_path}`} prefetch={false}
 className={`px-4 py-2 border rounded text-sm ${
   path === cat.category_path
   ? "bg-black text-white"
