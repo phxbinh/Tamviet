@@ -155,7 +155,7 @@ export default function CategoryParentSelect({
             <div
               onClick={() => { onChange(null); setIsOpen(false); }}
               className={`
-                flex items-center justify-between px-5 py-3.5 rounded-xl cursor-pointer transition-all group
+                flex items-center justify-between px-5 py-1.5 rounded-xl cursor-pointer transition-all group
                 ${value === null ? "bg-primary/10 text-primary" : "hover:bg-muted/50 text-foreground/40"}
               `}
             >
@@ -176,7 +176,7 @@ export default function CategoryParentSelect({
                   key={c.id}
                   onClick={() => { onChange(c.id); setIsOpen(false); }}
                   className={`
-                    flex items-center justify-between px-5 py-3.5 rounded-xl cursor-pointer transition-all mb-1 group
+                    flex items-center justify-between px-5 py-1.5 rounded-xl cursor-pointer transition-all mb-1 group
                     ${isSelected ? "bg-primary text-white shadow-lg shadow-primary/20" : "hover:bg-primary/[0.03] text-foreground/60"}
                   `}
                   style={{ marginLeft: `${c.level * 12}px` }}
