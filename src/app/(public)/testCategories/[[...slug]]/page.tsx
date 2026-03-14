@@ -318,7 +318,8 @@ const categoryTree = categories
 
 {/* 2. CATEGORY TOOLBAR: Đã fix lỗi Dropdown và Rung lắc */}
 {/* 2. CATEGORY TOOLBAR: Tối ưu Single-line & Compact */}
-<div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+<div className="sticky top-0 z-[100] py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 md:mx-0 md:px-0 transition-all duration-500">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
   
   {/* Container cuộn ngang: Ép cứng trên 1 dòng */}
   <div className="relative group w-full md:w-auto overflow-hidden">
