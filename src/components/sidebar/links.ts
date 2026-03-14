@@ -51,6 +51,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Markdown', href: '/test', showInSidebar: true },
   { name: 'Test UI', href: '/testUI', showInSidebar: true },
+  { name: 'Test Categories', href: '/testCategories', showInSidebar: true },
 
 ];
 
