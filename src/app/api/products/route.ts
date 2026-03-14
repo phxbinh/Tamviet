@@ -1,3 +1,4 @@
+// src/app/api/products/route.tsx
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
