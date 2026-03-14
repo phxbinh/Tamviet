@@ -1,3 +1,6 @@
+
+/* Lấy tất cả các sản phẩm */
+// src/app/api/products/categories/route.ts
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/neon/sql";
 
