@@ -216,7 +216,8 @@ async function getProducts(path?: string) {
   const host = (await headers()).get("host");
   const url = path
     ? `http://${host}/api/products/categories?category=${path}`
-    : `http://${host}/api/products/categories`;
+    : `http://${host}/api/products`;
+//: `http://${host}/api/products/categories`
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) return null;
   const json = await res.json();
