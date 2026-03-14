@@ -87,7 +87,7 @@ All
 
 <Link
 key={cat.id}
-href={`/products/categories/${cat.category_path}`}
+href={`/testCategories/${cat.category_path}`}
 className={`px-4 py-2 border rounded text-sm ${
   path === cat.category_path
   ? "bg-black text-white"
