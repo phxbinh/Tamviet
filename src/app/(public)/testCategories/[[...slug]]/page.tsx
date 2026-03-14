@@ -22,8 +22,8 @@ async function getProducts(path?:string){
   const host = (await headers()).get("host");
 
   const url = path
-    ? `http://${host}/api/products?category=${path}`
-    : `http://${host}/api/products`
+    ? `http://${host}/api/products/categories?category=${path}`
+    : `http://${host}/api/products/categories`
 
   const res = await fetch(url,{ cache:"no-store" })
 
@@ -73,7 +73,7 @@ Products
 <div className="flex flex-wrap gap-3">
 
 <Link
-href="/products"
+href="/products/categories"
 className={`px-4 py-2 border rounded ${
   !path ? "bg-black text-white":""
 }`}
@@ -87,7 +87,7 @@ All
 
 <Link
 key={cat.id}
-href={`/products/${cat.category_path}`}
+href={`/products/categories/${cat.category_path}`}
 className={`px-4 py-2 border rounded text-sm ${
   path === cat.category_path
   ? "bg-black text-white"
