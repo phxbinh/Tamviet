@@ -111,6 +111,44 @@ className={`px-4 py-2 border rounded text-sm ${
 
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
+{products.length === 0 ? (
+
+<div className="col-span-full text-center py-20 text-gray-500">
+  Không tìm thấy sản phẩm trong danh mục này
+</div>
+
+) : (
+
+products.map((p:any)=>(
+  <div
+    key={p.id}
+    className="border rounded p-4 space-y-2 hover:shadow"
+  >
+
+    <div className="font-semibold">
+      {p.name}
+    </div>
+
+    <div className="text-sm text-gray-500">
+      {p.slug}
+    </div>
+
+  </div>
+))
+
+)}
+
+
+</div>
+
+</div>
+
+  )
+}
+
+
+
+/*
 {products.map((p:any)=>(
 
 <div
@@ -129,10 +167,17 @@ className="border rounded p-4 space-y-2 hover:shadow"
 </div>
 
 ))}
+*/
 
-</div>
+/* Cách gọn
+{products?.length ? (
+  products.map((p:any)=>(
+    <ProductCard key={p.id} product={p} />
+  ))
+) : (
+  <EmptyState />
+)}
+*/
 
-</div>
 
-  )
-}
+
