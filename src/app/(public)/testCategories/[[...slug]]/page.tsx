@@ -73,7 +73,7 @@ Products
 <div className="flex flex-wrap gap-3">
 
 <Link
-href="/products/categories"
+href="/testCategories"
 className={`px-4 py-2 border rounded ${
   !path ? "bg-black text-white":""
 }`}
