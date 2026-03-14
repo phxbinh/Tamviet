@@ -1,4 +1,4 @@
-
+// src/app/(public)/testCategories/[[...slug]]/page.tsx
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { headers } from "next/headers";
