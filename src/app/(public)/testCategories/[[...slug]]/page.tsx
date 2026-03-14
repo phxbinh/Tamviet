@@ -5,20 +5,29 @@ import { headers } from "next/headers";
 import { ProductCard } from "@/components/shop/ProductCard"; // Import từ Số 1
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
+import { getProductsByCategory } from "@/lib/db/products";
 
-// --- API Helpers (Giữ nguyên logic của bạn nhưng tối ưu hóa Fetch) ---
+
+import { getCategoriesTree } from "@/lib/db/categories";
+
+async function getCategories() {
+  return await getCategoriesTree();
+}
+
+async function getProducts(path?: string) {
+  return await getProductsByCategory(path);
+}
+
+
+
+// --- API Helpers (Giữ nguyên logic nhưng tối ưu hóa Fetch) ---
+/*
 async function getCategories() {
   const host = (await headers()).get("host");
   const res = await fetch(`http://${host}/api/admin/categories/tree`, { cache: "no-store" });
   if (!res.ok) return [];
   const json = await res.json();
   return json.data;
-}
-
-import { getProductsByCategory } from "@/lib/db/products";
-
-async function getProducts(path?: string) {
-  return await getProductsByCategory(path);
 }
 
 async function getProducts(path?: string) {
@@ -32,6 +41,8 @@ async function getProducts(path?: string) {
   const json = await res.json();
   return json.data;
 }
+*/
+
 
 export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
