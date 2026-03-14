@@ -139,7 +139,7 @@ const [products, categories] = await Promise.all([
         </div>
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2 md:gap-x-8 md:gap-y-8">
           {products.length === 0 ? (
             <div className="col-span-full py-40 flex flex-col items-center justify-center space-y-6 bg-card/20 rounded-[3rem] border border-dashed border-border/50">
               <Sparkles className="w-12 h-12 text-foreground/10" />
