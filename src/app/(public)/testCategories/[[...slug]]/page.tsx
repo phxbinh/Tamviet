@@ -283,7 +283,7 @@ const categoryTree = categories
             
             <Link
               href="/testCategories"
-              className={`px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
+              className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
                 !path 
                 ? "bg-foreground text-background border-foreground shadow-lg" 
                 : "border-transparent text-foreground/40 hover:text-foreground hover:bg-foreground/5"
@@ -296,7 +296,7 @@ const categoryTree = categories
               <Link
                 key={cat.id}
                 href={`/testCategories/${cat.category_path}`}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
+                className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
                   path === cat.category_path
                   ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
                   : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
