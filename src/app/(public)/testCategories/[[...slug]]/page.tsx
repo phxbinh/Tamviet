@@ -316,16 +316,16 @@ const categoryTree = categories
         </div>*/}
 
 
-{/* 2. CATEGORY TOOLBAR: Scroll + Dropdown Hybrid */}
-<div className="flex flex-col gap-4 mb-10">
-  <div className="relative group w-full overflow-hidden">
-    <div className="flex items-center gap-2 p-1.5 bg-card/40 backdrop-blur-2xl rounded-full border border-border/40 overflow-x-auto no-scrollbar scroll-smooth">
+{/* 2. CATEGORY TOOLBAR: Đã fix lỗi Dropdown và Rung lắc */}
+<div className="relative mb-12 h-[56px]"> {/* Cố định chiều cao để không bị nhảy trang */}
+  <div className="absolute inset-0 flex items-center">
+    <div className="flex items-center gap-2 p-1.5 bg-card/60 backdrop-blur-3xl rounded-full border border-border/40 w-full overflow-x-auto no-scrollbar shadow-2xl shadow-black/5">
       
-      {/* Nút ALL mặc định */}
+      {/* Nút ALL */}
       <Link
         href="/testCategories"
-        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 border ${
-          !path ? "bg-foreground text-background border-foreground shadow-sm" : "border-transparent text-foreground/40 hover:bg-foreground/5"
+        className={`shrink-0 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 border ${
+          !path ? "bg-foreground text-background border-foreground shadow-lg" : "border-transparent text-foreground/40 hover:bg-foreground/5"
         }`}
       >
         All
@@ -336,33 +336,40 @@ const categoryTree = categories
         const isActive = path === parent.category_path || path.startsWith(parent.category_path + "/");
 
         return (
-          <div key={parent.id} className="relative group/dropdown">
+          <div key={parent.id} className="relative shrink-0 group/dropdown">
             {/* Nút Cha */}
             <Link
               href={`/testCategories/${parent.category_path}`}
-              className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 border whitespace-nowrap ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 border whitespace-nowrap ${
                 isActive
-                ? "bg-primary text-white border-primary shadow-[0_8px_15px_rgba(var(--primary),0.2)]"
+                ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
                 : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
               }`}
             >
               {parent.name}
               {hasChildren && (
-                <ChevronDown className={`w-3 h-3 transition-transform duration-500 group-hover/dropdown:rotate-180 ${isActive ? 'text-white' : 'text-primary/40'}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-500 group-hover/dropdown:rotate-180 ${isActive ? 'text-white' : 'text-primary/40'}`} />
               )}
             </Link>
 
-            {/* Dropdown Mini cho Sub-categories */}
+            {/* Dropdown Con: Đã fix Visibility */}
             {hasChildren && (
-              <div className="absolute top-full left-0 mt-2 min-w-[160px] p-2 bg-card/95 backdrop-blur-2xl border border-border/50 rounded-[1.5rem] shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 group-hover/dropdown:pointer-events-auto transition-all duration-500 z-[100]">
+              <div className="absolute top-[120%] left-0 min-w-[200px] p-2 bg-card border border-border/50 rounded-[1.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] 
+                invisible opacity-0 translate-y-2 
+                group-hover/dropdown:visible group-hover/dropdown:opacity-100 group-hover/dropdown:translate-y-0 
+                transition-all duration-300 z-[999]">
+                
+                {/* Mũi tên nhỏ trỏ lên trên */}
+                <div className="absolute -top-1.5 left-8 w-3 h-3 bg-card border-t border-l border-border/50 rotate-45" />
+
                 {parent.children.map((child: any) => (
                   <Link
                     key={child.id}
                     href={`/testCategories/${child.category_path}`}
-                    className={`block px-4 py-2.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all ${
+                    className={`block px-5 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
                       path === child.category_path 
-                      ? "bg-primary/10 text-primary" 
-                      : "text-foreground/40 hover:bg-foreground/5 hover:text-foreground"
+                      ? "bg-primary/10 text-primary italic" 
+                      : "text-foreground/50 hover:bg-foreground/5 hover:text-foreground"
                     }`}
                   >
                     {child.name}
@@ -374,11 +381,9 @@ const categoryTree = categories
         );
       })}
     </div>
-
-    {/* Mask báo hiệu còn nội dung */}
-    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
   </div>
 </div>
+
 
 
 
