@@ -70,6 +70,7 @@ export default function SidebarClient({ links, onNavigate }: { links: SidebarLin
     return (
       <Link
         key={link.href}
+        prefetch={false}
         href={link.href!}
         onClick={onNavigate}
         className={`${baseClass} ${active ? activeClass : inactiveClass}`}
