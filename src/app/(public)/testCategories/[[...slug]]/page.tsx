@@ -278,7 +278,7 @@ const categoryTree = categories
       <div className="max-w-7xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
         
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
-        {/*<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
             
             <Link
@@ -313,66 +313,7 @@ const categoryTree = categories
             <LayoutGrid className="w-3.5 h-3.5" />
             Showing {products.length} Results
           </div>
-        </div>*/}
-
-
-{/* 2. CATEGORY TOOLBAR: Đã fix lỗi Dropdown và Rung lắc */}
-{/* 2. CATEGORY TOOLBAR: Tối ưu Single-line & Compact */}
-<div className="sticky top-0 z-[100] py-4 bg-background/80 backdrop-blur-md -mx-4 px-4 md:mx-0 md:px-0 transition-all duration-500">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-  
-  {/* Container cuộn ngang: Ép cứng trên 1 dòng */}
-  <div className="relative group w-full md:w-auto overflow-hidden">
-    <div className="flex items-center gap-1.5 p-1.5 bg-card/40 backdrop-blur-2xl rounded-full border border-border/40 overflow-x-auto no-scrollbar scroll-smooth">
-      
-      {/* All Series - Nhỏ gọn hơn */}
-      <Link
-        href="/testCategories"
-        className={`px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 whitespace-nowrap border ${
-          !path 
-          ? "bg-foreground text-background border-foreground shadow-sm" 
-          : "border-transparent text-foreground/40 hover:bg-foreground/5"
-        }`}
-      >
-        All
-      </Link>
-
-      {categories.map((cat: any) => (
-        <Link
-          key={cat.id}
-          href={`/testCategories/${cat.category_path}`}
-          className={`flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.15em] transition-all duration-500 border whitespace-nowrap ${
-            path === cat.category_path
-            ? "bg-primary text-white border-primary shadow-[0_8px_15px_rgba(var(--primary),0.2)]"
-            : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
-          }`}
-        >
-          {cat.category_depth > 0 && <span className="opacity-20 text-[8px]">/</span>}
-          {cat.name}
-        </Link>
-      ))}
-    </div>
-    
-    {/* Gradient Mask: Tạo hiệu ứng mờ dần ở cạnh phải để báo hiệu còn nội dung cuộn */}
-    <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
-  </div>
-
-  {/* Quick Stats: Nhỏ gọn, tinh tế hơn */}
-  <div className="hidden md:flex items-center gap-2 px-4 text-[9px] font-bold uppercase tracking-[0.2em] text-foreground/20 italic whitespace-nowrap">
-    <div className="w-8 h-[1px] bg-border/40" />
-    <span>{products.length} Articles</span>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
+        </div>
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
