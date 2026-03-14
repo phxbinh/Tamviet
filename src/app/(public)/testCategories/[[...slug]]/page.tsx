@@ -11,11 +11,7 @@ import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import { ProductCard } from "@/components/shop/ProductCard"; // Import từ Số 1
 import { LayoutGrid, Filter, ChevronRight, Sparkles } from "lucide-react";
-
-
-
-
-
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 
 
 
@@ -328,7 +324,10 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
                 key={p.id}
                 id={p.id}
                 name={p.name}
-                thumbnail_url={p.thumbnail_url}
+                /*thumbnail_url={p.thumbnail_url} */
+                thumbnail_url={
+                  p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined
+                }
                 price_min={p.price_min}
               />
             ))
