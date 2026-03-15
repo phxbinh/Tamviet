@@ -1,6 +1,6 @@
 
 'use client'
-import { motion, useMotionValue, animate } from "framer-motion";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { ProductCardSlug } from "@/components/shop/ProductCard";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
@@ -90,7 +90,8 @@ function RelatedProductsSection_({ relatedProducts }: RelatedProductsProps) {
 
 // ... Interface Product giữ nguyên
 
-export default function RelatedProductsSection({ relatedProducts }: RelatedProductsProps) {
+//export default
+function RelatedProductsSection__({ relatedProducts }: RelatedProductsProps) {
   const [width, setWidth] = useState(0);
   const [showRightGradient, setShowRightGradient] = useState(true);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
@@ -196,6 +197,94 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
         <motion.div 
           animate={{ opacity: showRightGradient ? 1 : 0 }}
           className="absolute top-0 right-0 h-full w-4 bg-gradient-to-l from-white via-white/40 to-transparent z-10 pointer-events-none" 
+        />
+      </div>
+    </section>
+  );
+}
+
+
+
+
+
+export default function RelatedProductsSection({ relatedProducts }: RelatedProductsProps) {
+  const [width, setWidth] = useState(0);
+  const carousel = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+
+  // TỐI ƯU: Biến đổi tọa độ X thành độ mờ (opacity) trực tiếp, không dùng State
+  // Khi x = 0 (đầu danh sách) -> opacity gradient trái = 0
+  // Khi x = -20 -> bắt đầu hiện gradient trái
+  const leftOpacity = useTransform(x, [0, -40], [0, 1]);
+
+  // Khi x = -width (cuối danh sách) -> opacity gradient phải = 0
+  // Chúng ta dùng hàm để tính toán động khi width thay đổi
+  const rightOpacity = useTransform(x, [-width + 40, -width], [1, 0]);
+
+  useEffect(() => {
+    const calculateWidth = () => {
+      if (carousel.current) {
+        setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
+      }
+    };
+    calculateWidth();
+    // Đợi ảnh load xong tính lại lần nữa cho chuẩn
+    window.addEventListener('load', calculateWidth);
+    window.addEventListener('resize', calculateWidth);
+    return () => {
+      window.removeEventListener('load', calculateWidth);
+      window.removeEventListener('resize', calculateWidth);
+    };
+  }, [relatedProducts]);
+
+  const scrollBy = (direction: 'left' | 'right') => {
+    const step = 300;
+    const targetX = direction === 'left' ? x.get() + step : x.get() - step;
+    animate(x, Math.max(Math.min(targetX, 0), -width), {
+      type: "spring",
+      stiffness: 400, // Tăng độ cứng để phản hồi nhanh hơn
+      damping: 40,
+    });
+  };
+
+  return (
+    <section className="mt-16 border-t pt-10 overflow-hidden select-none">
+      <div className="flex justify-between items-end mb-6">
+        <h2 className="text-2xl font-bold uppercase">Sản phẩm tương tự</h2>
+        <div className="hidden md:flex gap-2">
+          <button onClick={() => scrollBy('left')} className="p-2 rounded-full border hover:bg-gray-100 active:scale-95 transition-transform"><ChevronLeft size={20}/></button>
+          <button onClick={() => scrollBy('right')} className="p-2 rounded-full border hover:bg-gray-100 active:scale-95 transition-transform"><ChevronRight size={20}/></button>
+        </div>
+      </div>
+
+      <div className="relative">
+        {/* Gradient TRÁI - Không re-render React khi ẩn/hiện */}
+        <motion.div 
+          style={{ opacity: leftOpacity }}
+          className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" 
+        />
+
+        <motion.div ref={carousel} className="touch-pan-y overflow-visible">
+          <motion.div
+            drag="x"
+            style={{ x }}
+            dragConstraints={{ right: 0, left: -width }}
+            dragElastic={0.1} // Tạo độ bám tay (lò xo)
+            dragTransition={{ power: 0.2, timeConstant: 200 }} // Giảm quán tính để dừng nhanh hơn, bớt cảm giác trôi
+            className="flex gap-6 cursor-grab active:cursor-grabbing"
+          >
+            {relatedProducts.map((item) => (
+              <div key={item.id} className="min-w-[250px] md:min-w-[300px] pointer-events-none md:pointer-events-auto">
+                <ProductCardSlug {...item} />
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Gradient PHẢI - Không re-render React khi ẩn/hiện */}
+        <motion.div 
+          style={{ opacity: rightOpacity }}
+          className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" 
         />
       </div>
     </section>
