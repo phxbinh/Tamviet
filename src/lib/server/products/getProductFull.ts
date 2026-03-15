@@ -41,7 +41,7 @@ export async function getProductFull(
 
     /* ---------------- PRODUCT ---------------- */
 
-    const productRows = await sql<ProductRow[]>`
+    const productRows = await sql`
       select
         id,
         name,
@@ -59,7 +59,7 @@ export async function getProductFull(
       return null;
     }
 
-    const product = productRows[0] as Product;
+    const product = productRows[0];
 
 
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
