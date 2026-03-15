@@ -26,7 +26,7 @@ export default async function ProductPage({
   const { id } = await params;
 
   //const data = await getProduct(id);
-  const data = await getProductFull(params.id);
+  const data = await getProductFull(id);
 
   return <ProductDetailClient data={data} />;
 }
