@@ -4,7 +4,7 @@ import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
 
-export type ProductRow = {
+interface ProductRow = {
   id: string;
   name: string;
   slug: string;
