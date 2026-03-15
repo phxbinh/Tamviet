@@ -7,7 +7,7 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
 // 1. Định nghĩa Interface cho sản phẩm (Bạn có thể điều chỉnh tùy theo Data thực tế)
 interface Product {
-  id: string | number;
+  id: string;
   slug: string;
   name: string;
   thumbnail_url?: string;
