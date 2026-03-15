@@ -1,3 +1,4 @@
+import "server-only"
 import { sql } from "@/lib/neon/sql";
 
 // --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
