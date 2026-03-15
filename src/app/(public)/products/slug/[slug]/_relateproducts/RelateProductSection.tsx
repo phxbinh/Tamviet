@@ -25,11 +25,14 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
   const carousel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+  const timer = setTimeout(() => {
     if (carousel.current) {
-      // Thêm kiểm tra tồn tại trước khi tính toán
       setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
     }
-  }, [relatedProducts]);
+  }, 100); // Đợi một chút để DOM render xong hoàn toàn
+  return () => clearTimeout(timer);
+}, [relatedProducts]);
+
 
   return (
     <section className="mt-16 border-t pt-10 overflow-hidden">
