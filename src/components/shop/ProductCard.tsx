@@ -270,12 +270,13 @@ export function ProductCard({ id, name, thumbnail_url, price_min }: ProductCardP
 }
 
 interface ProductCardPropsSlug {
+  id: string;
   slug: string;
   name: string;
   thumbnail_url?: string;
   price_min?: number;
 }
-export function ProductCardSlug({ slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
+export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   return (
     <Link href={`/products/slug/${slug}`} prefetch={false} className="group block w-full relative overflow-hidden rounded-[0.5rem] border border-border/30 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:border-primary/20 hover:shadow-[0_40px_80px_rgba(var(--primary),0.1)] hover:-translate-y-2 bg-background">
       
