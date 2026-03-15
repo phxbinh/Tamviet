@@ -42,7 +42,7 @@ interface ProductFull {
 }
 
 // Đổi tham số từ id thành slug
-export async function getProductFull(slug: string): Promise<ProductFull | null> {
+export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
   try {
     /* ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- */
     const productRows = await sql`
