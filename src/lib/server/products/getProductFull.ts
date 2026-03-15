@@ -40,7 +40,8 @@ interface ProductFull {
   images: ProductImage[];
 }
 
-export async function getProductFull_(id: string): Promise<ProductFull | null> {
+//export
+async function getProductFull(id: string): Promise<ProductFull | null> {
   try {
     /* ---------------- PRODUCT ---------------- */
     const productRows = await sql`
@@ -172,5 +173,165 @@ export async function getProductFull_(id: string): Promise<ProductFull | null> {
     throw new Error("Failed to fetch product detail");
   }
 }
+
+
+
+/* ---------------- FUNCTION ---------------- */
+
+export async function getProductFull_(id: string): Promise<ProductFull | null> {
+  try {
+
+    /* ---------------- PRODUCT ---------------- */
+
+    const productRows = await sql`
+      select
+        id,
+        name,
+        slug,
+        status,
+        description,
+        short_description
+      from products
+      where id = ${id}
+      and status = 'active'
+      limit 1
+    `;
+
+    if (productRows.length === 0) {
+      return null;
+    }
+
+    const product = productRows[0] as Product;
+
+
+    /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
+
+    const variantRows = await sql`
+      select
+        v.id as variant_id,
+        v.sku,
+        v.price,
+        v.stock,
+        a.name as attribute_name,
+        av.value as attribute_value
+      from product_variants v
+      left join variant_attribute_values vav
+        on vav.variant_id = v.id
+      left join attribute_values av
+        on av.id = vav.attribute_value_id
+      left join attributes a
+        on a.id = av.attribute_id
+      where v.product_id = ${id}
+      and v.is_active = true
+      order by v.created_at, v.id
+    `;
+
+    const variantsMap = new Map<string, Variant>();
+
+    for (const row of variantRows) {
+
+      let variant = variantsMap.get(row.variant_id);
+
+      if (!variant) {
+        variant = {
+          id: row.variant_id,
+          sku: row.sku,
+          price: row.price,
+          stock: row.stock,
+          attributes: {},
+        };
+
+        variantsMap.set(row.variant_id, variant);
+      }
+
+      if (row.attribute_name) {
+        variant.attributes[row.attribute_name] = row.attribute_value;
+      }
+    }
+
+    const variants = Array.from(variantsMap.values());
+
+
+    /* ---------------- ATTRIBUTES (UI SELECTOR) ---------------- */
+
+    const attributeRows = await sql`
+      select
+        a.id as attribute_id,
+        a.name as attribute_name,
+        av.id as value_id,
+        av.value
+      from product_variants v
+      join variant_attribute_values vav
+        on vav.variant_id = v.id
+      join attribute_values av
+        on av.id = vav.attribute_value_id
+      join attributes a
+        on a.id = av.attribute_id
+      where v.product_id = ${id}
+      and v.is_active = true
+      order by a.name
+    `;
+
+    const attributesMap = new Map<string, Attribute>();
+
+    for (const row of attributeRows) {
+
+      let attr = attributesMap.get(row.attribute_id);
+
+      if (!attr) {
+        attr = {
+          id: row.attribute_id,
+          name: row.attribute_name,
+          values: [],
+        };
+
+        attributesMap.set(row.attribute_id, attr);
+      }
+
+      attr.values.push({
+        id: row.value_id,
+        value: row.value,
+      });
+    }
+
+    const attributes = Array.from(attributesMap.values());
+
+
+    /* ---------------- IMAGES ---------------- */
+
+    const imageRows = await sql`
+      select
+        id,
+        image_url,
+        is_thumbnail
+      from product_images
+      where product_id = ${id}
+      order by is_thumbnail desc, id
+    `;
+
+    const images: ProductImage[] = imageRows.map((img) => ({
+      id: img.id,
+      url: img.image_url,
+      is_thumbnail: img.is_thumbnail,
+    }));
+
+
+    /* ---------------- RETURN DATA ---------------- */
+
+    return {
+      product,
+      attributes,
+      variants,
+      images,
+    };
+
+  } catch (err) {
+
+    console.error("product-full error:", err);
+
+    throw new Error("Failed to fetch product detail");
+  }
+}
+
 
 
