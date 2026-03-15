@@ -10,7 +10,8 @@ import { sql } from "@/lib/neon/sql";
 import Link from "next/link";
 import {ProductCardSlug} from "@/components/shop/ProductCard";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import RelatedProductsSection from "./_relateproducts/RelateProductSection";
+//import RelatedProductsSection from "./_relateproducts/RelateProductSection";
+import RelatedProductsSection from "./_relateproducts/RelateProductSectionO";
 
 // ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
