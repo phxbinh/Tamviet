@@ -28,5 +28,10 @@ export default async function ProductPage({
   //const data = await getProduct(id);
   const data = await getProductFull(id);
 
+if (!data) {
+    notFound();
+  }
+
+
   return <ProductDetailClient data={data} />;
 }
