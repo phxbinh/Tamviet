@@ -1,46 +1,8 @@
-import "server-only";
 import { sql } from "@/lib/neon/sql";
-import type { ProductFull, Product } from "@/types/productDetail";
 
-type ProductRow = {
-  id: string;
-  name: string;
-  slug: string;
-  status: string;
-  description: string | null;
-  short_description: string | null;
-};
-
-type VariantRow = {
-  variant_id: string;
-  sku: string;
-  price: number;
-  stock: number;
-  attribute_name: string | null;
-  attribute_value: string | null;
-};
-
-type AttributeRow = {
-  attribute_id: string;
-  attribute_name: string;
-  value_id: string;
-  value: string;
-};
-
-type ImageRow = {
-  id: string;
-  image_url: string;
-  is_thumbnail: boolean;
-};
-
-export async function getProductFull(
-  id: string
-): Promise<ProductFull | null> {
-
+export async function getProductDetail(id: string) {
   try {
-
     /* ---------------- PRODUCT ---------------- */
-
     const productRows = await sql`
       select
         id,
@@ -56,45 +18,32 @@ export async function getProductFull(
     `;
 
     if (productRows.length === 0) {
-      return null;
+      return null; // Hoặc ném lỗi tùy bạn
     }
 
     const product = productRows[0];
 
-
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
-
     const variantRows = await sql`
       select
         v.id as variant_id,
         v.sku,
         v.price,
         v.stock,
-
         a.name as attribute_name,
         av.value as attribute_value
-
       from product_variants v
-
-      left join variant_attribute_values vav
-        on vav.variant_id = v.id
-
-      left join attribute_values av
-        on av.id = vav.attribute_value_id
-
-      left join attributes a
-        on a.id = av.attribute_id
-
+      left join variant_attribute_values vav on vav.variant_id = v.id
+      left join attribute_values av on av.id = vav.attribute_value_id
+      left join attributes a on a.id = av.attribute_id
       where v.product_id = ${id}
       and v.is_active = true
-
       order by v.created_at
     `;
 
     const variantsMap = new Map();
 
     for (const row of variantRows) {
-
       if (!variantsMap.has(row.variant_id)) {
         variantsMap.set(row.variant_id, {
           id: row.variant_id,
@@ -113,23 +62,16 @@ export async function getProductFull(
 
     const variants = Array.from(variantsMap.values());
 
-
     /* ---------------- ATTRIBUTES (for UI selector) ---------------- */
-
     const attributeRows = await sql`
       select
         a.id as attribute_id,
         a.name as attribute_name,
         av.id as value_id,
         av.value
-
       from attributes a
-
-      join attribute_values av
-        on av.attribute_id = a.id
-
+      join attribute_values av on av.attribute_id = a.id
       where av.id in (
-
         select attribute_value_id
         from variant_attribute_values
         where variant_id in (
@@ -137,16 +79,13 @@ export async function getProductFull(
           from product_variants
           where product_id = ${id}
         )
-
       )
-
       order by a.name
     `;
 
     const attributesMap = new Map();
 
     for (const row of attributeRows) {
-
       if (!attributesMap.has(row.attribute_id)) {
         attributesMap.set(row.attribute_id, {
           id: row.attribute_id,
@@ -163,9 +102,7 @@ export async function getProductFull(
 
     const attributes = Array.from(attributesMap.values());
 
-
     /* ---------------- IMAGES ---------------- */
-
     const imageRows = await sql`
       select
         id,
@@ -182,9 +119,7 @@ export async function getProductFull(
       is_thumbnail: img.is_thumbnail,
     }));
 
-
-    /* ---------------- RESPONSE ---------------- */
-
+    /* ---------------- RETURN DATA ---------------- */
     return {
       product,
       attributes,
@@ -193,9 +128,7 @@ export async function getProductFull(
     };
 
   } catch (err) {
-
     console.error("product-full error:", err);
-
     throw new Error("Failed to fetch product detail");
   }
 }
