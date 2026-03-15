@@ -10,6 +10,7 @@ import { sql } from "@/lib/neon/sql";
 import Link from "next/link";
 import {ProductCardSlug} from "@/components/shop/ProductCard";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
+import RelatedProductsSection from "./_relateproducts/RelateProductSection";
 
 // ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
@@ -161,53 +162,16 @@ return (
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
 
-         {/* Phần sản phẩm liên quan */}
+      {/* Phần sản phẩm liên quan */}
       {relatedProducts.length > 0 && (
-        <section className="mt-16 border-t pt-10">
-          <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {relatedProducts.map((item) => (
-              <ProductCardSlug 
-                id={item.id}
-                key={item.id}
-                slug={item.slug}
-                name={item.name}
-                thumbnail_url={
-                  item.thumbnail_url ? getPublicImageUrl(item.thumbnail_url) : undefined
-                }
-                price_min={item.price_min}
-              />
-            ))}
-          </div>
-        </section>
+        <div className="container mx-auto px-4">
+          <RelatedProductsSection relatedProducts={relatedProducts} />
+        </div>
       )} 
   </>
 );
 
 }
-
-
-              /*
-              <Link 
-                key={item.id} 
-                href={`/products/slug/${item.slug}`}
-                className="group block"
-              >
-                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
-                  <img 
-                    src={item.thumbnail || "/placeholder.png"} 
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="font-medium text-sm group-hover:text-primary line-clamp-2">
-                  {item.name}
-                </h3>
-                <p className="text-red-600 font-bold mt-1">
-                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
-                </p>
-              </Link> */
-
 
 
 
