@@ -158,15 +158,30 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
         </Swiper>
 
         <style jsx global>{`
-          .swiper-pagination-bullet-active {
-            background: #000 !important;
-            width: 20px !important; /* Kéo dài dấu chấm đang chọn nhìn rất hiện đại */
-            border-radius: 4px !important;
+          /* Trạng thái chung của TẤT CẢ các dấu chấm */
+          .swiper-pagination-bullet {
+            background: #d1d5db; /* Màu xám nhạt cho các chấm không chọn */
+            opacity: 1; /* Đảm bảo hiện rõ */
+            width: 8px;
+            height: 8px;
+            border-radius: 4px; /* Bo tròn mặc định */
+            
+            /* CỐT LÕI: Animation mượt mà */
+            transition: all 0.3s ease-in-out; 
           }
+
+          /* Trạng thái CHỈ ĐANG CHỌN (Active) */
+          .swiper-pagination-bullet-active {
+            background: #000 !important; /* Màu đen */
+            width: 24px !important; /* Kéo dài ra (tăng từ 20px lên 24px nhìn rõ hơn) */
+          }
+
+          /* Tinh chỉnh vị trí */
           .swiper-pagination {
             bottom: 0 !important;
           }
         `}</style>
+
       </div>
     </section>
   );
