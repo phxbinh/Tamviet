@@ -35,7 +35,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
 
 
   return (
-    <section className="mt-16 border-t pt-10 overflow-hidden">
+    <section className="mt-16 border-t pt-10 pr-8 overflow-hidden">
       <div className="flex justify-between items-end mb-6">
         <div>
           <h2 className="text-2xl font-bold">Sản phẩm tương tự</h2>
