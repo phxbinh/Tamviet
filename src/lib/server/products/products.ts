@@ -1,3 +1,4 @@
+/*
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
@@ -51,6 +52,6 @@ async function getProducts(): Promise<ProductRow[]> {
 }
 
 export const getProductsCached = cache(getProducts);
-
+*/
 
 
