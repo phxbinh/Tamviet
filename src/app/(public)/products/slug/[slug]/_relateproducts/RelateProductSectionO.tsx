@@ -11,9 +11,6 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/free-mode';
 
-
-
-
 interface Product {
   id: string;
   slug: string;
