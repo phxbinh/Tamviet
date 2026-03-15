@@ -41,7 +41,7 @@ interface ProductFull {
 }
 
 //export
-async function getProductFull(id: string): Promise<ProductFull | null> {
+async function getProductFull_(id: string): Promise<ProductFull | null> {
   try {
     /* ---------------- PRODUCT ---------------- */
     const productRows = await sql`
