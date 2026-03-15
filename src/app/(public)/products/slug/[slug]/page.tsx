@@ -8,13 +8,13 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 
+
+// ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
 interface BreadcrumbItem {
   label: string;
   href?: string; // Dấu ? nghĩa là không bắt buộc phải có href
 }
-
-
 
 async function getCategoryPath(categoryId: string) {
   const rows = await sql`
@@ -37,6 +37,59 @@ async function getCategoryPath(categoryId: string) {
   return rows;
 }
 
+// ✳️ Lấy các sản phẩm liên quan
+export async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
+  try {
+    const rows = await sql`
+      select
+        p.id,
+        p.name,
+        p.slug,
+        p.thumbnail_url, -- Cột thumbnail mặc định của bạn (nếu có)
+        
+        min(v.price) as price_min,
+        sum(v.stock) as total_stock,
+        
+        img.image_url as thumbnail -- Ảnh đánh dấu là thumbnail trong bảng images
+
+      from products p
+      
+      -- Join với bảng trung gian để lọc theo category
+      inner join product_categories pc 
+        on pc.product_id = p.id
+
+      -- Join lấy giá và kho từ variants
+      left join product_variants v
+        on v.product_id = p.id
+        and v.is_active = true
+
+      -- Join lấy ảnh thumbnail
+      left join product_images img
+        on img.product_id = p.id
+        and img.is_thumbnail = true
+
+      where pc.category_id = ${categoryId} -- Lọc cùng danh mục
+      and p.id != ${currentProductId}     -- Loại trừ sản phẩm đang xem
+      and p.status = 'active'             -- Chỉ lấy sản phẩm đang bán
+
+      group by
+        p.id,
+        p.name,
+        p.slug,
+        p.thumbnail_url,
+        img.image_url
+
+      order by p.created_at desc
+      limit ${limit}
+    `;
+    
+    return rows;
+  } catch (err) {
+    console.error("Related products error:", err);
+    return [];
+  }
+}
+
 
 
 
@@ -53,6 +106,7 @@ if (!data) {
     notFound();
   }
 
+  // ✳️ Làm Breadcrumb
   // --- BƯỚC 1: KHAI BÁO BIẾN breadcrumbs ---
   const categoryPath = await getCategoryPath(data.product.category_id);
   
@@ -88,6 +142,13 @@ if (!data) {
     ],
   };
 
+  // ✳️ Lấy sản phẩm liên quan
+  // Lấy sản phẩm liên quan
+  const relatedProducts = await getRelatedProducts(
+    data.product.category_id, 
+    data.product.id
+  );
+
 return (
   <>
     <script
@@ -97,7 +158,112 @@ return (
     <Breadcrumb items={breadcrumbs} />
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
+    <br><hr>
+    <h1> Sản phẩm liên quan </h1>
+
+         {/* Phần sản phẩm liên quan */}
+      {relatedProducts.length > 0 && (
+        <section className="mt-16 border-t pt-10">
+          <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {relatedProducts.map((item) => (
+              <Link 
+                key={item.id} 
+                href={`/products/${item.slug}`}
+                className="group block"
+              >
+                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
+                  <img 
+                    src={item.thumbnail || "/placeholder.png"} 
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-medium text-sm group-hover:text-primary line-clamp-2">
+                  {item.name}
+                </h3>
+                <p className="text-red-600 font-bold mt-1">
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
   </>
 );
 
 }
+
+
+
+
+
+
+
+
+
+
+// src/app/(public)/products/[slug]/page.tsx
+
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = await getProductDetail_slug(slug);
+  
+  if (!data) notFound();
+
+  // Lấy sản phẩm liên quan
+  const relatedProducts = await getRelatedProducts(
+    data.product.category_id, 
+    data.product.id
+  );
+
+  return (
+    <div className="container mx-auto px-4">
+      <Breadcrumb items={breadcrumbs} />
+      
+      {/* Chi tiết sản phẩm hiện tại */}
+      <ProductDetailClient data={data} />
+
+      {/* Phần sản phẩm liên quan */}
+      {relatedProducts.length > 0 && (
+        <section className="mt-16 border-t pt-10">
+          <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {relatedProducts.map((item) => (
+              <Link 
+                key={item.id} 
+                href={`/products/${item.slug}`}
+                className="group block"
+              >
+                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
+                  <img 
+                    src={item.thumbnail || "/placeholder.png"} 
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-medium text-sm group-hover:text-primary line-clamp-2">
+                  {item.name}
+                </h3>
+                <p className="text-red-600 font-bold mt-1">
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
