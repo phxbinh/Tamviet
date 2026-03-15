@@ -1,6 +1,45 @@
 import { sql } from "@/lib/neon/sql";
 
-export async function getProductFull(id: string) {
+// --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
+interface AttributeValue {
+  id: string;
+  value: string;
+}
+
+interface Attribute {
+  id: string;
+  name: string;
+  values: AttributeValue[];
+}
+
+interface Variant {
+  id: string;
+  sku: string;
+  price: number;
+  stock: number;
+  attributes: Record<string, string>;
+}
+
+interface ProductImage {
+  id: string;
+  url: string;
+  is_thumbnail: boolean;
+}
+
+interface Product {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+interface ProductFull {
+  product: Product;
+  attributes: Attribute[];
+  variants: Variant[];
+  images: ProductImage[];
+}
+
+export async function getProductFull(id: string): Promise<ProductFull | null> {
   try {
     /* ---------------- PRODUCT ---------------- */
     const productRows = await sql`
@@ -21,7 +60,7 @@ export async function getProductFull(id: string) {
       return null; // Hoặc ném lỗi tùy bạn
     }
 
-    const product = productRows[0];
+    const product = productRows[0] as Product;
 
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
     const variantRows = await sql`
