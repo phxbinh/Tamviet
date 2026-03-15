@@ -27,12 +27,22 @@ interface ProductImage {
   url: string;
   is_thumbnail: boolean;
 }
-
+/*
 interface Product {
   id: string;
   name: string;
   description?: string;
 }
+*/
+
+interface Product {
+  id: string;
+  name: string;
+  description?: string;
+  category_id: string; // Thêm dòng này
+}
+
+
 
 interface ProductFull {
   product: Product;
@@ -45,7 +55,7 @@ interface ProductFull {
 export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
   try {
     /* ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- */
-    const productRows = await sql`
+    /*const productRows = await sql`
       select
         id,
         name,
@@ -57,7 +67,30 @@ export async function getProductDetail_slug(slug: string): Promise<ProductFull |
       where slug = ${slug}
       and status = 'active'
       limit 1
-    `;
+    `;*/
+
+/* ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- */
+const productRows = await sql`
+  select
+    p.id,
+    p.name,
+    p.slug,
+    p.status,
+    p.description,
+    p.short_description,
+    (
+      select category_id 
+      from product_categories pc 
+      where pc.product_id = p.id 
+      limit 1
+    ) as category_id -- Lấy 1 category_id từ bảng trung gian
+  from products p
+  where p.slug = ${slug}
+  and p.status = 'active'
+  limit 1
+`;
+
+
 
     if (productRows.length === 0) {
       return null;
