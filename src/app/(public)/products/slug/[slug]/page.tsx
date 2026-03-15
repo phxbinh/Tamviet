@@ -162,6 +162,7 @@ return (
     <h1> Sản phẩm liên quan </h1>
 
          {/* Phần sản phẩm liên quan */}
+      <div>
       {relatedProducts.length > 0 && (
         <section className="mt-16 border-t pt-10">
           <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
@@ -189,7 +190,7 @@ return (
             ))}
           </div>
         </section>
-      )}
+      )} </div>
   </>
 );
 
