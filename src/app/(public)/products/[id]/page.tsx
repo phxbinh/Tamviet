@@ -1,5 +1,7 @@
 import ProductDetailClient from "@/features/products/components/ProductDetailClient";
 import { headers } from "next/headers";
+import { getProductFull } from "@/lib/server/getProductFull";
+import { notFound } from "next/navigation";
 
 async function getProduct(id: string) {
   const host = (await headers()).get("host");
@@ -23,7 +25,8 @@ export default async function ProductPage({
 }) {
   const { id } = await params;
 
-  const data = await getProduct(id);
+  //const data = await getProduct(id);
+  const data = await getProductFull(params.id);
 
   return <ProductDetailClient data={data} />;
 }
