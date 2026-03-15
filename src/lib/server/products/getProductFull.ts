@@ -1,13 +1,43 @@
-
 import "server-only";
 import { sql } from "@/lib/neon/sql";
+
+type ProductRow = {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  description: string | null;
+  short_description: string | null;
+};
+
+type VariantRow = {
+  variant_id: string;
+  sku: string;
+  price: number;
+  stock: number;
+  attribute_name: string | null;
+  attribute_value: string | null;
+};
+
+type AttributeRow = {
+  attribute_id: string;
+  attribute_name: string;
+  value_id: string;
+  value: string;
+};
+
+type ImageRow = {
+  id: string;
+  image_url: string;
+  is_thumbnail: boolean;
+};
 
 export async function getProductFull(id: string) {
   try {
 
     /* ---------------- PRODUCT ---------------- */
 
-    const productRows = await sql`
+    const productRows = await sql<ProductRow[]>`
       select
         id,
         name,
@@ -30,7 +60,7 @@ export async function getProductFull(id: string) {
 
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
 
-    const variantRows = await sql`
+    const variantRows = await sql<VariantRow[]>`
       select
         v.id as variant_id,
         v.sku,
@@ -57,7 +87,7 @@ export async function getProductFull(id: string) {
       order by v.created_at
     `;
 
-    const variantsMap = new Map();
+    const variantsMap = new Map<string, any>();
 
     for (const row of variantRows) {
 
@@ -82,7 +112,7 @@ export async function getProductFull(id: string) {
 
     /* ---------------- ATTRIBUTES (for UI selector) ---------------- */
 
-    const attributeRows = await sql`
+    const attributeRows = await sql<AttributeRow[]>`
       select
         a.id as attribute_id,
         a.name as attribute_name,
@@ -109,7 +139,7 @@ export async function getProductFull(id: string) {
       order by a.name
     `;
 
-    const attributesMap = new Map();
+    const attributesMap = new Map<string, any>();
 
     for (const row of attributeRows) {
 
@@ -132,7 +162,7 @@ export async function getProductFull(id: string) {
 
     /* ---------------- IMAGES ---------------- */
 
-    const imageRows = await sql`
+    const imageRows = await sql<ImageRow[]>`
       select
         id,
         image_url,
