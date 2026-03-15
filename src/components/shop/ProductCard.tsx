@@ -277,7 +277,7 @@ interface ProductCardPropsSlug {
 }
 export function ProductCardSlug({ slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   return (
-    <Link href={`/products/${slug}`} prefetch={false} className="group block w-full relative overflow-hidden rounded-[0.5rem] border border-border/30 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:border-primary/20 hover:shadow-[0_40px_80px_rgba(var(--primary),0.1)] hover:-translate-y-2 bg-background">
+    <Link href={`/products/slug/${slug}`} prefetch={false} className="group block w-full relative overflow-hidden rounded-[0.5rem] border border-border/30 transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] hover:border-primary/20 hover:shadow-[0_40px_80px_rgba(var(--primary),0.1)] hover:-translate-y-2 bg-background">
       
       {/* Container Ảnh: Tỉ lệ 4/5 chuẩn High-end Fashion - */}
       <div className="relative aspect-[4/5] overflow-hidden">
