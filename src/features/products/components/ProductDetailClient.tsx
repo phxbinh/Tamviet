@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
-import { ProductFull } from '@/types/productDetail'
+import { ProductFull } from '@/types/product'
 
 
 // --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
