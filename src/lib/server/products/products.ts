@@ -15,7 +15,7 @@ interface ProductRow {
 };
 
 async function getProducts(): Promise<ProductRow[]> {
-  const rows = await sql`
+  const [rows] = await sql`
     select
       p.id,
       p.name,
