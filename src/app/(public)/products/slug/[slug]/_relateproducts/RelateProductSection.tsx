@@ -4,14 +4,32 @@ import { useRef, useEffect, useState } from "react";
 import { ProductCardSlug } from "@/components/shop/ProductCard";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
-export default function RelatedProductsSection({ relatedProducts }) {
+
+// 1. Định nghĩa Interface cho sản phẩm (Bạn có thể điều chỉnh tùy theo Data thực tế)
+interface Product {
+  id: string | number;
+  slug: string;
+  name: string;
+  thumbnail_url?: string;
+  price_min: number;
+}
+
+// 2. Định nghĩa Type cho Props
+interface RelatedProductsProps {
+  relatedProducts: Product[];
+}
+
+export default function RelatedProductsSection({ relatedProducts }: RelatedProductsProps) {
   const [width, setWidth] = useState(0);
-  const carousel = useRef();
+    // 3. Định nghĩa kiểu cho useRef là HTMLDivElement
+  const carousel = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Tính toán độ dài tối đa có thể kéo
-    setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
-  }, []);
+    if (carousel.current) {
+      // Thêm kiểm tra tồn tại trước khi tính toán
+      setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
+    }
+  }, [relatedProducts]);
 
   return (
     <section className="mt-16 border-t pt-10 overflow-hidden">
