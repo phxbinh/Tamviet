@@ -1,6 +1,8 @@
 // src/lib/server/products/products.ts
 // -> Chức năng lấy tất cả sản phẩm có status=active và thông số cần thiết để hiển thị lên productCard
 // -> Chưa được sử dụng
+// -> thay thế cho phương thức GET ở 
+//    src/app/api/products/route.ts
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
