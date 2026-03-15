@@ -160,18 +160,13 @@ return (
     <Breadcrumb items={breadcrumbs} />
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
-    <br/><hr/>
-    <h1> Sản phẩm liên quan </h1>
 
          {/* Phần sản phẩm liên quan */}
-      <div>
       {relatedProducts.length > 0 && (
         <section className="mt-16 border-t pt-10">
           <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {relatedProducts.map((item) => (
-
-
               <ProductCardSlug 
                 id={item.id}
                 key={item.id}
@@ -182,13 +177,10 @@ return (
                 }
                 price_min={item.price_min}
               />
-
-
-
             ))}
           </div>
         </section>
-      )} </div>
+      )} 
   </>
 );
 
