@@ -1,12 +1,15 @@
 
 import "server-only";
 import { sql } from "@/lib/neon/sql";
-import { ProductFull } from "@/types/productDetail"
+import { Product, ProductFull } from "@/types/productDetail"
 
 export async function getProductFull(id: string): Promise<ProductFull | null>  {
   /* ---------------- PRODUCT ---------------- */
 
-  const productRows = await sql`
+
+
+
+  const productRows = await sql<Product[]>`
     select
       id,
       name,
@@ -24,7 +27,7 @@ export async function getProductFull(id: string): Promise<ProductFull | null>  {
     return null;
   }
 
-  const product = productRows[0];
+  const product: Product = productRows[0];
 
   /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
 
