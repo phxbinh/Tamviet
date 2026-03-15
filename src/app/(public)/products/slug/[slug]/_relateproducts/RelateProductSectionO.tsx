@@ -157,30 +157,56 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
           ))}
         </Swiper>
 
-        <style jsx global>{`
-          /* Trạng thái chung của TẤT CẢ các dấu chấm */
-          .swiper-pagination-bullet {
-            background: #d1d5db; /* Màu xám nhạt cho các chấm không chọn */
-            opacity: 1; /* Đảm bảo hiện rõ */
-            width: 8px;
-            height: 8px;
-            border-radius: 4px; /* Bo tròn mặc định */
-            
-            /* CỐT LÕI: Animation mượt mà */
-            transition: all 0.3s ease-in-out; 
-          }
+<style jsx global>{`
+  /* Container chứa các dấu chấm */
+  .swiper-pagination-lock {
+    display: block;
+  }
 
-          /* Trạng thái CHỈ ĐANG CHỌN (Active) */
-          .swiper-pagination-bullet-active {
-            background: #000 !important; /* Màu đen */
-            width: 24px !important; /* Kéo dài ra (tăng từ 20px lên 24px nhìn rõ hơn) */
-          }
+  .swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease-in-out; /* Mượt hóa cả cụm pagination */
+  }
 
-          /* Tinh chỉnh vị trí */
-          .swiper-pagination {
-            bottom: 0 !important;
-          }
-        `}</style>
+  /* Trạng thái mặc định của từng dấu chấm */
+  .swiper-pagination-bullet {
+    background: #e5e7eb !important; /* màu xám nhẹ (gray-200) */
+    opacity: 1 !important;
+    height: 8px !important;
+    width: 8px !important;
+    margin: 0 6px !important;
+    border-radius: 99px !important;
+    
+    /* QUAN TRỌNG: Chặn đứng hiện tượng nhảy cọc cọc */
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.5s ease,
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    
+    will-change: width, transform; /* Báo cho GPU chuẩn bị trước */
+  }
+
+  /* Khi dấu chấm được kích hoạt */
+  .swiper-pagination-bullet-active {
+    background: #000000 !important;
+    width: 28px !important; /* Kéo dài ra mượt mà */
+    transform: translateZ(0); /* Ép dùng Layer riêng trên GPU */
+  }
+
+  /* Xử lý cho dynamic bullets để không bị giật vị trí */
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main {
+    transform: scale(1) translateZ(0);
+  }
+  
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev,
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next {
+    transform: scale(0.66) translateZ(0);
+  }
+`}</style>
+
 
       </div>
     </section>
