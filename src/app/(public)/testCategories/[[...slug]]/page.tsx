@@ -119,6 +119,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
             products.map((p: any) => (
               /* GỌI COMPONENT SỐ 1 TẠI ĐÂY */
               <ProductCardSlug 
+                id={p.id}
                 key={p.id}
                 slug={p.slug}
                 name={p.name}
