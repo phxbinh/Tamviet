@@ -9,7 +9,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 
 
 
-export async function getCategoryPath(categoryId: string) {
+async function getCategoryPath(categoryId: string) {
   const rows = await sql`
     WITH RECURSIVE category_path AS (
       -- Điểm bắt đầu: danh mục hiện tại của sản phẩm
