@@ -38,7 +38,7 @@ async function getCategoryPath(categoryId: string) {
 }
 
 // ✳️ Lấy các sản phẩm liên quan
-export async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
+async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
   try {
     const rows = await sql`
       select
