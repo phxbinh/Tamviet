@@ -1,5 +1,5 @@
 // src/lib/db/products.ts
-'server-only'
+import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
 
