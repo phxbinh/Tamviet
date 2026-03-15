@@ -1,5 +1,3 @@
-import "server-only";
-import { sql } from "@/lib/neon/sql";
 
 import "server-only";
 import { sql } from "@/lib/neon/sql";
