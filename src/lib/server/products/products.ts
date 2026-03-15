@@ -1,6 +1,6 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
-import { cache } from "next";
+import { cache } from "react";
 
 export type ProductRow = {
   id: string;
@@ -12,7 +12,7 @@ export type ProductRow = {
   thumbnail: string | null;
 };
 
-export async function getProducts(): Promise<ProductRow[]> {
+async function getProducts(): Promise<ProductRow[]> {
   const rows = await sql<ProductRow[]>`
     select
       p.id,
@@ -49,3 +49,8 @@ export async function getProducts(): Promise<ProductRow[]> {
 
   return rows;
 }
+
+export const getProductsCached = cache(getProducts);
+
+
+
