@@ -16,11 +16,10 @@ import {
 } from "lucide-react";
 
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
-import { ProductFull } from '@/types/product'
 
 
 // --- INTERFACES (Định nghĩa trực tiếp để đảm bảo tính độc lập) ---
-/*
+
 interface AttributeValue {
   id: string;
   value: string;
@@ -58,8 +57,6 @@ interface ProductFull {
   variants: Variant[];
   images: ProductImage[];
 }
-
-*/
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
