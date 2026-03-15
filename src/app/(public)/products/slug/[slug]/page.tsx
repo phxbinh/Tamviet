@@ -165,7 +165,7 @@ return (
       {/* Phần sản phẩm liên quan */}
       {relatedProducts.length > 0 && (
         <div className="container mx-auto px-4">
-          <RelatedProductsSection relatedProducts={relatedProducts} />
+          <RelatedProductsSection relatedProducts={relatedProducts as any[]} />
         </div>
       )} 
   </>
