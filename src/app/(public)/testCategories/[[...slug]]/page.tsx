@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
+import { ProductCardSlug } from "@/components/shop/ProductCard";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory } from "@/lib/db/products";
@@ -117,9 +118,9 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
           ) : (
             products.map((p: any) => (
               /* GỌI COMPONENT SỐ 1 TẠI ĐÂY */
-              <ProductCard 
+              <ProductCardSlug 
                 key={p.id}
-                id={p.id}
+                slug={p.slug}
                 name={p.name}
                 /*thumbnail_url={p.thumbnail_url} */
                 thumbnail_url={
