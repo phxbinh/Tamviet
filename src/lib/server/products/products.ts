@@ -50,7 +50,7 @@ async function getProducts(): Promise<ProductRow[]> {
     order by p.created_at desc
   `;
 
-  return rows as ProductRow;
+  return rows as ProductRow[];
 }
 
 export const getProductsCached = cache(getProducts);
