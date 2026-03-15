@@ -28,7 +28,7 @@ function RelatedProductsSection_({ relatedProducts }: RelatedProductsProps) {
       if (carousel.current) {
         setWidth(carousel.current.scrollWidth - carousel.current.offsetWidth);
       }
-    }, 100);
+    }, 300);
     return () => clearTimeout(timer);
   }, [relatedProducts]);
 
