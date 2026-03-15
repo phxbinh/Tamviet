@@ -8,7 +8,8 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 import Link from "next/link";
-
+import {ProductCardSlug} from "@/components/shop/ProductCard";
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
 // ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
@@ -169,6 +170,7 @@ return (
           <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {relatedProducts.map((item) => (
+              {/*
               <Link 
                 key={item.id} 
                 href={`/products/slug/${item.slug}`}
@@ -187,7 +189,21 @@ return (
                 <p className="text-red-600 font-bold mt-1">
                   {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                 </p>
-              </Link>
+              </Link> */}
+
+              <ProductCardSlug 
+                id={p.id}
+                key={p.id}
+                slug={p.slug}
+                name={p.name}
+                thumbnail_url={
+                  p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined
+                }
+                price_min={p.price_min}
+              />
+
+
+
             ))}
           </div>
         </section>
