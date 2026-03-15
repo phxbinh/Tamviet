@@ -1,8 +1,9 @@
 
 import "server-only";
 import { sql } from "@/lib/neon/sql";
+import { ProductFull } from "@/types/product"
 
-export async function getProductFull(id: string) {
+export async function getProductFull(id: string): Promise<ProductFull | null>  {
   /* ---------------- PRODUCT ---------------- */
 
   const productRows = await sql`
