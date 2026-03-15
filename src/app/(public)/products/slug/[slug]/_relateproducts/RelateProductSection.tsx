@@ -79,7 +79,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
         </motion.div>
 
         {/* Lớp phủ mờ ở cạnh phải để báo hiệu còn sản phẩm */}
-        <div className="absolute top-0 right-0 h-full w-16 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+        <div className="absolute top-0 right-0 h-full w-3 bg-gradient-to-l from-white to-transparent pointer-events-none" />
       </motion.div>
     </section>
   );
