@@ -1,5 +1,6 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
+import type { ProductFull, Product } from "@/types/productDetail";
 
 type ProductRow = {
   id: string;
@@ -32,7 +33,10 @@ type ImageRow = {
   is_thumbnail: boolean;
 };
 
-export async function getProductFull(id: string) {
+export async function getProductFull(
+  id: string
+): Promise<ProductFull | null> {
+
   try {
 
     /* ---------------- PRODUCT ---------------- */
@@ -55,7 +59,7 @@ export async function getProductFull(id: string) {
       return null;
     }
 
-    const product = productRows[0];
+    const product = productRows[0] as Product;
 
 
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
@@ -87,7 +91,7 @@ export async function getProductFull(id: string) {
       order by v.created_at
     `;
 
-    const variantsMap = new Map<string, any>();
+    const variantsMap = new Map();
 
     for (const row of variantRows) {
 
@@ -139,7 +143,7 @@ export async function getProductFull(id: string) {
       order by a.name
     `;
 
-    const attributesMap = new Map<string, any>();
+    const attributesMap = new Map();
 
     for (const row of attributeRows) {
 
