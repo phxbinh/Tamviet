@@ -9,7 +9,7 @@ export async function getProductFull(id: string): Promise<ProductFull | null>  {
 
 
 
-  const productRows = await sql<Product[]>`
+  const productRows = await sql`
     select
       id,
       name,
@@ -27,7 +27,7 @@ export async function getProductFull(id: string): Promise<ProductFull | null>  {
     return null;
   }
 
-  const product: Product = productRows[0];
+  const product = productRows[0];
 
   /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
 
