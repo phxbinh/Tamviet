@@ -171,7 +171,7 @@ return (
             {relatedProducts.map((item) => (
               <Link 
                 key={item.id} 
-                href={`/products/${item.slug}`}
+                href={`/products/slug/${item.slug}`}
                 className="group block"
               >
                 <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
