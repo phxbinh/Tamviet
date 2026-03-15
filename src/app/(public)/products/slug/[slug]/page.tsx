@@ -7,6 +7,7 @@ import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_sl
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
+import Link from "react/link";
 
 
 // ✳️ Làm breadcrumb
