@@ -192,14 +192,14 @@ return (
               </Link> */}
 
               <ProductCardSlug 
-                id={p.id}
-                key={p.id}
-                slug={p.slug}
-                name={p.name}
+                id={item.id}
+                key={item.id}
+                slug={item.slug}
+                name={item.name}
                 thumbnail_url={
-                  p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined
+                  item.thumbnail_url ? getPublicImageUrl(item.thumbnail_url) : undefined
                 }
-                price_min={p.price_min}
+                price_min={item.price_min}
               />
 
 
