@@ -197,7 +197,7 @@ export async function getProductFull(id: string): Promise<ProductFull | null>  {
     return null;
   }
 
-  const product = productRows[0];
+  const product = productRows[0] as Product;
 
 
   /* ---------------- VARIANTS + ATTRIBUTES (1 QUERY) ---------------- */
