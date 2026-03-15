@@ -52,7 +52,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
       {/* Container chính với Gradient Mask để tạo chiều sâu */}
       <motion.div 
         ref={carousel} 
-        className="cursor-grab active:cursor-grabbing relative"
+        className="cursor-grab active:cursor-grabbing relative touch-none"
         whileTap={{ cursor: "grabbing" }}
       >
         <motion.div
@@ -63,7 +63,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
           {relatedProducts.map((item) => (
             <motion.div 
               key={item.id} 
-              className="min-w-[250px] md:min-w-[300px]"
+              className="min-w-[250px] md:min-w-[300px] select-none"
             >
               <ProductCardSlug
                 id={item.id}
@@ -84,4 +84,20 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
     </section>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
