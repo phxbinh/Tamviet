@@ -1,5 +1,6 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
+import { cache } from "next";
 
 export type ProductRow = {
   id: string;
