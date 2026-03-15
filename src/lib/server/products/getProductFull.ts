@@ -178,7 +178,7 @@ async function getProductFull(id: string): Promise<ProductFull | null> {
 
 /* ---------------- FUNCTION ---------------- */
 
-export async function getProductFull_(id: string): Promise<ProductFull | null> {
+export async function getProductFull(id: string): Promise<ProductFull | null> {
   try {
 
     /* ---------------- PRODUCT ---------------- */
