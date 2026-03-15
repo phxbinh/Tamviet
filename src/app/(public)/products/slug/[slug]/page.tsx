@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { sql } from "@/lib/neon/sql";
 
 
 
