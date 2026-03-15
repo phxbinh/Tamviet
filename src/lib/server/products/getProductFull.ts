@@ -64,7 +64,7 @@ export async function getProductFull(
 
     /* ---------------- VARIANTS + ATTRIBUTES ---------------- */
 
-    const variantRows = await sql<VariantRow[]>`
+    const variantRows = await sql`
       select
         v.id as variant_id,
         v.sku,
@@ -116,7 +116,7 @@ export async function getProductFull(
 
     /* ---------------- ATTRIBUTES (for UI selector) ---------------- */
 
-    const attributeRows = await sql<AttributeRow[]>`
+    const attributeRows = await sql`
       select
         a.id as attribute_id,
         a.name as attribute_name,
@@ -166,7 +166,7 @@ export async function getProductFull(
 
     /* ---------------- IMAGES ---------------- */
 
-    const imageRows = await sql<ImageRow[]>`
+    const imageRows = await sql`
       select
         id,
         image_url,
