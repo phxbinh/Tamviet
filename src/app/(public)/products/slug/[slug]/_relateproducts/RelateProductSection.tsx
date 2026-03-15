@@ -164,7 +164,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
         {/* Gradient mờ ảo */}
         <motion.div 
           animate={{ opacity: showLeftGradient ? 1 : 0 }}
-          className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-white via-white/40 to-transparent z-10 pointer-events-none" 
+          className="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-white via-white/40 to-transparent z-10 pointer-events-none" 
         />
 
         <motion.div ref={carousel} className="cursor-grab active:cursor-grabbing">
@@ -195,7 +195,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
 
         <motion.div 
           animate={{ opacity: showRightGradient ? 1 : 0 }}
-          className="absolute top-0 right-0 h-full w-20 bg-gradient-to-l from-white via-white/40 to-transparent z-10 pointer-events-none" 
+          className="absolute top-0 right-0 h-full w-4 bg-gradient-to-l from-white via-white/40 to-transparent z-10 pointer-events-none" 
         />
       </div>
     </section>
