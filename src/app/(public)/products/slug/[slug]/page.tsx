@@ -8,6 +8,12 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 
+// 1. Định nghĩa interface (nếu chưa có)
+interface BreadcrumbItem {
+  label: string;
+  href?: string; // Dấu ? nghĩa là không bắt buộc phải có href
+}
+
 
 
 async function getCategoryPath(categoryId: string) {
@@ -51,7 +57,7 @@ if (!data) {
   const categoryPath = await getCategoryPath(data.product.category_id);
   
   let currentPath = "";
-  const breadcrumbs = categoryPath.map((cat) => {
+  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat) => {
     currentPath = currentPath ? `${currentPath}/${cat.slug}` : cat.slug;
     return {
       label: cat.name,
