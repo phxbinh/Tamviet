@@ -170,26 +170,7 @@ return (
           <h2 className="text-2xl font-bold mb-6">Sản phẩm tương tự</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {relatedProducts.map((item) => (
-              {/*
-              <Link 
-                key={item.id} 
-                href={`/products/slug/${item.slug}`}
-                className="group block"
-              >
-                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
-                  <img 
-                    src={item.thumbnail || "/placeholder.png"} 
-                    alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="font-medium text-sm group-hover:text-primary line-clamp-2">
-                  {item.name}
-                </h3>
-                <p className="text-red-600 font-bold mt-1">
-                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
-                </p>
-              </Link> */}
+
 
               <ProductCardSlug 
                 id={item.id}
@@ -214,7 +195,26 @@ return (
 }
 
 
-
+              /*
+              <Link 
+                key={item.id} 
+                href={`/products/slug/${item.slug}`}
+                className="group block"
+              >
+                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">
+                  <img 
+                    src={item.thumbnail || "/placeholder.png"} 
+                    alt={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <h3 className="font-medium text-sm group-hover:text-primary line-clamp-2">
+                  {item.name}
+                </h3>
+                <p className="text-red-600 font-bold mt-1">
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
+                </p>
+              </Link> */
 
 
 
