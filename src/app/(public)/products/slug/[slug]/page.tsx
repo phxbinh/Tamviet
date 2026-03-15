@@ -158,7 +158,7 @@ return (
     <Breadcrumb items={breadcrumbs} />
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
-    <br><hr>
+    <br/><hr/>
     <h1> Sản phẩm liên quan </h1>
 
          {/* Phần sản phẩm liên quan */}
