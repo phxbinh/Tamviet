@@ -1,6 +1,6 @@
 import ProductDetailClient from "@/features/products/components/ProductDetailClient";
 import { headers } from "next/headers";
-import { getProductFull } from "@/lib/server/getProductFull";
+import { getProductFull } from "@/lib/server/products/getProductFull";
 import { notFound } from "next/navigation";
 
 async function getProduct(id: string) {
