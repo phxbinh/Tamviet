@@ -1,6 +1,6 @@
 import { sql } from "@/lib/neon/sql";
 
-export async function getProductDetail(id: string) {
+export async function getProductFull(id: string) {
   try {
     /* ---------------- PRODUCT ---------------- */
     const productRows = await sql`
