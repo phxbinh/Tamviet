@@ -6,11 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "lint": "next lint"
   },
   "dependencies": {
     "swiper": "^11.0.0", 
@@ -29,7 +25,6 @@
   
     "zustand": "^5.0.0",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.39.1",
     "@neondatabase/serverless": "^0.9.5",
     "@supabase/supabase-js": "^2.33.0",
     "@supabase/ssr": "^0.4.0",
@@ -66,8 +61,7 @@
     "eslint": "^8.0.0",
     "eslint-config-next": "^15.0.0",
     
-    "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.4"
+    "dotenv": "^16.4.7"
   }
 }
 
