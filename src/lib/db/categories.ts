@@ -1,13 +1,8 @@
 import 'server-only'
 import { sql } from "@/lib/neon/sql";
 
-export interface Category {
-  id: string;
-  name: string;
-  category_path: string;
-  category_depth: number;
-}
 
+/*
 export async function getCategoriesTree(): Promise<Category[] || Null>  {
   const rows = await sql`
     select
@@ -25,9 +20,15 @@ export async function getCategoriesTree(): Promise<Category[] || Null>  {
   return rows as Category[];
 }
 // src/lib/db/categories.ts
+*/
 
+export interface Category {
+  id: string;
+  name: string;
+  category_path: string;
+  category_depth: number;
+}
 
-/*
 export async function getCategoriesTree(): Promise<Category[]> {
   const rows = await sql`
     select
@@ -44,4 +45,3 @@ export async function getCategoriesTree(): Promise<Category[]> {
 
   return rows as Category[];
 }
-*/
