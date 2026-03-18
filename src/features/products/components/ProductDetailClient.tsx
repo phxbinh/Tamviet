@@ -138,7 +138,6 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
 
 
-// ... (giữ nguyên các phần import và logic useMemo bên trên)
 
 {/* 2. Attributes (Optimized UI/UX) */}
 <div className="space-y-6">
