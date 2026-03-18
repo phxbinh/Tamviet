@@ -90,7 +90,7 @@ export const getProductsByCategory = cache(getProductsByCategoryCached);
 // src/lib/db/products.ts
 
 // src/lib/db/products.ts
-/*
+/* ✳️-> Bị lỗi danh danh sách sản phẩm bị lặp lại một lần cho mỗi sản phẩm
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
