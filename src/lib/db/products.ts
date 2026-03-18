@@ -113,7 +113,7 @@ async function getProductsByCategoryCached(
     // CASE 1: KHÔNG CATEGORY
     // ===============================
     if (!slug) {
-      const rows = await sql`
+      const rows = (await sql`
         WITH variant_data AS (
           SELECT
             product_id,
@@ -145,12 +145,12 @@ async function getProductsByCategoryCached(
           ON t.product_id = p.id
         WHERE p.status = 'active'
         ORDER BY p.created_at DESC
-      `;
+      `) as ProductCard[];
 
       return rows.map((r) => ({
         ...r,
-        price_min: r.price_min ? Number(r.price_min) : null,
-        total_stock: r.total_stock ? Number(r.total_stock) : null,
+        price_min: r.price_min !== null ? Number(r.price_min) : null,
+        total_stock: r.total_stock !== null ? Number(r.total_stock) : null,
       }));
     }
 
@@ -168,15 +168,15 @@ async function getProductsByCategoryCached(
 
     const path = cat[0].category_path;
 
-    const rows = await sql`
+    const rows = (await sql`
       WITH variant_data AS (
         SELECT
           product_id,
           MIN(price) AS price_min,
           SUM(stock) AS total_stock
-          FROM product_variants
-          WHERE is_active = true
-          GROUP BY product_id
+        FROM product_variants
+        WHERE is_active = true
+        GROUP BY product_id
       ),
       thumbnail AS (
         SELECT DISTINCT ON (product_id)
@@ -206,12 +206,12 @@ async function getProductsByCategoryCached(
         p.status = 'active'
         AND c.category_path LIKE ${path + "%"}
       ORDER BY p.created_at DESC
-    `;
+    `) as ProductCard[];
 
     return rows.map((r) => ({
       ...r,
-      price_min: r.price_min ? Number(r.price_min) : null,
-      total_stock: r.total_stock ? Number(r.total_stock) : null,
+      price_min: r.price_min !== null ? Number(r.price_min) : null,
+      total_stock: r.total_stock !== null ? Number(r.total_stock) : null,
     }));
 
   } catch (err) {
@@ -221,4 +221,3 @@ async function getProductsByCategoryCached(
 }
 
 export const getProductsByCategory = cache(getProductsByCategoryCached);
-
