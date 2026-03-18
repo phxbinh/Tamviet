@@ -62,7 +62,7 @@ export async function getRelatedProducts(
       LIMIT ${limit};
     `;
 
-    return rows;
+    return rows as RelatedProduct[];
   } catch (err) {
     console.error("getRelatedProducts error:", err);
     return [];
