@@ -141,7 +141,8 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
 {/* 2. Attributes (Optimized UI/UX) */}
 {/* 2. Attributes (Compact & Contextual UI) */}
-<div className="space-y-5">
+{/* 2. Attributes (Ultra Compact & Row-based) */}
+<div className="space-y-3">
   {attributes.map((attr) => {
     const currentValue = selected[attr.name];
 
@@ -149,39 +150,35 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
       <div 
         key={attr.id} 
         className={`
-          group/attr p-3 rounded-2xl border transition-all duration-300
-          ${currentValue ? "border-primary/30 bg-primary/[0.02]" : "border-border bg-transparent"}
+          group/attr p-2 md:p-3 rounded-xl border transition-all duration-200
+          ${currentValue ? "border-primary/20 bg-primary/[0.01]" : "border-border/60 bg-transparent"}
         `}
       >
-        {/* Label & Active Value: Nằm ngay trên các button */}
-        <div className="flex justify-between items-center mb-3 px-1">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/50 group-hover/attr:text-primary transition-colors">
-              {attr.name}
-            </span>
-            
-            {/* Phản ứng ngay bên dưới nhãn khi click */}
-            <div className="h-4"> {/* Chiều cao cố định để không nhảy layout */}
-              {currentValue ? (
-                <span className="text-[11px] font-bold text-foreground animate-in fade-in slide-in-from-left-2 duration-300 flex items-center gap-1">
-                  <div className="w-1 h-1 bg-primary rounded-full" /> {currentValue}
-                </span>
-              ) : (
-                <span className="text-[9px] italic text-muted-foreground/40 font-medium">Chưa chọn...</span>
-              )}
-            </div>
+        {/* Header Row: Label và Value nằm cạnh nhau */}
+        <div className="flex items-center gap-2 mb-2 px-0.5">
+          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em] text-muted-foreground/40 group-hover/attr:text-primary transition-colors">
+            {attr.name}:
+          </span>
+          
+          {/* Giá trị hiển thị ngay kế bên Label khi click */}
+          <div className="min-h-[14px] flex items-center">
+            {currentValue ? (
+              <span className="text-[10px] md:text-[11px] font-bold text-foreground animate-in fade-in slide-in-from-left-1 duration-200 uppercase tracking-wide">
+                {currentValue}
+              </span>
+            ) : (
+              <span className="text-[9px] italic text-muted-foreground/20 font-medium">Chọn...</span>
+            )}
           </div>
 
-          {/* Icon trạng thái nhỏ gọn */}
+          {/* Dấu check nhỏ gọn ở cuối hàng */}
           {currentValue && (
-            <div className="bg-primary/10 p-1 rounded-full">
-              <Check className="w-3 h-3 text-primary" />
-            </div>
+            <Check className="w-3 h-3 text-primary ml-auto opacity-60" />
           )}
         </div>
 
-        {/* Nút bấm: Sát nhau, tối ưu không gian */}
-        <div className="flex flex-wrap gap-2">
+        {/* Nút bấm: Padding nhỏ, gap khít hơn trên mobile */}
+        <div className="flex flex-wrap gap-1.5">
           {attr.values.map((v) => {
             const active = currentValue === v.value;
             return (
@@ -190,10 +187,10 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
                 type="button"
                 onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
                 className={`
-                  relative min-w-[60px] px-4 py-2 text-[10px] font-bold uppercase tracking-wider transition-all duration-200 rounded-xl border
+                  relative min-w-[50px] md:min-w-[60px] px-3 py-1.5 md:py-2 text-[9px] md:text-[10px] font-bold uppercase tracking-wider transition-all duration-200 rounded-lg border
                   ${active 
-                    ? "bg-foreground text-background border-foreground shadow-md scale-[1.05] z-10" 
-                    : "bg-background border-border text-foreground/60 hover:border-primary/50 hover:text-foreground active:scale-95"
+                    ? "bg-foreground text-background border-foreground shadow-sm scale-[1.03] z-10" 
+                    : "bg-background border-border/50 text-foreground/50 hover:border-primary/40 hover:text-foreground active:scale-95"
                   }
                 `}
               >
