@@ -1,5 +1,5 @@
 // src/lib/db/products.ts
-/*
+
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
@@ -86,11 +86,11 @@ async function getProductsByCategoryCached(slug?: string) {
 }
 
 export const getProductsByCategory = cache(getProductsByCategoryCached);
-*/
 
 // src/lib/db/products.ts
 
 // src/lib/db/products.ts
+/*
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { cache } from "react";
@@ -221,3 +221,5 @@ async function getProductsByCategoryCached(
 }
 
 export const getProductsByCategory = cache(getProductsByCategoryCached);
+*/
+
