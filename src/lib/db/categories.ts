@@ -1,6 +1,6 @@
 import 'server-only'
 import { sql } from "@/lib/neon/sql";
-
+/*
 export async function getCategoriesTree() {
   const rows = await sql`
     select
@@ -16,4 +16,27 @@ export async function getCategoriesTree() {
   `;
 
   return rows;
+}
+*/
+// src/lib/db/categories.ts
+
+export interface Category {
+  id: string;
+  name: string;
+  category_path: string;
+  category_depth: number;
+}
+
+export async function getCategoriesTree(): Promise<Category[]> {
+  const rows = await sql`
+    select
+      id,
+      name,
+      category_path,
+      category_depth
+    from categories
+    order by category_path
+  `;
+
+  return rows as Category[];
 }
