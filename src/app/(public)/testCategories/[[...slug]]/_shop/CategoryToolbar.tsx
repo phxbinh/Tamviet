@@ -37,7 +37,7 @@ export function CategoryToolbar({ categories, currentPath }: Props) {
         {/* ALL */}
         <Link
           href="/testCategories"
-          prefetch={false}
+          prefetch={true}
           onMouseEnter={() => handlePrefetch("/testCategories")}
           onTouchStart={() => handlePrefetch("/testCategories")}
           className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
