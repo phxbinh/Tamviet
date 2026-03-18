@@ -12,6 +12,7 @@ import {ProductCardSlug} from "@/components/shop/ProductCard";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 //import RelatedProductsSection from "./_relateproducts/RelateProductSection";
 import RelatedProductsSection from "./_relateproducts/RelateProductSectionO";
+import { getRelatedProducts } from "./_relateproducts/getSqlAllRelatedProduct";
 
 // ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
@@ -42,6 +43,7 @@ async function getCategoryPath(categoryId: string) {
 }
 
 // ✳️ Lấy các sản phẩm liên quan
+/*
 async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
   try {
     const rows = await sql`
@@ -93,7 +95,7 @@ async function getRelatedProducts(categoryId: string, currentProductId: string, 
     return [];
   }
 }
-
+*/
 
 
 
