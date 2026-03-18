@@ -73,11 +73,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         />
 
 
-          <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
-            <LayoutGrid className="w-3.5 h-3.5" />
-            Showing {products.length} Results
-          </div>
-        </div>
+
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2 md:gap-x-8 md:gap-y-8">
@@ -156,7 +152,14 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
                 {cat.name}
               </Link>
             ))}
-          </div> */
+          </div>
+          <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
+            <LayoutGrid className="w-3.5 h-3.5" />
+            Showing {products.length} Results
+          </div>
+        </div>
+
+*/
 
 
 
