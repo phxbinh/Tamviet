@@ -1,4 +1,4 @@
-'server-only'
+import 'server-only'
 import { sql } from "@/lib/neon/sql";
 
 export async function getCategoriesTree() {
