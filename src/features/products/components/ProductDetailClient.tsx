@@ -117,7 +117,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           <div className="flex items-center gap-2 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
             <Star className="w-3 h-3 fill-current" /> Authentic Registry
           </div>
-          <h1 className="text-2xl xl:text-5xl font-black tracking-tighter uppercase italic text-foreground leading-tight min-h-[2.5em] flex items-center">
+          <h1 className="text-2xl xl:text-5xl font-black tracking-tighter uppercase italic text-foreground leading-tight min-h-[1.5em] flex items-center">
             {product.name}
           </h1>
           
