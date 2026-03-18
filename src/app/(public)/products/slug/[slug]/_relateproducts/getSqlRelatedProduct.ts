@@ -17,7 +17,7 @@ export async function getRelatedProducts(
   limit = 4
 ): Promise<RelatedProduct[]> {
   try {
-    const rows = await sql<RelatedProduct[]>`
+    const rows = await sql`
       WITH variant_data AS (
         SELECT
           product_id,
