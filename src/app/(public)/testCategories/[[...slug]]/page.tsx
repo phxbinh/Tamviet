@@ -65,7 +65,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
       <div className="max-w-7xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
         
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        {/*<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
             
             <Link
@@ -93,7 +93,12 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
                 {cat.name}
               </Link>
             ))}
-          </div>
+          </div> */}
+
+        <CategoryToolbar 
+          categories={categories}
+          currentPath={path}
+        />
 
 
           <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
