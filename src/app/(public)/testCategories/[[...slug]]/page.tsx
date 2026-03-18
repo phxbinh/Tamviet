@@ -81,7 +81,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
             {categories.map((cat: any) => (
               <Link
                 key={cat.id}
-                href={`/testCategories/${cat.category_path}`} prefetch={true}
+                href={`/testCategories/${cat.category_path}`} prefetch={false}
                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
                   path === cat.category_path
                   ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
