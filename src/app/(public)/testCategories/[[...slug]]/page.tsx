@@ -65,35 +65,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
       <div className="max-w-7xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
         
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
-        {/*<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
-            
-            <Link
-              href="/testCategories" prefetch={true}
-              className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
-                !path 
-                ? "bg-foreground text-background border-foreground shadow-lg" 
-                : "border-transparent text-foreground/40 hover:text-foreground hover:bg-foreground/5"
-              }`}
-            >
-              All Series
-            </Link>
-
-            {categories.map((cat: any) => (
-              <Link
-                key={cat.id}
-                href={`/testCategories/${cat.category_path}`} prefetch={true}
-                className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
-                  path === cat.category_path
-                  ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
-                  : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
-                }`}
-              >
-                {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
-                {cat.name}
-              </Link>
-            ))}
-          </div> */}
+ 
 
         <CategoryToolbar 
           categories={categories}
@@ -156,7 +128,35 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 */
 
 
+       /*<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
+            
+            <Link
+              href="/testCategories" prefetch={true}
+              className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
+                !path 
+                ? "bg-foreground text-background border-foreground shadow-lg" 
+                : "border-transparent text-foreground/40 hover:text-foreground hover:bg-foreground/5"
+              }`}
+            >
+              All Series
+            </Link>
 
+            {categories.map((cat: any) => (
+              <Link
+                key={cat.id}
+                href={`/testCategories/${cat.category_path}`} prefetch={true}
+                className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border whitespace-nowrap ${
+                  path === cat.category_path
+                  ? "bg-primary text-white border-primary shadow-[0_10px_20px_rgba(var(--primary),0.3)]"
+                  : "border-transparent text-foreground/40 hover:text-primary hover:bg-primary/5"
+                }`}
+              >
+                {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
+                {cat.name}
+              </Link>
+            ))}
+          </div> */
 
 
 
