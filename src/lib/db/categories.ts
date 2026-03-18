@@ -32,10 +32,13 @@ export async function getCategoriesTree(): Promise<Category[]> {
     select
       id,
       name,
+      slug,
+      parent_id,
       category_path,
       category_depth
     from categories
-    order by category_path
+    where is_active = true
+    order by display_order asc, name asc
   `;
 
   return rows as Category[];
