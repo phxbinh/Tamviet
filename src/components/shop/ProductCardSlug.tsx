@@ -15,7 +15,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
   return (
     <Link 
       href={`/products/slug/${slug}`} 
-      prefetch={false} 
+      prefetch={true} 
       className="group block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform"
     >
       
