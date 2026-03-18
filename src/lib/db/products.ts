@@ -90,6 +90,21 @@ export const getProductsByCategory = cache(getProductsByCategoryCached);
 
 // src/lib/db/products.ts
 
+// src/lib/db/products.ts
+import "server-only";
+import { sql } from "@/lib/neon/sql";
+import { cache } from "react";
+
+interface ProductCard {
+  id: string;
+  name: string;
+  slug: string;
+  thumbnail_url: string | null;
+  thumbnail: string | null;
+  price_min: number | null;
+  total_stock: number | null;
+}
+
 async function getProductsByCategoryCached(
   slug?: string,
   limit = 20,
