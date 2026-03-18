@@ -27,13 +27,7 @@ interface ProductImage {
   url: string;
   is_thumbnail: boolean;
 }
-/*
-interface Product {
-  id: string;
-  name: string;
-  description?: string;
-}
-*/
+
 
 interface Product {
   id: string;
@@ -52,7 +46,8 @@ interface ProductFull {
 }
 
 // Đổi tham số từ id thành slug
-export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
+//export 
+async function getProductDetail_slug_(slug: string): Promise<ProductFull | null> {
   try {
     /* ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- */
     /*const productRows = await sql`
@@ -69,7 +64,7 @@ export async function getProductDetail_slug(slug: string): Promise<ProductFull |
       limit 1
     `;*/
 
-/* ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- */
+// ---------------- 1. LẤY PRODUCT BẰNG SLUG ---------------- 
 const productRows = await sql`
   select
     p.id,
@@ -100,7 +95,7 @@ const productRows = await sql`
     // Lấy ID từ kết quả trả về để dùng cho các query sau (tối ưu hiệu năng)
     const productId = product.id;
 
-    /* ---------------- 2. VARIANTS (Dùng productId) ---------------- */
+    // ---------------- 2. VARIANTS (Dùng productId) ---------------- 
     const variantRows = await sql`
       select
         v.id as variant_id,
@@ -135,7 +130,7 @@ const productRows = await sql`
     }
     const variants = Array.from(variantsMap.values());
 
-    /* ---------------- 3. ATTRIBUTES (Dùng productId) ---------------- */
+    // ---------------- 3. ATTRIBUTES (Dùng productId) ---------------- 
     const attributeRows = await sql`
       select
         a.id as attribute_id,
@@ -196,3 +191,124 @@ const productRows = await sql`
     throw new Error("Failed to fetch product detail");
   }
 }
+
+
+
+
+/*
+import "server-only";
+import { sql } from "@/lib/neon/sql";
+*/
+
+export async function getProductDetail_slug(slug: string) {
+  try {
+    const rows = await sql`
+      SELECT json_build_object(
+        'product', json_build_object(
+          'id', p.id,
+          'name', p.name,
+          'description', p.description,
+          'category_id', pc.category_id
+        ),
+
+        'variants', (
+          SELECT COALESCE(json_agg(
+            json_build_object(
+              'id', v.id,
+              'sku', v.sku,
+              'price', v.price,
+              'stock', v.stock,
+              'attributes', (
+                SELECT COALESCE(json_object_agg(a.name, av.value), '{}')
+                FROM variant_attribute_values vav
+                JOIN attribute_values av 
+                  ON av.id = vav.attribute_value_id
+                JOIN attributes a 
+                  ON a.id = av.attribute_id
+                WHERE vav.variant_id = v.id
+              )
+            )
+          ), '[]')
+          FROM product_variants v
+          WHERE v.product_id = p.id
+          AND v.is_active = true
+        ),
+
+        'attributes', (
+          SELECT COALESCE(json_agg(
+            json_build_object(
+              'id', a.id,
+              'name', a.name,
+              'values', (
+                SELECT json_agg(
+                  json_build_object(
+                    'id', av.id,
+                    'value', av.value
+                  )
+                )
+                FROM attribute_values av
+                WHERE av.attribute_id = a.id
+                AND av.id IN (
+                  SELECT vav.attribute_value_id
+                  FROM variant_attribute_values vav
+                  JOIN product_variants v 
+                    ON v.id = vav.variant_id
+                  WHERE v.product_id = p.id
+                )
+              )
+            )
+          ), '[]')
+          FROM attributes a
+          WHERE EXISTS (
+            SELECT 1
+            FROM attribute_values av
+            JOIN variant_attribute_values vav 
+              ON vav.attribute_value_id = av.id
+            JOIN product_variants v 
+              ON v.id = vav.variant_id
+            WHERE av.attribute_id = a.id
+            AND v.product_id = p.id
+          )
+        ),
+
+        'images', (
+          SELECT COALESCE(json_agg(
+            json_build_object(
+              'id', pi.id,
+              'url', pi.image_url,
+              'is_thumbnail', pi.is_thumbnail
+            )
+            ORDER BY pi.is_thumbnail DESC, pi.id
+          ), '[]')
+          FROM product_images pi
+          WHERE pi.product_id = p.id
+        )
+      ) AS data
+
+      FROM products p
+
+      LEFT JOIN LATERAL (
+        SELECT category_id
+        FROM product_categories
+        WHERE product_id = p.id
+        LIMIT 1
+      ) pc ON true
+
+      WHERE p.slug = ${slug}
+      AND p.status = 'active'
+      LIMIT 1;
+    `;
+
+    if (!rows.length) return null;
+
+    return rows[0].data;
+
+  } catch (err) {
+    console.error("product-full PRO MAX error:", err);
+    throw new Error("Failed to fetch product detail");
+  }
+}
+
+
+
+
