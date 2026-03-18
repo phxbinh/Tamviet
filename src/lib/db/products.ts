@@ -106,10 +106,8 @@ interface ProductCard {
 }
 
 async function getProductsByCategoryCached(
-  slug?: string,
-  limit = 20,
-  offset = 0
-) {
+  slug?: string
+): Promise<ProductCard[]> {
   try {
     // ===============================
     // CASE 1: KHÔNG CATEGORY
@@ -141,15 +139,19 @@ async function getProductsByCategoryCached(
           vd.total_stock,
           t.image_url AS thumbnail
         FROM products p
-        LEFT JOIN variant_data vd ON vd.product_id = p.id
-        LEFT JOIN thumbnail t ON t.product_id = p.id
+        LEFT JOIN variant_data vd 
+          ON vd.product_id = p.id
+        LEFT JOIN thumbnail t 
+          ON t.product_id = p.id
         WHERE p.status = 'active'
         ORDER BY p.created_at DESC
-        LIMIT ${limit}
-        OFFSET ${offset}
       `;
 
-      return rows;
+      return rows.map((r) => ({
+        ...r,
+        price_min: r.price_min ? Number(r.price_min) : null,
+        total_stock: r.total_stock ? Number(r.total_stock) : null,
+      }));
     }
 
     // ===============================
@@ -172,9 +174,9 @@ async function getProductsByCategoryCached(
           product_id,
           MIN(price) AS price_min,
           SUM(stock) AS total_stock
-        FROM product_variants
-        WHERE is_active = true
-        GROUP BY product_id
+          FROM product_variants
+          WHERE is_active = true
+          GROUP BY product_id
       ),
       thumbnail AS (
         SELECT DISTINCT ON (product_id)
@@ -192,33 +194,31 @@ async function getProductsByCategoryCached(
         vd.total_stock,
         t.image_url AS thumbnail
       FROM products p
-
-      JOIN product_categories pc 
+      JOIN product_categories pc
         ON pc.product_id = p.id
-
-      JOIN categories c 
+      JOIN categories c
         ON c.id = pc.category_id
-
-      LEFT JOIN variant_data vd 
+      LEFT JOIN variant_data vd
         ON vd.product_id = p.id
-
-      LEFT JOIN thumbnail t 
+      LEFT JOIN thumbnail t
         ON t.product_id = p.id
-
-      WHERE 
+      WHERE
         p.status = 'active'
         AND c.category_path LIKE ${path + "%"}
-        
       ORDER BY p.created_at DESC
-      LIMIT ${limit}
-      OFFSET ${offset}
     `;
 
-    return rows;
+    return rows.map((r) => ({
+      ...r,
+      price_min: r.price_min ? Number(r.price_min) : null,
+      total_stock: r.total_stock ? Number(r.total_stock) : null,
+    }));
 
   } catch (err) {
     console.error("getProductsByCategory error:", err);
     return [];
   }
 }
+
+export const getProductsByCategory = cache(getProductsByCategoryCached);
 
