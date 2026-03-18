@@ -1,6 +1,6 @@
 
 // src/app/(public)/testCategories/[[...slug]]/_shop/CategoryToolbar.tsx
-/*
+
 "use client";
 
 import Link from "next/link";
@@ -81,9 +81,9 @@ export function CategoryToolbar({ categories, currentPath }: Props) {
     </div>
   );
 }
-*/
 
 
+/*
 "use client";
 
 import Link from "next/link";
@@ -120,7 +120,7 @@ export function CategoryToolbar({ categories, currentPath }: Props) {
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
       <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
 
-        {/* ALL */}
+        
         <Link
           href="/testCategories"
           prefetch={true} // luôn prefetch cái này
@@ -133,7 +133,7 @@ export function CategoryToolbar({ categories, currentPath }: Props) {
           All Series
         </Link>
 
-        {/* CATEGORY LIST */}
+        
         {categories.map((cat, i) => {
           const href = `/testCategories/${cat.category_path}`;
           const isActive = currentPath === cat.category_path;
@@ -171,3 +171,4 @@ export function CategoryToolbar({ categories, currentPath }: Props) {
     </div>
   );
 }
+*/
