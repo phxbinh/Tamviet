@@ -2,7 +2,7 @@
 'use client'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, FreeMode, Autoplay } from 'swiper/modules';
-import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
+import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
