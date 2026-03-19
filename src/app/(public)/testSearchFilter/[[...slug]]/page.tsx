@@ -7,12 +7,12 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory } from "@/lib/db/products";
+import { getProductsByCategory } from "./_server/getProductsByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-import { Filters } from "../_shop/Filters";
-import { Pagination } from "../_shop/Pagination";
+import { Filters } from "./_shop/Filters";
+import { Pagination } from "./_shop/Pagination";
 
 export default async function Page({ 
   params, 
