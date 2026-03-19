@@ -89,8 +89,8 @@ export default async function Page({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
             <Filters />
-            <Link
-              href="/testCategories" prefetch={true}
+            <Link 
+              href="/testSearchFilter" prefetch={true}
               className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
                 !path 
                 ? "bg-foreground text-background border-foreground shadow-lg" 
