@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
-import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
+import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory } from "./_server/getProductsByCategory";
