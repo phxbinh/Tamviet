@@ -313,9 +313,7 @@ export async function getProductDetail_slug_(slug: string) {
 
 
 // Tối ưu test
-export async function getProductDetail_slug(
-  slug: string
-): Promise<ProductFull | null> {
+export async function getProductDetail_slug(slug: string) {
   try {
     const rows = await sql`
       WITH base_product AS (
@@ -368,7 +366,7 @@ export async function getProductDetail_slug(
             sku,
             price,
             stock,
-            COALESCE(json_object_agg(attr_name, attr_value), '{}') AS attrs
+            json_object_agg(attr_name, attr_value) AS attrs
           FROM variant_data
           GROUP BY id, sku, price, stock
         ) t
@@ -432,42 +430,7 @@ export async function getProductDetail_slug(
 
     if (!rows.length) return null;
 
-    const raw = rows[0].data;
-
-    // 🔥 FIX TYPE TẠI ĐÂY
-    const result: ProductFull = {
-      product: {
-        id: raw.product.id,
-        name: raw.product.name,
-        description: raw.product.description,
-        category_id: raw.product.category_id,
-      },
-
-      variants: (raw.variants ?? []).map((v: any): Variant => ({
-        id: v.id,
-        sku: v.sku,
-        price: Number(v.price),
-        stock: Number(v.stock),
-        attributes: v.attributes ?? {},
-      })),
-
-      attributes: (raw.attributes ?? []).map((a: any): Attribute => ({
-        id: a.id,
-        name: a.name,
-        values: (a.values ?? []).map((val: any): AttributeValue => ({
-          id: val.id,
-          value: val.value,
-        })),
-      })),
-
-      images: (raw.images ?? []).map((img: any): ProductImage => ({
-        id: img.id,
-        url: img.url,
-        is_thumbnail: img.is_thumbnail,
-      })),
-    };
-
-    return result;
+    return rows[0].data;
 
   } catch (err) {
     console.error("product-full ULTRA error:", err);
