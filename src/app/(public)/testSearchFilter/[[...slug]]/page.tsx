@@ -7,12 +7,41 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory } from "./_server/getProductsByCategory";
+import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory_";
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-import { Filters } from "./_shop/Filters";
+import { Filters } from "./_shop/Filters_";
 import { Pagination } from "./_shop/Pagination";
+
+
+// Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
+export async function getProductTypes() {
+  return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
+}
+
+// Trong page.tsx
+/*
+const [products, categories, productTypes] = await Promise.all([
+  getProductsByCategory({ 
+    slug: path, 
+    search, 
+    minPrice, 
+    maxPrice, 
+    productTypeCode: sParams.type as string, // Lọc theo code từ URL
+    page, 
+    limit 
+  }),
+  getCategoriesTree(),
+  getProductTypes() // Lấy list cho droplist
+]);
+
+// Trong phần return của page.tsx
+<Filters productTypes={productTypes} />
+*/
+
+
+
 
 export default async function Page({ 
   params, 
@@ -31,6 +60,7 @@ export default async function Page({
   const maxPrice = Number(sParams.max) || undefined;
   const limit = 8;
 
+/*
   const [products, categories] = await Promise.all([
     getProductsByCategory({ 
       slug: path, 
@@ -42,6 +72,22 @@ export default async function Page({
     }),
     getCategoriesTree()
   ]);
+*/
+
+const [products, categories, productTypes] = await Promise.all([
+  getProductsByCategory({ 
+    slug: path, 
+    search, 
+    minPrice, 
+    maxPrice, 
+    productTypeCode: sParams.type as string, // Lọc theo code từ URL
+    page, 
+    limit 
+  }),
+  getCategoriesTree(),
+  getProductTypes() // Lấy list cho droplist
+]);
+
 
   if (products === null) notFound();
   
@@ -88,7 +134,8 @@ export default async function Page({
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex flex-wrap items-center gap-2 md:gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5 overflow-x-auto no-scrollbar">
-            <Filters />
+            {/*<Filters />*/}
+            <Filters productTypes={productTypes} />
             <Link 
               href="/testSearchFilter" prefetch={true}
               className={`px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border ${
