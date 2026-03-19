@@ -3,7 +3,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { CategoryToolbar } from "./CategoryToolbar";
+import { CategoryToolbar } from "./CategoryToolbarO";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
 
 export function ProductListClient({
