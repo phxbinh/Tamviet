@@ -14,14 +14,13 @@ import { CategoryToolbar } from "./_shop/CategoryToolbar";
 import { Filters } from "./_shop/Filters_";
 import { Pagination } from "./_shop/Pagination";
 
-
+/*
 // Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
 export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
 }
 
 // Trong page.tsx
-/*
 const [products, categories, productTypes] = await Promise.all([
   getProductsByCategory({ 
     slug: path, 
