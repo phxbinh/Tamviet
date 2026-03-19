@@ -15,6 +15,7 @@ import { Filters } from "./_shop/Filters_";
 import { Pagination } from "./_shop/Pagination";
 
 /*
+abc
 // Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
 export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
