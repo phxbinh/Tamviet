@@ -14,7 +14,8 @@ async function getProducts(path?: string) {
   return await getProductsByCategory(path);
 }
 
-export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
+//export default
+async function Page_({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
   const slugArray = slug ?? [];
   const path = slugArray.join("/");
@@ -188,6 +189,40 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
         </div>
 
 */
+
+
+
+// src/app/(public)/testCategories/[[...slug]]/page.tsx
+
+import { ProductListClient } from "./_shop/ProductListClient";
+//import { getProductsByCategory } from "@/lib/db/products";
+//import { getCategoriesTree } from "@/lib/db/categories";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const { slug } = await params;
+  const slugArray = slug ?? [];
+  const path = slugArray.join("/");
+
+  const [products, categories] = await Promise.all([
+    getProductsByCategory(path),
+    getCategoriesTree(),
+  ]);
+
+  return (
+    <div className="max-w-7xl mx-auto px-6 md:px-10">
+      <ProductListClient
+        initialProducts={products}
+        categories={categories}
+        initialPath={path}
+      />
+    </div>
+  );
+}
+
 
 
 
