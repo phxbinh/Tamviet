@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
 import { LayoutGrid, ChevronRight, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory } from "@/lib/db/products";
+import { getProductsByCategory } from "./_server/getProductsByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 
