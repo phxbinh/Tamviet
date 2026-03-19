@@ -14,8 +14,7 @@ import { CategoryToolbar } from "./_shop/CategoryToolbar";
 import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
 
-//export default
-async function Page_({ 
+export default async function Page({ 
   params, 
   searchParams 
 }: { 
@@ -180,7 +179,8 @@ import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
 */
 
-export default async function Page({ 
+//export default 
+async function Page_({ 
   params, 
   searchParams 
 }: { 
