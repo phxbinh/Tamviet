@@ -6,7 +6,7 @@ import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_sl
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
-import {ProductCardSlug} from "@/components/shop/ProductCard";
+import {ProductCardSlug} from "@/components/shop/ProductCardSearchFilter";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
 import { getRelatedProducts } from "../_relateproducts/getSqlRelatedProduct";
 
