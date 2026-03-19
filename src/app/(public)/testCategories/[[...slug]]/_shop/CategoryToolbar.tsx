@@ -83,7 +83,7 @@ export function CategoryToolbar_({ categories, currentPath }: Props) {
 }
 
 
-export function CategoryToolbar__({ categories, currentPath }: Props) {
+export function CategoryToolbar({ categories, currentPath }: Props) {
   const router = useRouter();
 
   // tránh prefetch spam
@@ -167,7 +167,7 @@ interface Propss {
   onCategoryClick?: (path: string) => void;
 }
 
-export function CategoryToolbar({
+export function CategoryToolbar__({
   categories,
   currentPath,
   onCategoryClick,
