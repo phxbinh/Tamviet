@@ -292,7 +292,7 @@ async function Page_({
           {/* Row 1: Search & Price Filter */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-border/50 pb-8">
             <div className="w-full md:w-auto">
-                <Filters />
+                {/*<Filters />*/}
             </div>
             <div className="hidden md:flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               <LayoutGrid className="w-4 h-4" />
