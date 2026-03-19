@@ -22,7 +22,7 @@ export async function getProductsByCategory(options: {
   
   const offset = (page - 1) * limit;
 
-  // Chuẩn bị tham số cho LIKE pattern (tránh truyền undefined vào query)
+  // Đảm bảo không truyền undefined vào SQL
   const searchPattern = search ? `%${search}%` : null;
   const slugPattern = slug ? `${slug}%` : null;
 
@@ -45,17 +45,16 @@ export async function getProductsByCategory(options: {
       ON c.id = pc.category_id
     WHERE 
       p.status = 'active'
-      -- Lọc theo Search (Nếu searchPattern là null thì bỏ qua điều kiện này)
-      AND (${searchPattern} IS NULL OR (p.name ILIKE ${searchPattern} OR p.description ILIKE ${searchPattern}))
-      -- Lọc theo Category Path
-      AND (${slugPattern} IS NULL OR c.category_path LIKE ${slugPattern})
+      -- ÉP KIỂU ::text ĐỂ POSTGRES BIẾT ĐÂY LÀ CHUỖI KỂ CẢ KHI NULL
+      AND (${searchPattern}::text IS NULL OR (p.name ILIKE ${searchPattern}::text OR p.description ILIKE ${searchPattern}::text))
+      AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
     GROUP BY 
       p.id, p.name, p.slug, p.thumbnail_url
     HAVING 
-      -- Lọc theo khoảng giá (Dùng COALESCE hoặc IS NULL để handle trường hợp không nhập giá)
-      (${minPrice ?? null} IS NULL OR MIN(v.price) >= ${minPrice})
+      -- ÉP KIỂU ::numeric CHO GIÁ
+      (${minPrice ?? null}::numeric IS NULL OR MIN(v.price) >= ${minPrice}::numeric)
       AND 
-      (${maxPrice ?? null} IS NULL OR MIN(v.price) <= ${maxPrice})
+      (${maxPrice ?? null}::numeric IS NULL OR MIN(v.price) <= ${maxPrice}::numeric)
     ORDER BY p.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `;
