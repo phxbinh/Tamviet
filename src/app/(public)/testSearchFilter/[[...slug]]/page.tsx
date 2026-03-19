@@ -41,6 +41,11 @@ const [products, categories, productTypes] = await Promise.all([
 */
 
 
+// Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
+interface ProductType {
+  code: string;
+  name: string;
+}
 
 
 export default async function Page({ 
@@ -74,7 +79,7 @@ export default async function Page({
   ]);
 */
 
-const [products, categories, productTypes] = await Promise.all([
+const [products, categories, productTypesData] = await Promise.all([
   getProductsByCategory({ 
     slug: path, 
     search, 
@@ -90,7 +95,9 @@ const [products, categories, productTypes] = await Promise.all([
 
 
   if (products === null) notFound();
-  
+  // Ép kiểu (cast) dữ liệu trả về từ Database
+  const productTypes = (productTypesData as unknown) as ProductType[];
+
   const totalCount = products[0]?.total_count || 0;
 
   // Tìm tên category hiện tại để làm Title cho "Hào hứng"
