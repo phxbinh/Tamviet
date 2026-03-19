@@ -33,7 +33,7 @@ export function ProductListClient({
 
     // 🐢 chưa có → fetch
     try {
-      const res = await fetch(`/api/products?category=${path}`);
+      const res = await fetch(`/api/products/testCategories?category=${path}`);
       const data = await res.json();
 
       cache.current.set(path, data);
