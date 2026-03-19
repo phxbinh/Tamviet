@@ -14,13 +14,11 @@ export default async function Page({
   searchParams
 }: {
   params: Promise<{ slug?: string[] }>;
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { slug } = await params;
-  const slugArray = slug ?? [];
-  const path = slugArray.join("/");
+  const query = await searchParams;
 
-  // 🔥 QUERY PARAMS
   const {
     search,
     min,
@@ -29,7 +27,7 @@ export default async function Page({
     page = "1",
     color,
     size
-  } = searchParams;
+  } = query;
 
   const filters = {
     color: typeof color === "string" ? color.split(",") : [],
