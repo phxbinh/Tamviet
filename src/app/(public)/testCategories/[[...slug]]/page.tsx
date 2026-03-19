@@ -193,7 +193,7 @@ async function Page_({ params }: { params: Promise<{ slug?: string[] }> }) {
 
 
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-
+/*
 import { ProductListClient } from "./_shop/ProductListClient";
 //import { getProductsByCategory } from "@/lib/db/products";
 //import { getCategoriesTree } from "@/lib/db/categories";
@@ -222,7 +222,7 @@ export default async function Page({
     </div>
   );
 }
-
+*/
 
 
 
