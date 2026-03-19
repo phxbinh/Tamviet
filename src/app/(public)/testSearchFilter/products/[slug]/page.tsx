@@ -60,7 +60,7 @@ if (!data) {
     currentPath = currentPath ? `${currentPath}/${cat.slug}` : cat.slug;
     return {
       label: cat.name,
-      href: `/testCategories/${currentPath}`
+      href: `/testSearchFilter/${currentPath}`
     };
   });
 
