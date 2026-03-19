@@ -200,7 +200,7 @@ import "server-only";
 import { sql } from "@/lib/neon/sql";
 */
 
-export async function getProductDetail_slug(slug: string) {
+export async function getProductDetail_slug_(slug: string) {
   try {
     const rows = await sql`
       SELECT json_build_object(
@@ -305,6 +305,172 @@ export async function getProductDetail_slug(slug: string) {
 
   } catch (err) {
     console.error("product-full PRO MAX error:", err);
+    throw new Error("Failed to fetch product detail");
+  }
+}
+
+
+
+
+// Tối ưu test
+export async function getProductDetail_slug(
+  slug: string
+): Promise<ProductFull | null> {
+  try {
+    const rows = await sql`
+      WITH base_product AS (
+        SELECT p.id, p.name, p.description
+        FROM products p
+        WHERE p.slug = ${slug}
+        AND p.status = 'active'
+        LIMIT 1
+      ),
+
+      category AS (
+        SELECT pc.product_id, pc.category_id
+        FROM product_categories pc
+        JOIN base_product bp ON bp.id = pc.product_id
+        LIMIT 1
+      ),
+
+      variant_data AS (
+        SELECT
+          v.id,
+          v.product_id,
+          v.sku,
+          v.price,
+          v.stock,
+          a.name AS attr_name,
+          av.value AS attr_value,
+          a.id AS attr_id,
+          av.id AS value_id
+        FROM product_variants v
+        LEFT JOIN variant_attribute_values vav ON vav.variant_id = v.id
+        LEFT JOIN attribute_values av ON av.id = vav.attribute_value_id
+        LEFT JOIN attributes a ON a.id = av.attribute_id
+        JOIN base_product bp ON bp.id = v.product_id
+        WHERE v.is_active = true
+      ),
+
+      variants_json AS (
+        SELECT json_agg(
+          json_build_object(
+            'id', id,
+            'sku', sku,
+            'price', price,
+            'stock', stock,
+            'attributes', attrs
+          )
+        ) AS data
+        FROM (
+          SELECT
+            id,
+            sku,
+            price,
+            stock,
+            COALESCE(json_object_agg(attr_name, attr_value), '{}') AS attrs
+          FROM variant_data
+          GROUP BY id, sku, price, stock
+        ) t
+      ),
+
+      attributes_json AS (
+        SELECT json_agg(
+          json_build_object(
+            'id', attr_id,
+            'name', attr_name,
+            'values', values_arr
+          )
+        ) AS data
+        FROM (
+          SELECT
+            attr_id,
+            attr_name,
+            json_agg(
+              DISTINCT jsonb_build_object(
+                'id', value_id,
+                'value', attr_value
+              )
+            ) AS values_arr
+          FROM variant_data
+          WHERE attr_id IS NOT NULL
+          GROUP BY attr_id, attr_name
+        ) t
+      ),
+
+      images_json AS (
+        SELECT json_agg(
+          json_build_object(
+            'id', id,
+            'url', image_url,
+            'is_thumbnail', is_thumbnail
+          )
+          ORDER BY is_thumbnail DESC, id
+        ) AS data
+        FROM product_images pi
+        JOIN base_product bp ON bp.id = pi.product_id
+      )
+
+      SELECT json_build_object(
+        'product', json_build_object(
+          'id', bp.id,
+          'name', bp.name,
+          'description', bp.description,
+          'category_id', c.category_id
+        ),
+        'variants', COALESCE(vj.data, '[]'),
+        'attributes', COALESCE(aj.data, '[]'),
+        'images', COALESCE(ij.data, '[]')
+      ) AS data
+
+      FROM base_product bp
+      LEFT JOIN category c ON c.product_id = bp.id
+      LEFT JOIN variants_json vj ON true
+      LEFT JOIN attributes_json aj ON true
+      LEFT JOIN images_json ij ON true
+    `;
+
+    if (!rows.length) return null;
+
+    const raw = rows[0].data;
+
+    // 🔥 FIX TYPE TẠI ĐÂY
+    const result: ProductFull = {
+      product: {
+        id: raw.product.id,
+        name: raw.product.name,
+        description: raw.product.description,
+        category_id: raw.product.category_id,
+      },
+
+      variants: (raw.variants ?? []).map((v: any): Variant => ({
+        id: v.id,
+        sku: v.sku,
+        price: Number(v.price),
+        stock: Number(v.stock),
+        attributes: v.attributes ?? {},
+      })),
+
+      attributes: (raw.attributes ?? []).map((a: any): Attribute => ({
+        id: a.id,
+        name: a.name,
+        values: (a.values ?? []).map((val: any): AttributeValue => ({
+          id: val.id,
+          value: val.value,
+        })),
+      })),
+
+      images: (raw.images ?? []).map((img: any): ProductImage => ({
+        id: img.id,
+        url: img.url,
+        is_thumbnail: img.is_thumbnail,
+      })),
+    };
+
+    return result;
+
+  } catch (err) {
+    console.error("product-full ULTRA error:", err);
     throw new Error("Failed to fetch product detail");
   }
 }
