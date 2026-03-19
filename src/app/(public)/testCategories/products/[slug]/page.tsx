@@ -7,10 +7,7 @@ import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_sl
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
-import Link from "next/link";
 import {ProductCardSlug} from "@/components/shop/ProductCard";
-import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-//import RelatedProductsSection from "./_relateproducts/RelateProductSection";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
 import { getRelatedProducts } from "../_relateproducts/getSqlRelatedProduct";
 
@@ -41,63 +38,6 @@ async function getCategoryPath(categoryId: string) {
   `;
   return rows;
 }
-
-// ✳️ Lấy các sản phẩm liên quan
-/*
-async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
-  try {
-    const rows = await sql`
-      select
-        p.id,
-        p.name,
-        p.slug,
-        p.thumbnail_url, -- Cột thumbnail mặc định của bạn (nếu có)
-        
-        min(v.price) as price_min,
-        sum(v.stock) as total_stock,
-        
-        img.image_url as thumbnail -- Ảnh đánh dấu là thumbnail trong bảng images
-
-      from products p
-      
-      -- Join với bảng trung gian để lọc theo category
-      inner join product_categories pc 
-        on pc.product_id = p.id
-
-      -- Join lấy giá và kho từ variants
-      left join product_variants v
-        on v.product_id = p.id
-        and v.is_active = true
-
-      -- Join lấy ảnh thumbnail
-      left join product_images img
-        on img.product_id = p.id
-        and img.is_thumbnail = true
-
-      where pc.category_id = ${categoryId} -- Lọc cùng danh mục
-      and p.id != ${currentProductId}     -- Loại trừ sản phẩm đang xem
-      and p.status = 'active'             -- Chỉ lấy sản phẩm đang bán
-
-      group by
-        p.id,
-        p.name,
-        p.slug,
-        p.thumbnail_url,
-        img.image_url
-
-      order by p.created_at desc
-      limit ${limit}
-    `;
-    
-    return rows;
-  } catch (err) {
-    console.error("Related products error:", err);
-    return [];
-  }
-}
-*/
-
-
 
 export default async function ProductPage({
   params,
