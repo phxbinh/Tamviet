@@ -3,6 +3,7 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
+
 export async function getProductsByCategory(options: {
   slug?: string;
   search?: string;
@@ -62,3 +63,17 @@ export async function getProductsByCategory(options: {
 
   return rows;
 }
+
+
+// Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
+export async function getProductTypes() {
+  return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
+}
+
+
+
+
+
+
+
+
