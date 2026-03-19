@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CategoryToolbar } from "./CategoryToolbarO";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlug";
-
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl'
 export function ProductListClient({
   initialProducts,
   categories,
@@ -61,7 +61,9 @@ export function ProductListClient({
             id={p.id}
             slug={p.slug}
             name={p.name}
-            thumbnail_url={p.thumbnail_url}
+            thumbnail_url={
+                  p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined
+                }
             price_min={p.price_min}
           />
         ))}
