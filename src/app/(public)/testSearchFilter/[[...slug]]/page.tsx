@@ -13,6 +13,8 @@ import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
 import { Filters } from "./_shop/Filters__";
 import { Pagination } from "./_shop/Pagination";
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 /*
 abc
@@ -212,8 +214,9 @@ const [products, categories, productTypesData] = await Promise.all([
           )}
 
         {/* Phân trang */}
-        <Pagination totalCount={totalCount} limit={limit} />
         </div>
+        <Pagination totalCount={totalCount} limit={limit} />
+
       </div>
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
