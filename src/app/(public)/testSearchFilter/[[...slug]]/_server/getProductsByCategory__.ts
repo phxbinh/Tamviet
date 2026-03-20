@@ -87,10 +87,6 @@ async function getProductsByCategory_(options: {
   return rows;
 }
 
-// src/lib/db/products.ts
-import "server-only";
-import { sql } from "@/lib/neon/sql";
-
 export async function getProductsByCategory(options: {
   slug?: string;
   search?: string;
