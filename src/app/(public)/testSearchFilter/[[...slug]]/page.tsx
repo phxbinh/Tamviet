@@ -8,8 +8,8 @@ import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
-//import { getCategoriesTree } from "@/lib/db/categories";
-import { getCategoriesTree } from "@/lib/db/categories_droplist";
+import { getCategoriesTree } from "@/lib/db/categories";
+//import { getCategoriesTree } from "@/lib/db/categories_droplist";
 
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
@@ -91,13 +91,14 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
 
   return (
 <>
+{/* droplist for categories --🔸
 <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
   <div className="flex gap-2 overflow-x-auto px-4 py-2">
     {categories.map((cat) => (
       <CategoryItem key={cat.id} cat={cat} path={path} />
     ))}
   </div>
-</div>
+</div>*/}
 
     <div className="min-h-screen bg-background pb-20">
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
@@ -140,7 +141,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
             >
               All Series
             </Link>
-{/*
+
             {categories.map((cat: any) => (
               <Link
                 key={cat.id}
@@ -155,7 +156,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
                 {cat.name}
               </Link>
             ))}
-*/}
+
 
 
 
