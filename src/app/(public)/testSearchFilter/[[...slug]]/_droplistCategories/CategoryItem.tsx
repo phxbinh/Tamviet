@@ -1,3 +1,4 @@
+/*
 'use client';
 
 import Link from 'next/link';
@@ -30,7 +31,7 @@ export function CategoryItem({ cat, path }: any) {
           {cat.name}
         </Link>
 
-        {/* Toggle button */}
+        
         {hasChildren && (
           <button
             onClick={(e) => {
@@ -48,7 +49,7 @@ export function CategoryItem({ cat, path }: any) {
         )}
       </div>
 
-      {/* CHILDREN */}
+      
       {hasChildren && open && (
         <div className="absolute left-full top-0 ml-2 bg-background border rounded-md shadow-lg p-2 min-w-[150px] z-50">
           {cat.children.map((child: any) => (
@@ -59,3 +60,65 @@ export function CategoryItem({ cat, path }: any) {
     </div>
   );
 }
+
+
+*/
+
+
+'use client';
+
+import Link from 'next/link';
+import { ChevronRight, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+
+export function CategoryItem({ cat, path }: any) {
+  const [open, setOpen] = useState(false);
+  const hasChildren = cat.children && cat.children.length > 0;
+
+  // Kiểm tra xem item này có đang được chọn không (active)
+  const isActive = path === cat.category_path;
+
+  return (
+    <div
+      className="relative group"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <div className="flex items-center gap-1">
+        <Link
+          href={`/testSearchFilter/${cat.category_path}`}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all duration-200 border whitespace-nowrap ${
+            isActive
+              ? "bg-primary text-white border-primary shadow-sm"
+              : "border-transparent text-foreground/60 hover:text-primary hover:bg-primary/5"
+          }`}
+        >
+          {cat.name}
+          
+          {/* Icon chỉ hướng nếu có con */}
+          {hasChildren && (
+            <ChevronRight 
+              className={`w-3 h-3 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} 
+            />
+          )}
+        </Link>
+      </div>
+
+      {/* RENDER CHILDREN */}
+      {hasChildren && open && (
+        <div 
+          className="absolute left-0 top-full mt-1 lg:left-full lg:top-0 lg:ml-2 flex flex-col gap-1 bg-white border border-border rounded-lg shadow-xl p-2 min-w-[180px] z-[100] animate-in fade-in zoom-in-95 duration-200"
+          onClick={(e) => e.stopPropagation()} // Ngăn chặn nổi bọt sự kiện
+        >
+          {cat.children.map((child: any) => (
+            <CategoryItem key={child.id || child.category_path} cat={child} path={path} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+
