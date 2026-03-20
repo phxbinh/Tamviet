@@ -87,6 +87,7 @@ async function getProductsByCategory_(options: {
   return rows;
 }
 
+// src/lib/db/products.ts
 export async function getProductsByCategory(options: {
   slug?: string;
   search?: string;
@@ -103,41 +104,40 @@ export async function getProductsByCategory(options: {
   const searchPattern = search ? `%${search}%` : null;
   const slugPattern = slug ? `${slug}%` : null;
 
-  // Xử lý logic Sort động
+  // 1. CHUẨN BỊ CÂU LỆNH ORDER BY
   let orderBy = sql`p.created_at DESC`; 
   if (sort === "price_asc") orderBy = sql`price_min ASC`;
-  if (sort === "price_desc") orderBy = sql`price_min DESC`;
-  if (sort === "oldest") orderBy = sql`p.created_at ASC`;
-  if (sort === "name_asc") orderBy = sql`p.name ASC`;
+  else if (sort === "price_desc") orderBy = sql`price_min DESC`;
+  else if (sort === "oldest") orderBy = sql`p.created_at ASC`;
 
+  // 2. DÙNG CTE ĐỂ TÍNH TOÁN TRƯỚC (Đây là bí kíp)
   const rows = await sql`
-    SELECT
-      p.id,
-      p.name,
-      p.slug,
-      p.thumbnail_url,
-      p.created_at,
-      -- Lấy giá nhỏ nhất từ bảng variant
-      (SELECT MIN(price) FROM product_variants WHERE product_id = p.id AND is_active = true) as price_min,
-      -- Tính tổng kho
-      (SELECT SUM(stock) FROM product_variants WHERE product_id = p.id AND is_active = true) as total_stock,
-      COUNT(*) OVER() AS total_count
-    FROM products p
-    LEFT JOIN product_types pt ON p.product_type_id = pt.id
-    LEFT JOIN product_categories pc ON pc.product_id = p.id
-    LEFT JOIN categories c ON c.id = pc.category_id
+    WITH product_data AS (
+      SELECT
+        p.id,
+        p.name,
+        p.slug,
+        p.thumbnail_url,
+        p.created_at,
+        -- Tính giá Min ngay tại đây
+        (SELECT MIN(price) FROM product_variants WHERE product_id = p.id AND is_active = true) as price_min,
+        (SELECT SUM(stock) FROM product_variants WHERE product_id = p.id AND is_active = true) as total_stock
+      FROM products p
+      LEFT JOIN product_types pt ON p.product_type_id = pt.id
+      LEFT JOIN product_categories pc ON pc.product_id = p.id
+      LEFT JOIN categories c ON c.id = pc.category_id
+      WHERE 
+        p.status = 'active'
+        AND (${searchPattern}::text IS NULL OR (p.name ILIKE ${searchPattern}::text OR p.description ILIKE ${searchPattern}::text))
+        AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
+        AND (${productTypeCode ?? null}::text IS NULL OR pt.code = ${productTypeCode}::text)
+      GROUP BY p.id, p.name, p.slug, p.thumbnail_url, p.created_at
+    )
+    SELECT *, COUNT(*) OVER() AS total_count
+    FROM product_data p
     WHERE 
-      p.status = 'active'
-      AND (${searchPattern}::text IS NULL OR (p.name ILIKE ${searchPattern}::text OR p.description ILIKE ${searchPattern}::text))
-      AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
-      AND (${productTypeCode ?? null}::text IS NULL OR pt.code = ${productTypeCode}::text)
-    GROUP BY 
-      p.id, p.name, p.slug, p.thumbnail_url, p.created_at
-    HAVING 
-      -- Lọc giá dựa trên sub-query giá min
-      (${minPrice ?? null}::numeric IS NULL OR (SELECT MIN(price) FROM product_variants WHERE product_id = p.id AND is_active = true) >= ${minPrice}::numeric)
-      AND 
-      (${maxPrice ?? null}::numeric IS NULL OR (SELECT MIN(price) FROM product_variants WHERE product_id = p.id AND is_active = true) <= ${maxPrice}::numeric)
+      (${minPrice ?? null}::numeric IS NULL OR price_min >= ${minPrice}::numeric)
+      AND (${maxPrice ?? null}::numeric IS NULL OR price_min <= ${maxPrice}::numeric)
     ORDER BY ${orderBy}
     LIMIT ${limit} OFFSET ${offset}
   `;
