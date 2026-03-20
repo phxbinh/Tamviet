@@ -41,7 +41,16 @@ export default async function Page({
   const minPrice = sParams.min ? Number(sParams.min) : undefined;
   const maxPrice = sParams.max ? Number(sParams.max) : undefined;
   //const sort = (sParams.sort as string) || "latest";
-  const sort = (sParams.sort as string) || "newest";
+  const allowedSort = ["price_asc", "price_desc", "newest", "oldest"] as const;
+
+type SortType = typeof allowedSort[number];
+
+const rawSort = sParams.sort;
+
+const sort: SortType = allowedSort.includes(rawSort as SortType)
+  ? (rawSort as SortType)
+  : "newest";
+
   const limit = 8;
 
   const [products, categories, productTypesData] = await Promise.all([
