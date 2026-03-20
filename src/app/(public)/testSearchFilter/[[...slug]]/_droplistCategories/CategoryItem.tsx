@@ -224,7 +224,7 @@ export function CategoryItem({ cat, path }: any) {
       >
         {/* CATEGORY LINK */}
         <Link
-          href={`/testSearchFilter/${cat.category_path}`}
+          href={`/testSearchFilter/${cat.category_path}`} prefetch={true}
           className={`px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] transition-colors ${
             isActive
               ? 'text-primary'
@@ -273,7 +273,7 @@ export function CategoryItem({ cat, path }: any) {
           {cat.children.map((child: any) => (
             <Link
               key={child.id}
-              href={`/testSearchFilter/${child.category_path}`}
+              href={`/testSearchFilter/${child.category_path}`} prefetch={true}
               className={`px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all ${
                 path === child.category_path
                   ? 'bg-primary text-white shadow-lg shadow-primary/20'
