@@ -1,9 +1,5 @@
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-
-// src/app/(public)/testCategories/[[...slug]]/page.tsx
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
@@ -37,12 +33,10 @@ export default async function Page({
   const search = sParams.search as string;
   const minPrice = sParams.min ? Number(sParams.min) : undefined;
   const maxPrice = sParams.max ? Number(sParams.max) : undefined;
-  const allowedSort = ["price_asc", "price_desc", "newest", "oldest"] as const;
 
+  const allowedSort = ["price_asc", "price_desc", "newest", "oldest"] as const;
   type SortType = typeof allowedSort[number];
-  
   const rawSort = sParams.sort;
-  
   const sort: SortType = allowedSort.includes(rawSort as SortType)
     ? (rawSort as SortType)
     : "newest";
@@ -64,7 +58,6 @@ export default async function Page({
     getProductTypes() // Lấy list cho droplist
   ]);
 
-  if (products === null) notFound();
   // Ép kiểu (cast) dữ liệu trả về từ Database
   const productTypes = (productTypesData as unknown) as ProductType[];
 
@@ -169,7 +162,6 @@ export default async function Page({
                 key={p.id}
                 slug={p.slug}
                 name={p.name}
-                /*thumbnail_url={p.thumbnail_url} */
                 thumbnail_url={
                   p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined
                 }
