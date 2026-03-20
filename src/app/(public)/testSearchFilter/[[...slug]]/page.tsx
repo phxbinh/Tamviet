@@ -11,7 +11,7 @@ import { getProductsByCategory, getProductTypes } from "./_server/getProductsByC
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-import { Filters } from "./_shop/Filters__a__";
+import { Filters } from "./_shop/Filters__a_";
 import { Pagination } from "./_shop/Pagination";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
