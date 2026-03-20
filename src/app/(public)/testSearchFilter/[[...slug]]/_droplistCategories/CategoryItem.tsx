@@ -120,6 +120,8 @@ export function CategoryItem({ cat, path }: any) {
 }
 */
 
+
+/*
 'use client';
 
 import Link from 'next/link';
@@ -134,7 +136,7 @@ export function CategoryItem({ cat, path }: any) {
   return (
     <div className="relative flex flex-col items-start w-full group">
       <div className="flex items-stretch w-full overflow-hidden transition-all duration-300 border rounded-full border-border group-hover:border-primary/50">
-        {/* PHẦN 1: TAG LINK (Click để vào category cha) */}
+        //PHẦN 1: TAG LINK (Click để vào category cha) 
         <Link
           href={`/testSearchFilter/${cat.category_path}`}
           className={`flex-1 flex items-center gap-2 px-3 py-1 text-[10px] font-black uppercase tracking-widest transition-colors ${
@@ -149,7 +151,7 @@ export function CategoryItem({ cat, path }: any) {
           <span className="truncate">{cat.name}</span>
         </Link>
 
-        {/* PHẦN 2: ICON TOGGLE (Chỉ hiện khi có con) */}
+        //PHẦN 2: ICON TOGGLE (Chỉ hiện khi có con) 
         {hasChildren && (
           <button
             onClick={(e) => {
@@ -169,7 +171,7 @@ export function CategoryItem({ cat, path }: any) {
         )}
       </div>
 
-      {/* DROPLIST CON */}
+      //DROPLIST CON
       {hasChildren && open && (
         <div className="flex flex-col w-full gap-1 mt-1 ml-4 border-l border-border/50 pl-2 animate-in fade-in slide-in-from-top-1 duration-200">
           {cat.children.map((child: any) => (
@@ -181,6 +183,78 @@ export function CategoryItem({ cat, path }: any) {
   );
 }
 
+*/
+
+'use client';
+
+import Link from 'next/link';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+
+export function CategoryItem({ cat, path }: any) {
+  const [open, setOpen] = useState(false);
+  const hasChildren = cat.children && cat.children.length > 0;
+  const isActive = path === cat.category_path || path.startsWith(cat.category_path + '/');
+
+  return (
+    <div 
+      className="relative flex flex-col items-start group"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <div className={`flex items-stretch overflow-hidden rounded-full border transition-all duration-300 ${
+        isActive 
+        ? "border-primary bg-primary/10 shadow-[0_0_15px_rgba(var(--primary),0.1)]" 
+        : "border-border/60 bg-card/50 hover:border-primary/50"
+      }`}>
+        
+        {/* ĐỐI TƯỢNG 1: CLICK VÀO CATEGORY CHA */}
+        <Link
+          href={`/testSearchFilter/${cat.category_path}`}
+          className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${
+            isActive ? "text-primary" : "text-foreground/50 hover:text-primary"
+          }`}
+        >
+          {cat.name}
+        </Link>
+
+        {/* ĐỐI TƯỢNG 2: ICON ĐỂ DROP LIST (Chỉ hiện nếu có con) */}
+        {hasChildren && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen(!open);
+            }}
+            className={`px-2 flex items-center border-l border-border/40 hover:bg-primary/20 transition-colors ${
+              open ? "bg-primary/10 text-primary" : "text-foreground/30"
+            }`}
+          >
+            <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+          </button>
+        )}
+      </div>
+
+      {/* DROPLIST BOX */}
+      {hasChildren && open && (
+        <div className="absolute top-full left-0 mt-2 min-w-[200px] bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl p-2 shadow-2xl z-50 flex flex-col gap-1 animate-in fade-in zoom-in-95 duration-200">
+          {cat.children.map((child: any) => (
+            <Link
+              key={child.id}
+              href={`/testSearchFilter/${child.category_path}`}
+              className={`px-4 py-2 rounded-xl text-[9px] font-bold uppercase tracking-wider transition-all ${
+                path === child.category_path
+                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                : "text-foreground/60 hover:bg-primary/10 hover:text-primary"
+              }`}
+            >
+              {child.name}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 
