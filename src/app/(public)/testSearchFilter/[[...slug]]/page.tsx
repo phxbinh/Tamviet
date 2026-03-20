@@ -7,41 +7,14 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
+import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory_";
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-import { Filters } from "./_shop/Filters__";
+import { Filters } from "./_shop/Filters_";
 import { Pagination } from "./_shop/Pagination";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-/*
-abc
-// Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
-export async function getProductTypes() {
-  return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
-}
-
-// Trong page.tsx
-const [products, categories, productTypes] = await Promise.all([
-  getProductsByCategory({ 
-    slug: path, 
-    search, 
-    minPrice, 
-    maxPrice, 
-    productTypeCode: sParams.type as string, // Lọc theo code từ URL
-    page, 
-    limit 
-  }),
-  getCategoriesTree(),
-  getProductTypes() // Lấy list cho droplist
-]);
-
-// Trong phần return của page.tsx
-<Filters productTypes={productTypes} />
-*/
-
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
 interface ProductType {
@@ -68,35 +41,20 @@ export default async function Page({
   const sort = (sParams.sort as string) || "latest"; 
   const limit = 8;
 
-/*
-  const [products, categories] = await Promise.all([
+  const [products, categories, productTypesData] = await Promise.all([
     getProductsByCategory({ 
       slug: path, 
       search, 
       minPrice, 
       maxPrice, 
+      sort,
+      productTypeCode: sParams.type as string, // Lọc theo code từ URL
       page, 
       limit 
     }),
-    getCategoriesTree()
+    getCategoriesTree(),
+    getProductTypes() // Lấy list cho droplist
   ]);
-*/
-
-const [products, categories, productTypesData] = await Promise.all([
-  getProductsByCategory({ 
-    slug: path, 
-    search, 
-    minPrice, 
-    maxPrice, 
-    sort,
-    productTypeCode: sParams.type as string, // Lọc theo code từ URL
-    page, 
-    limit 
-  }),
-  getCategoriesTree(),
-  getProductTypes() // Lấy list cho droplist
-]);
-
 
   if (products === null) notFound();
   // Ép kiểu (cast) dữ liệu trả về từ Database
@@ -179,9 +137,6 @@ const [products, categories, productTypesData] = await Promise.all([
           </div>
         </div>
 
-
-
-
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-2 md:gap-x-8 md:gap-y-8">
           {products.length === 0 ? (
@@ -215,6 +170,7 @@ const [products, categories, productTypesData] = await Promise.all([
 
         {/* Phân trang */}
         </div>
+
         <Pagination totalCount={totalCount} limit={limit} />
 
       </div>
@@ -224,162 +180,5 @@ const [products, categories, productTypesData] = await Promise.all([
     </div>
   );
 }
-
-// src/app/(public)/testCategories/[[...slug]]/page.tsx
-/*
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
-import { LayoutGrid, ChevronRight, Sparkles, Search, SlidersHorizontal } from "lucide-react";
-import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory } from "./_server/getProductsByCategory";
-import { getCategoriesTree } from "@/lib/db/categories";
-import { Filters } from "./_shop/Filters";
-import { Pagination } from "./_shop/Pagination";
-*/
-
-//export default 
-async function Page_({ 
-  params, 
-  searchParams 
-}: { 
-  params: Promise<{ slug?: string[] }>,
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) {
-  const { slug } = await params;
-  const sParams = await searchParams;
-  
-  const path = slug?.join("/") || "";
-  const page = Number(sParams.page) || 1;
-  const search = sParams.search as string;
-  const minPrice = Number(sParams.min) || undefined;
-  const maxPrice = Number(sParams.max) || undefined;
-  const limit = 8;
-
-  const [products, categories] = await Promise.all([
-    getProductsByCategory({ slug: path, search, minPrice, maxPrice, page, limit }),
-    getCategoriesTree()
-  ]);
-
-  if (products === null) notFound();
-  
-  const totalCount = Number(products[0]?.total_count || 0);
-  const currentCategory = categories.find((c: any) => c.category_path === path);
-
-  return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-background pb-20">
-      
-      {/* 1. HERO SECTION - Minimal & Elegant */}
-      <div className="relative h-[40vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(var(--primary),0.1),transparent)]" />
-        <div className="relative z-10 text-center space-y-3 px-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-              Curated Studio
-            </span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-foreground uppercase italic leading-none">
-            {currentCategory?.name || "All Series"}<span className="text-primary">.</span>
-          </h1>
-          
-          <p className="max-w-md mx-auto text-[11px] md:text-xs font-medium text-muted-foreground uppercase tracking-widest leading-relaxed opacity-70">
-            Tinh hoa thiết kế hội tụ trong từng đường nét sản phẩm.
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 md:px-10 relative z-20">
-        
-        {/* 2. SMART TOOLBAR - Tách biệt Filter và Category */}
-        <div className="space-y-8 mb-16">
-          
-          {/* Row 1: Search & Price Filter */}
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-border/50 pb-8">
-            <div className="w-full md:w-auto">
-                {/*<Filters />*/}
-            </div>
-            <div className="hidden md:flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              <LayoutGrid className="w-4 h-4" />
-              <span>{totalCount} masterpieces found</span>
-            </div>
-          </div>
-
-          {/* Row 2: Category Navigation (Capsule Style) */}
-          <div className="flex flex-wrap items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-            <Link 
-              href="/testSearchFilter"
-              className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${
-                !path 
-                ? "bg-foreground text-background border-foreground shadow-xl scale-105" 
-                : "bg-card border-border text-muted-foreground hover:border-primary hover:text-primary"
-              }`}
-            >
-              All Series
-            </Link>
-
-            {categories.filter((c:any) => c.category_depth <= 1).map((cat: any) => (
-              <Link
-                key={cat.id}
-                href={`/testSearchFilter/${cat.category_path}`}
-                className={`flex items-center gap-2 px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border whitespace-nowrap ${
-                  path === cat.category_path
-                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105"
-                  : "bg-card border-border text-muted-foreground hover:border-primary hover:text-primary"
-                }`}
-              >
-                {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-50" />}
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* 3. PRODUCT GRID */}
-        {products.length === 0 ? (
-          <div className="py-32 flex flex-col items-center justify-center space-y-6 bg-card/30 rounded-[3rem] border border-dashed border-border/60 backdrop-blur-sm">
-            <div className="p-6 rounded-full bg-background shadow-inner">
-                <Sparkles className="w-12 h-12 text-primary/20 animate-pulse" />
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-black uppercase tracking-[0.3em] text-foreground/40">
-                No matching items
-              </p>
-              <p className="text-[10px] font-medium text-muted-foreground mt-2 italic">
-                Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn.
-              </p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
-              {products.map((p: any) => (
-                <div key={p.id} className="group transition-transform duration-500 hover:-translate-y-2">
-                    <ProductCardSlug 
-                        id={p.id}
-                        slug={p.slug}
-                        name={p.name}
-                        thumbnail_url={p.thumbnail_url ? getPublicImageUrl(p.thumbnail_url) : undefined}
-                        price_min={p.price_min}
-                    />
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination Section */}
-            <div className="mt-24 flex justify-center border-t border-border/50 pt-12">
-              <Pagination totalCount={totalCount} limit={limit} />
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Trang trí background */}
-      <div className="fixed top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="fixed bottom-0 left-0 -z-10 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
-    </div>
-  );
-}
-
 
 
