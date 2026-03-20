@@ -15,7 +15,7 @@ import { Filters } from "./_shop/Filters__a__";
 import { Pagination } from "./_shop/Pagination";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-import { CategoryItem } from './droplistCategories/CategoryItem';
+import { CategoryItem } from './_droplistCategories/CategoryItem';
 
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
