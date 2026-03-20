@@ -143,7 +143,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
                 {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
                 {cat.name}
               </Link>
-            ))}*/
+            ))}*/}
 
 
 
