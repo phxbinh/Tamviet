@@ -63,6 +63,7 @@ export default async function Page({
   const search = sParams.search as string;
   const minPrice = Number(sParams.min) || undefined;
   const maxPrice = Number(sParams.max) || undefined;
+  const sort = (sParams.sort as string) || "latest"; 
   const limit = 8;
 
 /*
@@ -85,6 +86,7 @@ const [products, categories, productTypesData] = await Promise.all([
     search, 
     minPrice, 
     maxPrice, 
+    sort,
     productTypeCode: sParams.type as string, // Lọc theo code từ URL
     page, 
     limit 
