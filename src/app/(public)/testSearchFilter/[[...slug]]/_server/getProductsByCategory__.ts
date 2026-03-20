@@ -8,7 +8,7 @@ export async function getProductsByCategory(options: {
   minPrice?: number;
   maxPrice?: number;
   productTypeCode?: string;
-  sort?: string; // <-- Thêm option Sort
+  sort?: string;
   page?: number;
   limit?: number;
 }) {
@@ -18,7 +18,7 @@ export async function getProductsByCategory(options: {
     minPrice, 
     maxPrice, 
     productTypeCode,
-    sort = "latest", // Mặc định là mới nhất
+    sort = "latest", 
     page = 1, 
     limit = 8 
   } = options;
@@ -28,9 +28,9 @@ export async function getProductsByCategory(options: {
   const searchPattern = search ? `%${search}%` : null;
   const slugPattern = slug ? `${slug}%` : null;
 
-  // --- LOGIC XỬ LÝ SORT ĐỘNG ---
-  // Chúng ta sử dụng sql fragment để tránh lỗi SQL Injection và đảm bảo performance
-  let orderBy = sql`p.created_at DESC`; // Mặc định
+  // --- FIX LOGIC SORT ĐỘNG ---
+  // Sử dụng sql fragment để bọc logic sắp xếp
+  let orderBy = sql`p.created_at DESC`; // Mặc định: Sản phẩm mới nhất lên đầu
 
   if (sort === "price_asc") {
     orderBy = sql`MIN(v.price) ASC`;
@@ -48,26 +48,39 @@ export async function getProductsByCategory(options: {
       p.name,
       p.slug,
       p.thumbnail_url,
+      p.created_at, -- Lấy thêm để phục vụ GROUP BY và SORT
       MIN(v.price) as price_min,
       SUM(v.stock) as total_stock,
       COUNT(*) OVER() AS total_count
     FROM products p
-    LEFT JOIN product_types pt ON p.product_type_id = pt.id
-    LEFT JOIN product_variants v ON v.product_id = p.id AND v.is_active = true
-    LEFT JOIN product_categories pc ON pc.product_id = p.id
-    LEFT JOIN categories c ON c.id = pc.category_id
+    -- Join với Variant để lấy giá và kho
+    LEFT JOIN product_variants v 
+      ON v.product_id = p.id 
+      AND v.is_active = true
+    -- Join với Product Types để lọc theo loại (clothes, pump...)
+    LEFT JOIN product_types pt 
+      ON p.product_type_id = pt.id
+    -- Join với Categories để lọc theo Slug đường dẫn
+    LEFT JOIN product_categories pc 
+      ON pc.product_id = p.id
+    LEFT JOIN categories c 
+      ON c.id = pc.category_id
     WHERE 
       p.status = 'active'
+      -- Tìm kiếm theo tên hoặc mô tả
       AND (${searchPattern}::text IS NULL OR (p.name ILIKE ${searchPattern}::text OR p.description ILIKE ${searchPattern}::text))
+      -- Lọc theo danh mục (hỗ trợ tìm cả danh mục con qua category_path)
       AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
+      -- Lọc theo mã loại sản phẩm
       AND (${productTypeCode ?? null}::text IS NULL OR pt.code = ${productTypeCode}::text)
     GROUP BY 
-      p.id, p.name, p.slug, p.thumbnail_url, p.created_at -- Thêm p.created_at vào group by nếu cần sort theo nó
+      p.id, p.name, p.slug, p.thumbnail_url, p.created_at
     HAVING 
+      -- Lọc khoảng giá dựa trên giá thấp nhất của variant
       (${minPrice ?? null}::numeric IS NULL OR MIN(v.price) >= ${minPrice}::numeric)
       AND 
       (${maxPrice ?? null}::numeric IS NULL OR MIN(v.price) <= ${maxPrice}::numeric)
-    ORDER BY ${orderBy} -- <-- Sử dụng biến orderBy động tại đây
+    ORDER BY ${orderBy}
     LIMIT ${limit} OFFSET ${offset}
   `;
 
