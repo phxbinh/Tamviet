@@ -161,7 +161,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
 */}
 
   <div className="flex gap-2">
-    {categoryTree.map((cat: any) => (
+    {categories.map((cat: any) => (
       <CategoryItem key={cat.id} cat={cat} path={path} />
     ))}
   </div>
