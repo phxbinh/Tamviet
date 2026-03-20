@@ -16,10 +16,23 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   const [search, setSearch] = useState(searchParams.get('search') ?? '');
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
+/*
   useEffect(() => {
     const urlSearch = searchParams.get('search') ?? '';
     if (urlSearch !== search) setSearch(urlSearch);
   }, [searchParams]);
+*/
+
+const isTypingRef = useRef(false);
+
+useEffect(() => {
+  const urlSearch = searchParams.get('search') ?? '';
+
+  // Chỉ sync khi KHÔNG phải do user đang gõ
+  if (!isTypingRef.current && urlSearch !== search) {
+    setSearch(urlSearch);
+  }
+}, [searchParams]);
 
   function updateFilters(updates: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -33,6 +46,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
     });
   }
 
+/*
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -41,6 +55,25 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [search]);
+*/
+useEffect(() => {
+  if (debounceRef.current) clearTimeout(debounceRef.current);
+
+  debounceRef.current = setTimeout(() => {
+    const current = searchParams.get('search') ?? '';
+    if (search !== current) {
+      updateFilters({ search: search || null });
+    }
+
+    // ✅ cho phép sync lại sau khi push xong
+    isTypingRef.current = false;
+
+  }, 500);
+
+  return () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+  };
+}, [search]);
 
   // --- CSS ĐÃ FIX THEO GLOBALS.CSS ---
   // Sử dụng var(--border), var(--card), var(--primary) từ file Số 2
@@ -56,7 +89,11 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
         <Search className={iconStyle} />
         <input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          //onChange={(e) => setSearch(e.target.value)}
+onChange={(e) => {
+  isTypingRef.current = true;
+  setSearch(e.target.value);
+}}
           type="text"
           placeholder="Tìm kiếm sản phẩm..."
           className={inputStyle}
