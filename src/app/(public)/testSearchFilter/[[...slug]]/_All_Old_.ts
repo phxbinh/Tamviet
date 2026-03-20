@@ -89,17 +89,17 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
       children: categories.filter((child: any) => child.parent_id === parent.id)
     }));
 
-  return (
-<>
-{/* droplist for categories --🔸
+/* droplist for categories --🔸
 <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
   <div className="flex gap-2 overflow-x-auto px-4 py-2">
     {categories.map((cat) => (
       <CategoryItem key={cat.id} cat={cat} path={path} />
     ))}
   </div>
-</div>*/}
+</div>*/
 
+  return (
+<>
     <div className="min-h-screen bg-background pb-20">
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
       <div className="relative h-[30vh] md:h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50">
