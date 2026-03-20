@@ -9,16 +9,11 @@ import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
 import { getCategoriesTree } from "@/lib/db/categories";
-//import { getCategoriesTree } from "@/lib/db/categories_droplist";
-
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
-// src/app/(public)/testCategories/[[...slug]]/page.tsx
 import { Filters } from "./_shop/Filters__a__";
 import { Pagination } from "./_shop/Pagination";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-import { CategoryItem } from './_droplistCategories/CategoryItem';
-
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
 interface ProductType {
@@ -40,20 +35,17 @@ export default async function Page({
   const path = slug?.join("/") || "";
   const page = Number(sParams.page) || 1;
   const search = sParams.search as string;
-  //const minPrice = Number(sParams.min) || undefined;
-  //const maxPrice = Number(sParams.max) || undefined;
   const minPrice = sParams.min ? Number(sParams.min) : undefined;
   const maxPrice = sParams.max ? Number(sParams.max) : undefined;
-  //const sort = (sParams.sort as string) || "latest";
   const allowedSort = ["price_asc", "price_desc", "newest", "oldest"] as const;
 
-type SortType = typeof allowedSort[number];
-
-const rawSort = sParams.sort;
-
-const sort: SortType = allowedSort.includes(rawSort as SortType)
-  ? (rawSort as SortType)
-  : "newest";
+  type SortType = typeof allowedSort[number];
+  
+  const rawSort = sParams.sort;
+  
+  const sort: SortType = allowedSort.includes(rawSort as SortType)
+    ? (rawSort as SortType)
+    : "newest";
 
   const limit = 8;
 
@@ -90,17 +82,8 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
     }));
 
   return (
-<>
-{/* droplist for categories --🔸
-<div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
-  <div className="flex gap-2 overflow-x-auto px-4 py-2">
-    {categories.map((cat) => (
-      <CategoryItem key={cat.id} cat={cat} path={path} />
-    ))}
-  </div>
-</div>*/}
-
-    <div className="min-h-screen bg-background pb-20">
+    <>
+    {/*<div className="min-h-screen bg-background pb-20"> */}
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
       <div className="relative h-[30vh] md:h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_0%,transparent_70%)]" />
@@ -157,29 +140,6 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
               </Link>
             ))}
 
-
-
-
-
-
-{/*
-    <div className="flex gap-2">
-      {categories.map((cat) => (
-        <CategoryItem key={cat.id} cat={cat} path={path} />
-      ))}
-    </div>
-*/}
-
-{/*
-  <div className="flex gap-2">
-    {categories.map((cat: any) => (
-      <CategoryItem key={cat.id} cat={cat} path={path} />
-    ))}
-  </div>*/}
-
-
-
-
           </div>
           <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -217,17 +177,17 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
               />
             ))
           )}
-
-        {/* Phân trang */}
         </div>
 
+        {/* 4. Phân trang */}
         <Pagination totalCount={totalCount} limit={limit} />
 
       </div>
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
       <div className="fixed bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none z-0 opacity-50" />
-    </div> </>
+    {/*</div>*/}
+    </>
   );
 }
 
