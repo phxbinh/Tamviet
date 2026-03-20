@@ -88,40 +88,61 @@ async function getProductsByCategory_(options: {
 }
 
 // src/lib/db/products.ts
+
 export async function getProductsByCategory(options: {
   slug?: string;
   search?: string;
   minPrice?: number;
   maxPrice?: number;
   productTypeCode?: string;
-  sort?: string;
+  sort?: string; // <-- Thêm tham số sort
   page?: number;
   limit?: number;
 }) {
-  const { slug, search, minPrice, maxPrice, productTypeCode, sort = "latest", page = 1, limit = 8 } = options;
+  const { 
+    slug, 
+    search, 
+    minPrice, 
+    maxPrice, 
+    productTypeCode,
+    sort = "latest", // Mặc định là mới nhất
+    page = 1, 
+    limit = 8 
+  } = options;
+  
   const offset = (page - 1) * limit;
-
   const searchPattern = search ? `%${search}%` : null;
   const slugPattern = slug ? `${slug}%` : null;
 
-  // 1. CHUẨN BỊ CÂU LỆNH ORDER BY
+  // 1. Xác định logic ORDER BY bằng SQL Fragment
   let orderBy = sql`p.created_at DESC`; 
   if (sort === "price_asc") orderBy = sql`price_min ASC`;
   else if (sort === "price_desc") orderBy = sql`price_min DESC`;
   else if (sort === "oldest") orderBy = sql`p.created_at ASC`;
+  else if (sort === "name_asc") orderBy = sql`p.name ASC`;
 
-  // 2. DÙNG CTE ĐỂ TÍNH TOÁN TRƯỚC (Đây là bí kíp)
+  // 2. Sử dụng Sub-query để tính price_min từ bảng variants trước khi sort
   const rows = await sql`
-    WITH product_data AS (
+    SELECT * FROM (
       SELECT
         p.id,
         p.name,
         p.slug,
         p.thumbnail_url,
         p.created_at,
-        -- Tính giá Min ngay tại đây
-        (SELECT MIN(price) FROM product_variants WHERE product_id = p.id AND is_active = true) as price_min,
-        (SELECT SUM(stock) FROM product_variants WHERE product_id = p.id AND is_active = true) as total_stock
+        -- Tính giá thấp nhất từ bảng product_variants
+        (
+          SELECT MIN(price) 
+          FROM product_variants 
+          WHERE product_id = p.id AND is_active = true
+        ) as price_min,
+        -- Tính tổng kho
+        (
+          SELECT SUM(stock) 
+          FROM product_variants 
+          WHERE product_id = p.id AND is_active = true
+        ) as total_stock,
+        COUNT(*) OVER() AS total_count
       FROM products p
       LEFT JOIN product_types pt ON p.product_type_id = pt.id
       LEFT JOIN product_categories pc ON pc.product_id = p.id
@@ -132,18 +153,23 @@ export async function getProductsByCategory(options: {
         AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
         AND (${productTypeCode ?? null}::text IS NULL OR pt.code = ${productTypeCode}::text)
       GROUP BY p.id, p.name, p.slug, p.thumbnail_url, p.created_at
-    )
-    SELECT *, COUNT(*) OVER() AS total_count
-    FROM product_data p
+    ) as filtered_products
     WHERE 
+      -- Lọc khoảng giá trên kết quả đã tính toán
       (${minPrice ?? null}::numeric IS NULL OR price_min >= ${minPrice}::numeric)
-      AND (${maxPrice ?? null}::numeric IS NULL OR price_min <= ${maxPrice}::numeric)
+      AND 
+      (${maxPrice ?? null}::numeric IS NULL OR price_min <= ${maxPrice}::numeric)
     ORDER BY ${orderBy}
     LIMIT ${limit} OFFSET ${offset}
   `;
 
   return rows;
 }
+
+export async function getProductTypes() {
+  return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
+}
+
 
 
 export async function getProductTypes() {
