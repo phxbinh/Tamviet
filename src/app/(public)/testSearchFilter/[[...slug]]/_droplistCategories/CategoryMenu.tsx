@@ -1,4 +1,4 @@
-import { getCategoriesTree } from '@/lib/db/categories';
+import { getCategoriesTree } from '@/lib/db/categories_droplist';
 import { CategoryItem } from './CategoryItem';
 
 export default async function CategoriesMenu({ path }: { path: string }) {
