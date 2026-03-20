@@ -36,9 +36,12 @@ export default async function Page({
   const path = slug?.join("/") || "";
   const page = Number(sParams.page) || 1;
   const search = sParams.search as string;
-  const minPrice = Number(sParams.min) || undefined;
-  const maxPrice = Number(sParams.max) || undefined;
-  const sort = (sParams.sort as string) || "latest"; 
+  //const minPrice = Number(sParams.min) || undefined;
+  //const maxPrice = Number(sParams.max) || undefined;
+  const minPrice = sParams.min ? Number(sParams.min) : undefined;
+  const maxPrice = sParams.max ? Number(sParams.max) : undefined;
+  //const sort = (sParams.sort as string) || "latest";
+  const sort = (sParams.sort as string) || "newest";
   const limit = 8;
 
   const [products, categories, productTypesData] = await Promise.all([
