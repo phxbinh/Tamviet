@@ -90,6 +90,15 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
     }));
 
   return (
+<>
+<div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
+  <div className="flex gap-2 overflow-x-auto px-4 py-2">
+    {categories.map((cat) => (
+      <CategoryItem key={cat.id} cat={cat} path={path} />
+    ))}
+  </div>
+</div>
+
     <div className="min-h-screen bg-background pb-20">
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
       <div className="relative h-[30vh] md:h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50">
@@ -160,11 +169,12 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
     </div>
 */}
 
+{/*
   <div className="flex gap-2">
     {categories.map((cat: any) => (
       <CategoryItem key={cat.id} cat={cat} path={path} />
     ))}
-  </div>
+  </div>*/}
 
 
 
@@ -216,7 +226,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
       <div className="fixed bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none z-0 opacity-50" />
-    </div>
+    </div> </>
   );
 }
 
