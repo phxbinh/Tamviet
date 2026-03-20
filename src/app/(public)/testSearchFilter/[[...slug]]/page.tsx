@@ -75,8 +75,7 @@ export default async function Page({
     }));
   
   return (
-    <>
-    {/*<div className="min-h-screen bg-background pb-20"> */}
+    <div> {/*<div className="min-h-screen bg-background pb-20">*/}
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
       <div className="relative h-[30vh] md:h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_0%,transparent_70%)]" />
@@ -178,8 +177,7 @@ export default async function Page({
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
       <div className="fixed bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none z-0 opacity-50" />
-    {/*</div>*/}
-    </>
+    </div>
   );
 }
 
