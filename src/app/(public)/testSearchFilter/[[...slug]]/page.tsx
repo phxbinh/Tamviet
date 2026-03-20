@@ -7,11 +7,11 @@ import { ProductCard } from "@/components/shop/ProductCard";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory_";
+import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
 import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-import { Filters } from "./_shop/Filters_";
+import { Filters } from "./_shop/Filters__";
 import { Pagination } from "./_shop/Pagination";
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
