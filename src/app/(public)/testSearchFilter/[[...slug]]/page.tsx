@@ -73,7 +73,7 @@ export default async function Page({
       ...parent,
       children: categories.filter((child: any) => child.parent_id === parent.id)
     }));
-
+  
   return (
     <>
     {/*<div className="min-h-screen bg-background pb-20"> */}
