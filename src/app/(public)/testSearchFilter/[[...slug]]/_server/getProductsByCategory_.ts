@@ -1,14 +1,16 @@
+
+// lấy sản phẩm có theo product_types
 // src/lib/db/products.ts
 import "server-only";
 import { sql } from "@/lib/neon/sql";
+
 
 export async function getProductsByCategory(options: {
   slug?: string;
   search?: string;
   minPrice?: number;
   maxPrice?: number;
-  productTypeCode?: string;
-  sort?: string; // <-- Thêm option Sort
+  productTypeCode?: string; // <-- Thêm option lọc theo Code của Product Type
   page?: number;
   limit?: number;
 }) {
@@ -18,7 +20,6 @@ export async function getProductsByCategory(options: {
     minPrice, 
     maxPrice, 
     productTypeCode,
-    sort = "latest", // Mặc định là mới nhất
     page = 1, 
     limit = 8 
   } = options;
@@ -27,20 +28,6 @@ export async function getProductsByCategory(options: {
 
   const searchPattern = search ? `%${search}%` : null;
   const slugPattern = slug ? `${slug}%` : null;
-
-  // --- LOGIC XỬ LÝ SORT ĐỘNG ---
-  // Chúng ta sử dụng sql fragment để tránh lỗi SQL Injection và đảm bảo performance
-  let orderBy = sql`p.created_at DESC`; // Mặc định
-
-  if (sort === "price_asc") {
-    orderBy = sql`MIN(v.price) ASC`;
-  } else if (sort === "price_desc") {
-    orderBy = sql`MIN(v.price) DESC`;
-  } else if (sort === "oldest") {
-    orderBy = sql`p.created_at ASC`;
-  } else if (sort === "name_asc") {
-    orderBy = sql`p.name ASC`;
-  }
 
   const rows = await sql`
     SELECT
@@ -52,28 +39,34 @@ export async function getProductsByCategory(options: {
       SUM(v.stock) as total_stock,
       COUNT(*) OVER() AS total_count
     FROM products p
+    -- JOIN với bảng product_types qua product_type_id
     LEFT JOIN product_types pt ON p.product_type_id = pt.id
     LEFT JOIN product_variants v ON v.product_id = p.id AND v.is_active = true
     LEFT JOIN product_categories pc ON pc.product_id = p.id
     LEFT JOIN categories c ON c.id = pc.category_id
     WHERE 
       p.status = 'active'
+      -- Lọc theo Search
       AND (${searchPattern}::text IS NULL OR (p.name ILIKE ${searchPattern}::text OR p.description ILIKE ${searchPattern}::text))
+      -- Lọc theo Category
       AND (${slugPattern}::text IS NULL OR c.category_path LIKE ${slugPattern}::text)
+      -- Lọc theo Product Type Code (ví dụ: 'clothes', 'beverage')
       AND (${productTypeCode ?? null}::text IS NULL OR pt.code = ${productTypeCode}::text)
     GROUP BY 
-      p.id, p.name, p.slug, p.thumbnail_url, p.created_at -- Thêm p.created_at vào group by nếu cần sort theo nó
+      p.id, p.name, p.slug, p.thumbnail_url
     HAVING 
       (${minPrice ?? null}::numeric IS NULL OR MIN(v.price) >= ${minPrice}::numeric)
       AND 
       (${maxPrice ?? null}::numeric IS NULL OR MIN(v.price) <= ${maxPrice}::numeric)
-    ORDER BY ${orderBy} -- <-- Sử dụng biến orderBy động tại đây
+    ORDER BY p.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `;
 
   return rows;
 }
 
+
+// Thêm hàm này vào file getProductsByCategory.ts hoặc db/products.ts
 export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
 }
