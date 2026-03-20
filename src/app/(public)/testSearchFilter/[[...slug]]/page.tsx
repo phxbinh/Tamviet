@@ -152,13 +152,19 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
 
 
 
-
+{/*
     <div className="flex gap-2">
       {categories.map((cat) => (
         <CategoryItem key={cat.id} cat={cat} path={path} />
       ))}
     </div>
+*/}
 
+  <div className="flex gap-2">
+    {categoryTree.map((cat: any) => (
+      <CategoryItem key={cat.id} cat={cat} path={path} />
+    ))}
+  </div>
 
 
 
@@ -213,5 +219,10 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
     </div>
   );
 }
+
+
+
+
+
 
 
