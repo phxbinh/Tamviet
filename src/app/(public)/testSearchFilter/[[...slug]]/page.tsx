@@ -8,7 +8,9 @@ import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
-import { getCategoriesTree } from "@/lib/db/categories_droplist";
+import { getCategoriesTree } from "@/lib/db/categories";
+//import { getCategoriesTree } from "@/lib/db/categories_droplist";
+
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
 import { Filters } from "./_shop/Filters__a__";
@@ -129,7 +131,7 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
             >
               All Series
             </Link>
-{/*
+
             {categories.map((cat: any) => (
               <Link
                 key={cat.id}
@@ -143,20 +145,20 @@ const sort: SortType = allowedSort.includes(rawSort as SortType)
                 {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
                 {cat.name}
               </Link>
-            ))}*/}
+            ))}
 
 
 
 
 
 
-
+{/*
     <div className="flex gap-2">
       {categories.map((cat) => (
         <CategoryItem key={cat.id} cat={cat} path={path} />
       ))}
     </div>
-
+*/}
 
 
 
