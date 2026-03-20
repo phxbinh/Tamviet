@@ -21,7 +21,7 @@ export function Pagination({ totalCount, limit }: { totalCount: number, limit: n
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
         <Link
           key={p}
-          href={createPageURL(p)}
+          href={createPageURL(p)} prefetch={true}
           className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
             p === currentPage 
             ? "bg-primary text-white" 
