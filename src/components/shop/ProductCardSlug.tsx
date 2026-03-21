@@ -14,7 +14,7 @@ interface ProductCardPropsSlug {
 export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   return (
     <Link 
-      href={`/testCategories/products/${slug}`} 
+      href={`/testSearchParam/products/${slug}`} 
       prefetch={true} 
       className="group block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform"
     >
