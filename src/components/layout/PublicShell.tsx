@@ -161,7 +161,7 @@ export default function PublicShell({
         <div className="flex-1 flex flex-col min-w-0">
 
           {/* HEADER */}
-          <header className="sticky top-0 z-50 h-16 flex items-center px-4 border-b border-border bg-background/70 backdrop-blur-md">
+          <header className="sticky top-0 z-10 h-16 flex items-center px-4 border-b border-border bg-background/70 backdrop-blur-md">
             <button
               onClick={() => setIsOpen(true)}
               className="md:hidden p-2 mr-2 hover:bg-accent rounded-lg"
