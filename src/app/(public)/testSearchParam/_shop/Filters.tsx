@@ -13,7 +13,6 @@ export interface ProductType {
 */
 
 
-
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -25,7 +24,7 @@ export interface ProductType {
   name: string;
 }
 
-export function Filters({ productTypes }: { productTypes: ProductType[] }) {
+export function Filters_({ productTypes }: { productTypes: ProductType[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -190,7 +189,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
 
 
 
-export function Filters_({ productTypes }: { productTypes: ProductType[] }) {
+export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
