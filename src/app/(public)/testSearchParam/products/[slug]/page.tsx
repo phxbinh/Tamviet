@@ -126,7 +126,9 @@ return (
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
+<div className="sticky top-16">
     <Breadcrumb items={breadcrumbs} />
+</div>
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
 
