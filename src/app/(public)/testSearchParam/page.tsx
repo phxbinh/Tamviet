@@ -1,4 +1,4 @@
-// src/app/(public)/testCategories/[[...slug]]/page.tsx
+// src/app/(public)/testSearchParams/page.tsx
 import Link from "next/link";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
