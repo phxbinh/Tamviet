@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory";
+import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 
 import { Filters } from "./_shop/Filters";
