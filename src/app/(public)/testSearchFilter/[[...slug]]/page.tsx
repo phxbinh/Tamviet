@@ -1,5 +1,5 @@
 // src/app/(public)/testCategories/[[...slug]]/page.tsx
-'use client'
+
 
 import Link from "next/link";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
