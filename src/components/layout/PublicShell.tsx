@@ -73,7 +73,7 @@ export default function PublicShell({
           {/* SCROLL AREA */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col bg-transparent">
             
-            <main className="flex-1 p-2 md:p-8 w-full max-w-6xl mx-auto overflow-x-visible shrink-0">
+            <main className="flex-1 px-1 py-2 md:p-8 w-full max-w-6xl mx-auto overflow-x-visible shrink-0">
               {children}
             </main>
 
