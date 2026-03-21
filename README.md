@@ -133,4 +133,52 @@ my-nextjs-app/
 ├── next.config.mjs      # Cấu hình Next.js
 └── package.json
 ```
+
+#### Cấu trúc folders cho Global Local Shared
+```plaintext
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".", 
+    "paths": {
+      /* 1. Tầng Giao diện & Hệ thống (Bất biến) */
+      "@/*": ["./src/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@shared/*": ["./src/components/shared/*"],
+      
+      /* 2. Tầng Logic & Hạ tầng (Cẩn thận khi sửa) */
+      "@lib/*": ["./src/lib/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@services/*": ["./src/services/*"],
+      "@types/*": ["./src/types/*"],
+      "@const/*": ["./src/constants/*"],
+
+      /* 3. Tầng Tính năng (Dành cho Colocation - Local) */
+      /* Khi bạn làm việc ở route nào, bạn có thể gọi bí danh riêng cho nó */
+      "@orders/*": ["./src/app/(dashboard)/orders/_components/*"],
+      "@products/*": ["./src/app/(dashboard)/products/_components/*"],
+      "@auth/*": ["./src/app/(auth)/_components/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
   
