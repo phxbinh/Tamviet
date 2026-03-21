@@ -101,7 +101,7 @@ export default async function Page({
         </div>
       </div>
 */}
-      <div className="max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-20">
+      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-20">
 
         {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
         <ExpandableSearch 
