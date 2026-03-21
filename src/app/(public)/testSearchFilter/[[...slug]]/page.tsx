@@ -101,7 +101,7 @@ export default async function Page({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-10 -mt-10 relative z-20">
+      <div className="max-w-7xl mx-auto px-1 md:px-10 -mt-10 relative z-20">
         
         {/* 2. CATEGORY TOOLBAR: Thiết kế dạng Capsule scannable */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
