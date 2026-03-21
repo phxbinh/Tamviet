@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
-import { getRelatedProducts } from "../_relateproducts/getSqlRelatedProduct";
+import { getRelatedProducts } from "../_relateproducts/getSqlRelateProduct";
 
 // ✳️ Làm breadcrumb
 // 1. Định nghĩa interface (nếu chưa có)
