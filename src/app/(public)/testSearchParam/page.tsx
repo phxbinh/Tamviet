@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ProductCardSlug } from "@/components/shop/ProductCardSlugSearchFilter";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory__";
+import { getProductsByCategory, getProductTypes } from "./_server/getProductsByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
-import { CategoryToolbar } from "./_shop/CategoryToolbar";
-import { Filters } from "./_shop/Filters__a__";
+
+import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
 import { ExpandableSearch } from "./_shop/ExpandableSearch"; // Import component mới
 
