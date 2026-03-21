@@ -77,7 +77,7 @@ export default async function Page({
   
   return (
 <>
-      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-20">
+      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-100">
 
         {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
         <ExpandableSearch 
@@ -113,15 +113,15 @@ export default async function Page({
         </div>
       </div>
 */}
-      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-20">
+      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-30">
 
-        {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
+        {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */} {/*
         <ExpandableSearch 
             productTypes={productTypes}
             categories={categories}
             path={path}
             productsLength={products.length}
-        />
+        />*/}
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-1 gap-y-1 md:gap-x-4 md:gap-y-4">
