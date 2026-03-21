@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import AppShell from "@/components/layout/AppShell";
 
 const inter = Inter({ subsets: ["latin"] });
-
+/*
 export default function RootLayout({
   children,
 }: {
@@ -17,7 +17,23 @@ export default function RootLayout({
       <body className={`${inter.className} h-full`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
-          {/*<div className="fixed bottom-6 right-6 z-50"><ThemeToggle /></div>*/}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+*/
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>
