@@ -105,6 +105,7 @@ interface ExpandableSearchProps {
   productsLength: number;
 }
 */
+import Link from 'next/link';
 
 export function ExpandableSearch_({ 
   productTypes, 
