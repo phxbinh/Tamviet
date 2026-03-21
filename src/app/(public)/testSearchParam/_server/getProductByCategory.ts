@@ -113,9 +113,10 @@ export async function getProductsByCategory(options: {
   const slugPattern = slug ? `${slug}%` : null;
 
   // =============================
-  // 🔥 1. BASE FILTER (CHỈ LẤY ID)
+  // ✅ COUNT (VIẾT RIÊNG)
   // =============================
-  const baseFilter = sql`
+  const countPromise = sql`
+    SELECT COUNT(*) as total
     FROM products p
     LEFT JOIN product_types pt ON pt.id = p.product_type_id
     WHERE 
@@ -142,38 +143,95 @@ export async function getProductsByCategory(options: {
   `;
 
   // =============================
-  // 🔥 2. COUNT (NHẸ)
+  // ✅ DATA QUERY (KHÔNG DÙNG dynamic fragment)
   // =============================
-  const countPromise = sql`
-    SELECT COUNT(*) as total
-    ${baseFilter}
-  `;
 
-  // =============================
-  // 🔥 3. SORT LOGIC
-  // =============================
-  let orderBase = sql`ORDER BY p.created_at DESC`;
+  let dataQuery;
 
-  if (sort === "oldest") {
-    orderBase = sql`ORDER BY p.created_at ASC`;
-  }
+  if (sort === "price_asc" || sort === "price_desc") {
+    dataQuery = sql`
+      WITH base_products AS (
+        SELECT p.id
+        FROM products p
+        LEFT JOIN product_types pt ON pt.id = p.product_type_id
+        WHERE 
+          p.status = 'active'
 
-  // ⚠️ price sort sẽ xử lý ở phase 2
-  const isSortByPrice =
-    sort === "price_asc" || sort === "price_desc";
+          AND (${productTypeCode ?? null}::text IS NULL 
+            OR pt.code = ${productTypeCode}
+          )
 
-  // =============================
-  // 🔥 4. QUERY DATA (2 PHASE)
-  // =============================
-  const dataPromise = sql`
-    WITH base_products AS (
-      SELECT p.id, p.created_at
-      ${baseFilter}
-      ${!isSortByPrice ? orderBase : sql``}
+          AND (
+            ${slugPattern}::text IS NULL OR EXISTS (
+              SELECT 1
+              FROM product_categories pc
+              JOIN categories c ON c.id = pc.category_id
+              WHERE pc.product_id = p.id
+                AND c.category_path LIKE ${slugPattern}
+            )
+          )
+
+          AND (
+            ${searchPattern}::text IS NULL 
+            OR p.name ILIKE ${searchPattern}
+          )
+      ),
+
+      aggregated AS (
+        SELECT 
+          p.id,
+          p.name,
+          p.slug,
+          p.thumbnail_url,
+          p.created_at,
+          MIN(v.price) AS price_min,
+          COALESCE(SUM(v.stock), 0) AS total_stock
+        FROM products p
+        JOIN base_products bp ON bp.id = p.id
+        LEFT JOIN product_variants v 
+          ON v.product_id = p.id AND v.is_active = true
+        GROUP BY p.id, p.name, p.slug, p.thumbnail_url, p.created_at
+      )
+
+      SELECT *
+      FROM aggregated
+      ORDER BY 
+        price_min ${sort === "price_asc" ? sql`ASC` : sql`DESC`},
+        created_at DESC
       LIMIT ${limit} OFFSET ${offset}
-    ),
+    `;
+  } else {
+    dataQuery = sql`
+      WITH base_products AS (
+        SELECT p.id, p.created_at
+        FROM products p
+        LEFT JOIN product_types pt ON pt.id = p.product_type_id
+        WHERE 
+          p.status = 'active'
 
-    aggregated AS (
+          AND (${productTypeCode ?? null}::text IS NULL 
+            OR pt.code = ${productTypeCode}
+          )
+
+          AND (
+            ${slugPattern}::text IS NULL OR EXISTS (
+              SELECT 1
+              FROM product_categories pc
+              JOIN categories c ON c.id = pc.category_id
+              WHERE pc.product_id = p.id
+                AND c.category_path LIKE ${slugPattern}
+            )
+          )
+
+          AND (
+            ${searchPattern}::text IS NULL 
+            OR p.name ILIKE ${searchPattern}
+          )
+
+        ORDER BY p.created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      )
+
       SELECT 
         p.id,
         p.name,
@@ -187,25 +245,13 @@ export async function getProductsByCategory(options: {
       LEFT JOIN product_variants v 
         ON v.product_id = p.id AND v.is_active = true
       GROUP BY p.id, p.name, p.slug, p.thumbnail_url, p.created_at
-    )
+      ORDER BY p.created_at DESC
+    `;
+  }
 
-    SELECT *
-    FROM aggregated
-    ${
-      isSortByPrice
-        ? sort === "price_asc"
-          ? sql`ORDER BY price_min ASC, created_at DESC`
-          : sql`ORDER BY price_min DESC, created_at DESC`
-        : sql`ORDER BY created_at DESC`
-    }
-  `;
-
-  // =============================
-  // 🔥 5. EXECUTE SONG SONG
-  // =============================
   const [countResult, rows] = await Promise.all([
     countPromise,
-    dataPromise,
+    dataQuery,
   ]);
 
   const total_count = Number(countResult[0]?.total || 0);
