@@ -78,6 +78,7 @@ export default async function Page({
   return (
     <div className="p-0"> {/*<div className="min-h-screen bg-background pb-20">*/}
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
+{/*
       <div className="relative h-[30vh] md:h-[40vh] flex flex-col items-center justify-center overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary),0.05)_0%,transparent_70%)]" />
         
@@ -99,7 +100,7 @@ export default async function Page({
           </p>
         </div>
       </div>
-
+*/}
       <div className="max-w-7xl mx-auto px-1 md:px-10 -mt-10 relative z-20">
 
         {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
