@@ -1,5 +1,5 @@
 // src/app/(public)testSearchParams/_serber/getProductByCategory.ts
-/*
+
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
@@ -79,10 +79,9 @@ export async function getProductsByCategory(options: {
 export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
 }
-*/
 
 
-
+/*
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
@@ -267,3 +266,4 @@ export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
 }
 
+*/
