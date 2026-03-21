@@ -24,14 +24,14 @@ export function ExpandableSearch({
     <div className="flex flex-col gap-4 mb-12">
       {/* SEARCH BAR CHÍNH & TOGGLE BUTTON */}
       <div className="flex items-center gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-full border border-border/40 shadow-xl">
-        <div className="flex-1 flex items-center gap-3 px-4">
+        {/*<div className="flex-1 flex items-center gap-3 px-4">
           <Search className="w-4 h-4 text-foreground/40" />
           <input 
             type="text" 
             placeholder="Search something..." 
             className="bg-transparent border-none outline-none text-sm w-full placeholder:text-foreground/20 uppercase font-black tracking-widest"
           />
-        </div>
+        </div>*/}
         
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
