@@ -53,6 +53,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Test UI', href: '/testUI', showInSidebar: true },
   { name: 'Test Categories', href: '/testCategories', showInSidebar: true },
   { name: 'Test search filter', href: '/testSearchFilter', showInSidebar: true },
+  { name: 'Test param', href: '/testSearchParam', showInSidebar: true },
 
 ];
 
