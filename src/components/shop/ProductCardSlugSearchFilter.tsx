@@ -68,9 +68,9 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
         </div>
 
         {/* CTA cho Mobile: Rất mờ, chỉ hiện text nhỏ */}
-        <p className="md:hidden text-[9px] uppercase tracking-[0.2em] text-muted-foreground font-medium opacity-60">
+        {/*<p className="md:hidden text-[9px] uppercase tracking-[0.2em] text-muted-foreground font-medium opacity-60">
           Tap to view
-        </p>
+        </p> */}
       </div>
 
     </Link>
