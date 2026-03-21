@@ -76,6 +76,18 @@ export default async function Page({
     }));
   
   return (
+<>
+      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-20">
+
+        {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
+        <ExpandableSearch 
+            productTypes={productTypes}
+            categories={categories}
+            path={path}
+            productsLength={products.length}
+        />
+</div>
+
     <div className="p-0"> {/*<div className="min-h-screen bg-background pb-20">*/}
       {/* 1. HERO HEADER: Tăng sự lôi kéo ngay từ đầu */}
 {/*
@@ -149,7 +161,7 @@ export default async function Page({
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
       <div className="fixed bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none z-0 opacity-50" />
-    </div>
+    </div> </>
   );
 }
 
