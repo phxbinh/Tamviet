@@ -16,6 +16,9 @@ interface BreadcrumbItem {
   href?: string; // Dấu ? nghĩa là không bắt buộc phải có href
 }
 
+
+
+
 async function getCategoryPath(categoryId: string) {
   const rows = await sql`
     WITH RECURSIVE category_path AS (
@@ -52,6 +55,7 @@ if (!data) {
 
   // ✳️ Làm Breadcrumb
   // --- BƯỚC 1: KHAI BÁO BIẾN breadcrumbs ---
+/*
   const categoryPath = await getCategoryPath(data.product.category_id);
   
   let currentPath = "";
@@ -65,6 +69,29 @@ if (!data) {
 
   // Thêm sản phẩm vào cuối mảng
   breadcrumbs.push({ label: data.product.name });
+*/
+
+
+  // --- BƯỚC 1: KHAI BÁO BIẾN breadcrumbs ---
+  const categoryPath = await getCategoryPath(data.product.category_id);
+  
+  let currentPath = "";
+  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat) => {
+    // Nối dồn slug để tạo thành category_path (ví dụ: 'thoi-trang' -> 'thoi-trang/nam')
+    currentPath = currentPath ? `${currentPath}/${cat.slug}` : cat.slug;
+    
+    return {
+      label: cat.name,
+      // 🔥 Đổi đường dẫn href sang route mới với query param ?cat=
+      href: `/testSearchParams?cat=${currentPath}` 
+    };
+  });
+
+  // Thêm tên sản phẩm hiện tại vào cuối mảng (không có href vì đang ở trang đó)
+  breadcrumbs.push({ label: data.product.name });
+
+
+
 
   // --- BƯỚC 2: SỬ DỤNG BIẾN breadcrumbs (Dòng 18 của bạn nằm ở đây) ---
   const jsonLd = {
