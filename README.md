@@ -107,4 +107,30 @@ PATCH  /api/products/images/[id]/thumbnail
 PATCH  /api/products/images/reorder
 POST   /api/products/images/precheck
 ```
+
+#### Cấu trúc dự án Next.js --) Tham khảo
+```plaintext
+my-nextjs-app/
+├── public/              # Chứa assets tĩnh (images, fonts, robots.txt...)
+├── src/                 # Toàn bộ mã nguồn nằm ở đây (Khuyên dùng)
+│   ├── app/             # App Router (File-system routing)
+│   │   ├── (auth)/      # Route groups (ví dụ: login, register)
+│   │   ├── (dashboard)/ # Route groups cho admin/user panel
+│   │   ├── api/         # Các API routes (Backend-side)
+│   │   ├── layout.tsx   # Root layout dùng chung
+│   │   └── page.tsx     # Trang chủ
+│   ├── components/      # Các UI Components dùng chung
+│   │   ├── ui/          # Nguyên tử (button, input - shadcn/ui style)
+│   │   ├── forms/       # Các logic liên quan đến form
+│   │   └── shared/      # Navbar, Footer, Sidebar
+│   ├── hooks/           # Custom React hooks (useLocalStorage, useAuth...)
+│   ├── lib/             # Cấu hình thư viện bên thứ 3 (prisma, axios, utils)
+│   ├── services/        # Nơi gọi API (Fetch, React Query) hoặc logic nghiệp vụ
+│   ├── store/           # Quản lý state (Zustand, Redux, Jotai)
+│   ├── types/           # Định nghĩa TypeScript interfaces/types
+│   └── constants/       # Các biến hằng số, config màu sắc, menu items
+├── tailwind.config.ts   # Cấu hình Tailwind CSS
+├── next.config.mjs      # Cấu hình Next.js
+└── package.json
+```
   
