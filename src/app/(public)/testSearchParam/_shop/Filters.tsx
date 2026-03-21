@@ -1,4 +1,5 @@
 // src/app/(public)/testSearchParam/_shop/Filters.tsx
+/*
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -9,8 +10,187 @@ export interface ProductType {
   code: string;
   name: string;
 }
+*/
+
+
+
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useTransition, useState, useEffect, useRef, useCallback } from 'react';
+import { Search, Tag, ArrowUpDown, Loader2, CircleDollarSign } from 'lucide-react';
+
+export interface ProductType {
+  code: string;
+  name: string;
+}
 
 export function Filters({ productTypes }: { productTypes: ProductType[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+
+  // =============================
+  // 🔥 LOCAL STATE (không phụ thuộc URL liên tục)
+  // =============================
+  const [search, setSearch] = useState(() => searchParams.get('search') ?? '');
+
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // =============================
+  // 🔥 BUILD QUERY (memo + reuse)
+  // =============================
+  const buildQuery = useCallback((updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    for (const key in updates) {
+      const value = updates[key];
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+
+    params.set('page', '1');
+    return `?${params.toString()}`;
+  }, [searchParams]);
+
+  // =============================
+  // 🔥 PUSH (centralized)
+  // =============================
+  const push = useCallback((updates: Record<string, string | null>) => {
+    const href = buildQuery(updates);
+
+    startTransition(() => {
+      router.push(href, { scroll: false });
+    });
+  }, [buildQuery]);
+
+  // =============================
+  // 🔥 DEBOUNCE SEARCH (clean)
+  // =============================
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(() => {
+      const current = searchParams.get('search') ?? '';
+
+      if (search !== current) {
+        push({ search: search || null });
+      }
+    }, 400); // giảm delay → mượt hơn
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [search]);
+
+  // =============================
+  // 🔥 SYNC URL → STATE (chỉ khi cần)
+  // =============================
+  useEffect(() => {
+    const urlSearch = searchParams.get('search') ?? '';
+    if (urlSearch !== search) {
+      setSearch(urlSearch);
+    }
+  }, [searchParams]);
+
+  // =============================
+  // 🔥 UI
+  // =============================
+  const itemStyle = "relative flex items-center bg-card border border-border rounded-xl transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary shadow-sm";
+  const iconStyle = "absolute left-3.5 w-4 h-4 text-foreground/40 pointer-events-none";
+  const inputStyle = "w-full bg-transparent pl-10 pr-4 py-2.5 text-sm font-medium outline-none placeholder:text-foreground/30 text-foreground";
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-4 items-center w-full py-6">
+
+      {/* SEARCH */}
+      <div className={`${itemStyle} w-full lg:w-80`}>
+        <Search className={iconStyle} />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          type="text"
+          placeholder="Tìm kiếm sản phẩm..."
+          className={inputStyle}
+        />
+        {isPending && (
+          <div className="absolute right-3">
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
+
+        {/* TYPE */}
+        <div className={`${itemStyle} flex-1 lg:w-52`}>
+          <Tag className={iconStyle} />
+          <select
+            value={searchParams.get('type') ?? ''}
+            onChange={(e) => push({ type: e.target.value || null })}
+            className={`${inputStyle} appearance-none cursor-pointer`}
+          >
+            <option value="">Tất cả danh mục</option>
+            {productTypes.map((type) => (
+              <option key={type.code} value={type.code}>
+                {type.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* SORT */}
+        <div className={`${itemStyle} flex-1 lg:w-48`}>
+          <ArrowUpDown className={iconStyle} />
+          <select
+            value={searchParams.get('sort') ?? 'newest'}
+            onChange={(e) => push({ sort: e.target.value })}
+            className={`${inputStyle} appearance-none cursor-pointer`}
+          >
+            <option value="newest">Mới nhất</option>
+            <option value="price_asc">Giá thấp → cao</option>
+            <option value="price_desc">Giá cao → thấp</option>
+            <option value="oldest">Cũ nhất</option>
+          </select>
+        </div>
+
+        {/* PRICE */}
+        <div className={`${itemStyle} px-3 py-1 lg:w-60 gap-2`}>
+          <CircleDollarSign className="w-4 h-4 text-foreground/40 ml-1" />
+          <div className="flex items-center grow">
+            <input
+              type="number"
+              placeholder="Min"
+              defaultValue={searchParams.get('min') ?? ''}
+              onBlur={(e) => push({ min: e.target.value || null })}
+              className="w-full bg-transparent text-sm text-center outline-none"
+            />
+            <span className="px-1">|</span>
+            <input
+              type="number"
+              placeholder="Max"
+              defaultValue={searchParams.get('max') ?? ''}
+              onBlur={(e) => push({ max: e.target.value || null })}
+              className="w-full bg-transparent text-sm text-center outline-none"
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+export function Filters_({ productTypes }: { productTypes: ProductType[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
