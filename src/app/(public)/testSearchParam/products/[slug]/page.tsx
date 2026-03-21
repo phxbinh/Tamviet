@@ -102,12 +102,7 @@ return (
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
-
-<div className="sticky top-16 z-0 bg-background/80 backdrop-blur-md self-start w-full">
-  <Breadcrumb items={breadcrumbs} />
-</div>
-
-<div>
+    <Breadcrumb items={breadcrumbs} />
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
 
@@ -117,10 +112,8 @@ return (
           <RelatedProductsSection relatedProducts={relatedProducts as any[]} />
         </div>
       )} 
-</div>
-</>
+  </>
 );
-
 }
 
 
