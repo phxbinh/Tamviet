@@ -8,7 +8,7 @@ import { getCategoriesTree } from "@/lib/db/categories";
 
 import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
-import { ExpandableSearch } from "./_shop/ExpandableSearch"; // Import component mới
+import { ExpandableSearch } from "./_shop/ExpandableSearch_"; // Import component mới
 
 
 export const dynamic = 'force-dynamic';
