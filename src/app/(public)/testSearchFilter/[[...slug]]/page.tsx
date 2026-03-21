@@ -147,7 +147,7 @@ export default async function Page({
         {/* GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
         <ExpandableSearch 
             productTypes={productTypes}
-            categories={categories}
+            categories={categoryTree}
             path={path}
             productsLength={products.length}
         />
