@@ -125,8 +125,7 @@ export default async function Page({
 
       {/* Trang trí chân trang bằng hiệu ứng gradient loang */}
       <div className="fixed bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none z-0 opacity-50" />
-    </div>
-  </>
+    </>
   );
 }
 
