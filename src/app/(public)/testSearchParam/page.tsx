@@ -77,7 +77,7 @@ export default async function Page({
   
   return (
     <>
-      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-30">
+      <div className="sticky top-2 max-w-7xl mx-auto px-1 md:px-10 -mt-0 relative z-0">
 
         {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */} 
         <ExpandableSearch 
