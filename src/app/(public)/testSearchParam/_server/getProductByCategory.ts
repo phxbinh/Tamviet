@@ -1,4 +1,4 @@
-// src/lib/db/products.ts
+// src/app/(public)testSearchParams/_serber/getProductByCategory.ts
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
