@@ -83,7 +83,7 @@ if (!data) {
     return {
       label: cat.name,
       // 🔥 Đổi đường dẫn href sang route mới với query param ?cat=
-      href: `/testSearchParams?cat=${currentPath}` 
+      href: `/testSearchParam?cat=${currentPath}` 
     };
   });
 
