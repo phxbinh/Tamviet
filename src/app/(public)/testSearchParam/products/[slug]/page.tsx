@@ -16,9 +16,6 @@ interface BreadcrumbItem {
   href?: string; // Dấu ? nghĩa là không bắt buộc phải có href
 }
 
-
-
-
 async function getCategoryPath(categoryId: string) {
   const rows = await sql`
     WITH RECURSIVE category_path AS (
@@ -55,24 +52,6 @@ if (!data) {
 
   // ✳️ Làm Breadcrumb
   // --- BƯỚC 1: KHAI BÁO BIẾN breadcrumbs ---
-/*
-  const categoryPath = await getCategoryPath(data.product.category_id);
-  
-  let currentPath = "";
-  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat) => {
-    currentPath = currentPath ? `${currentPath}/${cat.slug}` : cat.slug;
-    return {
-      label: cat.name,
-      href: `/testSearchFilter/${currentPath}`
-    };
-  });
-
-  // Thêm sản phẩm vào cuối mảng
-  breadcrumbs.push({ label: data.product.name });
-*/
-
-
-  // --- BƯỚC 1: KHAI BÁO BIẾN breadcrumbs ---
   const categoryPath = await getCategoryPath(data.product.category_id);
   
   let currentPath = "";
@@ -89,9 +68,6 @@ if (!data) {
 
   // Thêm tên sản phẩm hiện tại vào cuối mảng (không có href vì đang ở trang đó)
   breadcrumbs.push({ label: data.product.name });
-
-
-
 
   // --- BƯỚC 2: SỬ DỤNG BIẾN breadcrumbs (Dòng 18 của bạn nằm ở đây) ---
   const jsonLd = {
@@ -121,14 +97,16 @@ if (!data) {
   );
 
 return (
-  <>
+  <div className="flex flex-col gap-4">
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
     />
-<div className="sticky top-16">
+
+  <div className="sticky top-16 z-20 bg-background/80 backdrop-blur-md self-start w-full">
     <Breadcrumb items={breadcrumbs} />
 </div>
+<div>
     <h1>{data.product.name}</h1>
     <ProductDetailClient data={data} />
 
@@ -138,10 +116,16 @@ return (
           <RelatedProductsSection relatedProducts={relatedProducts as any[]} />
         </div>
       )} 
+</div>
+</div>
   </>
 );
 
 }
+
+
+
+
 
 
 
