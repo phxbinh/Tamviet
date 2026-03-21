@@ -9,7 +9,7 @@ interface BreadcrumbItem {
 
 export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6">
+    <nav aria-label="Breadcrumb" className="mb-6 sticky top-16">
       <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         {/* Trang chủ luôn là điểm bắt đầu */}
         <li className="flex items-center">
