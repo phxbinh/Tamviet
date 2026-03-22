@@ -41,7 +41,9 @@ export function Pagination({ totalCount, limit }: { totalCount: number, limit: n
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, KeyboardEvent } from 'react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 export function Pagination({
   totalCount,
@@ -50,9 +52,18 @@ export function Pagination({
   totalCount: number;
   limit: number;
 }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
   const totalPages = Math.ceil(totalCount / limit);
+
+  // State cho field nhập số trang
+  const [jumpPage, setJumpPage] = useState('');
+
+  // Clear input khi chuyển trang thành công
+  useEffect(() => {
+    setJumpPage('');
+  }, [currentPage]);
 
   if (totalPages <= 1) return null;
 
@@ -62,51 +73,47 @@ export function Pagination({
     return `?${params.toString()}`;
   };
 
-  // 🔥 core logic đã được FIX hoàn toàn
-  const getPages = () => {
-    const pagesSet = new Set<number>();
-
-    // 1. Luôn hiển thị trang đầu và trang cuối
-    pagesSet.add(1);
-    if (totalPages > 1) {
-      pagesSet.add(totalPages);
-    }
-
-    // 2. Lấy các trang xung quanh trang hiện tại (delta = 1)
-    const delta = 1;
-    const rangeStart = Math.max(2, currentPage - delta);
-    const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
-
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-      pagesSet.add(i);
-    }
-
-    // 3. Chuyển Set về Array và sắp xếp lại theo thứ tự tăng dần
-    const sortedPages = Array.from(pagesSet).sort((a, b) => a - b);
-    const result: (number | '...')[] = [];
-
-    // 4. Duyệt mảng để điền số hoặc dấu '...' một cách chuẩn xác
-    for (let i = 0; i < sortedPages.length; i++) {
-      if (i > 0) {
-        const gap = sortedPages[i] - sortedPages[i - 1];
-        if (gap === 2) {
-          // Nếu chỉ thiếu đúng 1 số ở giữa (vd: 1 và 3), thì chèn luôn số 2 thay vì dùng '...'
-          result.push(sortedPages[i - 1] + 1);
-        } else if (gap > 2) {
-          // Nếu thiếu nhiều số, mới chèn '...'
-          result.push('...');
-        }
+  const handleJump = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      let page = Number(jumpPage);
+      if (page < 1) page = 1;
+      if (page > totalPages) page = totalPages;
+      
+      if (page && page !== currentPage) {
+        router.push(createPageURL(page), { scroll: false });
       }
-      result.push(sortedPages[i]);
+    }
+  };
+
+  // 🔥 Logic cố định hiển thị TỐI ĐA 5 trang (có kèm ...)
+  const getPages = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
 
-    return result;
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, '...', totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [
+      1,
+      '...',
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      '...',
+      totalPages,
+    ];
   };
 
   const pages = getPages();
 
   const baseStyle =
-    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center";
+    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center min-w-[32px] h-[32px]";
 
   return (
     <div className="flex justify-center items-center gap-2 mt-12 flex-wrap">
@@ -115,7 +122,7 @@ export function Pagination({
         href={createPageURL(1)}
         className={`${baseStyle} bg-card hover:bg-border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
       >
-        ⏮
+        <ChevronsLeft className="w-4 h-4" />
       </Link>
 
       {/* ◀ PREV */}
@@ -123,13 +130,13 @@ export function Pagination({
         href={createPageURL(Math.max(1, currentPage - 1))}
         className={`${baseStyle} bg-card hover:bg-border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
       >
-        ◀
+        <ChevronLeft className="w-4 h-4" />
       </Link>
 
       {/* PAGES */}
       {pages.map((p, i) =>
         p === '...' ? (
-          <span key={`dots-${i}`} className="px-2 text-foreground/40 font-bold">
+          <span key={`dots-${i}`} className="px-1 text-foreground/40 font-bold h-[32px] flex items-center">
             ...
           </span>
         ) : (
@@ -152,7 +159,7 @@ export function Pagination({
         href={createPageURL(Math.min(totalPages, currentPage + 1))}
         className={`${baseStyle} bg-card hover:bg-border ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
       >
-        ▶
+        <ChevronRight className="w-4 h-4" />
       </Link>
 
       {/* LAST ⏭ */}
@@ -160,11 +167,28 @@ export function Pagination({
         href={createPageURL(totalPages)}
         className={`${baseStyle} bg-card hover:bg-border ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
       >
-        ⏭
+        <ChevronsRight className="w-4 h-4" />
       </Link>
+
+      {/* JUMP TO PAGE INPUT */}
+      <div className="flex items-center gap-2 ml-2 md:ml-4 pl-2 md:pl-4 border-l border-border h-[32px]">
+        <span className="text-xs text-foreground/60 hidden sm:block">Trang:</span>
+        <input
+          type="number"
+          min={1}
+          max={totalPages}
+          value={jumpPage}
+          onChange={(e) => setJumpPage(e.target.value)}
+          onKeyDown={handleJump}
+          placeholder="Số..."
+          title="Nhập số trang và nhấn Enter"
+          className="w-14 px-2 h-full text-xs font-medium bg-card border border-border rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-center placeholder:text-foreground/30 placeholder:font-normal transition-all"
+        />
+      </div>
     </div>
   );
 }
+
 
 
 
