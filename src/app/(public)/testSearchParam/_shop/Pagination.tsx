@@ -62,79 +62,58 @@ export function Pagination({
     return `?${params.toString()}`;
   };
 
-  // 🔥 core logic
-/*
+  // 🔥 core logic đã được FIX hoàn toàn
   const getPages = () => {
-    const pages: (number | '...')[] = [];
+    const pagesSet = new Set<number>();
 
-    const delta = 1; // số trang xung quanh current
+    // 1. Luôn hiển thị trang đầu và trang cuối
+    pagesSet.add(1);
+    if (totalPages > 1) {
+      pagesSet.add(totalPages);
+    }
 
+    // 2. Lấy các trang xung quanh trang hiện tại (delta = 1)
+    const delta = 1;
     const rangeStart = Math.max(2, currentPage - delta);
     const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
 
-    pages.push(1);
-
-    if (rangeStart > 2) {
-      pages.push('...');
-    }
-
     for (let i = rangeStart; i <= rangeEnd; i++) {
-      pages.push(i);
+      pagesSet.add(i);
     }
 
-    if (rangeEnd < totalPages - 1) {
-      pages.push('...');
-    }
+    // 3. Chuyển Set về Array và sắp xếp lại theo thứ tự tăng dần
+    const sortedPages = Array.from(pagesSet).sort((a, b) => a - b);
+    const result: (number | '...')[] = [];
 
-    if (totalPages > 1) {
-      pages.push(totalPages);
-    }
-
-    return pages;
-  };
-*/
-
-const getPages = () => {
-  const pages: (number | '...')[] = [];
-
-  const delta = 1;
-
-  const left = currentPage - delta;
-  const right = currentPage + delta;
-
-  for (let i = 1; i <= totalPages; i++) {
-    if (
-      i === 1 || // first
-      i === totalPages || // last
-      (i >= left && i <= right) // around current
-    ) {
-      pages.push(i);
-    } else {
-      // chỉ push "..." nếu cái trước KHÔNG phải "..."
-      if (pages[pages.length - 1] !== '...') {
-        pages.push('...');
+    // 4. Duyệt mảng để điền số hoặc dấu '...' một cách chuẩn xác
+    for (let i = 0; i < sortedPages.length; i++) {
+      if (i > 0) {
+        const gap = sortedPages[i] - sortedPages[i - 1];
+        if (gap === 2) {
+          // Nếu chỉ thiếu đúng 1 số ở giữa (vd: 1 và 3), thì chèn luôn số 2 thay vì dùng '...'
+          result.push(sortedPages[i - 1] + 1);
+        } else if (gap > 2) {
+          // Nếu thiếu nhiều số, mới chèn '...'
+          result.push('...');
+        }
       }
+      result.push(sortedPages[i]);
     }
-  }
 
-  return pages;
-};
-
-
-
+    return result;
+  };
 
   const pages = getPages();
 
   const baseStyle =
-    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all";
+    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center";
 
   return (
     <div className="flex justify-center items-center gap-2 mt-12 flex-wrap">
-
       {/* ⏮ FIRST */}
       <Link
         href={createPageURL(1)}
-        className={`${baseStyle} bg-card hover:bg-border`}
+        className={`${baseStyle} bg-card hover:bg-border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
       >
         ⏮
       </Link>
@@ -142,7 +121,7 @@ const getPages = () => {
       {/* ◀ PREV */}
       <Link
         href={createPageURL(Math.max(1, currentPage - 1))}
-        className={`${baseStyle} bg-card hover:bg-border`}
+        className={`${baseStyle} bg-card hover:bg-border ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
       >
         ◀
       </Link>
@@ -150,16 +129,16 @@ const getPages = () => {
       {/* PAGES */}
       {pages.map((p, i) =>
         p === '...' ? (
-          <span key={i} className="px-2 text-foreground/40">
+          <span key={`dots-${i}`} className="px-2 text-foreground/40 font-bold">
             ...
           </span>
         ) : (
           <Link
-            key={p}
-            href={createPageURL(p)}
+            key={`page-${p}`}
+            href={createPageURL(p as number)}
             className={`${baseStyle} ${
               p === currentPage
-                ? 'bg-primary text-white'
+                ? 'bg-primary text-white pointer-events-none'
                 : 'bg-card hover:bg-border text-foreground/60'
             }`}
           >
@@ -171,7 +150,7 @@ const getPages = () => {
       {/* NEXT ▶ */}
       <Link
         href={createPageURL(Math.min(totalPages, currentPage + 1))}
-        className={`${baseStyle} bg-card hover:bg-border`}
+        className={`${baseStyle} bg-card hover:bg-border ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
       >
         ▶
       </Link>
@@ -179,13 +158,14 @@ const getPages = () => {
       {/* LAST ⏭ */}
       <Link
         href={createPageURL(totalPages)}
-        className={`${baseStyle} bg-card hover:bg-border`}
+        className={`${baseStyle} bg-card hover:bg-border ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
       >
         ⏭
       </Link>
     </div>
   );
 }
+
 
 
 
