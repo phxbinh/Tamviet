@@ -126,7 +126,7 @@ body {
 @layer utilities {
   /* Thanh cuộn tùy chỉnh */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 1px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: hsl(var(--border));
@@ -159,6 +159,7 @@ body {
   }
 }
 
+/*
 @layer utilities {
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -173,7 +174,6 @@ body {
     background: rgba(255, 255, 255, 0.2);
   }
 
-  /* Firefox */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: transparent transparent;
@@ -183,6 +183,6 @@ body {
     scrollbar-color: rgba(255,255,255,0.2) transparent;
   }
 }
-
+*/
 
 
