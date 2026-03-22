@@ -54,17 +54,23 @@ export function StickyFilterWrapper({
 }) {
   const direction = useScrollDirection();
 
-  const isHidden = direction === "down";
+  const isCompact = direction === "down";
 
   return (
     <div
       className={`
         sticky top-16 z-20
         transition-all duration-300 ease-out
-        ${isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}
+        ${isCompact ? "py-1" : "py-3"}
       `}
     >
-      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+      <div
+        className={`
+          bg-background/80 backdrop-blur-md border-b border-border
+          transition-all duration-300
+          ${isCompact ? "scale-[0.98]" : "scale-100"}
+        `}
+      >
         {children}
       </div>
     </div>
