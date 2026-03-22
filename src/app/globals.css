@@ -98,7 +98,7 @@ body {
 
   /* Scroll margin cho Heading khi click link neo */
   [id] {
-    scroll-margin-top: 120px;
+    scroll-margin-top: 100px;
   }
 
   /* Loại bỏ mũi tên mặc định của thẻ details/summary */
