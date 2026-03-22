@@ -63,6 +63,7 @@ export function Pagination({
   };
 
   // 🔥 core logic
+/*
   const getPages = () => {
     const pages: (number | '...')[] = [];
 
@@ -91,6 +92,36 @@ export function Pagination({
 
     return pages;
   };
+*/
+
+const getPages = () => {
+  const pages: (number | '...')[] = [];
+
+  const delta = 1;
+
+  const left = currentPage - delta;
+  const right = currentPage + delta;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 || // first
+      i === totalPages || // last
+      (i >= left && i <= right) // around current
+    ) {
+      pages.push(i);
+    } else {
+      // chỉ push "..." nếu cái trước KHÔNG phải "..."
+      if (pages[pages.length - 1] !== '...') {
+        pages.push('...');
+      }
+    }
+  }
+
+  return pages;
+};
+
+
+
 
   const pages = getPages();
 
