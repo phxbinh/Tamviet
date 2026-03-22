@@ -66,6 +66,10 @@ export function useScrollDirection() {
 }
 */
 
+'use client'
+
+import { useEffect, useRef, useState } from "react";
+
 export function useScrollDirection() {
   const [direction, setDirection] = useState<"up" | "down">("up");
 
