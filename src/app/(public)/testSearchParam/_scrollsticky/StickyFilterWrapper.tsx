@@ -68,7 +68,7 @@ export function StickyFilterWrapper({
         className={`
           bg-background/80 backdrop-blur-md border-b border-border
           transition-all duration-300
-          ${isCompact ? "scale-[0.98]" : "scale-100"}
+          ${isCompact ? "scale-[1.0]" : "scale-100"}
         `}
       >
         {children}
