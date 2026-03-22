@@ -69,6 +69,15 @@
     color: hsl(var(--foreground));
     @apply transition-colors duration-300;
   }
+  
+  body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
 
   .dark body {
     background-image: radial-gradient(at top left, #020617, #0f172a, #020617);
