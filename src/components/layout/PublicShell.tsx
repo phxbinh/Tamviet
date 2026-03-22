@@ -280,7 +280,7 @@ export default function PublicShell({
           </header>
 
           {/* ✅ SCROLL CONTAINER - KHÔNG WRAPPER */}
-          <main className="flex-1 px-1 md:px-8 pb-4 pt-0 custom-scrollbar">
+          <main className="flex-1 px-1 md:px-8 pb-4 pt-0 no-scrollbar">
             {children}
           </main>
 
