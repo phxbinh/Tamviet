@@ -57,13 +57,13 @@ export function StickyFilterWrapper({
   const isCompact = direction === "down";
 
   return (
-    <div
-      className={`
-        sticky top-16 z-20
-        transition-all duration-300 ease-out
-        ${isCompact ? "py-1" : "py-3"}
-      `}
-    >
+<div
+  className={`
+    sticky top-16 z-20
+    transition-transform duration-300 ease-out
+    ${isCompact ? "-translate-y-2 scale-[0.98]" : "translate-y-0 scale-100"}
+  `}
+>
       <div
         className={`
           bg-background/80 backdrop-blur-md border-b border-border
