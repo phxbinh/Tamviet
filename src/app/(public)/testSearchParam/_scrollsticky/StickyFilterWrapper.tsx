@@ -198,10 +198,11 @@ export function StickyFilterWrapper____({
 
 
 
-
+/*
+"use client"
 import { useEffect, useRef, useState } from "react";
 import { useScrollDirection } from "./useScrollDirection";
-
+*/
 export function StickyFilterWrapper({
   children,
 }: {
