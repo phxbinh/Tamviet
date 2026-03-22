@@ -102,8 +102,8 @@ export function Pagination_({ totalCount, limit }: { totalCount: number; limit: 
 
 
 
-
-export function Pagination___({ totalCount, limit }: { totalCount: number; limit: number }) {
+// chạy được SEO good
+export function Pagination({ totalCount, limit }: { totalCount: number; limit: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -291,7 +291,7 @@ export function Pagination_scroll({ totalCount, limit }: { totalCount: number; l
 
 
 
-export function Pagination({ totalCount, limit }: { totalCount: number; limit: number }) {
+export function Pagination__scroll_({ totalCount, limit }: { totalCount: number; limit: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
