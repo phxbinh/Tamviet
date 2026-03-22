@@ -183,7 +183,7 @@ export function StickyFilterWrapper({
         sticky top-16 z-20
         will-change-transform
         transition-transform duration-300 ease-out
-        ${isHidden ? "-translate-y-[80px]" : "translate-y-[80px]"}
+        ${isHidden ? "-translate-y-[80px]" : "translate-y-0"}
       `}
     >
       <div className="bg-background/80 backdrop-blur-md border-b border-border">
