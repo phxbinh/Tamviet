@@ -82,7 +82,8 @@ export default function PublicShell({
           </header>
 
           {/* ✅ SCROLL CONTAINER - KHÔNG WRAPPER */}
-          <main className="flex-1 px-1 md:px-8 pb-4 pt-0">
+          {/*<main className="flex-1 px-1 md:px-8 pb-4 pt-0"> */}
+          <main id="scroll-container" className="flex-1 overflow-y-auto">
             {children}
           </main>
 
