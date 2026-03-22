@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen`}>
+      <body className={`${inter.className} min-h-screen overflow-y-auto`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
         </ThemeProvider>
