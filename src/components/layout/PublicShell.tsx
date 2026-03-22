@@ -267,7 +267,7 @@ export default function PublicShell({
         )}
 
         {/* MAIN */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 no-scrollbar">
 
           {/* HEADER */}
           <header className="sticky top-0 z-30 h-16 flex items-center px-4 border-b border-border bg-background/70 backdrop-blur-md">
