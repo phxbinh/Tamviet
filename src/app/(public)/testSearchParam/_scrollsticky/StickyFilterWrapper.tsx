@@ -13,15 +13,16 @@ export function StickyFilterWrapper({
 
   // 🔥 tìm scroll container thật (main)
   useEffect(() => {
-    let el = ref.current;
-    while (el) {
-      if (el.scrollHeight > el.clientHeight) {
-        setContainer(el);
-        break;
-      }
-      el = el.parentElement;
+  let el: HTMLElement | null = ref.current; // ✅ đổi type tại đây
+
+  while (el) {
+    if (el.scrollHeight > el.clientHeight) {
+      setContainer(el);
+      break;
     }
-  }, []);
+    el = el.parentElement;
+  }
+}, []);
 
   const direction = useScrollDirection(container);
 
