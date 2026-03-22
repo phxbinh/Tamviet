@@ -77,8 +77,7 @@ export default async function Page({
     }));
   
   return (
-      <div className="flex flex-col gap-4">
-        {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */} 
+<>
         {/* 🔥 STICKY FILTER */}
         <StickyFilterWrapper>
           <ExpandableSearch 
@@ -88,6 +87,9 @@ export default async function Page({
             productsLength={products.length}
           />
         </StickyFilterWrapper>
+      <div className="flex flex-col gap-4">
+        {/* 2. GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */} 
+
   
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-1 gap-y-1 md:gap-x-4 md:gap-y-4">
@@ -122,7 +124,7 @@ export default async function Page({
 
         {/* 4. Phân trang */}
         <Pagination totalCount={totalCount} limit={limit} />
-      </div>
+      </div> </>
   );
 }
 
