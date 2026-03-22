@@ -65,8 +65,8 @@
   }
   /*
   html, body {
-  overflow: hidden;*/
-}
+  overflow: hidden;
+}*/
 
   body {
     background-color: hsl(var(--background));
