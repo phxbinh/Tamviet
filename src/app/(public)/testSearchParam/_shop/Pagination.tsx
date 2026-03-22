@@ -83,14 +83,14 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
       <div className="flex items-center gap-1.5">
         {currentPage > 1 && (
           <>
-            <Link href={createPageURL(1)} className={`${btnBase} ${idleStyle}`} title="Trang đầu"><ChevronsLeft size={16} /></Link>
-            <Link href={createPageURL(currentPage - 1)} className={`${btnBase} ${idleStyle}`} title="Trang trước"><ChevronLeft size={16} /></Link>
+            <Link href={createPageURL(1)} className={`${btnBase} ${idleStyle}`} title="Trang đầu" prefetch={true}><ChevronsLeft size={16} /></Link>
+            <Link href={createPageURL(currentPage - 1)} className={`${btnBase} ${idleStyle}`} title="Trang trước" prefetch={true}><ChevronLeft size={16} /></Link>
           </>
         )}
 
         {getPages().map((p, i) => (
           typeof p === 'number' ? (
-            <Link key={i} href={createPageURL(p)} className={`${btnBase} ${p === currentPage ? activeStyle : idleStyle}`}>{p}</Link>
+            <Link key={i} href={createPageURL(p)} className={`${btnBase} ${p === currentPage ? activeStyle : idleStyle}`} prefetch={true}>{p}</Link>
           ) : (
             <span key={i} className="px-1 text-foreground/30 font-bold">...</span>
           )
@@ -98,8 +98,8 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
 
         {currentPage < totalPages && (
           <>
-            <Link href={createPageURL(currentPage + 1)} className={`${btnBase} ${idleStyle}`} title="Trang sau"><ChevronRight size={16} /></Link>
-            <Link href={createPageURL(totalPages)} className={`${btnBase} ${idleStyle}`} title="Trang cuối"><ChevronsRight size={16} /></Link>
+            <Link href={createPageURL(currentPage + 1)} className={`${btnBase} ${idleStyle}`} title="Trang sau" prefetch={true}><ChevronRight size={16} /></Link>
+            <Link href={createPageURL(totalPages)} className={`${btnBase} ${idleStyle}`} title="Trang cuối" prefetch={true}><ChevronsRight size={16} /></Link>
           </>
         )}
       </div>
