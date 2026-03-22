@@ -1,0 +1,44 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useScrollDirection } from "./useScrollDirection";
+
+export function StickyFilterWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+
+  // 🔥 tìm scroll container thật (main)
+  useEffect(() => {
+    let el = ref.current;
+    while (el) {
+      if (el.scrollHeight > el.clientHeight) {
+        setContainer(el);
+        break;
+      }
+      el = el.parentElement;
+    }
+  }, []);
+
+  const direction = useScrollDirection(container);
+
+  const isHidden = direction === "down";
+
+  return (
+    <div
+      ref={ref}
+      className={`
+        sticky top-16 z-20
+        transition-all duration-300 ease-out
+        ${isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}
+      `}
+    >
+      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+        {children}
+      </div>
+    </div>
+  );
+}
