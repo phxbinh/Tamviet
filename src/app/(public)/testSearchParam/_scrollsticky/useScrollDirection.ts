@@ -101,7 +101,7 @@ export function useScrollDirection() {
 }
 */
 
-
+/* Chạy ngon
 'use client'
 
 import { useEffect, useRef, useState } from "react";
@@ -140,4 +140,66 @@ export function useScrollDirection() {
 
   return direction;
 }
+*/
+
+
+'use client'
+
+import { useEffect, useRef, useState } from "react";
+
+export function useScrollDirection() {
+  const [direction, setDirection] = useState<"up" | "down">("up");
+
+  const lastScroll = useRef(0);
+  const accumulated = useRef(0); // 🔥 tích lũy scroll
+
+  const THRESHOLD = 80; // 🔥 chỉnh độ nhạy ở đây (60–120 là đẹp)
+
+  useEffect(() => {
+    lastScroll.current = window.scrollY;
+
+    const handleScroll = () => {
+      const current = window.scrollY;
+
+      // 🔥 chặn cuối trang (fix giật)
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      if (current >= maxScroll - 2) return;
+
+      const delta = current - lastScroll.current;
+
+      // 🔥 bỏ qua scroll nhỏ
+      if (Math.abs(delta) < 2) return;
+
+      // 🔥 tích lũy khoảng scroll
+      accumulated.current += delta;
+
+      // ===== SCROLL DOWN =====
+      if (accumulated.current > THRESHOLD) {
+        if (direction !== "down") {
+          setDirection("down");
+        }
+        accumulated.current = 0; // reset
+      }
+
+      // ===== SCROLL UP =====
+      if (accumulated.current < -THRESHOLD) {
+        if (direction !== "up") {
+          setDirection("up");
+        }
+        accumulated.current = 0; // reset
+      }
+
+      lastScroll.current = current;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [direction]);
+
+  return direction;
+}
+
+
 
