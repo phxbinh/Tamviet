@@ -9,7 +9,7 @@ export function useScrollDirection() {
   const lastScroll = useRef(0);
   const accumulated = useRef(0);
 
-  const THRESHOLD = 80;
+  const THRESHOLD = 120;
 
   useEffect(() => {
     lastScroll.current = window.scrollY;
