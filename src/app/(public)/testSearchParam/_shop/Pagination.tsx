@@ -4,7 +4,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MouseEvent } from 'react'; // Import MouseEvent từ react
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Send } from 'lucide-react';
 
 /*
@@ -394,12 +394,6 @@ export function Pagination__scroll_({ totalCount, limit }: { totalCount: number;
 
 
 
-'use client';
-
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect, MouseEvent } from 'react'; // Import MouseEvent từ react
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Send } from 'lucide-react';
 
 export function Pagination({ totalCount, limit }: { totalCount: number; limit: number }) {
   const router = useRouter();
