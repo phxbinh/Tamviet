@@ -58,7 +58,7 @@ export function ExpandableSearch({ productTypes, categories, path, productsLengt
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-0">
       <div className="flex items-center gap-3 bg-card/40 backdrop-blur-3xl p-0 rounded-full border border-border/40 shadow-xl">
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
