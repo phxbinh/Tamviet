@@ -67,7 +67,7 @@ export function useScrollDirection() {
 */
 
 
-
+/* Chạy được
  'use client'
 
 import { useEffect, useState } from "react";
@@ -96,6 +96,47 @@ export function useScrollDirection() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  return direction;
+}
+*/
+
+
+'use client'
+
+import { useEffect, useRef, useState } from "react";
+
+export function useScrollDirection() {
+  const [direction, setDirection] = useState<"up" | "down">("up");
+  const lastScroll = useRef(0);
+
+  useEffect(() => {
+    lastScroll.current = window.scrollY;
+
+    const handleScroll = () => {
+      const current = window.scrollY;
+
+      // 🔥 chặn cuối trang (fix giật)
+      const maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      if (current >= maxScroll - 2) return;
+
+      // 🔥 chống rung nhẹ
+      if (Math.abs(current - lastScroll.current) < 5) return;
+
+      if (current > lastScroll.current) {
+        if (direction !== "down") setDirection("down");
+      } else {
+        if (direction !== "up") setDirection("up");
+      }
+
+      lastScroll.current = current;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [direction]);
 
   return direction;
 }
