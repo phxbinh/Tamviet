@@ -124,17 +124,6 @@ body {
 
 /* 4. CÁC TIỆN ÍCH TÙY CHỈNH (UTILITIES) */
 @layer utilities {
-  /* Thanh cuộn tùy chỉnh */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 1px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 10px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #22d3ee80;
-  }
 
   /* Hiệu ứng mượt cho Chatbot streaming */
   .prose-stream span {
@@ -159,8 +148,17 @@ body {
   }
 }
 
-/*
+
 @layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
@@ -183,6 +181,4 @@ body {
     scrollbar-color: rgba(255,255,255,0.2) transparent;
   }
 }
-*/
-
 
