@@ -136,7 +136,7 @@ export function StickyFilterWrapper__ux({
 
 
 
-export function StickyFilterWrapper({
+export function StickyFilterWrapper__ux_({
   children,
 }: {
   children: React.ReactNode;
@@ -168,5 +168,30 @@ export function StickyFilterWrapper({
   );
 }
 
+"use client";
+
+export function StickyFilterWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const direction = useScrollDirection();
+  const isHidden = direction === "down";
+
+  return (
+    <div
+      className={`
+        sticky top-16 z-20
+        will-change-transform
+        transition-transform duration-300 ease-out
+        ${isHidden ? "-translate-y-[80px]" : "translate-y-0"}
+      `}
+    >
+      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 
