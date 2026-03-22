@@ -77,7 +77,8 @@ export function StickyFilterWrapper_({
   );
 }
 
-export function StickyFilterWrapper({
+// Chạy ngon
+export function StickyFilterWrapper__({
   children,
 }: {
   children: React.ReactNode;
@@ -107,5 +108,30 @@ export function StickyFilterWrapper({
   );
 }
 
+
+
+export function StickyFilterWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const direction = useScrollDirection();
+
+  const isHidden = direction === "down";
+
+  return (
+    <div
+      className={`
+        sticky top-16 z-20
+        transition-transform duration-300 ease-out will-change-transform
+        ${isHidden ? "-translate-y-full" : "translate-y-0"}
+      `}
+    >
+      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 
