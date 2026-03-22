@@ -47,7 +47,7 @@ export function StickyFilterWrapper({
 */
 
 
-export function StickyFilterWrapper({
+export function StickyFilterWrapper_({
   children,
 }: {
   children: React.ReactNode;
@@ -68,6 +68,36 @@ export function StickyFilterWrapper({
         className={`
           bg-background/80 backdrop-blur-md border-b border-border
           transition-all duration-300
+          ${isCompact ? "scale-[0.98]" : "scale-100"}
+        `}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function StickyFilterWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const direction = useScrollDirection();
+
+  const isCompact = direction === "down";
+
+  return (
+<div
+  className={`
+    sticky top-16 z-20
+    transition-transform duration-300 ease-out
+    ${isCompact ? "-translate-y-0 scale-[1.0]" : "translate-y-0 scale-100"}
+  `}
+>
+      <div
+        className={`
+          bg-background/80 backdrop-blur-md border-b border-border
+          transition-all duration-300
           ${isCompact ? "scale-[1.0]" : "scale-100"}
         `}
       >
@@ -76,5 +106,6 @@ export function StickyFilterWrapper({
     </div>
   );
 }
+
 
 
