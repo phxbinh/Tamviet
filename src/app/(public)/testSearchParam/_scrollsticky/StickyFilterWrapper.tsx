@@ -168,7 +168,6 @@ export function StickyFilterWrapper__ux_({
   );
 }
 
-"use client";
 
 export function StickyFilterWrapper({
   children,
