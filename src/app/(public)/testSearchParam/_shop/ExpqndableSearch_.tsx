@@ -59,10 +59,10 @@ export function ExpandableSearch({ productTypes, categories, path, productsLengt
 
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex items-center gap-3 bg-card/40 backdrop-blur-3xl p-0 border border-border/40 shadow-xl">
+      <div className="flex items-center bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl">
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+          className={`flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
             isExpanded ? "bg-primary text-white" : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10"
           }`}
         >
