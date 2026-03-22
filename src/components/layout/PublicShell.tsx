@@ -229,7 +229,7 @@ export default function PublicShell({
 
   return (
     <>
-      <div className="flex min-h-screen bg-background">
+      <div className="flex min-h-screen bg-background no-scrollbar">
 
         {/* SIDEBAR */}
         <aside
