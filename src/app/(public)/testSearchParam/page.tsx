@@ -41,7 +41,7 @@ export default async function Page({
     ? (rawSort as SortType)
     : "newest";
 
-  const limit = 3;
+  const limit = 8;
 
   const [products, categories, productTypesData] = await Promise.all([
     getProductsByCategory({ 
