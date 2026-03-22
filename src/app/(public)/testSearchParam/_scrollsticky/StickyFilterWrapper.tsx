@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useScrollDirection } from "./useScrollDirection";
 
+/*
 export function StickyFilterWrapper({
   children,
 }: {
@@ -43,3 +44,31 @@ export function StickyFilterWrapper({
     </div>
   );
 }
+*/
+
+
+export function StickyFilterWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const direction = useScrollDirection();
+
+  const isHidden = direction === "down";
+
+  return (
+    <div
+      className={`
+        sticky top-16 z-20
+        transition-all duration-300 ease-out
+        ${isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"}
+      `}
+    >
+      <div className="bg-background/80 backdrop-blur-md border-b border-border">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+
