@@ -394,6 +394,13 @@ export function Pagination__scroll_({ totalCount, limit }: { totalCount: number;
 
 
 
+'use client';
+
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, MouseEvent } from 'react'; // Import MouseEvent từ react
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Send } from 'lucide-react';
+
 export function Pagination({ totalCount, limit }: { totalCount: number; limit: number }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -402,7 +409,6 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
   const [jumpPage, setJumpPage] = useState('');
 
   useEffect(() => setJumpPage(''), [currentPage]);
-
   if (totalPages <= 1) return null;
 
   const createPageURL = (p: number) => {
@@ -411,23 +417,15 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
     return `?${params.toString()}`;
   };
 
-  // Hàm xử lý cuộn mượt mà không làm mất SEO
-  const handlePageClick = (e: MouseEvent<HTMLAnchorElement | HTMLButtonElement>, p: number) => {
-    const targetPage = Math.max(1, Math.min(p, totalPages));
-    if (targetPage === currentPage) {
-      e.preventDefault();
-      return;
-    }
+  // FIX TYPE: Sử dụng React.MouseEvent
+  const handlePageClick = (e: MouseEvent<HTMLElement>, p: number) => {
+    const target = Math.max(1, Math.min(p, totalPages));
+    if (target === currentPage) return e.preventDefault();
 
-    // Chặn hành vi nhảy tức thì của Link
     e.preventDefault();
-
-    // Thực hiện cuộn mượt trước
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Đợi một chút để hiệu ứng cuộn bắt đầu rồi mới đổi URL
-    // { scroll: false } cực kỳ quan trọng để Next.js không nhảy "bộp" lên đầu
-    router.push(createPageURL(targetPage), { scroll: false });
+    // Dùng { scroll: false } để chặn Next.js tự nhảy "bộp" lên đầu
+    router.push(createPageURL(target), { scroll: false });
   };
 
   const getPages = () => {
@@ -437,31 +435,24 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
     return [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
   };
 
-  const btnBase = "w-9 h-9 flex items-center justify-center rounded-xl border transition-all text-xs font-bold";
+  const btnBase = "w-10 h-10 flex items-center justify-center rounded-xl border transition-all text-xs font-bold";
   const activeStyle = "bg-primary border-primary text-white shadow-md shadow-primary/20 cursor-default";
-  const idleStyle = "bg-card border-border hover:border-primary/50 text-foreground/70 active:scale-90";
+  const idleStyle = "bg-card border-border hover:border-primary text-foreground/70 active:scale-90";
 
   return (
     <div className="flex flex-col items-center gap-6 mt-12 w-full">
-      {/* HÀNG 1: SỐ TRANG - Dùng Link cho SEO */}
+      {/* HÀNG 1: LINKS (SEO) */}
       <div className="flex items-center gap-1.5">
         {currentPage > 1 && (
           <>
-            <Link href={createPageURL(1)} onClick={(e) => handlePageClick(e, 1)} className={`${btnBase} ${idleStyle}`}><ChevronsLeft size={16} /></Link>
-            <Link href={createPageURL(currentPage - 1)} onClick={(e) => handlePageClick(e, currentPage - 1)} className={`${btnBase} ${idleStyle}`}><ChevronLeft size={16} /></Link>
+            <Link href={createPageURL(1)} onClick={(e) => handlePageClick(e, 1)} className={`${btnBase} ${idleStyle}`}><ChevronsLeft size={18} /></Link>
+            <Link href={createPageURL(currentPage - 1)} onClick={(e) => handlePageClick(e, currentPage - 1)} className={`${btnBase} ${idleStyle}`}><ChevronLeft size={18} /></Link>
           </>
         )}
 
         {getPages().map((p, i) => (
           typeof p === 'number' ? (
-            <Link 
-              key={i} 
-              href={createPageURL(p)} 
-              onClick={(e) => handlePageClick(e, p)}
-              className={`${btnBase} ${p === currentPage ? activeStyle : idleStyle}`}
-            >
-              {p}
-            </Link>
+            <Link key={i} href={createPageURL(p)} onClick={(e) => handlePageClick(e, p)} className={`${btnBase} ${p === currentPage ? activeStyle : idleStyle}`}>{p}</Link>
           ) : (
             <span key={i} className="px-1 text-foreground/30 font-bold">...</span>
           )
@@ -469,33 +460,34 @@ export function Pagination({ totalCount, limit }: { totalCount: number; limit: n
 
         {currentPage < totalPages && (
           <>
-            <Link href={createPageURL(currentPage + 1)} onClick={(e) => handlePageClick(e, currentPage + 1)} className={`${btnBase} ${idleStyle}`}><ChevronRight size={16} /></Link>
-            <Link href={createPageURL(totalPages)} onClick={(e) => handlePageClick(e, totalPages)} className={`${btnBase} ${idleStyle}`}><ChevronsRight size={16} /></Link>
+            <Link href={createPageURL(currentPage + 1)} onClick={(e) => handlePageClick(e, currentPage + 1)} className={`${btnBase} ${idleStyle}`}><ChevronRight size={18} /></Link>
+            <Link href={createPageURL(totalPages)} onClick={(e) => handlePageClick(e, totalPages)} className={`${btnBase} ${idleStyle}`}><ChevronsRight size={18} /></Link>
           </>
         )}
       </div>
 
-      {/* HÀNG 2: NHẢY TRANG - Dùng Button vì đây là tương tác người dùng, không cần SEO */}
-      <div className="flex items-center bg-card border border-border p-1 rounded-xl shadow-sm focus-within:border-primary transition-all">
-        <span className="text-[10px] uppercase tracking-wider font-black text-foreground/30 px-3 select-none">Đến trang</span>
+      {/* HÀNG 2: JUMP FIELD */}
+      <div className="flex items-center bg-card border border-border p-1 rounded-2xl shadow-sm focus-within:border-primary transition-all">
+        <span className="text-[10px] uppercase tracking-widest font-black text-foreground/30 px-4 select-none">Đến trang</span>
         <input
           type="number"
           value={jumpPage}
           onChange={(e) => setJumpPage(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handlePageClick(e as any, Number(jumpPage))}
           placeholder={`${currentPage}/${totalPages}`}
-          className="w-16 bg-transparent text-sm font-bold text-center outline-none border-none placeholder:text-foreground/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-16 bg-transparent text-sm font-bold text-center outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-foreground/20"
         />
         <button 
           onClick={(e) => handlePageClick(e as any, Number(jumpPage))}
-          className="bg-primary hover:bg-primary/90 text-white p-2 rounded-lg transition-transform active:scale-90"
+          className="bg-primary hover:bg-primary/90 text-white p-2.5 rounded-xl transition-transform active:scale-95 shadow-sm shadow-primary/20"
         >
-          <Send size={14} />
+          <Send size={16} />
         </button>
       </div>
     </div>
   );
 }
+
 
 
 
