@@ -178,7 +178,7 @@ function PublicShell_({
           {/* ================= SCROLL AREA (ONLY ONE) ================= */}
           <div className="flex-1 overflow-y-auto custom-scrollbar">
 
-            <div className="max-w-6xl mx-auto w-full px-2 md:px-8 py-4 flex flex-col min-h-full">
+            <div className="max-w-6xl mx-auto w-full px-2 md:px-8 pb-4 pt-0 flex flex-col min-h-full">
 
               {/* MAIN CONTENT */}
               <main className="flex-1">
