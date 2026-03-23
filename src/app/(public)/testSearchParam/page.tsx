@@ -14,7 +14,7 @@ import { Pagination } from "./_shop/Pagination";
 //import { ExpandableSearch } from "./_shop/ExpandableSearch_link__";
 //import { ExpandableSearch } from "./_shop/ExpandableSearch_link__fade";
 
-import { SearchUI } from "./_tachComponent/SearchUI";
+import { SearchUI } from "./_tachComponents/SearchUI";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -90,14 +90,22 @@ export default async function Page({
             productsLength={products.length}
           />
         </StickyFilterWrapper> */}
+
+<SearchUI
+  productTypes={productTypes}
+  categoryTree={categoryTree}
+  path={path}
+/>
       <div className="flex flex-col px-1 gap-4 mt-2">
 
+{/*
          <ExpandableSearch 
             productTypes={productTypes}
             categoryTree={categoryTree} 
             path={path}
             productsLength={products.length}
           />
+*/}
 
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-1 gap-y-1 md:gap-x-4 md:gap-y-4">
