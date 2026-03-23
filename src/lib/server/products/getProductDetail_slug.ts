@@ -33,6 +33,7 @@ interface Product {
   id: string;
   name: string;
   thumbnail_url?: string;
+  price_min?: number;
   description?: string;
   category_id: string; // Thêm dòng này
 }
