@@ -80,7 +80,7 @@ export default async function Page({
         <StickyFilterWrapper>
           <ExpandableSearch 
             productTypes={productTypes}
-            categories={categories}
+            categories={categoryTree} // categories
             path={path}
             productsLength={products.length}
           />
