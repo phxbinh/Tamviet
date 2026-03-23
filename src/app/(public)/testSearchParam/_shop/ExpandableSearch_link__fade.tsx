@@ -13,12 +13,19 @@ import {
 import { Filters } from "./Filters";
 import { useRouter, useSearchParams } from 'next/navigation';
 
+interface ExpandableSearchProps {
+  productTypes: any[];
+  categoryTree: any[];
+  path: string;
+  productsLength: number;
+}
+
 export function ExpandableSearch({
   productTypes,
   categoryTree,
   path,
   productsLength
-}: any) {
+}: ExpandableSearchProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
