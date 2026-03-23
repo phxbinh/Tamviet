@@ -66,7 +66,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   return (
     <div className="flex overflow-y-auto no-scrollbar flex-col lg:flex-row gap-4 items-center w-full py-6">
       
-      {/* SEARCH */} {/*
+      {/* SEARCH */} 
       <div className={`${itemStyle} w-full lg:w-80`}>
         <Search className={iconStyle} />
         <input
@@ -79,8 +79,9 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
           className={inputStyle}
         />
         {isPending && <Loader2 className="absolute right-3 w-4 h-4 animate-spin text-primary" />}
-      </div> */}
+      </div> 
 
+{/*
 <div className={`${itemStyle} w-full lg:w-80`}>
   <Search className={iconStyle} />
 
@@ -94,7 +95,6 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
     className={inputStyle}
   />
 
-  {/* 🔥 CLEAR BUTTON */}
   {search && !isPending && (
     <button
       onClick={() => {
@@ -108,13 +108,12 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
     </button>
   )}
 
-  {/* LOADING */}
   {isPending && (
     <Loader2 className="absolute right-3 w-4 h-4 animate-spin text-primary" />
   )}
 </div>
 
-
+*/}
 
       <div className="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
 
