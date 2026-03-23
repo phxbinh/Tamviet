@@ -8,7 +8,7 @@ export function CategoryMegaMenu({ categoryTree, path }: any) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative">
+    <div className="relative z-30">
       {/* NÚT KÍCH HOẠT CHÍNH */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -27,9 +27,9 @@ export function CategoryMegaMenu({ categoryTree, path }: any) {
       {isOpen && (
         <>
           {/* Overlay để click ra ngoài thì đóng */}
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
           
-          <div className="absolute top-full left-0 mt-4 w-[280px] md:w-[450px] bg-card/95 backdrop-blur-2xl border border-border rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-50 animate-in fade-in zoom-in-95 duration-200">
+          <div className="absolute top-full left-0 mt-4 w-[280px] md:w-[450px] bg-card/95 backdrop-blur-2xl border border-border rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-40 animate-in fade-in zoom-in-95 duration-200">
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mb-4">Select a category</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
