@@ -158,10 +158,10 @@ export default async function Page({
 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
   <div className="flex items-center gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5">
     
-    {/*Nút lọc Loại sản phẩm (Type) */}
-    <Filters productTypes={productTypes} />
+    {/*Nút lọc Loại sản phẩm (Type) */} {/*
+    <Filters productTypes={productTypes} />*/}
 
-    <div className="h-6 w-[1px] bg-border/40 mx-1" /> //Vạch ngăn cách
+    {/* <div className="h-6 w-[1px] bg-border/40 mx-1" /> Vạch ngăn cách */}
 
     {/* NÚT DROPDOWN CHÍNH - GOM TẤT CẢ CATEGORIES VÀO ĐÂY */}
     <CategoryMegaMenu categoryTree={categoryTree} path={path} />
