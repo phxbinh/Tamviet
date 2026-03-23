@@ -1,8 +1,21 @@
+
 'use client';
 
-import { SlidersHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
+import {
+  SlidersHorizontal,
+  ChevronUp,
+  ChevronDown
+} from 'lucide-react';
 
-export function FilterTrigger({ isExpanded, setIsExpanded }: any) {
+type FilterTriggerProps = {
+  isExpanded: boolean;
+  setIsExpanded: (v: boolean) => void;
+};
+
+export function FilterTrigger({
+  isExpanded,
+  setIsExpanded
+}: FilterTriggerProps) {
   return (
     <div className="relative w-full z-[10]">
       <div className="bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl relative z-[110]">
@@ -24,3 +37,7 @@ export function FilterTrigger({ isExpanded, setIsExpanded }: any) {
     </div>
   );
 }
+
+
+
+
