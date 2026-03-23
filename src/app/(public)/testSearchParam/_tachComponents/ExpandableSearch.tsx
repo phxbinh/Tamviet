@@ -24,3 +24,24 @@ export function ExpandableSearch(props: any) {
     </>
   );
 }
+
+
+/*
+
+'use client';
+
+import { FilterTrigger } from './FilterTrigger';
+
+export function ExpandableSearch({
+  isExpanded,
+  setIsExpanded
+}: any) {
+  return (
+    <FilterTrigger 
+      isExpanded={isExpanded} 
+      setIsExpanded={setIsExpanded} 
+    />
+  );
+}
+
+*/
