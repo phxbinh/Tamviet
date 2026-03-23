@@ -15,7 +15,7 @@ interface ExpandableSearchProps {
   productsLength: number;
 }
 
-export function ExpandableSearch({ productTypes, categories, path, productsLength }: ExpandableSearchProps) {
+export function ExpandableSearch({ productTypes, categories, categoryTree, path, productsLength }: ExpandableSearchProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPending, startTransition] = useTransition();
 
