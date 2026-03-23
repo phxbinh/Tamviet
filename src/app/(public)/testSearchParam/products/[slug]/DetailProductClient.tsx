@@ -120,7 +120,20 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
               )}
             </div>
           </div>
-
+          {/* 3. Status & SKU Info (Chỉ hiện khi đã chọn đủ) */}
+          <div className="min-h-[60px]">
+            {selectedVariant && (
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/40 border border-border/50 animate-in zoom-in-95">
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${selectedVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                  <span className="text-xs font-medium uppercase tracking-tight">
+                    {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock} available)` : 'Out of Stock'}
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-muted-foreground uppercase">SKU: {selectedVariant.sku}</span>
+              </div>
+            )}
+          </div>
           <hr className="border-border/50" />
 
 {/* 2. Attributes Selection (Ultra Compact Version) */}
@@ -165,20 +178,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 </div>
 
 
-          {/* 3. Status & SKU Info (Chỉ hiện khi đã chọn đủ) */}
-          <div className="min-h-[60px]">
-            {selectedVariant && (
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/40 border border-border/50 animate-in zoom-in-95">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${selectedVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                  <span className="text-xs font-medium uppercase tracking-tight">
-                    {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock} available)` : 'Out of Stock'}
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">SKU: {selectedVariant.sku}</span>
-              </div>
-            )}
-          </div>
+
 
           {/* 4. Action Buttons */}
           <div className="space-y-4">
