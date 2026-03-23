@@ -93,6 +93,8 @@ export function ExpandableSearch({ productTypes, categories, path, productsLengt
               All Series
             </button>
 
+    {/*<CategoryMegaMenu categoryTree={categoryTree} path={path} />*/}
+
             {/* CATEGORY */}
             {categories.map((cat: any) => (
               <button
