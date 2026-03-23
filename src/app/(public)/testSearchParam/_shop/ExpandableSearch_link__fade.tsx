@@ -61,7 +61,7 @@ export function ExpandableSearch({
         <Filters productTypes={productTypes} />
       </div>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent my-10" />
+      <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent my-2" />
 
       {/* CATEGORY */}
       <div className="space-y-8">
