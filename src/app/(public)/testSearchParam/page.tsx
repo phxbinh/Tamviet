@@ -10,7 +10,7 @@ import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
 //import { ExpandableSearch } from "./_shop/ExpandableSearch";
 import { StickyFilterWrapper } from "./_scrollsticky/StickyFilterWrapper";
-import { ExpandableSearch } from "./_shop/ExpandableSearch_link";
+import { ExpandableSearch } from "./_shop/ExpandableSearch_link_";
 
 
 export const dynamic = 'force-dynamic';
