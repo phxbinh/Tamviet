@@ -81,7 +81,6 @@ export default async function Page({
           <ExpandableSearch 
             productTypes={productTypes}
             categories={categories} 
-            categoryTree={categoryTree}
             path={path}
             productsLength={products.length}
           />
