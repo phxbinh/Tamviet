@@ -2,7 +2,7 @@
 
 
 
-
+// Tối ưu seo với metadata
 ///==========✳️✳️🔸🔸🔸
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
@@ -131,6 +131,30 @@ export default async function ProductPage({
     ],
   };
 
+  const product = data.product as typeof data.product & { slug: string };
+  
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.thumbnail_url ? [product.thumbnail_url] : [],
+    description: product.description || "",
+    sku: product.id,
+    brand: {
+      "@type": "Brand",
+      name: "TamViet",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "VND",
+      //price: product.price_min || 0,
+      availability: "https://schema.org/InStock",
+      url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
+    },
+  };
+
+
+
   // ================= RELATED =================
   const relatedProducts = await getRelatedProducts(
     data.product.category_id,
@@ -139,10 +163,16 @@ export default async function ProductPage({
 
   return (
     <>
-      {/* JSON-LD */}
+      {/* Breadcrumb JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
+      {/* Product JSON-LD 🔥 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
 
       <Breadcrumb items={breadcrumbs} />
