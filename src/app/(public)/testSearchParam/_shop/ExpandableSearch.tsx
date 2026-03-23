@@ -10,6 +10,7 @@ import {CategoryMegaMenu} from "../_droplistCategories/CategoryMega";
 interface ExpandableSearchProps {
   productTypes: any[];
   categories: any[];
+  categoryTree?: any[];
   path: string;
   productsLength: number;
 }
