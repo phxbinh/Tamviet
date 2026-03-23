@@ -6,7 +6,7 @@ import {
   Loader2
 } from 'lucide-react';
 
-import { Filters } from "../_shop/Filters";
+import { Filters } from "./Filters";
 
 interface FilterContentProps {
   productTypes: any[];
