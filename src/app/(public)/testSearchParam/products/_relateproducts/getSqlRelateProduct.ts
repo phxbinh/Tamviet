@@ -70,3 +70,24 @@ export async function getRelatedProducts(
     return [];
   }
 }
+
+export async function getCategoryPath(categoryId: string) {
+  const rows = await sql`
+    WITH RECURSIVE category_path AS (
+      -- Điểm bắt đầu: danh mục hiện tại của sản phẩm
+      SELECT id, name, slug, parent_id, 1 as level
+      FROM categories
+      WHERE id = ${categoryId}
+      
+      UNION ALL
+      
+      -- Bước đệ quy: tìm cha của danh mục ở trên
+      SELECT c.id, c.name, c.slug, c.parent_id, cp.level + 1
+      FROM categories c
+      JOIN category_path cp ON c.id = cp.parent_id
+    )
+    -- Sắp xếp theo level giảm dần để có thứ tự: Cha -> Con
+    SELECT name, slug FROM category_path ORDER BY level DESC;
+  `;
+  return rows;
+}
