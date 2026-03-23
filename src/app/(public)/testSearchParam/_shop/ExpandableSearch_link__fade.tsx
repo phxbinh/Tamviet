@@ -1,126 +1,113 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { SlidersHorizontal, X, FolderTree, ChevronRight } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { SlidersHorizontal, ChevronUp, ChevronDown, FolderTree, ChevronRight, Loader2 } from 'lucide-react';
 import { Filters } from "./Filters"; 
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export function ExpandableSearch({ productTypes, categoryTree, path, productsLength }: any) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  // Khóa scroll body khi mở sidebar
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
 
   const handleCategoryClick = (catPath: string) => {
     const params = new URLSearchParams(searchParams.toString());
     catPath ? params.set('cat', catPath) : params.delete('cat');
     params.set('page', '1');
     
-    router.push(`?${params.toString()}`, { scroll: false });
-    // Thường thì chọn xong category trên mobile nên đóng sidebar lại
-    // setIsOpen(false); 
+    startTransition(() => {
+      router.push(`?${params.toString()}`, { scroll: false });
+    });
   };
 
   return (
-    <>
-      {/* TRIGGER BUTTON - Cố định hoặc nằm trong luồng trang */}
-      <div className="bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl inline-block">
+    <div className="flex flex-col relative z-50 w-full">
+      {/* TRIGGER BUTTON */}
+      <div className="bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl relative z-[60]">
         <button 
-          onClick={() => setIsOpen(true)}
-          className="flex items-center gap-3 px-6 py-2.5 bg-foreground/5 text-foreground/60 hover:bg-primary hover:text-white transition-all group"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`w-full flex items-center justify-between gap-2 px-4 py-2 transition-all ${
+            isExpanded ? "bg-primary text-white" : "bg-foreground/5 text-foreground/60"
+          }`}
         >
-          <SlidersHorizontal className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Open Filters</span>
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Filters & Categories</span>
+          </div>
+          {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         </button>
       </div>
 
-      {/* SIDEBAR OVERLAY (BACKDROP) */}
-      <div 
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] transition-opacity duration-500 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsOpen(false)}
-      />
+      {/* OVERLAY: Click ra ngoài để đóng menu */}
+      {isExpanded && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/5 backdrop-blur-[2px]" 
+          onClick={() => setIsExpanded(false)}
+        />
+      )}
 
-      {/* SIDEBAR CONTENT - Slide from right to left */}
-      <div className={`fixed top-0 right-0 h-full w-[85vw] md:w-[450px] bg-card/95 backdrop-blur-3xl z-[101] shadow-[-20px_0_50px_rgba(0,0,0,0.2)] border-l border-border/40 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-        isOpen ? "translate-x-0" : "translate-x-full"
+      {/* CONTENT AREA - CHUYỂN SANG ABSOLUTE */}
+      <div className={`absolute top-full left-0 w-full z-50 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+        isExpanded 
+          ? "translate-y-0 opacity-100 pointer-events-auto" 
+          : "-translate-y-4 opacity-0 pointer-events-none"
       }`}>
-        
-        {/* HEADER SIDEBAR */}
-        <div className="flex items-center justify-between p-6 border-b border-border/40">
-          <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-primary" />
-            <span className="text-xs font-black uppercase tracking-widest">Advanced Filters</span>
-          </div>
-          <button 
-            onClick={() => setIsOpen(false)}
-            className="p-2 hover:bg-foreground/5 rounded-full transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* BODY - SCROLLABLE AREA */}
-        <div className="h-[calc(100%-80px)] overflow-y-auto custom-scrollbar p-6 pb-20">
+        <div className="mt-2 max-h-[70vh] overflow-y-auto custom-scrollbar p-6 bg-card/95 backdrop-blur-3xl border border-border/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
           
+          {/* Trạng thái loading khi đang load category */}
+          {isPending && (
+            <div className="absolute inset-0 bg-card/40 backdrop-blur-[1px] z-10 flex items-center justify-center">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          )}
+
           {/* SECTION: FILTERS */}
-          <div className="mb-10">
+          <div className="mb-8">
               <Filters productTypes={productTypes} />
           </div>
 
-          <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent my-10" />
+          <div className="h-px bg-border/20 my-8" />
 
-          {/* SECTION: CATEGORIES */}
-          <div className="space-y-8">
-            <div className="flex justify-between items-center">
+          {/* SECTION: CATEGORIES GRID */}
+          <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
                 <FolderTree className="w-4 h-4 text-primary" />
-                <p className="text-[11px] font-black uppercase tracking-widest text-primary">Categories</p>
+                <p className="text-[11px] font-black uppercase tracking-widest text-primary">Explore Categories</p>
               </div>
               <button 
                 onClick={() => handleCategoryClick("")}
-                className="text-[9px] font-bold text-foreground/30 hover:text-primary transition-colors uppercase underline underline-offset-4"
+                className="text-[10px] font-bold text-foreground/30 hover:text-primary uppercase"
               >
                 Reset
               </button>
             </div>
 
-            {/* Render kiểu Sidebar List (Dọc) thay vì Grid để phù hợp chiều ngang hẹp của Sidebar */}
-            <div className="flex flex-col gap-8">
+            {/* Grid: 2 cột mobile, 4 cột desktop */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10 items-start pb-4">
               {categoryTree.map((parent: any) => (
-                <div key={parent.id} className="group">
+                <div key={parent.id} className="flex flex-col gap-4">
                   <button 
                     onClick={() => handleCategoryClick(parent.category_path)}
-                    className={`w-full text-left text-[11px] font-black uppercase tracking-wider mb-3 transition-colors ${
-                      path === parent.category_path ? "text-primary" : "text-foreground/90 hover:text-primary"
+                    className={`text-left text-[11px] font-black uppercase tracking-tight hover:text-primary transition-all ${
+                      path === parent.category_path ? "text-primary" : "text-foreground/90"
                     }`}
                   >
                     {parent.name}
                   </button>
                   
-                  <div className="flex flex-col gap-1 border-l-2 border-border/20 ml-1">
+                  <div className="flex flex-col gap-2.5 border-l border-border/40 pl-3">
                     {parent.children?.map((child: any) => (
                       <button 
                         key={child.id} 
                         onClick={() => handleCategoryClick(child.category_path)}
-                        className={`text-left text-[10px] py-2 px-4 flex items-center justify-between transition-all ${
-                          path === child.category_path 
-                            ? "bg-primary/10 text-primary font-bold border-l-2 border-primary -ml-[2px]" 
-                            : "text-foreground/50 hover:bg-foreground/5 hover:text-foreground"
+                        className={`text-left text-[10px] font-medium flex items-start justify-between group transition-all ${
+                          path === child.category_path ? "text-primary font-bold italic" : "text-foreground/50 hover:text-primary"
                         }`}
                       >
-                        {child.name}
-                        <ChevronRight className={`w-3 h-3 transition-transform ${path === child.category_path ? "translate-x-0" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"}`} />
+                        <span className="group-hover:translate-x-1 transition-transform">{child.name}</span>
+                        <ChevronRight className="w-2.5 h-2.5 mt-0.5 opacity-0 group-hover:opacity-100 shrink-0" />
                       </button>
                     ))}
                   </div>
@@ -129,17 +116,7 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
             </div>
           </div>
         </div>
-
-        {/* FOOTER SIDEBAR (Tùy chọn) */}
-        <div className="absolute bottom-0 left-0 w-full p-4 bg-card border-t border-border/40 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
-           <button 
-            onClick={() => setIsOpen(false)}
-            className="w-full bg-primary text-white py-3 text-[10px] font-black uppercase tracking-[0.2em]"
-           >
-             Show Results ({productsLength})
-           </button>
-        </div>
       </div>
-    </>
+    </div>
   );
 }
