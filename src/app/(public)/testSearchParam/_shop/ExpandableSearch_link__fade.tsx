@@ -43,7 +43,7 @@ export function ExpandableSearch({
 
   // 🔥 TÁCH CONTENT RA (tránh duplicate)
   const renderContent = () => (
-    <div className="relative">
+    <div className="relative h-full">
       {/* LOADING */}
       {isPending && (
         <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[120] flex items-center justify-center">
