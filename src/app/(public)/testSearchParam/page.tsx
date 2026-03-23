@@ -8,9 +8,8 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 
-
-//export const dynamic = 'force-dynamic';
-//export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+export const revalidate = 50;
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
 interface ProductType {
