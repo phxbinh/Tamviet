@@ -25,18 +25,21 @@ export function FilterPanel({
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const paramsString = searchParams.toString();
+  // ùung để đóng panel khi url thay đổi
+  //const paramsString = searchParams.toString();
   
   // lock scroll
   useEffect(() => {
     document.body.style.overflow = isExpanded ? 'hidden' : '';
   }, [isExpanded]);
 
+/* ĐÓNG PANEL KHI LOAD XONG -> chạy được nhưng ux không tốt
   useEffect(() => {
     if (isExpanded) {
       setIsExpanded(false);
     }
   }, [paramsString]);
+*/
 
   const handleCategoryClick = (catPath: string) => {
     const params = new URLSearchParams(searchParams.toString());
