@@ -6,7 +6,7 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 
-import { Pagination } from "./_shop/Pagination";
+import { Pagination } from "./_tachComponents/Pagination";
 
 import { SearchUI } from "./_tachComponents/SearchUI";
 
