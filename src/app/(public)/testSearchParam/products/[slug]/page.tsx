@@ -147,7 +147,7 @@ export default async function ProductPage({
     offers: {
       "@type": "Offer",
       priceCurrency: "VND",
-      //price: product.price_min || 0,
+      price: product.price_min || 0,
       availability: "https://schema.org/InStock",
       url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
     },
