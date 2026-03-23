@@ -64,7 +64,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   }, [search]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 items-center w-full py-6">
+    <div className="flex overflow-y-auto no-scrollbar flex-col lg:flex-row gap-4 items-center w-full py-6">
       
       {/* SEARCH */} {/*
       <div className={`${itemStyle} w-full lg:w-80`}>
