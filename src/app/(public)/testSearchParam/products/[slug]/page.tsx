@@ -5,6 +5,7 @@
 
 ///==========✳️✳️🔸🔸🔸
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
+// src/app/(public)/testSearchParam/products/[slug]/page.tsx
 
 import type { Metadata } from "next";
 import ProductDetailClient from "@/features/products/components/ProductDetailClient";
@@ -15,6 +16,21 @@ import { sql } from "@/lib/neon/sql";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
 import { getRelatedProducts } from "../_relateproducts/getSqlRelateProduct";
 
+// ================= TYPE FIX CHUẨN =================
+type ProductSafe = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  thumbnail_url?: string;
+  price_min?: number;
+  category_id: string;
+};
+
+type ProductDetailSafe = {
+  product: ProductSafe;
+};
+
 // ================= SEO METADATA =================
 export async function generateMetadata({
   params,
@@ -23,7 +39,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const data = await getProductDetail_slug(slug);
+  const data = (await getProductDetail_slug(slug)) as ProductDetailSafe | null;
 
   if (!data) {
     return {
@@ -70,7 +86,7 @@ export async function generateMetadata({
   };
 }
 
-// ================= BREADCRUMB HELPER =================
+// ================= BREADCRUMB =================
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -81,6 +97,7 @@ async function getCategoryPath(categoryId: string) {
     WITH RECURSIVE category_path AS (
       SELECT id, name, slug, parent_id, 1 as level
       FROM categories
+      
       WHERE id = ${categoryId}
       
       UNION ALL
@@ -102,17 +119,19 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
 
-  const data = await getProductDetail_slug(slug);
+  const data = (await getProductDetail_slug(slug)) as ProductDetailSafe | null;
 
   if (!data) {
     notFound();
   }
 
+  const product = data.product;
+
   // ================= BREADCRUMB =================
-  const categoryPath = await getCategoryPath(data.product.category_id);
+  const categoryPath = await getCategoryPath(product.category_id);
 
   let currentPath = "";
-  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat) => {
+  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat: any) => {
     currentPath = currentPath
       ? `${currentPath}/${cat.slug}`
       : cat.slug;
@@ -123,11 +142,9 @@ export default async function ProductPage({
     };
   });
 
-  breadcrumbs.push({ label: data.product.name });
+  breadcrumbs.push({ label: product.name });
 
   // ================= JSON-LD =================
-
-  // Breadcrumb schema
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -149,14 +166,13 @@ export default async function ProductPage({
     ],
   };
 
-  // Product schema (🔥 QUAN TRỌNG)
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: data.product.name,
-    image: [data.product.thumbnail_url],
-    description: data.product.description || "",
-    sku: data.product.id,
+    name: product.name,
+    image: [product.thumbnail_url],
+    description: product.description || "",
+    sku: product.id,
     brand: {
       "@type": "Brand",
       name: "TamViet",
@@ -164,21 +180,20 @@ export default async function ProductPage({
     offers: {
       "@type": "Offer",
       priceCurrency: "VND",
-      price: data.product.price_min || 0,
+      price: product.price_min || 0,
       availability: "https://schema.org/InStock",
-      url: `https://tamviet.vercel.app/testSearchParam/products/${data.product.slug}`,
+      url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
     },
   };
 
   // ================= RELATED =================
   const relatedProducts = await getRelatedProducts(
-    data.product.category_id,
-    data.product.id
+    product.category_id,
+    product.id
   );
 
   return (
     <>
-      {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
@@ -188,16 +203,12 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
 
-      {/* Breadcrumb */}
       <Breadcrumb items={breadcrumbs} />
 
-      {/* Title */}
-      <h1 className="text-xl font-bold">{data.product.name}</h1>
+      <h1 className="text-xl font-bold">{product.name}</h1>
 
-      {/* Product detail */}
       <ProductDetailClient data={data} />
 
-      {/* Related */}
       {relatedProducts.length > 0 && (
         <div className="container mx-auto px-4">
           <RelatedProductsSection
@@ -208,11 +219,3 @@ export default async function ProductPage({
     </>
   );
 }
-
-
-
-
-
-
-
-
