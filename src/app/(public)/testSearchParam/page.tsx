@@ -8,8 +8,10 @@ import { getCategoriesTree } from "@/lib/db/categories";
 
 import { Filters } from "./_shop/Filters";
 import { Pagination } from "./_shop/Pagination";
-import { ExpandableSearch } from "./_shop/ExpandableSearch";
+//import { ExpandableSearch } from "./_shop/ExpandableSearch";
 import { StickyFilterWrapper } from "./_scrollsticky/StickyFilterWrapper";
+import { ExpandableSearch } from "./_shop/ExpandableSearch_link";
+
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -80,7 +82,7 @@ export default async function Page({
         <StickyFilterWrapper>
           <ExpandableSearch 
             productTypes={productTypes}
-            categories={categories} 
+            categoryTree={categoryTree} 
             path={path}
             productsLength={products.length}
           />
