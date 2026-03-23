@@ -155,7 +155,7 @@ export default async function Page({
 */}
 
 {/* 2. CATEGORY TOOLBAR */}
-<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 z-50">
   <div className="flex items-center gap-3 bg-card/40 backdrop-blur-3xl p-2 rounded-[2rem] border border-border/40 shadow-2xl shadow-black/5">
     
     {/*Nút lọc Loại sản phẩm (Type) */} {/*
