@@ -132,7 +132,7 @@ export function ExpandableSearch({
   return (
     <>
       {/* 🔘 TRIGGER */}
-      <div className="relative w-full z-[100]">
+      <div className="relative w-full z-[10]">
         <div className="bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl relative z-[110]">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
