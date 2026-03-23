@@ -1,6 +1,6 @@
 // src/app/(public)/testSearchParam/page.tsx
 import Link from "next/link";
-import { ProductCardSlug } from "@/components/shop/ProductCardSlugParam";
+import { ProductCardSlug } from "./_productCard/ProductCardSlug";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
