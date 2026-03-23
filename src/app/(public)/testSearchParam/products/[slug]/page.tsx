@@ -9,29 +9,15 @@
 
 import type { Metadata } from "next";
 import ProductDetailClient from "@/features/products/components/ProductDetailClient";
+import { headers } from "next/headers";
 import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
-import { getRelatedProducts } from "../_relateproducts/getSqlRelateProduct";
+import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
 
-// ================= TYPE FIX CHUẨN =================
-type ProductSafe = {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  thumbnail_url?: string;
-  price_min?: number;
-  category_id: string;
-};
-
-type ProductDetailSafe = {
-  product: ProductSafe;
-};
-
-// ================= SEO METADATA =================
+// ================= ✅ METADATA =================
 export async function generateMetadata({
   params,
 }: {
@@ -39,7 +25,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const data = (await getProductDetail_slug(slug)) as ProductDetailSafe | null;
+  const data = await getProductDetail_slug(slug);
 
   if (!data) {
     return {
@@ -47,7 +33,8 @@ export async function generateMetadata({
     };
   }
 
-  const product = data.product;
+  // 🔥 fix type tại chỗ, không đụng hệ thống
+  const product = data.product as typeof data.product & { slug: string };
 
   const url = `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`;
 
@@ -86,32 +73,14 @@ export async function generateMetadata({
   };
 }
 
-// ================= BREADCRUMB =================
+// ================= PAGE =================
+
+// ✳️ Breadcrumb type
 interface BreadcrumbItem {
   label: string;
   href?: string;
 }
 
-async function getCategoryPath(categoryId: string) {
-  const rows = await sql`
-    WITH RECURSIVE category_path AS (
-      SELECT id, name, slug, parent_id, 1 as level
-      FROM categories
-      
-      WHERE id = ${categoryId}
-      
-      UNION ALL
-      
-      SELECT c.id, c.name, c.slug, c.parent_id, cp.level + 1
-      FROM categories c
-      JOIN category_path cp ON c.id = cp.parent_id
-    )
-    SELECT name, slug FROM category_path ORDER BY level DESC;
-  `;
-  return rows;
-}
-
-// ================= PAGE =================
 export default async function ProductPage({
   params,
 }: {
@@ -119,33 +88,29 @@ export default async function ProductPage({
 }) {
   const { slug } = await params;
 
-  const data = (await getProductDetail_slug(slug)) as ProductDetailSafe | null;
+  const data = await getProductDetail_slug(slug);
 
   if (!data) {
     notFound();
   }
 
-  const product = data.product;
-
   // ================= BREADCRUMB =================
-  const categoryPath = await getCategoryPath(product.category_id);
-
+  const categoryPath = await getCategoryPath(data.product.category_id);
+  
   let currentPath = "";
-  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat: any) => {
-    currentPath = currentPath
-      ? `${currentPath}/${cat.slug}`
-      : cat.slug;
-
+  const breadcrumbs: BreadcrumbItem[] = categoryPath.map((cat) => {
+    currentPath = currentPath ? `${currentPath}/${cat.slug}` : cat.slug;
+    
     return {
       label: cat.name,
       href: `/testSearchParam?cat=${currentPath}`,
     };
   });
 
-  breadcrumbs.push({ label: product.name });
+  breadcrumbs.push({ label: data.product.name });
 
   // ================= JSON-LD =================
-  const breadcrumbLd = {
+  const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
@@ -166,54 +131,29 @@ export default async function ProductPage({
     ],
   };
 
-  const productLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    image: [product.thumbnail_url],
-    description: product.description || "",
-    sku: product.id,
-    brand: {
-      "@type": "Brand",
-      name: "TamViet",
-    },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "VND",
-      price: product.price_min || 0,
-      availability: "https://schema.org/InStock",
-      url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
-    },
-  };
-
   // ================= RELATED =================
   const relatedProducts = await getRelatedProducts(
-    product.category_id,
-    product.id
+    data.product.category_id,
+    data.product.id
   );
 
   return (
     <>
+      {/* JSON-LD */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <Breadcrumb items={breadcrumbs} />
 
-      <h1 className="text-xl font-bold">{product.name}</h1>
+      <h1>{data.product.name}</h1>
 
       <ProductDetailClient data={data} />
 
       {relatedProducts.length > 0 && (
         <div className="container mx-auto px-4">
-          <RelatedProductsSection
-            relatedProducts={relatedProducts as any[]}
-          />
+          <RelatedProductsSection relatedProducts={relatedProducts as any[]} />
         </div>
       )}
     </>
