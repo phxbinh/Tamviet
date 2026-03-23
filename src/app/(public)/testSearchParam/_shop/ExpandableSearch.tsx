@@ -5,6 +5,7 @@ import { useState, useTransition, useMemo, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, ChevronUp, ChevronDown, ChevronRight, LayoutGrid } from 'lucide-react';
 import { Filters } from "./Filters"; 
+import {CategoryMegaMenu} from "../_droplistCategories/CategoryMega";
 
 interface ExpandableSearchProps {
   productTypes: any[];
@@ -93,9 +94,9 @@ export function ExpandableSearch({ productTypes, categories, path, productsLengt
               All Series
             </button>
 
-    {/*<CategoryMegaMenu categoryTree={categoryTree} path={path} />*/}
+    <CategoryMegaMenu categoryTree={categoryTree} path={path} />
 
-            {/* CATEGORY */}
+            {/* CATEGORY */} {/*
             {categories.map((cat: any) => (
               <button
                 key={cat.id}
@@ -109,7 +110,7 @@ export function ExpandableSearch({ productTypes, categories, path, productsLengt
                 {cat.category_depth > 0 && <ChevronRight className="w-3 h-3 opacity-30" />}
                 {cat.name}
               </button>
-            ))}
+            ))}*/}
           </div>
 
           {/* RESULT COUNT */}
