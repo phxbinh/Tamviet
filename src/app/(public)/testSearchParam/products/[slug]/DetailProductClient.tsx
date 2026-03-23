@@ -123,44 +123,47 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
           <hr className="border-border/50" />
 
-          {/* 2. Attributes Selection */}
-          <div className="space-y-8">
-            {attributes.map((attr) => (
-              <div key={attr.id} className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Select {attr.name}
-                  </span>
-                  {selected[attr.name] && (
-                    <span className="text-[11px] font-medium text-primary flex items-center gap-1">
-                      <Check className="w-3 h-3" /> {selected[attr.name]}
-                    </span>
-                  )}
-                </div>
-                
-                <div className="flex flex-wrap gap-2">
-                  {attr.values.map((v) => {
-                    const isActive = selected[attr.name] === v.value;
-                    return (
-                      <button
-                        key={v.id}
-                        onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
-                        className={`
-                          px-5 py-2.5 text-xs font-medium transition-all rounded-full border
-                          ${isActive 
-                            ? "bg-foreground text-background border-foreground shadow-md scale-[1.02]" 
-                            : "bg-transparent border-border hover:border-dark text-foreground/70"
-                          }
-                        `}
-                      >
-                        {v.value}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+{/* 2. Attributes Selection (Ultra Compact Version) */}
+<div className="space-y-4"> {/* Giảm khoảng cách giữa các nhóm thuộc tính */}
+  {attributes.map((attr) => (
+    <div key={attr.id} className="space-y-2.5">
+      {/* Label & Selected Value trên cùng 1 hàng, font nhỏ hơn */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+          {attr.name}
+        </span>
+        {selected[attr.name] && (
+          <span className="text-[10px] font-bold text-primary uppercase animate-in fade-in slide-in-from-left-1">
+            — {selected[attr.name]}
+          </span>
+        )}
+      </div>
+      
+      {/* Nút bấm nhỏ gọn, gap khít */}
+      <div className="flex flex-wrap gap-1.5">
+        {attr.values.map((v) => {
+          const isActive = selected[attr.name] === v.value;
+          return (
+            <button
+              key={v.id}
+              onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
+              className={`
+                px-3 py-1.5 text-[11px] font-semibold transition-all rounded-md border
+                ${isActive 
+                  ? "bg-foreground text-background border-foreground shadow-sm" 
+                  : "bg-secondary/30 border-transparent hover:border-border text-foreground/60"
+                }
+              `}
+            >
+              {v.value}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</div>
+
 
           {/* 3. Status & SKU Info (Chỉ hiện khi đã chọn đủ) */}
           <div className="min-h-[60px]">
