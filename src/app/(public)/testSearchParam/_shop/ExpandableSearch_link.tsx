@@ -1,7 +1,7 @@
 // src/app/(public)/testSearchParam/_shop/ExpandableSearch_link.tsx
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useRef, useEffect } from 'react';
 import { SlidersHorizontal, ChevronUp, ChevronDown, LayoutGrid, FolderTree, ChevronRight } from 'lucide-react';
 import { Filters } from "./Filters"; 
 import Link from 'next/link';
@@ -19,6 +19,32 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isPending] = useTransition();
   const searchParams = useSearchParams();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  // Cập nhật vị trí dropdown khi mở hoặc resize/scroll
+  useEffect(() => {
+    const updatePosition = () => {
+      if (buttonRef.current && isDropdownOpen) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + window.scrollY + 10, // +10px khoảng cách
+          left: rect.left + window.scrollX,
+        });
+      }
+    };
+
+    updatePosition();
+
+    // Listen resize & scroll để giữ vị trí chính xác
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition);
+
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition);
+    };
+  }, [isDropdownOpen]);
 
   const getCategoryHref = (catPath: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -29,7 +55,6 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
   };
 
   return (
-    // Thêm z-index cực cao cho container tổng để nó luôn đè lên danh sách sản phẩm bên dưới
     <div className="flex flex-col gap-0 relative z-[100]">
       
       {/* 1. NÚT FILTER CHÍNH */}
@@ -56,7 +81,6 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
             ? "max-h-[2000px] opacity-100 visible" 
             : "max-h-0 opacity-0 invisible overflow-hidden" 
         }`}
-        // FIX QUAN TRỌNG: Chỉ ẩn overflow khi đang đóng. Khi mở phải để visible để dropdown hiển thị được ra ngoài.
         style={{ overflow: isExpanded ? 'visible' : 'hidden' }}
       >
         <div className="bg-background/50 backdrop-blur-md border-x border-b border-border/40 pb-4">
@@ -67,11 +91,12 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
             {/* --- MEGA MENU CATEGORIES --- */}
             <div className="relative inline-block">
               <button
+                ref={buttonRef}
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border transition-all ${
                   isDropdownOpen 
-                  ? "border-primary bg-primary text-white shadow-lg" 
-                  : "border-foreground/20 bg-card text-foreground/60 hover:bg-foreground/10"
+                    ? "border-primary bg-primary text-white shadow-lg" 
+                    : "border-foreground/20 bg-card text-foreground/60 hover:bg-foreground/10"
                 }`}
               >
                 <FolderTree className="w-3.5 h-3.5" />
@@ -79,14 +104,28 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
                 <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
               </button>
 
-              {/* DROPDOWN BOX */}
+              {/* DROPDOWN BOX - Sử dụng fixed + vị trí động */}
               {isDropdownOpen && (
                 <>
-                  {/* Overlay click-out */}
-                  <div className="fixed inset-0 z-[110]" onClick={() => setIsDropdownOpen(false)} />
-                  
-                  {/* Nội dung Mega Menu */}
-                  <div className="absolute top-[calc(100%+10px)] left-0 w-[300px] md:w-[550px] bg-card border border-border rounded-[1.5rem] p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] z-[120] animate-in fade-in slide-in-from-top-2 duration-300">
+                  {/* Overlay click-out để đóng khi click ngoài */}
+                  <div 
+                    className="fixed inset-0 z-[999]" 
+                    onClick={() => setIsDropdownOpen(false)} 
+                  />
+
+                  {/* Dropdown chính */}
+                  <div 
+                    className={`
+                      fixed z-[1000] bg-card border border-border rounded-[1.5rem] p-6 
+                      shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] 
+                      animate-in fade-in slide-in-from-top-2 duration-300
+                      w-[300px] md:w-[550px]
+                    `}
+                    style={{
+                      top: `${dropdownPosition.top}px`,
+                      left: `${dropdownPosition.left}px`,
+                    }}
+                  >
                     <div className="flex justify-between items-center mb-6 border-b border-border/50 pb-3">
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Danh mục sản phẩm</p>
                       <Link 
