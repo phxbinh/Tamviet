@@ -32,6 +32,7 @@ interface ProductImage {
 interface Product {
   id: string;
   name: string;
+  thumbnail_url?: string;
   description?: string;
   category_id: string; // Thêm dòng này
 }
