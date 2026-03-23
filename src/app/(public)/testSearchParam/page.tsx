@@ -79,7 +79,7 @@ export default async function Page({
   
   return (
 <>
-        {/* 🔥 STICKY FILTER */}
+        {/* 🔥 STICKY FILTER */} {/*
         <StickyFilterWrapper>
           <ExpandableSearch 
             productTypes={productTypes}
@@ -87,8 +87,16 @@ export default async function Page({
             path={path}
             productsLength={products.length}
           />
-        </StickyFilterWrapper>
+        </StickyFilterWrapper> */}
       <div className="flex flex-col px-1 gap-4 mt-2">
+
+         <ExpandableSearch 
+            productTypes={productTypes}
+            categoryTree={categoryTree} 
+            path={path}
+            productsLength={products.length}
+          />
+
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-1 gap-y-1 md:gap-x-4 md:gap-y-4">
           {products.length === 0 ? (
