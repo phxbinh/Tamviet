@@ -11,8 +11,8 @@ import { Pagination } from "./_shop/Pagination";
 //import { ExpandableSearch } from "./_shop/ExpandableSearch";
 import { StickyFilterWrapper } from "./_scrollsticky/StickyFilterWrapper";
 //import { ExpandableSearch } from "./_shop/ExpandableSearch_link_";
-//import { ExpandableSearch } from "./_shop/ExpandableSearch_link__";
-import { ExpandableSearch } from "./_shop/ExpandableSearch_link__fade";
+import { ExpandableSearch } from "./_shop/ExpandableSearch_link__";
+//import { ExpandableSearch } from "./_shop/ExpandableSearch_link__fade";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
