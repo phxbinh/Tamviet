@@ -313,7 +313,7 @@ export async function getProductDetail_slug_(slug: string) {
 
 
 
-export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
+export async function getProductDetail_slug_OK(slug: string): Promise<ProductFull | null> {
   try {
     const rows = await sql`
       WITH target_product AS (
@@ -381,5 +381,139 @@ export async function getProductDetail_slug(slug: string): Promise<ProductFull |
   }
 }
 
+
+
+export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
+  try {
+    const rows = await sql`
+      WITH target_product AS (
+        -- 1. Lấy thông tin sản phẩm gốc và category
+        SELECT 
+          p.id, 
+          p.name, 
+          p.thumbnail_url, 
+          p.slug, 
+          p.description, 
+          (
+            SELECT category_id 
+            FROM product_categories 
+            WHERE product_id = p.id 
+            LIMIT 1
+          ) as category_id
+        FROM products p
+        WHERE p.slug = ${slug} 
+          AND p.status = 'active'
+        LIMIT 1
+      ),
+
+      variants_data AS (
+        -- 2. Lấy toàn bộ variants + attributes
+        SELECT 
+          v.product_id,
+          v.id, 
+          v.sku, 
+          v.price, 
+          v.stock,
+          jsonb_object_agg(a.name, av.value) 
+            FILTER (WHERE a.id IS NOT NULL) as attributes
+        FROM product_variants v
+        LEFT JOIN variant_attribute_values vav ON v.id = vav.variant_id
+        LEFT JOIN attribute_values av ON vav.attribute_value_id = av.id
+        LEFT JOIN attributes a ON av.attribute_id = a.id
+        WHERE v.product_id = (SELECT id FROM target_product) 
+          AND v.is_active = true
+        GROUP BY v.product_id, v.id
+      ),
+
+      -- 🔥 NEW: tính giá thấp nhất
+      price_data AS (
+        SELECT 
+          product_id,
+          MIN(price) FILTER (WHERE stock > 0) as price_min
+        FROM product_variants
+        WHERE product_id = (SELECT id FROM target_product)
+          AND is_active = true
+        GROUP BY product_id
+      ),
+
+      unique_attributes AS (
+        -- 3. Lấy attributes để render filter
+        SELECT 
+          a.id, 
+          a.name,
+          jsonb_agg(
+            DISTINCT jsonb_build_object(
+              'id', av.id, 
+              'value', av.value
+            )
+          ) as values
+        FROM attributes a
+        JOIN attribute_values av ON a.id = av.attribute_id
+        JOIN variant_attribute_values vav ON av.id = vav.attribute_value_id
+        JOIN product_variants v ON vav.variant_id = v.id
+        WHERE v.product_id = (SELECT id FROM target_product) 
+          AND v.is_active = true
+        GROUP BY a.id, a.name
+      ),
+
+      images_data AS (
+        -- 4. Gom nhóm images
+        SELECT 
+          product_id,
+          jsonb_agg(
+            jsonb_build_object(
+              'id', id, 
+              'url', image_url, 
+              'is_thumbnail', is_thumbnail
+            )
+            ORDER BY is_thumbnail DESC, id
+          ) as images
+        FROM product_images
+        WHERE product_id = (SELECT id FROM target_product)
+        GROUP BY product_id
+      )
+
+      -- 5. Tổng hợp
+      SELECT 
+        jsonb_build_object(
+          'product', (
+            SELECT row_to_json(tp)
+            FROM (
+              SELECT 
+                tp.*,
+                pd.price_min
+              FROM target_product tp
+              LEFT JOIN price_data pd 
+                ON pd.product_id = tp.id
+            ) tp
+          ),
+
+          'variants', COALESCE(
+            (SELECT jsonb_agg(variants_data.*) FROM variants_data), 
+            '[]'::jsonb
+          ),
+
+          'attributes', COALESCE(
+            (SELECT jsonb_agg(unique_attributes.*) FROM unique_attributes), 
+            '[]'::jsonb
+          ),
+
+          'images', COALESCE(
+            (SELECT images FROM images_data), 
+            '[]'::jsonb
+          )
+        ) as data
+      FROM target_product;
+    `;
+
+    if (!rows || rows.length === 0) return null;
+
+    return rows[0].data;
+
+  } catch (err) {
+    console.error("Optimized Product Fetch Error:", err);
+    throw new Error("Failed to fetch product detail");
+  }
+}
 
 
