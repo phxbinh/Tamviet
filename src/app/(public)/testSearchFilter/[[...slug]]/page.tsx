@@ -10,8 +10,8 @@ import { getCategoriesTree } from "@/lib/db/categories";
 import { CategoryToolbar } from "./_shop/CategoryToolbar";
 import { Filters } from "./_shop/Filters__a__";
 import { Pagination } from "./_shop/Pagination";
-//import { CategoryMegaMenu } from "./_droplistCategories/CategoryMenu";
-import { ExpandableSearch } from "./_shop/ExpandableSearch"; // Import component mới
+import { CategoryMegaMenu } from "./_droplistCategories/CategoryMenu";
+//import { ExpandableSearch } from "./_shop/ExpandableSearch"; // Import component mới
 
 
 export const dynamic = 'force-dynamic';
@@ -145,13 +145,14 @@ export default async function Page({
         </div> */}
 
         {/* GỌI COMPONENT ĐÃ TÁCH TẠI ĐÂY */}
+{/*
         <ExpandableSearch 
             productTypes={productTypes}
             categories={categories}
             path={path}
             productsLength={products.length}
         />
-
+*/}
 
 
 
