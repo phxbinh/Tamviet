@@ -8,7 +8,7 @@
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
 
 import type { Metadata } from "next";
-import ProductDetailClient from "@/features/products/components/ProductDetailClient";
+import ProductDetailClient from "./DetailProductClient";
 import { headers } from "next/headers";
 import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
 import { notFound } from "next/navigation";
