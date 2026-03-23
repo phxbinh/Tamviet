@@ -38,7 +38,7 @@ export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
               ) : (
                 // Các cấp danh mục trung gian
                 <Link
-                  href={item.href || "#"}
+                  href={item.href || "#"} prefetch={true}
                   className="hover:text-primary transition-colors whitespace-nowrap"
                 >
                   {item.label}
