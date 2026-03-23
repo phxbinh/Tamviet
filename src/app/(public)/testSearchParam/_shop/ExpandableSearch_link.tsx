@@ -1,5 +1,4 @@
 // src/app/(public)/testSearchParam/_shop/ExpandableSearch_link.tsx
-// src/app/(public)/testSearchParam/_shop/ExpandableSearch.tsx
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -30,13 +29,15 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
   };
 
   return (
-    <div className="flex flex-col gap-0">
-      {/* HEADER BUTTON */}
-      <div className="flex items-center bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl z-20">
+    // Thêm z-index cực cao cho container tổng để nó luôn đè lên danh sách sản phẩm bên dưới
+    <div className="flex flex-col gap-0 relative z-[100]">
+      
+      {/* 1. NÚT FILTER CHÍNH */}
+      <div className="flex items-center bg-card/40 backdrop-blur-3xl p-1 border border-border/40 shadow-xl relative z-[101]">
         <button 
           onClick={() => {
             setIsExpanded(!isExpanded);
-            if (isExpanded) setIsDropdownOpen(false); // Đóng luôn dropdown nếu thu nhỏ filter
+            if (isExpanded) setIsDropdownOpen(false);
           }}
           className={`flex items-center gap-2 px-4 py-2 transition-all duration-300 ${
             isExpanded ? "bg-primary text-white" : "bg-foreground/5 text-foreground/60 hover:bg-foreground/10"
@@ -48,81 +49,82 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
         </button>
       </div>
 
-      {/* EXPANDABLE SECTION */}
+      {/* 2. VÙNG NỘI DUNG (EXPANDABLE) */}
       <div 
-        className={`transition-all duration-500 ${
+        className={`transition-all duration-500 ease-in-out ${
           isExpanded 
-            ? "max-h-[1500px] opacity-100 visible" // Thay overflow-hidden bằng logic visible/invisible
+            ? "max-h-[2000px] opacity-100 visible" 
             : "max-h-0 opacity-0 invisible overflow-hidden" 
         }`}
-        // Quan trọng: Khi đang mở thì cho phép overflow để dropdown không bị che
-        style={{ overflow: isExpanded ? 'visible' : 'hidden' }} 
+        // FIX QUAN TRỌNG: Chỉ ẩn overflow khi đang đóng. Khi mở phải để visible để dropdown hiển thị được ra ngoài.
+        style={{ overflow: isExpanded ? 'visible' : 'hidden' }}
       >
-        <div className="relative z-10"> {/* Bọc để quản lý z-index */}
+        <div className="bg-background/50 backdrop-blur-md border-x border-b border-border/40 pb-4">
           <Filters productTypes={productTypes} />
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 pb-4 px-2">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pt-4 px-4 relative">
             
-            {/* CATEGORY MEGA MENU */}
-            <div className="relative">
+            {/* --- MEGA MENU CATEGORIES --- */}
+            <div className="relative inline-block">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border transition-all ${
                   isDropdownOpen 
                   ? "border-primary bg-primary text-white shadow-lg" 
-                  : "border-foreground/10 bg-card/50 text-foreground/60 hover:bg-foreground/5"
+                  : "border-foreground/20 bg-card text-foreground/60 hover:bg-foreground/10"
                 }`}
               >
                 <FolderTree className="w-3.5 h-3.5" />
-                {path ? "Category: " + path.split('/').pop() : "Browse Categories"}
-                <ChevronDown className={`w-3 h-3 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} />
+                {path ? `Category: ${path.split('/').pop()}` : "Browse Categories"}
+                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : ""}`} />
               </button>
 
+              {/* DROPDOWN BOX */}
               {isDropdownOpen && (
                 <>
-                  {/* Overlay dùng fixed để phủ toàn màn hình, giúp click ra ngoài là đóng */}
-                  <div className="fixed inset-0 z-40" onClick={() => setIsDropdownOpen(false)} />
+                  {/* Overlay click-out */}
+                  <div className="fixed inset-0 z-[110]" onClick={() => setIsDropdownOpen(false)} />
                   
-                  {/* Dropdown Box */}
-                  <div className="absolute top-full left-0 mt-4 w-[280px] md:w-[500px] bg-card/95 backdrop-blur-3xl border border-border rounded-[2rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.4)] animate-in fade-in zoom-in-95 duration-200 z-50">
-                    <div className="flex justify-between items-center mb-4">
-                      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Select a category</p>
+                  {/* Nội dung Mega Menu */}
+                  <div className="absolute top-[calc(100%+10px)] left-0 w-[300px] md:w-[550px] bg-card border border-border rounded-[1.5rem] p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] z-[120] animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex justify-between items-center mb-6 border-b border-border/50 pb-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Danh mục sản phẩm</p>
                       <Link 
                         href={getCategoryHref("")}
                         onClick={() => setIsDropdownOpen(false)}
-                        className="text-[9px] font-bold uppercase text-foreground/40 hover:text-primary transition-colors"
+                        className="text-[9px] font-bold uppercase text-foreground/30 hover:text-red-500 transition-colors"
                       >
-                        Clear All
+                        Reset
                       </Link>
                     </div>
                     
-                    {/* KHU VỰC SCROLL CỦA DANH SÁCH */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar scroll-smooth">
+                    {/* Vùng Scroll nội bộ nếu danh mục quá dài */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar">
                       {categoryTree.map((parent: any) => (
-                        <div key={parent.id} className="space-y-3">
+                        <div key={parent.id} className="flex flex-col gap-3">
                           <Link
                             href={getCategoryHref(parent.category_path)}
                             onClick={() => setIsDropdownOpen(false)}
-                            className={`block text-[11px] font-black uppercase tracking-wider hover:text-primary transition-colors ${
-                              path === parent.category_path ? "text-primary" : "text-foreground"
+                            className={`text-[12px] font-black uppercase tracking-tight hover:text-primary transition-colors ${
+                              path === parent.category_path ? "text-primary underline underline-offset-4" : "text-foreground"
                             }`}
                           >
                             {parent.name}
                           </Link>
 
                           {parent.children && parent.children.length > 0 && (
-                            <div className="flex flex-col gap-2 pl-3 border-l border-border/60">
+                            <div className="flex flex-col gap-2.5 pl-3 border-l-2 border-primary/10">
                               {parent.children.map((child: any) => (
                                 <Link
                                   key={child.id}
                                   href={getCategoryHref(child.category_path)}
                                   onClick={() => setIsDropdownOpen(false)}
-                                  className={`text-[10px] font-bold text-foreground/40 hover:text-primary transition-colors flex items-center justify-between group ${
-                                    path === child.category_path ? "text-primary italic" : ""
+                                  className={`text-[11px] font-medium text-foreground/50 hover:text-primary hover:pl-1 transition-all flex items-center justify-between group ${
+                                    path === child.category_path ? "text-primary font-bold italic" : ""
                                   }`}
                                 >
-                                  <span className="truncate mr-2">{child.name}</span>
-                                  <ChevronRight className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-all shrink-0" />
+                                  {child.name}
+                                  <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                                 </Link>
                               ))}
                             </div>
@@ -136,9 +138,9 @@ export function ExpandableSearch({ productTypes, categoryTree, path, productsLen
             </div>
 
             {/* RESULT COUNT */}
-            <div className="flex items-center gap-4 px-6 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
+            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-foreground/30 italic">
               <LayoutGrid className="w-3.5 h-3.5" />
-              {isPending ? "Loading..." : `Showing ${productsLength} Results`}
+              {isPending ? "Updating..." : `${productsLength} Items Found`}
             </div>
           </div>
         </div>
