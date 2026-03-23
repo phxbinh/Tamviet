@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition, useState, useEffect, useRef } from 'react';
-import { Search, Tag, ArrowUpDown, Loader2, CircleDollarSign } from 'lucide-react';
+import { X, Search, Tag, ArrowUpDown, Loader2, CircleDollarSign } from 'lucide-react';
 
 export interface ProductType {
   code: string;
@@ -66,7 +66,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   return (
     <div className="flex flex-col lg:flex-row gap-4 items-center w-full py-6">
       
-      {/* SEARCH */}
+      {/* SEARCH */} {/*
       <div className={`${itemStyle} w-full lg:w-80`}>
         <Search className={iconStyle} />
         <input
@@ -79,7 +79,42 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
           className={inputStyle}
         />
         {isPending && <Loader2 className="absolute right-3 w-4 h-4 animate-spin text-primary" />}
-      </div>
+      </div> */}
+
+<div className={`${itemStyle} w-full lg:w-80`}>
+  <Search className={iconStyle} />
+
+  <input
+    value={search}
+    onChange={(e) => {
+      isTypingRef.current = true;
+      setSearch(e.target.value);
+    }}
+    placeholder="Tìm kiếm sản phẩm..."
+    className={inputStyle}
+  />
+
+  {/* 🔥 CLEAR BUTTON */}
+  {search && !isPending && (
+    <button
+      onClick={() => {
+        isTypingRef.current = false;
+        setSearch('');
+        updateFilters({ search: null }); // 🚀 push ngay
+      }}
+      className="absolute right-3 w-4 h-4 text-foreground/40 hover:text-primary transition"
+    >
+      <X className="w-4 h-4" />
+    </button>
+  )}
+
+  {/* LOADING */}
+  {isPending && (
+    <Loader2 className="absolute right-3 w-4 h-4 animate-spin text-primary" />
+  )}
+</div>
+
+
 
       <div className="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
 
