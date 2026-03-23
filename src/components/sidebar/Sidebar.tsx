@@ -6,7 +6,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const visibleLinks = sidebarLinks.filter((l) => l.showInSidebar !== false);
 
   return (
-    <div className="py-4">
+    <div className="py-4 z-50">
       <SidebarClient links={visibleLinks} onNavigate={onNavigate} />
     </div>
   );
