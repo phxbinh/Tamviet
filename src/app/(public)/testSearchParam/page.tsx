@@ -1,17 +1,16 @@
 // src/app/(public)/testSearchParam/page.tsx
 import Link from "next/link";
-import { ProductCardSlug } from "./_productCard/ProductCardSlug";
+import { ProductCardSlug } from "./_tachComponents/ProductCardSlug";
+import { Pagination } from "./_tachComponents/Pagination";
+import { SearchUI } from "./_tachComponents/SearchUI";
 import { LayoutGrid, Filter, ChevronRight, ChevronDown, Sparkles } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 
-import { Pagination } from "./_tachComponents/Pagination";
 
-import { SearchUI } from "./_tachComponents/SearchUI";
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+//export const dynamic = 'force-dynamic';
+//export const revalidate = 0;
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
 interface ProductType {
