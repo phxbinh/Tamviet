@@ -46,7 +46,7 @@ export function ExpandableSearch({
     <div className="relative h-full">
       {/* LOADING */}
       {isPending && (
-        <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[120] flex items-center justify-center">
+        <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[10] flex items-center justify-center">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <span className="text-[9px] font-bold uppercase tracking-widest animate-pulse">
