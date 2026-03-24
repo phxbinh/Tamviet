@@ -65,19 +65,19 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   }, [images]);
 
   return (
-    <div className="max-w-7xl mx-auto px-2 py-6 lg:py-20">
+    <div className="max-w-7xl mx-auto px-2 py-2 lg:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-24 items-start">
         
         {/* LEFT: IMAGE GALLERY */}
         <div className="lg:col-span-7">
           <div className="sticky top-24 group relative aspect-[4/5] overflow-hidden rounded-3xl bg-secondary/30">
-            <div className="absolute top-6 left-6 z-10">
+            <div className="absolute top-2 left-6 z-10">
               <span className="flex items-center gap-1.5 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-tighter shadow-sm">
                 <Zap className="w-3 h-3 fill-primary text-primary" /> New Arrival
               </span>
             </div>
             
-            <button className="absolute right-6 top-6 z-10 p-3 bg-white/90 backdrop-blur rounded-full shadow-sm hover:bg-primary hover:text-white text-muted-foreground transition-all">
+            <button className="absolute right-6 top-2 z-10 p-3 bg-white/90 backdrop-blur rounded-full shadow-sm hover:bg-primary hover:text-white text-muted-foreground transition-all">
               <Heart className="w-5 h-5" />
             </button>
 
