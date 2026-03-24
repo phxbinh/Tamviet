@@ -66,7 +66,7 @@ import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫ
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO";
 
 //export default
-async function HomePage_() {
+async function HomePage() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
   const sections = await getHomeSections(8);
 
