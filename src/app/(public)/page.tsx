@@ -62,12 +62,15 @@ const sections = [
 
 // app/page.tsx (Server Component)
 
-import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
+import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO";
 
 export default async function HomePage() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
-  const sections = await getHomeSections(8);
+  //const sections = await getHomeSections(8);
+
+  // Lấy theo thứ tự mãng truyền vào
+  const sections = await getHomeSections( ['coffee', 'clothes', 'pumps', 'beverage'], 8);
 
   return (
      <div className="space-y-16">
