@@ -45,7 +45,7 @@ Lỗi hiển thị không full FilterPanel
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <span className="text-[9px] font-bold uppercase tracking-widest animate-pulse">
-              Updating...
+              Loading...
             </span>
           </div>
         </div>
