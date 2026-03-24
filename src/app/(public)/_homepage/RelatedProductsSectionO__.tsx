@@ -35,7 +35,7 @@ export default function RelatedProductsSection({
   if (!relatedProducts || relatedProducts.length === 0) return null;
 
   return (
-  <section className="mt-5">
+  <section className="mt-1">
     <div className="flex justify-between items-end mb-2 px-4">
       {/* Cụm tiêu đề bên trái */}
       <div>
