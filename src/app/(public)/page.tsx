@@ -25,6 +25,7 @@ export default async function HomePage() {
   const productTypes = await getProductTypes();
 
   // 🔥 fetch song song
+/*
   const sections = await Promise.all(
     productTypes.map(async (type: any) => {
       const products = await getProductsByType(type.code, 8);
@@ -33,7 +34,9 @@ export default async function HomePage() {
         products
       };
     })
-  );
+  );*/
+
+const sections = await getProductsByType("coffee", 8);
 
   return (
     <div className="space-y-16">
