@@ -134,7 +134,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
       </div>
     )}
   </div>
-</div>
+
 
           <hr className="border-border/50" />
 
