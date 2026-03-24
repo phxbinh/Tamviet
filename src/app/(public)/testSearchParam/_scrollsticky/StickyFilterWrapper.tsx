@@ -26,7 +26,7 @@ export function StickyFilterWrapper({
   const isHidden = direction === "down";
 
   return (
-    <div className="sticky top-16 z-20 overflow-hidden">
+    <div className="sticky top-16 landscape:top-12 z-20 overflow-hidden">
       <div
         ref={ref}
         style={{
