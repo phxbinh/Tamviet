@@ -43,7 +43,7 @@ export async function getProductsByType(
     LEFT JOIN variant_data vd ON vd.product_id = p.id
     LEFT JOIN thumbnail t ON t.product_id = p.id
 
-    WHERE p.product_type_code = ${productTypeCode}
+    WHERE p.product_type = ${productTypeCode}
       AND p.status = 'active'
 
     ORDER BY p.created_at DESC
