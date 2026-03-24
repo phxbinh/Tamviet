@@ -46,7 +46,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
   }, [search]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 items-center w-full py-6">
+    <div className="flex flex-col lg:flex-row gap-2 items-center w-full py-3">
       {/* SEARCH FIELD */}
       <div className={`${itemStyle} w-full lg:w-80`}>
         <Search className={iconStyle} />
