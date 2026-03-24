@@ -36,7 +36,11 @@ export default async function HomePage() {
     })
   );*/
 
-const sections = await getProductsByType("coffee", 8);
+const sections = [
+  {
+    products: await getProductsByType("coffee", 8)
+  }
+];
 
   return (
     <div className="space-y-16">
