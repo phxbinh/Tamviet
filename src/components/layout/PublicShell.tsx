@@ -81,7 +81,7 @@ export default function PublicShell({
           </header>
 
           {/* MAIN CONTENT */}
-          <main className="flex-1 px-1 lg:px-8 pb-10 pt-4">
+          <main className="flex-1 px-1 lg:px-8 pb-10 pt-0">
             <div className="max-w-7xl mx-auto">
               {children}
             </div>
