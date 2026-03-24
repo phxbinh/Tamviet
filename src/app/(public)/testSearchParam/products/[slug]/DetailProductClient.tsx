@@ -64,8 +64,8 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   }, [images]);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-24 items-start">
+    <div className="max-w-7xl mx-auto px-2 py-6 lg:py-20">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-24 items-start">
         
         {/* LEFT: IMAGE GALLERY */}
         <div className="lg:col-span-7">
@@ -76,7 +76,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
               </span>
             </div>
             
-            <button className="absolute right-6 top-6 z-10 p-3 bg-white/90 backdrop-blur rounded-full shadow-sm hover:bg-primary hover:text-white transition-all">
+            <button className="absolute right-6 top-6 z-10 p-3 bg-white/90 backdrop-blur rounded-full shadow-sm hover:bg-primary hover:text-white text-muted-foreground transition-all">
               <Heart className="w-5 h-5" />
             </button>
 
@@ -95,7 +95,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
         {/* RIGHT: CONTENT */}
-        <div className="lg:col-span-5 space-y-8">
+        <div className="lg:col-span-5 space-y-2 md:space-y-8">
           {/* 1. Header & Price */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-primary font-bold text-[11px] uppercase tracking-widest">
