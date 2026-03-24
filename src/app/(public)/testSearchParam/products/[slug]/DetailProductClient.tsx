@@ -191,7 +191,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
 
           {/* 4. Action Buttons */}
-          <div className="space-y-4 mt-2 md:mt-4">
+          <div className="space-y-4 mt-6 md:mt-12">
             <button
               disabled={!selectedVariant || isAdding}
               onClick={() => { setIsAdding(true); setTimeout(() => setIsAdding(false), 2000); }}
