@@ -11,7 +11,18 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/free-mode';
 
-// ... (Interface giữ nguyên)
+interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  thumbnail_url?: string;
+  price_min: number;
+}
+
+interface RelatedProductsProps {
+  relatedProducts: Product[];
+  title?: string;
+}
 
 export default function RelatedProductsSection({ 
   relatedProducts, 
