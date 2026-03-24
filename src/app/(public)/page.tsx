@@ -72,20 +72,24 @@ export default async function HomePage() {
   // Lấy theo thứ tự mãng truyền vào
   //const sections = await getHomeSections_array( ['coffee', 'clothes', 'pumps', 'beverage'], 8);
 
-  return (
-     <div className="space-y-6">
- 
-      {sections.map((section) => (
-        <div key={section.type_code} className="mb-5">
-          <RelatedProductsSection 
-            title={section.type_name} 
-            relatedProducts={section.products} 
-            code={section.type_code}
-          />
-        </div>
-      ))}
-    </div>
-  );
+return (
+  <div className="space-y-6">
+    {sections.map((section) => (
+      // CẬP NHẬT DÒNG NÀY
+      <div 
+        key={section.type_code} 
+        className="mb-2 border border-[hsl(var(--border))] rounded-lg p-4 bg-[hsl(var(--card))]"
+      >
+        <RelatedProductsSection 
+          title={section.type_name} 
+          relatedProducts={section.products} 
+          code={section.type_code}
+        />
+      </div>
+    ))}
+  </div>
+);
+
 }
 
 
