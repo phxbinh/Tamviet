@@ -48,7 +48,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
       </div>
 
       {/* Info */}
-      <div className="p-4 md:p-5 text-center space-y-1.5 md:space-y-2">
+      <div className="p-2 md:p-5 text-center space-y-1.5 md:space-y-2">
         <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-x-1">
           <h3 className="text-[12px] md:text-sm font-medium text-foreground/90 line-clamp-1 transition-colors duration-500 group-hover:text-black">
             {name}
