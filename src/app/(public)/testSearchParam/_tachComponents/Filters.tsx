@@ -59,7 +59,7 @@ export function Filters({ productTypes }: { productTypes: ProductType[] }) {
         {isPending && <Loader2 className="absolute right-3 w-4 h-4 animate-spin text-primary" />}
       </div>
 
-      <div className="flex flex-wrap md:flex-nowrap gap-3 w-full lg:w-auto">
+      <div className="flex flex-col md:flex-nowrap gap-3 w-full lg:w-auto">
         {/* PRODUCT TYPE SELECT */}
         <div className={`${itemStyle} flex-1 lg:w-52`}>
           <Tag className={iconStyle} />
