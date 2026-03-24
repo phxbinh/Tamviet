@@ -1,4 +1,5 @@
-// Lấy theo dữ liệu truyền vào và sắp xếp theo A->export async function getHomeSections(
+// Lấy theo dữ liệu truyền vào và sắp xếp theo A->
+export async function getHomeSections(
   typeCodes?: string[], // Tham số tùy chọn, ví dụ: ['ao-thun', 'quan-jean']
   limitPerType = 8
 ): Promise<HomeSection[]> {
