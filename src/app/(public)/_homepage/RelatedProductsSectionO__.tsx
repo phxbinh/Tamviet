@@ -65,6 +65,7 @@ export default function RelatedProductsSection({
     </div>
 
     <div className="relative px-2 md:px-4 overflow-hidden">
+{/*
       <Swiper
         modules={[Navigation, Pagination, FreeMode, Autoplay]}
         spaceBetween={10}
@@ -96,7 +97,39 @@ export default function RelatedProductsSection({
           },
         }}
         className="related-swiper !pb-4"
-      >
+      > */}
+
+<Swiper
+  // 1. Xóa Pagination khỏi modules
+  modules={[Navigation, FreeMode, Autoplay]} 
+  spaceBetween={10}
+  slidesPerView={2.1}
+  freeMode={true}
+  grabCursor={true}
+  loop={relatedProducts.length > 4}
+  autoplay={{
+    delay: 4000,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  }}
+  navigation={{
+    nextEl: ".swiper-next-button",
+    prevEl: ".swiper-prev-button",
+  }}
+  // 2. XÓA HOẶC COMMENT ĐOẠN NÀY
+  /* pagination={{
+    clickable: true,
+    dynamicBullets: true,
+  }} 
+  */
+  breakpoints={{
+    768: { slidesPerView: 3, spaceBetween: 20 },
+    1024: { slidesPerView: 4, spaceBetween: 24 },
+  }}
+  // 3. Chỉnh lại padding bottom (vì không còn bullet nên không cần khoảng trống bên dưới)
+  className="related-swiper !pb-2" 
+>
+
         {relatedProducts.map((item) => (
           <SwiperSlide key={item.id} className="h-auto">
             <div className="border border-[hsl(var(--border))] rounded-xl p-2 md:p-4 bg-[hsl(var(--card))] hover:border-[hsl(var(--primary))] hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 h-full flex flex-col group overflow-hidden">
