@@ -5,6 +5,7 @@ import { Navigation, Pagination, FreeMode, Autoplay } from 'swiper/modules';
 import { ProductCardSlug } from "./ProductCardSlug";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -36,14 +37,31 @@ export default function RelatedProductsSection({
   return (
     <section className="mt-5">
       <div className="flex justify-between items-end mb-8 px-4">
+{/*
         <div>
           <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--foreground))]">
             {title}
-          </h2>
+          </h2> <Link href={`/testSearchParam?page=1&type=${code}`} View more...</Link>
           <div className="h-1 w-12 bg-[hsl(var(--primary))] mt-2"></div>
         </div>
         
         <div className="hidden md:flex gap-2">
+*/}
+
+<div className="flex items-baseline gap-3">
+  <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--foreground))]">
+    {title}
+  </h2> 
+  <Link 
+    href={`/testSearchParam?page=1&type=${code}`}
+    className="text-xs md:text-sm font-medium text-[hsl(var(--primary))] hover:underline transition-all"
+  >
+    Xem thêm...
+  </Link>
+</div>
+<div className="h-1 w-12 bg-[hsl(var(--primary))] mt-2"></div>
+
+
           <button className="swiper-prev-button p-2 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] transition-all disabled:opacity-20 active:scale-95">
             <ChevronLeft size={20} />
           </button>
