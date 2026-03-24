@@ -70,7 +70,7 @@ export default async function HomePage() {
   //const sections = await getHomeSections(8);
 
   // Lấy theo thứ tự mãng truyền vào
-  const sections = await getHomeSections( ['coffee', 'clothes', 'pumps', 'beverage'], 8);
+  const sections = await getHomeSections_array( ['coffee', 'clothes', 'pumps', 'beverage'], 8);
 
   return (
      <div className="space-y-16">
