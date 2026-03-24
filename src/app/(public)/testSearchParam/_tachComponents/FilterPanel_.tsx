@@ -2,7 +2,7 @@
 
 import { useTransition, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { FilterContent } from './FilterContent';
+import { FilterContent } from './FilterContent_';
 
 interface FilterPanelProps {
   isExpanded: boolean;
