@@ -59,7 +59,7 @@ const sections = [
 /*
 import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO";
-*/
+
 //export default
 async function HomePage_() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
@@ -67,11 +67,9 @@ async function HomePage_() {
 
   return (
      <div className="space-y-16">
-      {/* Duyệt qua từng "Section" dữ liệu */}
+ 
       {sections.map((section) => (
         <div key={section.type_code} className="mb-20">
-          {/* Tái sử dụng Component Swiper của bạn */}
-          {/* Ở đây mình đổi title động theo tên loại sản phẩm */}
           <RelatedProductsSection 
             title={section.type_name} 
             relatedProducts={section.products} 
@@ -81,7 +79,7 @@ async function HomePage_() {
     </div>
   );
 }
-
+*/
 
 
 
