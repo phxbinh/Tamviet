@@ -92,7 +92,7 @@ interface ProductCardPropsSlug {
 */
 
 
-export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
+export function ProductCardSlug__({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   const href = `/testSearchParam/products/${slug}`;
 
   // Hàm xử lý thêm vào giỏ hàng mà không chuyển trang
@@ -177,4 +177,82 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     </PrefetchLink>
   );
 }
+
+
+
+export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
+  const href = `/testSearchParam/products/${slug}`;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Added to cart:", id);
+  };
+
+  return (
+    <PrefetchLink
+      href={href}
+      // Thêm "active" vào className của cha để kích hoạt các con bên trong khi chạm
+      className="group active block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform"
+    >
+      
+      <div className="relative aspect-[4/5] overflow-hidden bg-[#fafafa]">
+        {thumbnail_url ? (
+          <img
+            src={thumbnail_url}
+            alt={name}
+            className="w-full h-full object-cover will-change-transform transition-transform duration-[2.5s] ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-foreground/10">
+            <ShoppingBag className="w-16 h-16 stroke-[0.3]" />
+          </div>
+        )}
+
+        {/* Nút Giỏ hàng - Fix lỗi không hiện trên mobile */}
+        <div className="absolute bottom-3 right-3 z-20">
+          <button
+            onClick={handleAddToCart}
+            // Giải pháp: Thêm group-active: để hiện ngay khi vừa chạm vào màn hình (Mobile)
+            // group-hover: dùng cho chuột (Desktop)
+            className="flex items-center justify-center bg-card/90 p-2.5 rounded-full shadow-md backdrop-blur-sm
+                     text-foreground 
+                     translate-y-4 opacity-0 scale-90
+                     group-hover:translate-y-0 group-hover:opacity-100 group-hover:scale-100
+                     group-active:translate-y-0 group-active:opacity-100 group-active:scale-100
+                     transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]
+                     active:scale-75 hover:bg-primary hover:text-white"
+          >
+            <ShoppingCart className="w-4 h-4 stroke-[1.5]" />
+          </button>
+        </div>
+
+        <div className="absolute inset-0 border border-border/50 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      </div>
+
+      <div className="p-2 md:p-5 text-center space-y-1.5 md:space-y-2">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-x-1">
+          <h3 className="text-[12px] md:text-sm font-medium text-foreground/80 line-clamp-1">
+            {name}
+          </h3>
+          {price_min && (
+             <span className="text-sm md:text-sm font-semibold tracking-tight text-foreground/90">
+                {new Intl.NumberFormat('vi-VN').format(price_min)}
+                <span className="ml-1 text-[10px] font-normal opacity-60 uppercase">vnd</span>
+             </span>
+          )}
+        </div>
+      </div>
+    </PrefetchLink>
+  );
+}
+
+
+
+
+
+
+
+
 
