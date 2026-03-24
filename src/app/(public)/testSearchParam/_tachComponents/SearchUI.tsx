@@ -19,7 +19,7 @@ export function SearchUI({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <>
+    <>   <div className="relative">
       {/* 🔥 Sticky */}
       <StickyFilterWrapper>
         <FilterTrigger
@@ -35,7 +35,7 @@ export function SearchUI({
         productTypes={productTypes}
         categoryTree={categoryTree}
         path={path}
-      />
+      /> </div>
     </>
   );
 }
