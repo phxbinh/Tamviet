@@ -93,23 +93,27 @@ interface ProductCardPropsSlug {
 */
 
 
+
+
 export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   const [isActive, setIsActive] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const href = `/testSearchParam/products/${slug}`;
 
-  // Xử lý khi chạm vào card trên mobile
-  const handleTouch = (e: React.MouseEvent | React.TouchEvent) => {
-    // Nếu là mobile (có touch), chúng ta sẽ chặn việc chuyển trang ở lần chạm đầu tiên để hiện icon
-    if ('ontouchstart' in window) {
-      if (!isActive) {
-        e.preventDefault();
-        setIsActive(true);
-      }
+  // Xử lý chạm trên Mobile
+  const handleTouch = (e: React.MouseEvent) => {
+    // Kiểm tra nếu là thiết bị có cảm ứng
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice && !isActive) {
+      // Lần chạm đầu: Hiện icon, chặn chuyển trang
+      e.preventDefault();
+      e.stopPropagation();
+      setIsActive(true);
     }
   };
 
-  // Click ra ngoài thì ẩn icon (Reset state)
+  // Click ra ngoài để ẩn icon
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
@@ -123,15 +127,19 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // Logic thêm vào giỏ hàng
     console.log("Added to cart:", id);
   };
 
   return (
-    <div ref={cardRef} className="relative w-full">
+    <div 
+      ref={cardRef} 
+      className="relative w-full"
+      // Chúng ta bắt sự kiện click tại đây để quản lý state
+      onClickCapture={handleTouch}
+    >
       <PrefetchLink
         href={href}
-        onClick={handleTouch}
-        // Kết hợp cả group-hover (cho máy tính) và isActive (cho mobile)
         className={`group block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform ${
           isActive ? "is-active" : ""
         }`}
@@ -155,11 +163,9 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
           <div className="absolute bottom-3 right-3 z-20">
             <button
               onClick={handleAddToCart}
-              // Hiển thị khi group-hover HOẶC khi state isActive = true
               className={`flex items-center justify-center bg-card/90 p-2.5 rounded-full shadow-md backdrop-blur-sm
                         text-foreground transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
                         active:scale-75 hover:bg-primary hover:text-white
-                        ${isActive || "group-hover:translate-y-0 group-hover:opacity-100 group-hover:scale-100"}
                         ${isActive 
                           ? "translate-y-0 opacity-100 scale-100" 
                           : "translate-y-4 opacity-0 scale-90 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-hover:scale-100"
@@ -193,6 +199,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     </div>
   );
 }
+
 
 
 
