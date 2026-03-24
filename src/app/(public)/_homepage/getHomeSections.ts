@@ -13,7 +13,7 @@ export interface HomeSection {
     price_min: number;
   }[];
 }
-
+/*
 export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
   try {
     // Truy vấn lấy danh mục và top N sản phẩm của mỗi danh mục bằng LATERAL JOIN
@@ -52,3 +52,41 @@ export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> 
     return [];
   }
 }
+*/
+
+export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
+  try {
+    const rows = await sql`
+      SELECT 
+        pt.code as type_code,
+        pt.name as type_name,
+        COALESCE(
+          (
+            SELECT json_agg(p_sub)
+            FROM (
+              SELECT 
+                p.id, 
+                p.name, 
+                p.slug, 
+                p.thumbnail_url,
+                (SELECT MIN(price) FROM product_variants WHERE product_id = p.id) as price_min
+              FROM products p
+              WHERE p.product_type = pt.code
+              -- Tạm thời comment dòng dưới nếu muốn check data tổng quát
+              AND p.status = 'active' 
+              ORDER BY p.created_at DESC
+              LIMIT ${limitPerType}
+            ) p_sub
+          ), 
+          '[]'
+        ) as products
+      FROM product_types
+    `;
+
+    return rows as HomeSection[];
+  } catch (err) {
+    console.error("getHomeSections error:", err);
+    return [];
+  }
+}
+
