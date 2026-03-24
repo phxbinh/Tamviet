@@ -76,7 +76,7 @@ export default async function HomePage() {
      <div className="space-y-6">
  
       {sections.map((section) => (
-        <div key={section.type_code} className="mb-20">
+        <div key={section.type_code} className="mb-5">
           <RelatedProductsSection 
             title={section.type_name} 
             relatedProducts={section.products} 
