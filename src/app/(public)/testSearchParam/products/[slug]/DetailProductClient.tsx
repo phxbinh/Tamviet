@@ -38,6 +38,7 @@ interface Product {
   id: string;
   name: string;
   description?: string;
+  short_description?: string;
 }
 
 interface ProductFull {
@@ -97,11 +98,21 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         {/* RIGHT: CONTENT */}
 <div className="lg:col-span-5 space-y-2">
   {/* Header Section */}
-  <div className="space-y-4">
+ <div className="space-y-4">
+  <div className="space-y-2">
     <h1 className="text-4xl xl:text-5xl font-medium tracking-tight text-foreground leading-[1.1]">
       {product.name}
     </h1>
+
+    {/* Mô tả ngắn */}
+    {product.short_description && (
+      <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-[90%]">
+        {product.short_description}
+      </p>
+    )}
   </div>
+</div>
+
 
   {/* Info Bar: Price & Stock (Fixed Height to prevent layout shift) */}
   <div className="min-h-[80px] flex flex-col justify-end">
