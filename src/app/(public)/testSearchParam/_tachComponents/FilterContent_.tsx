@@ -14,7 +14,8 @@ interface FilterContentProps {
   categoryTree: any[];
   path: string;
   isPending: boolean;
-  startTransition: (cb: () => void) => void; // 👈 thêm dòng này
+  startTransition: (cb: () => void) => void;
+  onNavigate?: () => void; // ✅ THÊM DÒNG NÀY
 }
 
 function buildCategoryHref(catPath: string) {
@@ -27,7 +28,8 @@ export function FilterContent({
   categoryTree,
   path,
   isPending,
-  startTransition
+  startTransition,
+  onNavigate
 }: FilterContentProps) {
   return (
     <div className="relative h-full overflow-y-auto no-scrollbar">
@@ -66,6 +68,7 @@ export function FilterContent({
           <PrefetchLink
             href="/testCategories"
             startTransition={startTransition}
+            onNavigate={onNavigate}
             className="text-[10px] font-bold text-foreground/30 hover:text-primary uppercase border-b border-transparent hover:border-primary transition-all pb-1"
           >
             Clear All
@@ -79,6 +82,7 @@ export function FilterContent({
               <PrefetchLink
                 href={buildCategoryHref(parent.category_path)}
                 startTransition={startTransition}
+                onNavigate={onNavigate}
                 className={`text-left text-[11px] font-black uppercase transition-all ${
                   path === parent.category_path
                     ? "text-primary border-l-2 border-primary pl-3"
@@ -94,6 +98,7 @@ export function FilterContent({
                     key={child.id}
                     href={buildCategoryHref(child.category_path)}
                     startTransition={startTransition}
+                    onNavigate={onNavigate}
                     className={`text-left text-[10px] flex items-center justify-between group ${
                       path === child.category_path
                         ? "text-primary font-bold italic"
