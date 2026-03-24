@@ -115,16 +115,15 @@ export default function RelatedProductsSection({
           </SwiperSlide>
         ))}
       </Swiper>
-
+{/*
       <style jsx global>{`
-        /* Giữ nguyên phần CSS của bạn */
         .swiper-pagination-lock { display: block; }
         .swiper-pagination-bullets.swiper-pagination-horizontal { bottom: 0 !important; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease-in-out; }
         .swiper-pagination-bullet { background: #e5e7eb !important; opacity: 1 !important; height: 8px !important; width: 8px !important; margin: 0 6px !important; border-radius: 99px !important; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), left 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important; will-change: width, transform; }
         .swiper-pagination-bullet-active { background: #000000 !important; width: 28px !important; transform: translateZ(0); }
         .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main { transform: scale(1) translateZ(0); }
         .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev, .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next { transform: scale(0.66) translateZ(0); }
-      `}</style>
+      `}</style> */}
     </div>
   </section>
 );
