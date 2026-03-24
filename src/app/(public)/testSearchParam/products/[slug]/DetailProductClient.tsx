@@ -123,7 +123,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           {/* 3. Status & SKU Info (Chỉ hiện khi đã chọn đủ) */}
           <div className="min-h-[60px]">
             {selectedVariant && (
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/40 border border-border/50 animate-in zoom-in-95">
+              <div className="flex items-center justify-between p-2 rounded-2xl bg-secondary/40 border border-border/50 animate-in">
                 <div className="flex items-center gap-3">
                   <div className={`w-2 h-2 rounded-full ${selectedVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
                   <span className="text-xs font-medium uppercase tracking-tight">
@@ -161,7 +161,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
               key={v.id}
               onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
               className={`
-                px-3 py-1.5 text-[11px] font-semibold transition-all rounded-md border
+                px-2 py-1.5 text-[11px] font-semibold transition-all rounded-md border
                 ${isActive 
                   ? "bg-foreground text-background border-foreground shadow-sm" 
                   : "bg-secondary/30 border-transparent hover:border-border text-foreground/60"
