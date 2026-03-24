@@ -38,6 +38,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-16">
       {sections.map(({ type, products }) => (
+        <h1> {type.name} </h1>
         <RelatedProductsSection
           relatedProducts={products}
         />
