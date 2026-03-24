@@ -95,7 +95,7 @@ export default function RelatedProductsSection({
             spaceBetween: 24,
           },
         }}
-        className="related-swiper !pb-14"
+        className="related-swiper !pb-4"
       >
         {relatedProducts.map((item) => (
           <SwiperSlide key={item.id} className="h-auto">
