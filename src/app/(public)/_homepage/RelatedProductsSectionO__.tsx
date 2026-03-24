@@ -64,7 +64,7 @@ export default function RelatedProductsSection({
       </div>
     </div>
 
-    <div className="relative px-2 md:px-4 overflow-hidden">
+    <div className="relative px-0 md:px-0 overflow-hidden">
 {/*
       <Swiper
         modules={[Navigation, Pagination, FreeMode, Autoplay]}
