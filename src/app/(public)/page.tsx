@@ -15,7 +15,7 @@ export default function PublicPage() {
 
 
 // app/page.tsx
-
+/*
 import RelatedProductsSection from "./_homepage/RelatedProductsSection";
 import { getProductsByType } from "./_homepage/getProductsByType";
 import { getProductTypes } from "./_homepage/getProductTypes";
@@ -23,9 +23,12 @@ import { getProductTypes } from "./_homepage/getProductTypes";
 export default async function HomePage() {
 
   const productTypes = await getProductTypes();
+*/
+
+
 
   // 🔥 fetch song song
-/*
+/* Không chạy được
   const sections = await Promise.all(
     productTypes.map(async (type: any) => {
       const products = await getProductsByType(type.code, 8);
@@ -36,6 +39,8 @@ export default async function HomePage() {
     })
   );*/
 
+
+/*
 const sections = [
   {
     products: await getProductsByType("coffee", 8)
@@ -52,3 +57,33 @@ const sections = [
     </div>
   );
 }
+*/
+
+// app/page.tsx (Server Component)
+import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
+import RelatedProductsSection from "./_homepage/RelateProductSectionO";
+
+export default async function HomePage() {
+  // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
+  const sections = await getHomeSections(8);
+
+  return (
+     <div className="space-y-16">
+      {/* Duyệt qua từng "Section" dữ liệu */}
+      {sections.map((section) => (
+        <div key={section.type_code} className="mb-20">
+          {/* Tái sử dụng Component Swiper của bạn */}
+          {/* Ở đây mình đổi title động theo tên loại sản phẩm */}
+          <RelatedProductsSection 
+            title={section.type_name} 
+            relatedProducts={section.products} 
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+
+
