@@ -94,40 +94,34 @@ interface ProductCardPropsSlug {
 
 
 
-
 export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   const [isActive, setIsActive] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const href = `/testSearchParam/products/${slug}`;
 
-  // Xử lý chạm trên Mobile
-  const handleTouch = (e: React.MouseEvent) => {
-    // Kiểm tra nếu là thiết bị có cảm ứng
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
-    if (isTouchDevice && !isActive) {
-      // Lần chạm đầu: Hiện icon, chặn chuyển trang
-      e.preventDefault();
-      e.stopPropagation();
-      setIsActive(true);
-    }
+  // 1. Dùng TouchStart để icon hiện lên NGAY LẬP TỨC khi ngón tay vừa chạm xuống
+  const handleTouchStart = () => {
+    setIsActive(true);
   };
 
-  // Click ra ngoài để ẩn icon
+  // 2. Click ra ngoài để reset trạng thái
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
         setIsActive(false);
       }
     };
+    document.addEventListener("touchstart", handleClickOutside);
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Logic thêm vào giỏ hàng
     console.log("Added to cart:", id);
   };
 
@@ -135,14 +129,11 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     <div 
       ref={cardRef} 
       className="relative w-full"
-      // Chúng ta bắt sự kiện click tại đây để quản lý state
-      onClickCapture={handleTouch}
+      onTouchStart={handleTouchStart} // Kích hoạt ngay khi chạm
     >
       <PrefetchLink
         href={href}
-        className={`group block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform ${
-          isActive ? "is-active" : ""
-        }`}
+        className="group block w-full relative overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] will-change-transform"
       >
         {/* Container Ảnh */}
         <div className="relative aspect-[4/5] overflow-hidden bg-[#fafafa]">
@@ -159,7 +150,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
             </div>
           )}
 
-          {/* Nút Giỏ hàng */}
+          {/* Nút Giỏ hàng - Hiện theo Hover (Desktop) hoặc Active State (Mobile) */}
           <div className="absolute bottom-3 right-3 z-20">
             <button
               onClick={handleAddToCart}
@@ -187,10 +178,16 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
               ${isActive ? "text-foreground" : "text-foreground/80 group-hover:text-foreground"}`}>
               {name}
             </h3>
-            {price_min && (
-              <span className="text-sm font-semibold tracking-tight text-foreground/90">
+            {price_min ? (
+              <span className="text-sm md:text-sm font-semibold tracking-tight text-foreground/80 md:text-foreground">
                 {new Intl.NumberFormat('vi-VN').format(price_min)}
-                <span className="ml-1 text-[10px] font-normal opacity-60 uppercase">vnd</span>
+                <span className="ml-1 text-[10px] font-normal text-muted-foreground uppercase">
+                  vnd
+                </span>
+              </span>
+            ) : (
+              <span className="text-[10px] md:text-xs font-medium text-muted-foreground/50 italic tracking-wider">
+                Price upon request
               </span>
             )}
           </div>
@@ -199,6 +196,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     </div>
   );
 }
+
 
 
 
