@@ -177,7 +177,7 @@ export default async function ProductPage({
 
       <Breadcrumb items={breadcrumbs} />
 
-      <h1>{data.product.name}</h1>
+      {/* <h1>{data.product.name}</h1> */}
 
       <ProductDetailClient data={data} />
 
