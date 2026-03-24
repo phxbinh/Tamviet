@@ -14,7 +14,7 @@ export default function AdminShell({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-full w-full overflow-hidden">
+    <div className="flex min-h-screen w-full overflow-hidden">
       {/* Sidebar cho Desktop */}
       <div className="hidden md:flex h-full">
         <AdminSidebar user={user} />
