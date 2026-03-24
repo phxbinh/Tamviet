@@ -65,8 +65,7 @@ const sections = [
 import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO";
 
-//export default
-async function HomePage() {
+export default async function HomePage() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
   const sections = await getHomeSections(8);
 
