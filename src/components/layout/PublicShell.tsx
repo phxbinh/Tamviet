@@ -8,7 +8,6 @@ import { Toast } from "@/components/Toast";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
-
 export default function PublicShell({
   children,
 }: {
@@ -24,36 +23,33 @@ export default function PublicShell({
         <aside
           className={`
             fixed inset-y-0 left-0 z-50 w-64 
-            bg-card/70 backdrop-blur-xl border-r border-border
+            bg-card/80 backdrop-blur-2xl border-r border-border
             transition-transform duration-300 ease-in-out
-            /* Trên Desktop (lg trở lên): Hiện cố định, không dùng transform */
             lg:relative lg:translate-x-0
-            /* Trên Mobile & Tablet (kể cả xoay ngang): Ẩn bằng transform */
             ${isOpen ? "translate-x-0" : "-translate-x-full"}
           `}
         >
-          <div className="h-16 flex items-center justify-between px-6 border-b border-border">
+          {/* Header của Sidebar - Cũng nên mỏng lại khi xoay ngang */}
+          <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border transition-all">
             <Link href="/">
-              <span className="font-bold tracking-tighter text-foreground">
+              <span className="font-bold tracking-tighter text-foreground text-sm uppercase">
                 TÂM<span className="text-neon-cyan"> VIỆT</span>
               </span>
             </Link>
-
-            {/* Nút đóng chỉ hiện trên mobile/tablet */}
             <button 
               onClick={() => setIsOpen(false)} 
-              className="lg:hidden p-2 hover:bg-foreground/5 rounded-full transition-colors"
+              className="lg:hidden p-2 hover:bg-foreground/5 rounded-full"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
 
-          <div className="h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
+          <div className="h-[calc(100vh-4rem)] landscape:h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
             <Sidebar onNavigate={() => setIsOpen(false)} />
           </div>
         </aside>
 
-        {/* BACKDROP - Chỉ hiện trên mobile/tablet khi menu mở */}
+        {/* BACKDROP */}
         {isOpen && (
           <div
             onClick={() => setIsOpen(false)}
@@ -62,25 +58,30 @@ export default function PublicShell({
         )}
 
         {/* MAIN CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0">
 
-          {/* HEADER */}
-          <header className="sticky top-0 z-30 h-16 flex items-center px-4 border-b border-border bg-background/70 backdrop-blur-md">
-            {/* Nút Burger - Chỉ hiện trên lg:hidden (Mobile & Tablet xoay ngang) */}
+          {/* HEADER - Tối ưu sticky cho landscape */}
+          <header className="sticky top-0 z-30 
+                           h-16 landscape:h-12 
+                           flex items-center px-4 
+                           border-b border-border 
+                           bg-background/80 backdrop-blur-md 
+                           transition-all duration-300">
             <button
               onClick={() => setIsOpen(true)}
-              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md transition-colors"
+              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
             
-            <div className="flex-1" />
-            
-            {/* Có thể thêm Breadcrumb hoặc User Profile ở đây */}
+            {/* Logo nhỏ hiện ở Header khi Menu ẩn (tùy chọn) */}
+            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
+              Tâm Việt Platform
+            </div>
           </header>
 
           {/* MAIN CONTENT */}
-          <main className="flex-1 px-4 lg:px-8 pb-4 pt-2 overflow-y-auto">
+          <main className="flex-1 px-4 lg:px-8 pb-10 pt-4">
             <div className="max-w-7xl mx-auto">
               {children}
             </div>
@@ -91,13 +92,14 @@ export default function PublicShell({
 
       <Toast />
 
-      {/* Theme Toggle nổi */}
-      <div className="fixed bottom-6 right-6 z-[100]">
+      {/* Theme Toggle - Ẩn bớt khi xoay ngang để đỡ vướng nội dung */}
+      <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
         <ThemeToggle />
       </div>
     </>
   );
 }
+
 
 
 
