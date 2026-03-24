@@ -40,7 +40,7 @@ const sections = await getProductsByType("coffee", 8);
 
   return (
     <div className="space-y-16">
-      {sections.map(({ type, products }) => (
+      {sections.map(({ products }) => (
         <RelatedProductsSection
           relatedProducts={products}
         />
