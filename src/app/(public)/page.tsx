@@ -80,6 +80,7 @@ export default async function HomePage() {
           <RelatedProductsSection 
             title={section.type_name} 
             relatedProducts={section.products} 
+            code={section.type_code}
           />
         </div>
       ))}
