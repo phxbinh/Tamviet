@@ -19,7 +19,7 @@ export function SearchUI({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <>   <div className="relative">
+    <>
       {/* 🔥 Sticky */}
       <StickyFilterWrapper>
         <FilterTrigger
@@ -27,7 +27,7 @@ export function SearchUI({
           setIsExpanded={setIsExpanded}
         />
       </StickyFilterWrapper>
-
+   <div className="relative">
       {/* 🔥 Panel */}
       <FilterPanel
         isExpanded={isExpanded}
