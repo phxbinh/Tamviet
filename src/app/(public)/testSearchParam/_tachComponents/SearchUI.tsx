@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FilterTrigger } from './FilterTrigger';
-import { FilterPanel } from './FilterPanel';
+import { FilterPanel } from './FilterPanel_';
 import { StickyFilterWrapper } from '../_scrollsticky/StickyFilterWrapper';
 
 interface Props {
