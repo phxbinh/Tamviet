@@ -2,12 +2,13 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
-export interface Product {
+
+interface Product {
   id: string;
-  name: string;
   slug: string;
+  name: string;
   thumbnail_url?: string;
-  price_min?: number;
+  price_min: number;
 }
 
 export async function getProductsByType(
