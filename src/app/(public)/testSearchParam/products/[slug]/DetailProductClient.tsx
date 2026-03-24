@@ -98,9 +98,6 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 <div className="lg:col-span-5 space-y-2">
   {/* Header Section */}
   <div className="space-y-4">
-    <div className="flex items-center gap-2 text-primary font-bold text-[11px] uppercase tracking-widest">
-      <Star className="w-3 h-3 fill-current" /> Premium Quality
-    </div>
     <h1 className="text-4xl xl:text-5xl font-medium tracking-tight text-foreground leading-[1.1]">
       {product.name}
     </h1>
