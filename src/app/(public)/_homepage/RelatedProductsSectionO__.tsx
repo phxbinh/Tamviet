@@ -36,7 +36,7 @@ export default function RelatedProductsSection({
 
   return (
   <section className="mt-5">
-    <div className="flex justify-between items-end mb-8 px-4">
+    <div className="flex justify-between items-end mb-2 px-4">
       {/* Cụm tiêu đề bên trái */}
       <div>
         <div className="flex items-baseline gap-3">
