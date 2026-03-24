@@ -2,7 +2,7 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
-export interface ProductPreview {
+export interface Product {
   id: string;
   name: string;
   slug: string;
@@ -13,7 +13,7 @@ export interface ProductPreview {
 export async function getProductsByType(
   productTypeCode: string,
   limit = 8
-): Promise<ProductPreview[]> {
+): Promise<Product[]> {
   const rows = await sql`
     WITH variant_data AS (
       SELECT
@@ -49,5 +49,5 @@ export async function getProductsByType(
     LIMIT ${limit};
   `;
 
-  return rows as ProductPreview[];
+  return rows as Product[];
 }
