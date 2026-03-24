@@ -95,45 +95,47 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
         {/* RIGHT: CONTENT */}
-        <div className="lg:col-span-5 space-y-2 md:space-y-8">
-          {/* 1. Header & Price */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-primary font-bold text-[11px] uppercase tracking-widest">
-              <Star className="w-3 h-3 fill-current" /> Premium Quality
-            </div>
-            <h1 className="text-4xl xl:text-5xl font-medium tracking-tight text-foreground leading-[1.1]">
-              {product.name}
-            </h1>
-            
-            <div className="flex items-baseline gap-3 pt-2">
-              {selectedVariant ? (
-                <div className="flex items-baseline gap-1.5 animate-in fade-in slide-in-from-bottom-2">
-                  <span className="text-3xl font-semibold tracking-tight">
-                    {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
-                  </span>
-                  <span className="text-sm font-medium text-muted-foreground uppercase">VND</span>
-                </div>
-              ) : (
-                <span className="text-2xl font-light text-muted-foreground/60">
-                  Select options for price
-                </span>
-              )}
-            </div>
-          </div>
-          {/* 3. Status & SKU Info (Chỉ hiện khi đã chọn đủ) */}
-          <div className="min-h-[60px]">
-            {selectedVariant && (
-              <div className="flex items-center justify-between p-2 rounded-2xl bg-secondary/40 border border-border/50 animate-in">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${selectedVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-                  <span className="text-xs font-medium uppercase tracking-tight">
-                    {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock} available)` : 'Out of Stock'}
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-muted-foreground uppercase">SKU: {selectedVariant.sku}</span>
-              </div>
-            )}
-          </div>
+<div className="lg:col-span-5 space-y-2">
+  {/* Header Section */}
+  <div className="space-y-4">
+    <div className="flex items-center gap-2 text-primary font-bold text-[11px] uppercase tracking-widest">
+      <Star className="w-3 h-3 fill-current" /> Premium Quality
+    </div>
+    <h1 className="text-4xl xl:text-5xl font-medium tracking-tight text-foreground leading-[1.1]">
+      {product.name}
+    </h1>
+  </div>
+
+  {/* Info Bar: Price & Stock (Fixed Height to prevent layout shift) */}
+  <div className="min-h-[80px] flex flex-col justify-end">
+    {selectedVariant ? (
+      <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/40 border border-border/50 animate-in fade-in slide-in-from-bottom-2">
+        {/* Price */}
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-3xl font-semibold tracking-tight">
+            {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
+          </span>
+          <span className="text-sm font-medium text-muted-foreground uppercase">VND</span>
+        </div>
+
+        {/* Stock Status (SKU removed as requested) */}
+        <div className="flex items-center gap-2.5">
+          <div className={`w-2 h-2 rounded-full ${selectedVariant.stock > 0 ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground/80">
+            {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock})` : 'Out of Stock'}
+          </span>
+        </div>
+      </div>
+    ) : (
+      <div className="pb-4">
+        <span className="text-xl font-light text-muted-foreground/60 italic">
+          Select options to see price and availability
+        </span>
+      </div>
+    )}
+  </div>
+</div>
+
           <hr className="border-border/50" />
 
 {/* 2. Attributes Selection (Ultra Compact Version) */}
