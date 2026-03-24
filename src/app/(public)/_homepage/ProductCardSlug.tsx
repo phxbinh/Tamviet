@@ -119,11 +119,30 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     };
   }, []);
 
+/*
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     console.log("Added to cart:", id);
   };
+*/
+
+const handleAddToCart = (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // Hiệu ứng rung điện thoại (chỉ hoạt động trên thiết bị thật)
+  if (typeof window !== "undefined" && window.navigator.vibrate) {
+    window.navigator.vibrate(10); // Rung cực nhẹ trong 10 miligiây
+  }
+
+  console.log("Added to cart:", id);
+  // Logic thêm vào giỏ hàng của bạn...
+};
+
+
+
+
 
   return (
     <div 
