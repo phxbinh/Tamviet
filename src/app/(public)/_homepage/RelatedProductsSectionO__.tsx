@@ -102,22 +102,48 @@ export default function RelatedProductsSection({
           ))}
         </Swiper>
 
-        <style jsx global>{`
-          .swiper-pagination-bullet {
-            background: hsl(var(--border)) !important;
-            height: 4px !important; /* Thu nhỏ bullet một chút cho cân đối mobile */
-            width: 4px !important;
-          }
-          .swiper-pagination-bullet-active {
-            background: hsl(var(--primary)) !important;
-            width: 16px !important;
-          }
-          /* Đảm bảo Swiper không bị cắt shadow khi hover */
-          .related-swiper {
-            padding-top: 10px !important;
-            margin-top: -10px !important;
-          }
-        `}</style>
+<style jsx global>{`
+  .swiper-pagination-lock {
+    display: block;
+  }
+
+  .swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease-in-out;
+  }
+
+  .swiper-pagination-bullet {
+    background: #e5e7eb !important;
+    opacity: 1 !important;
+    height: 8px !important;
+    width: 8px !important;
+    margin: 0 6px !important;
+    border-radius: 99px !important;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.5s ease,
+                transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: width, transform;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: #000000 !important;
+    width: 28px !important;
+    transform: translateZ(0);
+  }
+
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main {
+    transform: scale(1) translateZ(0);
+  }
+  
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev,
+  .swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next {
+    transform: scale(0.66) translateZ(0);
+  }
+`}</style>
       </div>
     </section>
   );
