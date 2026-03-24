@@ -137,7 +137,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           <hr className="border-border/50" />
 
 {/* 2. Attributes Selection (Ultra Compact Version) */}
-<div className="space-y-4"> {/* Giảm khoảng cách giữa các nhóm thuộc tính */}
+<div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(160px,1fr))]"> {/* Giảm khoảng cách giữa các nhóm thuộc tính */}
   {attributes.map((attr) => (
     <div key={attr.id} className="space-y-2.5">
       {/* Label & Selected Value trên cùng 1 hàng, font nhỏ hơn */}
