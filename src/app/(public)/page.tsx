@@ -78,7 +78,7 @@ return (
       // CẬP NHẬT DÒNG NÀY
       <div 
         key={section.type_code} 
-        className="mb-2 border border-[hsl(var(--border))] rounded-lg p-4 bg-[hsl(var(--card))]"
+        className="mb-2 mt-2 border border-[hsl(var(--border))] rounded-lg p-4 bg-[hsl(var(--card))]"
       >
         <RelatedProductsSection 
           title={section.type_name} 
