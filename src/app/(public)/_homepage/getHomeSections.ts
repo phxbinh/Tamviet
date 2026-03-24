@@ -83,6 +83,8 @@ export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> 
       FROM product_types
     `;
 
+console.log("Dữ liệu thô từ SQL:", JSON.stringify(rows, null, 2));
+
     return rows as HomeSection[];
   } catch (err) {
     console.error("getHomeSections error:", err);
