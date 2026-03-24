@@ -6,8 +6,8 @@ export interface ProductPreview {
   id: string;
   name: string;
   slug: string;
-  thumbnail_url: string | null;
-  price_min: number | null;
+  thumbnail_url?: string;
+  price_min?: number;
 }
 
 export async function getProductsByType(
