@@ -54,6 +54,7 @@ export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> 
 }
 */
 
+/* gemini
 export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
   try {
     const rows = await sql`
@@ -91,4 +92,64 @@ console.log("Dữ liệu thô từ SQL:", JSON.stringify(rows, null, 2));
     return [];
   }
 }
+*/
+
+
+
+
+
+
+export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
+  try {
+    const rows = await sql`
+      SELECT 
+        pt.code as type_code,
+        pt.name as type_name,
+        COALESCE(
+          (
+            SELECT json_agg(p_sub)
+            FROM (
+              SELECT 
+                p.id, 
+                p.name, 
+                p.slug, 
+                p.thumbnail_url,
+                (
+                  SELECT MIN(pv.price) 
+                  FROM product_variants pv 
+                  WHERE pv.product_id = p.id 
+                    AND pv.is_active = true
+                ) as price_min
+              FROM products p
+              WHERE p.product_type = pt.code      -- Khớp mã loại
+                AND p.product_type != 'default'  -- Loại bỏ sản phẩm thuộc loại default
+                AND p.status = 'active'          -- Chỉ lấy sản phẩm đang bán
+              ORDER BY p.created_at DESC
+              LIMIT ${limitPerType}
+            ) p_sub
+          ), 
+          '[]'
+        ) as products
+      FROM product_types pt
+      WHERE pt.code != 'default'                 -- Loại bỏ danh mục có mã là default
+      ORDER BY pt.name ASC;
+    `;
+
+    // Lọc bỏ những Section nào không có sản phẩm để giao diện không bị trống
+    const sections = (rows as HomeSection[]).filter(
+      (section) => section.products && section.products.length > 0
+    );
+
+    return sections;
+  } catch (err) {
+    console.error("getHomeSections error:", err);
+    return [];
+  }
+}
+
+
+
+
+
+
 
