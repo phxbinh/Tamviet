@@ -22,17 +22,19 @@ interface Product {
 interface RelatedProductsProps {
   relatedProducts: Product[];
   title?: string;
+  code?: string;
 }
 
 export default function RelatedProductsSection({ 
   relatedProducts, 
-  title = "Sản phẩm tương tự"
+  title = "Sản phẩm tương tự",
+  code
 }: RelatedProductsProps) {
   
   if (!relatedProducts || relatedProducts.length === 0) return null;
 
   return (
-    <section className="mt-16">
+    <section className="mt-5">
       <div className="flex justify-between items-end mb-8 px-4">
         <div>
           <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--foreground))]">
