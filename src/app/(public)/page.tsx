@@ -15,7 +15,7 @@ export default function PublicPage() {
 
 
 // app/page.tsx
-
+/*
 import RelatedProductsSection from "./_homepage/RelatedProductsSection";
 import { getProductsByType } from "./_homepage/getProductsByType";
 import { getProductTypes } from "./_homepage/getProductTypes";
@@ -23,20 +23,6 @@ import { getProductTypes } from "./_homepage/getProductTypes";
 export default async function HomePage() {
 
   const productTypes = await getProductTypes();
-
-  // 🔥 fetch song song
-/* Không chạy được
-  const sections = await Promise.all(
-    productTypes.map(async (type: any) => {
-      const products = await getProductsByType(type.code, 8);
-      return {
-        type,
-        products
-      };
-    })
-  );*/
-
-
 const sections = [
   {
     products: await getProductsByType("pumps", 8)
@@ -53,10 +39,29 @@ const sections = [
     </div>
   );
 }
+*/
+  // 🔥 fetch song song
+/* Không chạy được
+  const sections = await Promise.all(
+    productTypes.map(async (type: any) => {
+      const products = await getProductsByType(type.code, 8);
+      return {
+        type,
+        products
+      };
+    })
+  );*/
+
+
+
+
+
+
+
 
 
 // app/page.tsx (Server Component)
-/*
+
 import { getHomeSections } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO";
 
@@ -79,7 +84,7 @@ async function HomePage_() {
     </div>
   );
 }
-*/
+
 
 
 
