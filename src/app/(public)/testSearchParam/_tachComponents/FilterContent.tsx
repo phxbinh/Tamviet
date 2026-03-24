@@ -25,6 +25,7 @@ export function FilterContent({
 }: FilterContentProps) {
   return (
     <div className="relative h-full overflow-y-auto no-scrollbar">
+{/* Lỗi hiển thị không full FilterPanel
       {isPending && (
         <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[10] flex items-center justify-center">
           <div className="flex flex-col items-center gap-2">
@@ -35,7 +36,7 @@ export function FilterContent({
           </div>
         </div>
       )}
-
+*/}
       <div className="mb-10">
         <Filters productTypes={productTypes} />
       </div>
@@ -63,8 +64,8 @@ export function FilterContent({
             Clear All
           </button>
         </div>
-
-        <div className="space-y-6">
+{/*
+        <div className="space-y-3">
           {categoryTree.map((parent: any) => (
             <div key={parent.id} className="flex flex-col gap-4">
 
@@ -99,6 +100,51 @@ export function FilterContent({
             </div>
           ))}
         </div>
+*/}
+
+
+<div className="grid grid-cols-2 md:grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
+  {categoryTree.map((parent: any) => (
+    <div key={parent.id} className="flex flex-col gap-4">
+
+      <button
+        onClick={() => handleCategoryClick(parent.category_path)}
+        className={`text-left text-[11px] font-black uppercase transition-all ${
+          path === parent.category_path
+            ? "text-primary border-l-2 border-primary pl-3"
+            : "text-foreground/90 hover:text-primary"
+        }`}
+      >
+        {parent.name}
+      </button>
+
+      <div className="flex flex-col gap-3 border-l border-border/20 pl-4">
+        {parent.children?.map((child: any) => (
+          <button
+            key={child.id}
+            onClick={() => handleCategoryClick(child.category_path)}
+            className={`text-left text-[10px] flex items-center justify-between group ${
+              path === child.category_path
+                ? "text-primary font-bold italic"
+                : "text-foreground/50 hover:text-primary"
+            }`}
+          >
+            <span>{child.name}</span>
+            <ChevronRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all" />
+          </button>
+        ))}
+      </div>
+
+    </div>
+  ))}
+</div>
+
+
+
+
+
+
+
 
         <div className="h-10" />
       </div>
