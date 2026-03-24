@@ -63,7 +63,7 @@ const sections = [
 // app/page.tsx (Server Component)
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
-import RelatedProductsSection from "./_homepage/RelatedProductsSectionO_";
+import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
 
 export default async function HomePage() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
