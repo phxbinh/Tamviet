@@ -1,4 +1,19 @@
-// Lấy theo dữ liệu truyền vào và sắp xếp theo A->
+// Lấy theo dữ liệu truyền vào và sắp xếp theo A->Z
+import "server-only";
+import { sql } from "@/lib/neon/sql";
+
+export interface HomeSection {
+  type_code: string;
+  type_name: string;
+  products: {
+    id: string;
+    slug: string;
+    name: string;
+    thumbnail_url: string;
+    price_min: number;
+  }[];
+}
+
 export async function getHomeSections(
   typeCodes?: string[], // Tham số tùy chọn, ví dụ: ['ao-thun', 'quan-jean']
   limitPerType = 8
