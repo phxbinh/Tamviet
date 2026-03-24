@@ -136,7 +136,7 @@ const handleAddToCart = (e: React.MouseEvent) => {
     window.navigator.vibrate(10); // Rung cực nhẹ trong 10 miligiây
   }
 
-  console.log("Added to cart:", id);
+  alert("Added to cart: " + id);
   // Logic thêm vào giỏ hàng của bạn...
 };
 
