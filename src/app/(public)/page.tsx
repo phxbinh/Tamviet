@@ -39,7 +39,7 @@ export default async function HomePage() {
 
 const sections = [
   {
-    products: await getProductsByType("clothes", 8)
+    products: await getProductsByType("pumps", 8)
   }
 ];
 
