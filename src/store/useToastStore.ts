@@ -1,3 +1,4 @@
+/*
 import { create } from 'zustand';
 
 type ToastType = 'success' | 'error' | 'info';
@@ -32,3 +33,50 @@ export const useToastStore = create<ToastState>((set) => ({
 
   hideToast: () => set({ isVisible: false }),
 }));
+*/
+
+
+
+// store/useToastStore.ts
+import { create } from 'zustand';
+
+type ToastType = 'success' | 'error' | 'info';
+
+interface ToastItem {
+  id: string;
+  message: string;
+  type: ToastType;
+}
+
+interface ToastState {
+  toasts: ToastItem[];
+  showToast: (message: string, type?: ToastType) => void;
+  removeToast: (id: string) => void;
+}
+
+export const useToastStore = create<ToastState>((set) => ({
+  toasts: [],
+
+  showToast: (message, type = 'success') => {
+    const id = Math.random().toString(36).substring(2, 9);
+    
+    // Thêm toast mới vào mảng
+    set((state) => ({
+      toasts: [...state.toasts, { id, message, type }],
+    }));
+
+    // Tự động xóa sau 3.5s
+    setTimeout(() => {
+      set((state) => ({
+        toasts: state.toasts.filter((t) => t.id !== id),
+      }));
+    }, 3500);
+  },
+
+  removeToast: (id) => 
+    set((state) => ({
+      toasts: state.toasts.filter((t) => t.id !== id),
+    })),
+}));
+
+
