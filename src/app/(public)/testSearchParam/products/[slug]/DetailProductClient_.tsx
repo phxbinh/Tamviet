@@ -73,7 +73,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
             <div 
               ref={scrollRef}
               onScroll={handleScroll}
-              className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide touch-pan-x"
+              className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
             >
               {images.length > 0 ? images.map((img) => (
                 <div key={img.id} className="h-full w-full flex-none snap-center">
