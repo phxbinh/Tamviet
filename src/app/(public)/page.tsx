@@ -60,11 +60,17 @@ const sections = [
 
 
 
+
+
 // app/page.tsx (Server Component)
+
+// Thêm 2 dòng này lên trên cùng file
+export const dynamic = 'force-static'; 
+export const revalidate = 3600; 
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
-export const revalidate = 60;
+
 
 export default async function HomePage() {
   // Lấy toàn bộ data (gồm tên loại và danh sách sản phẩm của loại đó)
