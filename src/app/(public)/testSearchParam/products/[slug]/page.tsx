@@ -10,7 +10,8 @@
 import type { Metadata } from "next";
 
 //import ProductDetailClient from "./DetailProductClient";
-import ProductDetailClient from "./DetailProductClient_";
+//import ProductDetailClient from "./DetailProductClient_";
+import ProductDetailClient from "./_components/DetailProductClient";
 
 import { headers } from "next/headers";
 
