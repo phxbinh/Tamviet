@@ -132,7 +132,7 @@ export default function RelatedProductsSection({
 
         {relatedProducts.map((item) => (
           <SwiperSlide key={item.id} className="h-auto">
-            <div className="border border-[hsl(var(--border))] rounded-xl p-2 md:p-4 bg-[hsl(var(--card))] hover:border-[hsl(var(--primary))] hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 h-full flex flex-col group overflow-hidden">
+            <div className="border border-[hsl(var(--border))] rounded-xl p-0 md:p-0 bg-[hsl(var(--card))] hover:border-[hsl(var(--primary))] hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 h-full flex flex-col group overflow-hidden">
               <ProductCardSlug
                 id={item.id}
                 slug={item.slug}
