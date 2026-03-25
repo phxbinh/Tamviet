@@ -4,6 +4,8 @@ const OFFLINE_URL = '/offline';
 const ASSETS_TO_CACHE = [
   '/',
   '/offline',
+  '/test',
+  '/testSearchParam',
   '/manifest.json',
   '/icon-512.png',
   '/apple-icon.png', // Nên thêm icon này để hiển thị đúng trên iPhone
