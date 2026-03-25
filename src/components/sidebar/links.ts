@@ -24,35 +24,10 @@ export const sidebarLinks: SidebarLink[] = [
       { name: 'TodoImageGrok', href: '/todoImageGrok' },
     ],
   },
-/*
-  {
-    name: 'Products Management',
-    showInSidebar: true,
-    children: [
-      { name: 'All Products', href: '/admin/products' },
-      { name: 'Products (full)', href: '/admin/products-full' },
-      { name: 'Product View', href: '/admin/product-view' },
-      { name: 'Add New Product', href: '/admin/products/new' },
-    ],
-  },
 
-  {
-    name: 'Product Types & Attributes',
-    showInSidebar: true,
-    children: [
-      { name: 'Product Types', href: '/admin/product-types' },
-      { name: 'Type Attributes', href: '/admin/product-types/attribute-manager' },
-      { name: 'All Attributes', href: '/admin/attributes' },
-    ],
-  },
-*/
-  { name: 'Products shop', href: '/products', showInSidebar: true },
   { name: 'About', href: '/about', showInSidebar: true },
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Markdown', href: '/test', showInSidebar: true },
-  { name: 'Test UI', href: '/testUI', showInSidebar: true },
-  { name: 'Test Categories', href: '/testCategories', showInSidebar: true },
-  { name: 'Test search filter', href: '/testSearchFilter', showInSidebar: true },
   { name: 'Test param', href: '/testSearchParam', showInSidebar: true },
 
 ];
