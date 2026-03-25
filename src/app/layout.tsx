@@ -58,7 +58,7 @@ export default function RootLayout({
 }
 */
 
-
+/*
 export default function RootLayout({
   children,
 }: {
@@ -72,7 +72,6 @@ export default function RootLayout({
           <InstallPrompt />
         </ThemeProvider>
 
-        {/* Đăng ký Service Worker để chạy Offline */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -91,4 +90,53 @@ export default function RootLayout({
     </html>
   );
 }
+*/
+
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen overflow-y-auto`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AppShell>{children}</AppShell>
+          <InstallPrompt />
+        </ThemeProvider>
+
+        {/* Đăng ký Service Worker & Xin quyền lưu trữ bền vững */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(reg) { 
+                      console.log('Tâm Việt SW: OK');
+                      
+                      // XIN QUYỀN LƯU TRỮ BỀN VỮNG TẠI ĐÂY
+                      if (navigator.storage && navigator.storage.persist) {
+                        navigator.storage.persist().then(granted => {
+                          if (granted) console.log("Tâm Việt: Đã chiếm quyền lưu trữ bền vững!");
+                        });
+                      }
+                    },
+                    function(err) { console.log('Tâm Việt SW: Lỗi', err); }
+                  );
+                });
+              }
+            `,
+          }}
+        />
+      </body>
+    </html>
+  );
+}
+
+
+
+
+
 
