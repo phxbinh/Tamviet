@@ -120,7 +120,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
         </div>
 
 {/* change here */}
-        {/* RIGHT: PRODUCT INFO */}
+           {/* RIGHT: PRODUCT INFO */}
         <div className="lg:col-span-5 space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl xl:text-5xl font-medium tracking-tight leading-[1.1]">
