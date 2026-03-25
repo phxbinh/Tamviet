@@ -7,6 +7,37 @@ import AppShell from "@/components/layout/AppShell";
 
 // src/app/layout.tsx
 import { InstallPrompt } from "@/components/InstallPrompt"; // Đường dẫn đến file bạn vừa tạo
+import type { Metadata, Viewport } from "next";
+
+// 1. Cấu hình Viewport để tối ưu hiển thị trên Mobile (Chống zoom khi focus input)
+export const viewport: Viewport = {
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover", // Quan trọng: Tràn màn hình qua cả phần tai thỏ iPhone
+};
+
+// 2. Cấu hình Metadata chính
+export const metadata: Metadata = {
+  title: "Tâm Việt Luxury",
+  description: "Nâng tầm trải nghiệm cầu lông cao cấp",
+  manifest: "/manifest.json", // Khai báo file manifest trong thư mục public
+  appleWebApp: {
+    capable: true, // Biến Web thành App khi "Thêm vào MH chính"
+    statusBarStyle: "default", // Hoặc "black-translucent" nếu muốn trong suốt
+    title: "Tâm Việt",
+  },
+  formatDetection: {
+    telephone: false, // Tránh tự động đổi màu số điện thoại thành link xanh
+  },
+  icons: {
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" }, // Icon khi hiện ngoài màn hình iPhone
+    ],
+  },
+};
 
 const inter = Inter({ subsets: ["latin"] });
 /*
@@ -27,6 +58,7 @@ export default function RootLayout({
 }
 */
 
+/*
 export const metadata: Metadata = {
   manifest: "/manifest.json", // Thêm dòng này
   appleWebApp: {
@@ -35,7 +67,7 @@ export const metadata: Metadata = {
     title: "Tâm Việt",
   },
 };
-
+*/
 
 
 export default function RootLayout({
