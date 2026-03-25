@@ -137,7 +137,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
         className="group block w-full relative overflow-hidden"
       >
         {/* IMAGE */}
-        <div className="relative aspect-[4/5] overflow-hidden bg-[#fafafa]">
+        <div className="relative aspect-[3/4] overflow-hidden bg-[#fafafa]">
           {thumbnail_url ? (
             <img
               src={thumbnail_url}
