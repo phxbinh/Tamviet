@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tam-viet-v1';
+const CACHE_NAME = 'tam-viet-v2'; // Đổi v1 thành v2 để iPhone xóa cache cũ
 const OFFLINE_URL = '/offline';
 
 const ASSETS_TO_CACHE = [
@@ -11,40 +11,33 @@ const ASSETS_TO_CACHE = [
   '/apple-icon.png', // Nên thêm icon này để hiển thị đúng trên iPhone
 ];
 
+// 1. Cài đặt các trang tĩnh bắt buộc
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Dùng {invite: true} để không làm hỏng quá trình cài đặt nếu thiếu 1 file
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
   self.skipWaiting();
 });
 
+// 2. Kích hoạt và dọn dẹp
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
+    caches.keys().then((keys) => Promise.all(
+      keys.map((key) => { if (key !== CACHE_NAME) return caches.delete(key); })
+    ))
   );
-  // Giúp SW kiểm soát các trang ngay lập tức mà không cần load lại
-  self.clients.claim(); 
+  self.clients.claim();
 });
 
+// 3. Xử lý yêu cầu (QUAN TRỌNG NHẤT)
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Chiến lược: Ưu tiên Cache, không có thì gọi mạng, rồi lưu vào cache luôn
+      // Nếu có mạng, hãy tải mới và cập nhật vào cache
       const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // Lưu bản sao vào cache để lần sau nhanh hơn (Dynamic Caching)
+        // Chỉ cache những phản hồi thành công (status 200)
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -53,12 +46,15 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       }).catch(() => {
-        // Nếu mất mạng hoàn toàn và là trang web, hiện trang offline
+        // KHI MẤT MẠNG THỰC SỰ:
+        // Nếu là trang web (navigate), trả về trang Offline nếu không có cache
         if (event.request.mode === 'navigate') {
           return caches.match(OFFLINE_URL);
         }
       });
 
+      // Ưu tiên trả về Cache ngay lập tức để App mở nhanh, 
+      // đồng thời chạy fetchPromise ngầm để cập nhật dữ liệu từ Neon
       return cachedResponse || fetchPromise;
     })
   );
