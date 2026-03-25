@@ -58,17 +58,6 @@ export default function RootLayout({
 }
 */
 
-/*
-export const metadata: Metadata = {
-  manifest: "/manifest.json", // Thêm dòng này
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Tâm Việt",
-  },
-};
-*/
-
 
 export default function RootLayout({
   children,
@@ -80,10 +69,26 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen overflow-y-auto`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
-        <InstallPrompt />
+          <InstallPrompt />
         </ThemeProvider>
-        
+
+        {/* Đăng ký Service Worker để chạy Offline */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(reg) { console.log('Tâm Việt SW: OK'); },
+                    function(err) { console.log('Tâm Việt SW: Lỗi', err); }
+                  );
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
 }
+
