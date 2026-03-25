@@ -46,6 +46,7 @@ self.addEventListener('activate', (event) => {
 // =======================
 // 3. FETCH
 // =======================
+/*
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -78,6 +79,46 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
+*/
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+
+        // 🔥 Normalize URL (QUAN TRỌNG)
+        const url = new URL(event.request.url);
+        url.search = ''; // bỏ query
+
+        const normalizedRequest = new Request(url.toString());
+
+        // 👉 tìm cache
+        const cached = await cache.match(normalizedRequest);
+
+        if (cached) {
+          return cached;
+        }
+
+        try {
+          const networkResponse = await fetch(event.request);
+
+          if (networkResponse && networkResponse.status === 200) {
+            await cache.put(normalizedRequest, networkResponse.clone());
+          }
+
+          return networkResponse;
+        } catch (err) {
+          return cached || cache.match('/offline');
+        }
+      })()
+    );
+    return;
+  }
+});
+
 
   // =======================
   // ✅ B. STATIC (JS, CSS, IMAGE)
