@@ -20,7 +20,7 @@ export default function MarkdownShell({
 
   return (
     <>
-      <div className="flex h-full w-full overflow-hidden bg-background text-foreground">
+      <div className="flex min-h-screen w-full overflow-y-auto no-scrollbar bg-background text-foreground">
         
         {/* CỘT 1: SIDEBAR */}
         <aside
@@ -33,7 +33,7 @@ export default function MarkdownShell({
           {/* Sử dụng component đã tách */}
           <SidebarHeader onClose={closeSidebar} />
 
-          <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <div className="flex-1 overflow-y-auto no-scrollbat">
             <Sidebar onNavigate={closeSidebar} />
           </div>
         </aside>
@@ -63,7 +63,7 @@ export default function MarkdownShell({
           </header>
 
           {/* SCROLL AREA */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col bg-transparent">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col bg-transparent">
             <main className="flex-1 p-2 md:p-8 w-full max-w-6xl mx-auto overflow-x-visible shrink-0">
               {children}
             </main>
