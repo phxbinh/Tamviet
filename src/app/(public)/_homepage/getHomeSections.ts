@@ -114,7 +114,58 @@ export interface HomeSection {
 }
 */
 
+
 export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
+  try {
+    const rows = await sql`
+      SELECT 
+        pt.code as type_code,
+        pt.name as type_name,
+        COALESCE(
+          json_agg(p_sub) FILTER (WHERE p_sub.id IS NOT NULL), 
+          '[]'
+        ) as products
+      FROM product_types pt
+      LEFT JOIN LATERAL (
+        SELECT 
+          p.id, p.name, p.slug, p.thumbnail_url,
+          pv.price_min
+        FROM products p
+        LEFT JOIN LATERAL (
+          -- Lấy giá nhỏ nhất chỉ trong 1 lần quét index
+          SELECT MIN(price) as price_min 
+          FROM product_variants 
+          WHERE product_id = p.id AND is_active = true
+        ) pv ON true
+        WHERE p.product_type_id = pt.id 
+          AND p.status = 'active'
+        ORDER BY p.created_at DESC
+        LIMIT ${limitPerType}
+      ) p_sub ON true
+      WHERE pt.code != 'default'
+      GROUP BY pt.id, pt.code, pt.name
+      ORDER BY pt.name ASC;
+    `;
+
+    return (rows as HomeSection[]).filter(s => s.products.length > 0);
+  } catch (err) {
+    console.error("getHomeSections error:", err);
+    return [];
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+export async function getHomeSections_OK_On(limitPerType = 8): Promise<HomeSection[]> {
   try {
     const rows = await sql`
       SELECT 
