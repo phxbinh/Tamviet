@@ -85,37 +85,33 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      (async () => {
-        const cache = await caches.open(CACHE_NAME);
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
 
-        // 🔥 Normalize URL (QUAN TRỌNG)
-        const url = new URL(event.request.url);
-        url.search = ''; // bỏ query
+      const url = new URL(event.request.url);
 
-        const normalizedRequest = new Request(url.toString());
+      // 🔥 QUAN TRỌNG: normalize
+      url.search = ''; // bỏ query param
 
-        // 👉 tìm cache
-        const cached = await cache.match(normalizedRequest);
+      const normalizedRequest = new Request(url.toString());
 
-        if (cached) {
-          return cached;
+      // 👉 tìm cache bằng key đã normalize
+      const cached = await cache.match(normalizedRequest);
+
+      if (cached) return cached;
+
+      try {
+        const networkResponse = await fetch(event.request);
+
+        if (networkResponse && networkResponse.status === 200) {
+          await cache.put(normalizedRequest, networkResponse.clone());
         }
 
-        try {
-          const networkResponse = await fetch(event.request);
-
-          if (networkResponse && networkResponse.status === 200) {
-            await cache.put(normalizedRequest, networkResponse.clone());
-          }
-
-          return networkResponse;
-        } catch (err) {
-          return cached || cache.match('/offline');
-        }
-      })()
-    );
-    return;
+        return networkResponse;
+      } catch (err) {
+        return cached || cache.match('/');
+      }
+    })());
   }
 });
 
