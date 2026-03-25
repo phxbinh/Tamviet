@@ -186,8 +186,6 @@ body {
   }
 }
 
-
-
 @layer utilities {
   .animate-in {
     animation-duration: 500ms;
@@ -197,6 +195,7 @@ body {
 
   .fade-in {
     animation-name: fadeIn;
+    animation-fill-mode: forwards; 
   }
 
   .slide-in-from-right-full {
