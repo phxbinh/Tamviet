@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tam-viet-v2'; // Đổi v1 thành v2 để iPhone xóa cache cũ
+const CACHE_NAME = 'tam-viet-v3'; // Đổi v1 thành v2 để iPhone xóa cache cũ
 const OFFLINE_URL = '/offline';
 
 const ASSETS_TO_CACHE = [
@@ -29,33 +29,40 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. Xử lý yêu cầu (QUAN TRỌNG NHẤT)
+
 self.addEventListener('fetch', (event) => {
+  // 1. Chỉ xử lý yêu cầu GET
   if (event.request.method !== 'GET') return;
+
+  // 2. Bỏ qua các yêu cầu chrome-extension hoặc telemetry (tránh lỗi log)
+  if (event.request.url.startsWith('chrome-extension') || event.request.url.includes('_next/webpack-hmr')) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Nếu có mạng, hãy tải mới và cập nhật vào cache
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // Chỉ cache những phản hồi thành công (status 200)
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      }).catch(() => {
-        // KHI MẤT MẠNG THỰC SỰ:
-        // Nếu là trang web (navigate), trả về trang Offline nếu không có cache
-        if (event.request.mode === 'navigate') {
-          return caches.match(OFFLINE_URL);
-        }
-      });
+      // Chiến lược: Network First, Fallback to Cache
+      // Nghĩa là: Cố gắng lấy data mới từ Neon trước, nếu mất mạng thì mới lôi bản cũ trong máy ra.
+      
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // Nếu có mạng và lấy được data thành công
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // KHI MẤT MẠNG:
+          if (cachedResponse) return cachedResponse;
 
-      // Ưu tiên trả về Cache ngay lập tức để App mở nhanh, 
-      // đồng thời chạy fetchPromise ngầm để cập nhật dữ liệu từ Neon
-      return cachedResponse || fetchPromise;
+          // Nếu không có cả cache lẫn mạng, và đang vào 1 trang (navigation)
+          if (event.request.mode === 'navigate') {
+            return caches.match('/offline');
+          }
+        });
     })
   );
 });
+
