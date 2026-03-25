@@ -2,12 +2,47 @@ import "server-only";
 import { sql } from "@/lib/neon/sql";
 import { ProductFull } from "./types";
 
+
+
+/*
+WITH target_product AS (
+        -- 1. Lấy thông tin sản phẩm gốc và category
+        SELECT 
+          p.id, 
+          p.name, 
+          p.thumbnail_url, 
+          p.slug, 
+          p.description, 
+          p.short_description,
+          (
+            SELECT category_id 
+            FROM product_categories 
+            WHERE product_id = p.id 
+            LIMIT 1
+          ) as category_id
+        FROM products p
+        WHERE p.slug = ${slug} 
+          AND p.status = 'active'
+        LIMIT 1
+      ),
+
+*/
+
+
+
+
 export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
   try {
     const rows = await sql`
       WITH target_product AS (
         -- 1. Lấy sản phẩm gốc
-        SELECT id, name, slug, description, short_description, thumbnail_url
+        SELECT id, name, slug, description, short_description, thumbnail_url,
+          (
+            SELECT category_id 
+            FROM product_categories 
+            WHERE product_id = p.id 
+            LIMIT 1
+          ) as category_id
         FROM products 
         WHERE slug = ${slug} AND status = 'active'
         LIMIT 1
