@@ -6,20 +6,19 @@ const ASSETS_TO_CACHE = [
   '/offline',
   '/manifest.json',
   '/icon-512.png',
-  '/globals.css', // Thêm CSS tổng để giao diện không bị vỡ khi offline
+  '/apple-icon.png', // Nên thêm icon này để hiển thị đúng trên iPhone
 ];
 
-// 1. Cài đặt và lưu trữ các file quan trọng
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
+      // Dùng {invite: true} để không làm hỏng quá trình cài đặt nếu thiếu 1 file
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting(); // Kích hoạt ngay lập tức
+  self.skipWaiting();
 });
 
-// 2. Dọn dẹp cache cũ khi bạn đổi CACHE_NAME (ví dụ lên v2)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,21 +31,33 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  // Giúp SW kiểm soát các trang ngay lập tức mà không cần load lại
+  self.clients.claim(); 
 });
 
-// 3. Xử lý yêu cầu dữ liệu
 self.addEventListener('fetch', (event) => {
-  // Chỉ xử lý các yêu cầu GET (tránh lỗi khi gửi Form/POST)
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).catch(() => {
-        // Nếu là trang web (navigation), hiện trang offline
+    caches.match(event.request).then((cachedResponse) => {
+      // Chiến lược: Ưu tiên Cache, không có thì gọi mạng, rồi lưu vào cache luôn
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // Lưu bản sao vào cache để lần sau nhanh hơn (Dynamic Caching)
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Nếu mất mạng hoàn toàn và là trang web, hiện trang offline
         if (event.request.mode === 'navigate') {
           return caches.match(OFFLINE_URL);
         }
       });
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
