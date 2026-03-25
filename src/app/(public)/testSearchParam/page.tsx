@@ -55,7 +55,17 @@ export default async function Page({
   // Ép kiểu (cast) dữ liệu trả về từ Database
   const productTypes = (productTypesData as unknown) as ProductType[];
 
-  const totalCount = products[0]?.total_count || 0;
+  //const totalCount = products[0]?.total_count || 0;
+  const totalCount =  products.total
+
+
+
+
+
+
+
+
+
 
   // Tìm tên category hiện tại để làm Title cho "Hào hứng"
   const currentCategory = categories.find((c: any) => c.category_path === path);
@@ -78,7 +88,7 @@ export default async function Page({
       <div className="flex flex-col px-1 gap-4 mt-2">
         {/* 3. PRODUCT GRID: Sử dụng Component Số 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-1 gap-y-1 md:gap-x-4 md:gap-y-4">
-          {products.length === 0 ? (
+          {products.data.length === 0 ? (
             <div className="col-span-full py-40 flex flex-col items-center justify-center space-y-6 bg-card/20 rounded-[3rem] border border-dashed border-border/50">
               <Sparkles className="w-12 h-12 text-foreground/10" />
               <div className="text-center">
@@ -91,7 +101,7 @@ export default async function Page({
               </div>
             </div>
           ) : (
-            products.map((p: any) => (
+            products.data.map((p: any) => (
               /* GỌI COMPONENT SỐ 1 TẠI ĐÂY */
               <ProductCardSlug 
                 id={p.id}
