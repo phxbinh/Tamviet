@@ -3,6 +3,7 @@
 import { PrefetchLink } from "@/components/ui/PrefetchLink";
 import { ShoppingBag, ArrowRight, ShoppingCart } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useToastStore } from "@/store/useToastStore";
 
 interface ProductCardPropsSlug {
   id: string;
@@ -109,6 +110,7 @@ interface ProductCardPropsSlug {
 
 export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   const href = `/testSearchParam/products/${slug}`;
+  const { showToast } = useToastStore();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -118,7 +120,14 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
       navigator.vibrate(10);
     }
 
-    alert("Added to cart: " + id);
+    //alert("Added to cart: " + id);
+    try {
+      // Giả lập logic thành công
+      showToast(`Đã thêm sản phẩm thành công!`, "success");
+    } catch (error) {
+      // Giả lập logic thất bại
+      showToast("Có lỗi xảy ra, vui lòng thử lại.", "error");
+    }
   };
 
   return (
