@@ -119,6 +119,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
           </div>
         </div>
 
+{/* change here */}
         {/* RIGHT: PRODUCT INFO */}
         <div className="lg:col-span-5 space-y-8">
           <div className="space-y-4">
@@ -193,6 +194,8 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
             ))}
           </div>
 
+
+
           {/* Buttons */}
           <div className="space-y-4 pt-4">
             <button
@@ -227,3 +230,174 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
     </div>
   );
 }
+
+
+
+
+
+/*
+        // RIGHT: PRODUCT INFO 
+        <div className="lg:col-span-5 space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-4xl xl:text-5xl font-medium tracking-tight leading-[1.1]">
+              {product.name}
+            </h1>
+            {product.short_description && (
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                {product.short_description}
+              </p>
+            )}
+          </div>
+
+          // Price & Availability 
+          <div className="min-h-[100px] flex flex-col justify-center p-6 rounded-[2rem] bg-secondary/40 border border-border/50">
+            {selectedVariant ? (
+              <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-3">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-semibold tracking-tighter">
+                    {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
+                  </span>
+                  <span className="text-sm font-bold text-muted-foreground uppercase">VND</span>
+                </div>
+                <div className="text-right">
+                  <p className={`text-[10px] font-black uppercase tracking-widest ${selectedVariant.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock})` : 'Sold Out'}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground/60 italic font-light">
+                Please select your preferences
+              </p>
+            )}
+          </div>
+
+          // Attributes Selection 
+          <div className="grid gap-6 p-6 rounded-[2rem] bg-secondary/20 border border-border/40">
+            {attributes.map((attr) => (
+              <div key={attr.id} className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+                    {attr.name}
+                  </span>
+                  {selected[attr.name] && (
+                    <span className="text-[11px] font-bold text-primary uppercase">
+                      {selected[attr.name]}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2.5">
+                  {attr.values.map((v) => {
+                    const isActive = selected[attr.name] === v.value;
+                    return (
+                      <button
+                        key={v.id}
+                        onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
+                        className={`
+                          px-5 py-2.5 text-xs font-bold transition-all rounded-full border-2
+                          ${isActive 
+                            ? "bg-foreground text-background border-foreground shadow-lg scale-105" 
+                            : "bg-white/50 border-transparent hover:border-border text-foreground/70"
+                          }
+                        `}
+                      >
+                        {v.value}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+*/
+
+
+
+/*
+        // RIGHT: PRODUCT INFO 
+        <div className="lg:col-span-5 space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-4xl xl:text-5xl font-medium tracking-tight leading-[1.1]">
+              {product.name}
+            </h1>
+            {product.short_description && (
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                {product.short_description}
+              </p>
+            )}
+          </div>
+
+          // Price & Availability 
+          <div className="min-h-[100px] flex flex-col justify-center p-6 rounded-[2rem] bg-secondary/40 border border-border/50">
+            {selectedVariant ? (
+              <div className="flex items-center justify-between animate-in fade-in slide-in-from-bottom-3">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-semibold tracking-tighter">
+                    {new Intl.NumberFormat('vi-VN').format(selectedVariant.price)}
+                  </span>
+                  <span className="text-sm font-bold text-muted-foreground uppercase">VND</span>
+                </div>
+                <div className="text-right">
+                  <p className={`text-[10px] font-black uppercase tracking-widest ${selectedVariant.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {selectedVariant.stock > 0 ? `In Stock (${selectedVariant.stock})` : 'Sold Out'}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-muted-foreground/60 italic font-light">
+                Please select your preferences
+              </p>
+            )}
+          </div>
+
+          // Attributes Selection 
+          <div className="grid gap-6 p-6 rounded-[2rem] bg-secondary/20 border border-border/40">
+            {attributes.map((attr) => (
+              <div key={attr.id} className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">
+                    {attr.name}
+                  </span>
+                  {selected[attr.name] && (
+                    <span className="text-[11px] font-bold text-primary uppercase">
+                      {selected[attr.name]}
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2.5">
+                  {attr.values.map((v) => {
+                    const isActive = selected[attr.name] === v.value;
+                    return (
+                      <button
+                        key={v.id}
+                        onClick={() => setSelected(prev => ({ ...prev, [attr.name]: v.value }))}
+                        className={`
+                          px-5 py-2.5 text-xs font-bold transition-all rounded-full border-2
+                          ${isActive 
+                            ? "bg-foreground text-background border-foreground shadow-lg scale-105" 
+                            : "bg-white/50 border-transparent hover:border-border text-foreground/70"
+                          }
+                        `}
+                      >
+                        {v.value}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+
+*/
+
+
+
+
+
+
+
+
+
+
