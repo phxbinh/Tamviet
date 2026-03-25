@@ -3,9 +3,28 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, CheckCircle2, Boxes, Box, Tag, Package, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
+import { CheckCircle2, Boxes, Box, Tag, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
 import { UserAvatar } from '../dashboard/UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
+
+
+
+import { 
+  LayoutDashboard, // Tổng quan
+  UserCircle,      // Profiles
+  Layers,          // Product types
+  Package,         // Products
+  Beaker,          // Product test
+  FolderTree,      // Categories
+  Fingerprint,     // Attributes
+  TableProperties, // Product type attributes
+  GitBranch,       // Product variants
+  FileText,        // Details all products
+  Settings2        // Cài đặt
+} from 'lucide-react';
+
+
+
 
 interface AdminSidebarProps {
   user: any; 
@@ -17,16 +36,16 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', href: '/admin' },
-    { icon: CheckCircle2, label: 'Profiles', href: '/admin/profiles' },
-    { icon: Tag, label: 'Product types', href: '/admin/product-types' },
-    { icon: Boxes, label: 'Products', href: '/admin/products' },
-    { icon: Box, label: 'Product test', href: '/admin/product-test' },
-    { icon: Tag, label: 'Categories', href: '/admin/categories' },
-    { icon: Tag, label: 'Attributes', href: '/admin/attributes' },
-    { icon: Tag, label: 'Product type attributes', href: '/admin/product-type-attributes' },
-    { icon: Package, label: 'Product variants', href: '/admin/product-variants' },
-    { icon: Package, label: 'Details all products', href: '/admin/product-details' },
-    { icon: Settings, label: 'Cài đặt', href: '/admin/setting' },
+    { icon: UserCircle, label: 'Profiles', href: '/admin/profiles' },
+    { icon: Layers, label: 'Product types', href: '/admin/product-types' },
+    { icon: Package, label: 'Products', href: '/admin/products' },
+    { icon: Beaker, label: 'Product test', href: '/admin/product-test' },
+    { icon: FolderTree, label: 'Categories', href: '/admin/categories' },
+    { icon: Fingerprint, label: 'Attributes', href: '/admin/attributes' },
+    { icon: TableProperties, label: 'Product type attributes', href: '/admin/product-type-attributes' },
+    { icon: GitBranch, label: 'Product variants', href: '/admin/product-variants' },
+    { icon: FileText, label: 'Details all products', href: '/admin/product-details' },
+    { icon: Settings2, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
   return (
