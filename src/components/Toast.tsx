@@ -101,7 +101,7 @@ export function Toast() {
         return (
           <div 
             key={toast.id}
-            className="pointer-events-auto animate-in slide-in-from-right-full fade-in duration-500 opacity-0 fill-mode-forwards"
+            className="pointer-events-auto animate-in slide-in-from-right-full fade-in duration-500"
           >
             <div className={`relative flex items-center gap-4 px-5 py-4 rounded-2xl bg-card/80 backdrop-blur-xl border ${config.border} ${config.shadow} min-w-[300px] max-w-sm`}>
               <div className={`absolute inset-0 -z-10 rounded-2xl ${config.bg}`} />
