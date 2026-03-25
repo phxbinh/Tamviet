@@ -9,13 +9,27 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
-
+/*
   const selectedVariant = useMemo(() => {
     if (Object.keys(selected).length < attributes.length) return null;
     return variants.find((v) =>
       Object.entries(selected).every(([key, value]) => v.attributes[key] === value)
     );
   }, [selected, variants, attributes.length]);
+*/
+
+// File: ProductDetailClient.tsx
+
+const selectedVariant = useMemo(() => {
+  if (Object.keys(selected).length < attributes.length) return null;
+  
+  // Thêm "|| null" ở cuối để biến undefined thành null
+  return variants.find((v) =>
+    Object.entries(selected).every(([key, value]) => v.attributes[key] === value)
+  ) || null; 
+}, [selected, variants, attributes.length]);
+
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 lg:py-16">
