@@ -65,8 +65,7 @@ const sections = [
 // app/page.tsx (Server Component)
 
 // Thêm 2 dòng này lên trên cùng file
-export const dynamic = 'force-static'; 
-export const revalidate = 3600; 
+export const revalidate = 300; 
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
