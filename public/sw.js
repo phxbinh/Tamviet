@@ -1,59 +1,106 @@
 
-const CACHE_NAME = 'tam-viet-trail-v5'; // Đổi v1 thành v2 để iPhone xóa cache cũ
+const CACHE_NAME = 'tam-viet-trail-v6';
 const OFFLINE_URL = '/offline';
 
-const ASSETS_TO_CACHE = [
+// Các asset cơ bản
+const STATIC_ASSETS = [
   '/',
   '/offline',
   '/test',
   '/testSearchParam',
   '/manifest.json',
   '/icon-512.png',
-  '/apple-icon.png', // Nên thêm icon này để hiển thị đúng trên iPhone
+  '/apple-icon.png',
 ];
 
-// 1. Cài đặt các trang tĩnh bắt buộc
+// =======================
+// 1. INSTALL
+// =======================
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
-// 2. Kích hoạt và dọn dẹp
+// =======================
+// 2. ACTIVATE
+// =======================
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys.map((key) => { if (key !== CACHE_NAME) return caches.delete(key); })
-    ))
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
   );
   self.clients.claim();
 });
 
-
+// =======================
+// 3. FETCH
+// =======================
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // =======================
+  // ✅ A. HTML (SSR SNAPSHOT)
+  // =======================
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match(event.request).then((cachedPage) => {
+        const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const cacheCopy = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, cacheCopy);
+              });
+            }
+            return networkResponse;
+          })
+          .catch(() => {
+            // mất mạng
+            return cachedPage || caches.match(OFFLINE_URL);
+          });
+
+        // 🔥 Quan trọng: ưu tiên cache trước
+        return cachedPage || fetchPromise;
+      })
+    );
+    return;
+  }
+
+  // =======================
+  // ✅ B. STATIC (JS, CSS, IMAGE)
+  // =======================
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        // Nếu có mạng, lưu ngay bản HTML vừa lấy từ SQL vào máy
-        if (networkResponse.status === 200) {
-          const cacheCopy = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cacheCopy));
-        }
-        return networkResponse;
-      })
-      .catch(async () => {
-        // KHI TẮT MẠNG HOẶC TẮT APP MỞ LẠI:
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) return cachedResponse;
-        
-        // Nếu trang này chưa từng được cache, mới hiện trang Offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('/offline');
-        }
-      })
+    caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+
+      return fetch(event.request)
+        .then((networkResponse) => {
+          // cache lại asset
+          if (networkResponse && networkResponse.status === 200) {
+            const cacheCopy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, cacheCopy);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // có thể return fallback image nếu muốn
+        });
+    })
   );
 });
 
