@@ -8,9 +8,15 @@
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
 
 import type { Metadata } from "next";
+
 import ProductDetailClient from "./DetailProductClient";
+import ProductDetailClient from "./DetailProductClient_";
+
 import { headers } from "next/headers";
-import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
+
+//import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
+import { getProductDetail_slug } from "./products/getProductDetail_slug";
+
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
