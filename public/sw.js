@@ -1,4 +1,5 @@
-const CACHE_NAME = 'tam-viet-v3'; // Đổi v1 thành v2 để iPhone xóa cache cũ
+
+const CACHE_NAME = 'tam-viet-v5'; // Đổi v1 thành v2 để iPhone xóa cache cũ
 const OFFLINE_URL = '/offline';
 
 const ASSETS_TO_CACHE = [
