@@ -232,7 +232,9 @@ export async function getProductsByCategory(options: {
 
   const offset = (page - 1) * limit;
 
-  // search pattern
+  // =========================
+  // 🔍 SEARCH
+  // =========================
   const rawSearch = search?.trim();
   const flexibleSearch = rawSearch
     ? `%${rawSearch.replace(/\s+/g, "%")}%`
@@ -240,7 +242,50 @@ export async function getProductsByCategory(options: {
 
   const slugPattern = slug ? `${slug}%` : null;
 
-  // 🧠 dynamic ORDER BY (KHÔNG dùng CASE WHEN)
+  // =========================
+  // 🧠 WHERE CONDITIONS
+  // =========================
+  const conditions = [sql`p.status = 'active'`];
+
+  if (productTypeCode) {
+    conditions.push(sql`pt.code = ${productTypeCode}`);
+  }
+
+  if (slugPattern) {
+    conditions.push(sql`c.category_path LIKE ${slugPattern}`);
+  }
+
+  if (flexibleSearch) {
+    conditions.push(sql`
+      (
+        immutable_unaccent(p.name) ILIKE immutable_unaccent(${flexibleSearch})
+        OR immutable_unaccent(COALESCE(p.description, '')) ILIKE immutable_unaccent(${flexibleSearch})
+        OR p.slug ILIKE ${flexibleSearch}
+      )
+    `);
+  }
+
+  // =========================
+  // 💰 PRICE FILTER
+  // =========================
+  const priceConditions: any[] = [];
+
+  if (minPrice !== undefined) {
+    priceConditions.push(sql`vs.price_min >= ${minPrice}`);
+  }
+
+  if (maxPrice !== undefined) {
+    priceConditions.push(sql`vs.price_min <= ${maxPrice}`);
+  }
+
+  const priceWhere =
+    priceConditions.length > 0
+      ? sql.join(priceConditions, sql` AND `)
+      : sql`true`;
+
+  // =========================
+  // 🔀 ORDER BY
+  // =========================
   let orderBy;
   if (sort === "price_asc") {
     orderBy = sql`vs.price_min ASC`;
@@ -268,20 +313,7 @@ export async function getProductsByCategory(options: {
         LEFT JOIN product_types pt ON pt.id = p.product_type_id
         LEFT JOIN product_categories pc ON pc.product_id = p.id
         LEFT JOIN categories c ON c.id = pc.category_id
-
-        WHERE p.status = 'active'
-
-          AND (${productTypeCode ?? null} IS NULL OR pt.code = ${productTypeCode})
-
-          AND (${slugPattern} IS NULL OR c.category_path LIKE ${slugPattern})
-
-          AND (
-            ${flexibleSearch} IS NULL OR (
-              unaccent(p.name) ILIKE unaccent(${flexibleSearch})
-              OR unaccent(COALESCE(p.description, '')) ILIKE unaccent(${flexibleSearch})
-              OR p.slug ILIKE ${flexibleSearch}
-            )
-          )
+        WHERE ${sql.join(conditions, sql` AND `)}
       ),
 
       variant_stats AS (
@@ -304,17 +336,13 @@ export async function getProductsByCategory(options: {
         vs.total_stock
       FROM filtered_products fp
       JOIN variant_stats vs ON vs.product_id = fp.id
-
-      WHERE
-        (${minPrice ?? null} IS NULL OR vs.price_min >= ${minPrice})
-        AND (${maxPrice ?? null} IS NULL OR vs.price_min <= ${maxPrice})
-
+      WHERE ${priceWhere}
       ORDER BY ${orderBy}
       LIMIT ${limit} OFFSET ${offset}
     `;
 
     // =========================
-    // 🔹 COUNT QUERY (tách riêng)
+    // 🔹 COUNT QUERY
     // =========================
     const countRows = await sql`
       WITH filtered_products AS (
@@ -323,37 +351,25 @@ export async function getProductsByCategory(options: {
         LEFT JOIN product_types pt ON pt.id = p.product_type_id
         LEFT JOIN product_categories pc ON pc.product_id = p.id
         LEFT JOIN categories c ON c.id = pc.category_id
-
-        WHERE p.status = 'active'
-
-          AND (${productTypeCode ?? null} IS NULL OR pt.code = ${productTypeCode})
-
-          AND (${slugPattern} IS NULL OR c.category_path LIKE ${slugPattern})
-
-          AND (
-            ${flexibleSearch} IS NULL OR (
-              unaccent(p.name) ILIKE unaccent(${flexibleSearch})
-              OR unaccent(COALESCE(p.description, '')) ILIKE unaccent(${flexibleSearch})
-              OR p.slug ILIKE ${flexibleSearch}
-            )
-          )
+        WHERE ${sql.join(conditions, sql` AND `)}
       )
-
       SELECT COUNT(*)::int as total
       FROM filtered_products
     `;
 
+    const total = countRows[0]?.total ?? 0;
+
     return {
       data: dataRows,
-      total: countRows[0]?.total ?? 0,
+      total,
       page,
       limit,
-      totalPages: Math.ceil((countRows[0]?.total ?? 0) / limit),
+      totalPages: Math.ceil(total / limit),
     };
 
   } catch (error) {
-    console.error("Database Error in getProductsByCategory:", error);
-    throw new Error("Failed to fetch products.");
+    console.error("🔥 DB ERROR:", error);
+    throw error;
   }
 }
 
