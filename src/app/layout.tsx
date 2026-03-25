@@ -92,7 +92,7 @@ export default function RootLayout({
 }
 */
 
-
+/*
 export default function RootLayout({
   children,
 }: {
@@ -106,7 +106,7 @@ export default function RootLayout({
           <InstallPrompt />
         </ThemeProvider>
 
-        {/* Đăng ký Service Worker & Xin quyền lưu trữ bền vững */}
+   
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -134,9 +134,25 @@ export default function RootLayout({
     </html>
   );
 }
+*/
 
 
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen overflow-y-auto`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <AppShell>{children}</AppShell>
+          <InstallPrompt />
+        </ThemeProvider>
+
+        <ServiceWorkerRegister />
+      </body>
+    </html>
+  );
+}
 
 
 
