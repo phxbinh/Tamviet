@@ -1,4 +1,9 @@
 // src/app/(public)/testSearchParam/page.tsx
+
+// Thêm 2 dòng này lên trên cùng file
+export const dynamic = 'force-static'; 
+export const revalidate = 3600; 
+
 import Link from "next/link";
 import { ProductCardSlug } from "./_tachComponents/ProductCardSlug";
 import { Pagination } from "./_tachComponents/Pagination";
@@ -8,8 +13,6 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { getProductsByCategory, getProductTypes } from "./_server/getProductByCategory";
 import { getCategoriesTree } from "@/lib/db/categories";
 
-
-export const revalidate = 360;
 
 // Trước tiên, định nghĩa interface ngay trong page.tsx hoặc import từ Filters
 interface ProductType {
