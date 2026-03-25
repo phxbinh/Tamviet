@@ -95,11 +95,75 @@ console.log("Dữ liệu thô từ SQL:", JSON.stringify(rows, null, 2));
 */
 
 
+/*
+import "server-only";
+import { sql } from "@/lib/neon/sql";
 
-
-
+export interface HomeSection {
+  type_code: string;
+  type_name: string;
+  products: {
+    id: string;
+    slug: string;
+    name: string;
+    thumbnail_url: string;
+    price_min: number;
+  }[];
+}
+*/
 
 export async function getHomeSections(limitPerType = 8): Promise<HomeSection[]> {
+  try {
+    const rows = await sql`
+      SELECT 
+        pt.code as type_code,
+        pt.name as type_name,
+        COALESCE(
+          (
+            SELECT json_agg(p_sub)
+            FROM (
+              SELECT 
+                p.id, 
+                p.name, 
+                p.slug, 
+                p.thumbnail_url,
+                (
+                  SELECT MIN(pv.price) 
+                  FROM product_variants pv 
+                  WHERE pv.product_id = p.id 
+                    AND pv.is_active = true
+                ) as price_min
+              FROM products p
+              -- FIX: Sử dụng product_type_id để khớp với ID của bảng product_types
+              WHERE p.product_type_id = pt.id      
+                AND p.status = 'active'
+              ORDER BY p.created_at DESC
+              LIMIT ${limitPerType}
+            ) p_sub
+          ), 
+          '[]'
+        ) as products
+      FROM product_types pt
+      -- Lọc 'default' ngay từ bảng gốc để không tốn tài nguyên chạy sub-query
+      WHERE pt.code != 'default'                 
+      ORDER BY pt.name ASC;
+    `;
+
+    // Lọc bỏ những Section nào không có sản phẩm
+    const sections = (rows as HomeSection[]).filter(
+      (section) => section.products && section.products.length > 0
+    );
+
+    return sections;
+  } catch (err) {
+    console.error("getHomeSections error:", err);
+    return [];
+  }
+}
+
+
+
+export async function getHomeSections_ok_(limitPerType = 8): Promise<HomeSection[]> {
   try {
     const rows = await sql`
       SELECT 
