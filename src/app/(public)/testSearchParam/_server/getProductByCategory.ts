@@ -243,119 +243,125 @@ export async function getProductsByCategory(options: {
   const slugPattern = slug ? `${slug}%` : null;
 
   // =========================
-  // 🧠 WHERE CONDITIONS
+  // 🧠 BUILD WHERE
   // =========================
-  const conditions = [sql`p.status = 'active'`];
+  const whereClauses: string[] = ["p.status = 'active'"];
+  const params: any[] = [];
+  let i = 1;
 
   if (productTypeCode) {
-    conditions.push(sql`pt.code = ${productTypeCode}`);
+    whereClauses.push(`pt.code = $${i++}`);
+    params.push(productTypeCode);
   }
 
   if (slugPattern) {
-    conditions.push(sql`c.category_path LIKE ${slugPattern}`);
+    whereClauses.push(`c.category_path LIKE $${i++}`);
+    params.push(slugPattern);
   }
 
   if (flexibleSearch) {
-    conditions.push(sql`
+    whereClauses.push(`
       (
-        immutable_unaccent(p.name) ILIKE immutable_unaccent(${flexibleSearch})
-        OR immutable_unaccent(COALESCE(p.description, '')) ILIKE immutable_unaccent(${flexibleSearch})
-        OR p.slug ILIKE ${flexibleSearch}
+        immutable_unaccent(p.name) ILIKE immutable_unaccent($${i})
+        OR immutable_unaccent(COALESCE(p.description, '')) ILIKE immutable_unaccent($${i})
+        OR p.slug ILIKE $${i}
       )
     `);
+    params.push(flexibleSearch);
+    i++;
   }
 
   // =========================
   // 💰 PRICE FILTER
   // =========================
-  const priceConditions: any[] = [];
+  const priceClauses: string[] = [];
 
   if (minPrice !== undefined) {
-    priceConditions.push(sql`vs.price_min >= ${minPrice}`);
+    priceClauses.push(`vs.price_min >= $${i++}`);
+    params.push(minPrice);
   }
 
   if (maxPrice !== undefined) {
-    priceConditions.push(sql`vs.price_min <= ${maxPrice}`);
+    priceClauses.push(`vs.price_min <= $${i++}`);
+    params.push(maxPrice);
   }
 
   const priceWhere =
-    priceConditions.length > 0
-      ? sql.join(priceConditions, sql` AND `)
-      : sql`true`;
+    priceClauses.length > 0 ? priceClauses.join(" AND ") : "true";
 
   // =========================
   // 🔀 ORDER BY
   // =========================
-  let orderBy;
-  if (sort === "price_asc") {
-    orderBy = sql`vs.price_min ASC`;
-  } else if (sort === "price_desc") {
-    orderBy = sql`vs.price_min DESC`;
-  } else if (sort === "oldest") {
-    orderBy = sql`fp.created_at ASC`;
-  } else {
-    orderBy = sql`fp.created_at DESC`;
-  }
+  let orderBy = "fp.created_at DESC";
+
+  if (sort === "price_asc") orderBy = "vs.price_min ASC";
+  if (sort === "price_desc") orderBy = "vs.price_min DESC";
+  if (sort === "oldest") orderBy = "fp.created_at ASC";
+
+  // =========================
+  // 📦 MAIN QUERY
+  // =========================
+  const query = `
+    WITH filtered_products AS (
+      SELECT 
+        p.id,
+        p.name,
+        p.slug,
+        p.thumbnail_url,
+        p.created_at
+      FROM products p
+      LEFT JOIN product_types pt ON pt.id = p.product_type_id
+      LEFT JOIN product_categories pc ON pc.product_id = p.id
+      LEFT JOIN categories c ON c.id = pc.category_id
+      WHERE ${whereClauses.join(" AND ")}
+    ),
+
+    variant_stats AS (
+      SELECT 
+        v.product_id,
+        MIN(v.price)::float as price_min,
+        SUM(v.stock)::int as total_stock
+      FROM product_variants v
+      WHERE v.is_active = true
+      GROUP BY v.product_id
+    )
+
+    SELECT 
+      fp.id,
+      fp.name,
+      fp.slug,
+      fp.thumbnail_url,
+      fp.created_at,
+      vs.price_min,
+      vs.total_stock
+    FROM filtered_products fp
+    JOIN variant_stats vs ON vs.product_id = fp.id
+    WHERE ${priceWhere}
+    ORDER BY ${orderBy}
+    LIMIT $${i++} OFFSET $${i++}
+  `;
+
+  params.push(limit, offset);
+
+  // =========================
+  // 📊 COUNT QUERY
+  // =========================
+  const countQuery = `
+    WITH filtered_products AS (
+      SELECT p.id
+      FROM products p
+      LEFT JOIN product_types pt ON pt.id = p.product_type_id
+      LEFT JOIN product_categories pc ON pc.product_id = p.id
+      LEFT JOIN categories c ON c.id = pc.category_id
+      WHERE ${whereClauses.join(" AND ")}
+    )
+    SELECT COUNT(*)::int as total
+    FROM filtered_products
+  `;
 
   try {
-    // =========================
-    // 🔹 DATA QUERY
-    // =========================
-    const dataRows = await sql`
-      WITH filtered_products AS (
-        SELECT 
-          p.id,
-          p.name,
-          p.slug,
-          p.thumbnail_url,
-          p.created_at
-        FROM products p
-        LEFT JOIN product_types pt ON pt.id = p.product_type_id
-        LEFT JOIN product_categories pc ON pc.product_id = p.id
-        LEFT JOIN categories c ON c.id = pc.category_id
-        WHERE ${sql.join(conditions, sql` AND `)}
-      ),
-
-      variant_stats AS (
-        SELECT 
-          v.product_id,
-          MIN(v.price)::float as price_min,
-          SUM(v.stock)::int as total_stock
-        FROM product_variants v
-        WHERE v.is_active = true
-        GROUP BY v.product_id
-      )
-
-      SELECT 
-        fp.id,
-        fp.name,
-        fp.slug,
-        fp.thumbnail_url,
-        fp.created_at,
-        vs.price_min,
-        vs.total_stock
-      FROM filtered_products fp
-      JOIN variant_stats vs ON vs.product_id = fp.id
-      WHERE ${priceWhere}
-      ORDER BY ${orderBy}
-      LIMIT ${limit} OFFSET ${offset}
-    `;
-
-    // =========================
-    // 🔹 COUNT QUERY
-    // =========================
-    const countRows = await sql`
-      WITH filtered_products AS (
-        SELECT p.id
-        FROM products p
-        LEFT JOIN product_types pt ON pt.id = p.product_type_id
-        LEFT JOIN product_categories pc ON pc.product_id = p.id
-        LEFT JOIN categories c ON c.id = pc.category_id
-        WHERE ${sql.join(conditions, sql` AND `)}
-      )
-      SELECT COUNT(*)::int as total
-      FROM filtered_products
-    `;
+    const dataRows = await sql(query, params);
+    const countRows = await sql(countQuery, params.slice(0, i - 3));
 
     const total = countRows[0]?.total ?? 0;
 
@@ -366,7 +372,6 @@ export async function getProductsByCategory(options: {
       limit,
       totalPages: Math.ceil(total / limit),
     };
-
   } catch (error) {
     console.error("🔥 DB ERROR:", error);
     throw error;
