@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 1. Cho phép Next.js nén dữ liệu để Service Worker tải về nhanh hơn trên iPhone
+  // 1. .Cho phép Next.js nén dữ liệu để Service Worker tải về nhanh hơn trên iPhone
   compress: true,
 
   // 2. Cấu hình Headers để Safari KHÔNG chặn Cache
