@@ -1,10 +1,9 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  // 1. .Cho phép Next.js nén dữ liệu để Service Worker tải về nhanh hơn trên iPhone
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // 1. Nén dữ liệu để tải nhanh trên iPhone
   compress: true,
 
-  // 2. Cấu hình Headers để Safari KHÔNG chặn Cache
+  // 2. Cấu hình Headers để Safari không chặn Cache của Service Worker
   async headers() {
     return [
       {
@@ -19,12 +18,12 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // 3. (Tùy chọn) Nếu bạn dùng hình ảnh từ bên ngoài (ví dụ Cloudinary/S3) cho sản phẩm
+  // 3. Cho phép hiển thị ảnh từ các nguồn bên ngoài (nếu có)
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**", // Cho phép cache ảnh từ mọi nguồn hoặc cấu hình domain cụ thể của bạn
+        hostname: "**", 
       },
     ],
   },
