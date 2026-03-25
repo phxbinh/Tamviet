@@ -27,16 +27,15 @@ export default function RootLayout({
 }
 */
 
-export const metadata = {
-  title: "Tâm Việt Luxury",
-  description: "Dụng cụ cầu lông cao cấp",
-  // Thêm phần này:
+export const metadata: Metadata = {
+  manifest: "/manifest.json", // Thêm dòng này
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Tâm Việt",
   },
 };
+
 
 
 export default function RootLayout({
