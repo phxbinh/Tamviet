@@ -32,38 +32,28 @@ self.addEventListener('activate', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
-  // 1. Chỉ xử lý yêu cầu GET
   if (event.request.method !== 'GET') return;
 
-  // 2. Bỏ qua các yêu cầu chrome-extension hoặc telemetry (tránh lỗi log)
-  if (event.request.url.startsWith('chrome-extension') || event.request.url.includes('_next/webpack-hmr')) return;
-
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // Chiến lược: Network First, Fallback to Cache
-      // Nghĩa là: Cố gắng lấy data mới từ Neon trước, nếu mất mạng thì mới lôi bản cũ trong máy ra.
-      
-      return fetch(event.request)
-        .then((networkResponse) => {
-          // Nếu có mạng và lấy được data thành công
-          if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // KHI MẤT MẠNG:
-          if (cachedResponse) return cachedResponse;
-
-          // Nếu không có cả cache lẫn mạng, và đang vào 1 trang (navigation)
-          if (event.request.mode === 'navigate') {
-            return caches.match('/offline');
-          }
-        });
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        // Nếu có mạng, lưu ngay bản HTML vừa lấy từ SQL vào máy
+        if (networkResponse.status === 200) {
+          const cacheCopy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cacheCopy));
+        }
+        return networkResponse;
+      })
+      .catch(async () => {
+        // KHI TẮT MẠNG HOẶC TẮT APP MỞ LẠI:
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+        
+        // Nếu trang này chưa từng được cache, mới hiện trang Offline
+        if (event.request.mode === 'navigate') {
+          return caches.match('/offline');
+        }
+      })
   );
 });
 
