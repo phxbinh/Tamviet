@@ -93,7 +93,7 @@ export function Toast() {
 
   return (
     // Container bao ngoài cố định vị trí, các Toast bên trong xếp chồng dãn cách nhau (gap-3)
-    <div className="fixed top-24 right-5 z-[999] flex flex-col gap-3 pointer-events-none">
+    <div className="fixed top-20 right-3 z-[999] flex flex-col gap-1 pointer-events-none">
       {toasts.map((toast) => {
         const config = configs[toast.type];
         const Icon = config.icon;
