@@ -75,12 +75,10 @@ export async function getProductsByCategory(options: {
 
   return rows;
 }
-
+*/
 export async function getProductTypes() {
   return await sql`SELECT code, name FROM product_types ORDER BY name ASC`;
 }
-
-*/
 
 
 /*
