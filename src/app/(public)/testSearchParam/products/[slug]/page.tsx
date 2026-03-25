@@ -9,7 +9,7 @@
 
 import type { Metadata } from "next";
 
-import ProductDetailClient from "./DetailProductClient";
+//import ProductDetailClient from "./DetailProductClient";
 import ProductDetailClient from "./DetailProductClient_";
 
 import { headers } from "next/headers";
