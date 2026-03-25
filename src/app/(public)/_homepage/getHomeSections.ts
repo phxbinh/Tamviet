@@ -2,7 +2,7 @@
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 // Thêm dòng này ở đầu file hoặc trong hàm
-export const revalidate = 60; // Đơn vị: giây (1 giờ)
+//export const revalidate = 60; // Đơn vị: giây (1 giờ)
 
 export interface HomeSection {
   type_code: string;
