@@ -10,13 +10,13 @@
 import type { Metadata } from "next";
 
 //import ProductDetailClient from "./DetailProductClient";
-//import ProductDetailClient from "./DetailProductClient_";
-import ProductDetailClient from "./_components/ProductDetailClient";
+import ProductDetailClient from "./DetailProductClient_";
+//import ProductDetailClient from "./_components/ProductDetailClient";
 
 import { headers } from "next/headers";
 
 //import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
-import { getProductDetail_slug } from "./getProductDetail_slug_";
+import { getProductDetail_slug } from "./getProductDetail_slug";
 
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
