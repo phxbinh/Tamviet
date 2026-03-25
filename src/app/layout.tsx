@@ -5,6 +5,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AppShell from "@/components/layout/AppShell";
 
+// src/app/layout.tsx
+import { InstallPrompt } from "@/components/InstallPrompt"; // Đường dẫn đến file bạn vừa tạo
+
 const inter = Inter({ subsets: ["latin"] });
 /*
 export default function RootLayout({
@@ -24,6 +27,18 @@ export default function RootLayout({
 }
 */
 
+export const metadata = {
+  title: "Tâm Việt Luxury",
+  description: "Dụng cụ cầu lông cao cấp",
+  // Thêm phần này:
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Tâm Việt",
+  },
+};
+
+
 export default function RootLayout({
   children,
 }: {
@@ -34,7 +49,9 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen overflow-y-auto`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
+        <InstallPrompt />
         </ThemeProvider>
+        
       </body>
     </html>
   );
