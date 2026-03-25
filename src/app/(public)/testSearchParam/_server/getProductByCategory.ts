@@ -83,6 +83,7 @@ export async function getProductTypes() {
 */
 
 
+/*
 import "server-only";
 import { sql } from "@/lib/neon/sql";
 
@@ -188,9 +189,8 @@ export async function getProductsByCategory(options: {
   }
 }
 
-/**
- * Lấy danh sách Product Types để hiển thị trong bộ lọc
- */
+
+ // Lấy danh sách Product Types để hiển thị trong bộ lọc
 export async function getProductTypes() {
   try {
     return await sql`
@@ -203,10 +203,161 @@ export async function getProductTypes() {
     return [];
   }
 }
+*/
 
 
+import "server-only";
+import { sql } from "@/lib/neon/sql";
 
+type SortType = "price_asc" | "price_desc" | "newest" | "oldest";
 
+export async function getProductsByCategory(options: {
+  slug?: string;
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  productTypeCode?: string;
+  sort?: SortType;
+  page?: number;
+  limit?: number;
+}) {
+  const {
+    slug,
+    search,
+    minPrice,
+    maxPrice,
+    productTypeCode,
+    sort = "newest",
+    page = 1,
+    limit = 8,
+  } = options;
+
+  const offset = (page - 1) * limit;
+
+  // search pattern
+  const rawSearch = search?.trim();
+  const flexibleSearch = rawSearch
+    ? `%${rawSearch.replace(/\s+/g, "%")}%`
+    : null;
+
+  const slugPattern = slug ? `${slug}%` : null;
+
+  // 🧠 dynamic ORDER BY (KHÔNG dùng CASE WHEN)
+  let orderBy;
+  if (sort === "price_asc") {
+    orderBy = sql`vs.price_min ASC`;
+  } else if (sort === "price_desc") {
+    orderBy = sql`vs.price_min DESC`;
+  } else if (sort === "oldest") {
+    orderBy = sql`fp.created_at ASC`;
+  } else {
+    orderBy = sql`fp.created_at DESC`;
+  }
+
+  try {
+    // =========================
+    // 🔹 DATA QUERY
+    // =========================
+    const dataRows = await sql`
+      WITH filtered_products AS (
+        SELECT 
+          p.id,
+          p.name,
+          p.slug,
+          p.thumbnail_url,
+          p.created_at
+        FROM products p
+        LEFT JOIN product_types pt ON pt.id = p.product_type_id
+        LEFT JOIN product_categories pc ON pc.product_id = p.id
+        LEFT JOIN categories c ON c.id = pc.category_id
+
+        WHERE p.status = 'active'
+
+          AND (${productTypeCode ?? null} IS NULL OR pt.code = ${productTypeCode})
+
+          AND (${slugPattern} IS NULL OR c.category_path LIKE ${slugPattern})
+
+          AND (
+            ${flexibleSearch} IS NULL OR (
+              unaccent(p.name) ILIKE unaccent(${flexibleSearch})
+              OR unaccent(COALESCE(p.description, '')) ILIKE unaccent(${flexibleSearch})
+              OR p.slug ILIKE ${flexibleSearch}
+            )
+          )
+      ),
+
+      variant_stats AS (
+        SELECT 
+          v.product_id,
+          MIN(v.price)::float as price_min,
+          SUM(v.stock)::int as total_stock
+        FROM product_variants v
+        WHERE v.is_active = true
+        GROUP BY v.product_id
+      )
+
+      SELECT 
+        fp.id,
+        fp.name,
+        fp.slug,
+        fp.thumbnail_url,
+        fp.created_at,
+        vs.price_min,
+        vs.total_stock
+      FROM filtered_products fp
+      JOIN variant_stats vs ON vs.product_id = fp.id
+
+      WHERE
+        (${minPrice ?? null} IS NULL OR vs.price_min >= ${minPrice})
+        AND (${maxPrice ?? null} IS NULL OR vs.price_min <= ${maxPrice})
+
+      ORDER BY ${orderBy}
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+
+    // =========================
+    // 🔹 COUNT QUERY (tách riêng)
+    // =========================
+    const countRows = await sql`
+      WITH filtered_products AS (
+        SELECT p.id
+        FROM products p
+        LEFT JOIN product_types pt ON pt.id = p.product_type_id
+        LEFT JOIN product_categories pc ON pc.product_id = p.id
+        LEFT JOIN categories c ON c.id = pc.category_id
+
+        WHERE p.status = 'active'
+
+          AND (${productTypeCode ?? null} IS NULL OR pt.code = ${productTypeCode})
+
+          AND (${slugPattern} IS NULL OR c.category_path LIKE ${slugPattern})
+
+          AND (
+            ${flexibleSearch} IS NULL OR (
+              unaccent(p.name) ILIKE unaccent(${flexibleSearch})
+              OR unaccent(COALESCE(p.description, '')) ILIKE unaccent(${flexibleSearch})
+              OR p.slug ILIKE ${flexibleSearch}
+            )
+          )
+      )
+
+      SELECT COUNT(*)::int as total
+      FROM filtered_products
+    `;
+
+    return {
+      data: dataRows,
+      total: countRows[0]?.total ?? 0,
+      page,
+      limit,
+      totalPages: Math.ceil((countRows[0]?.total ?? 0) / limit),
+    };
+
+  } catch (error) {
+    console.error("Database Error in getProductsByCategory:", error);
+    throw new Error("Failed to fetch products.");
+  }
+}
 
 
 
