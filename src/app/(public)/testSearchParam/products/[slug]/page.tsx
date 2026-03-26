@@ -72,10 +72,10 @@ export async function generateMetadata({
       ],
     },
       other: {
-        'product:price:amount': 454500 || 0,
+        'product:price:amount': '454500',
         'product:price:currency': 'VND',
         'product:availability': 'instock',
-        'og:price:amount': 454500 || 0,
+        'og:price:amount': '454500',
         'og:price:currency': 'VND',
       },
     twitter: {
