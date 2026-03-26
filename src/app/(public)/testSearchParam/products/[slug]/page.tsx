@@ -60,10 +60,9 @@ export async function generateMetadata({
       title: product.name,
       description: product.description || "",
       url,
-      price: '454500',
       siteName: "TamViet",
       locale: "vi_VN",
-      type: "website",
+      type: "product",
       images: [
         {
           url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
@@ -73,12 +72,9 @@ export async function generateMetadata({
       ],
     },
       other: {
-   'og:price:amount': '454500',
-    'og:price:currency': 'VND',
     'product:price:amount': '454500',
     'product:price:currency': 'VND',
     'product:availability': 'instock',
-    'og:type': 'product',
       },
     twitter: {
       card: "summary_large_image",
