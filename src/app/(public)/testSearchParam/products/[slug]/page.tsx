@@ -266,11 +266,15 @@ const productLd = {
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 30,
         returnMethod: "https://schema.org/ReturnByMail",
-        feesCustomerResponsibility: "https://schema.org/FreeReturn",
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility", 
+        feesCustomerResponsibility: "https://schema.org/ReturnFeesCustomerResponsibility",
       },
     },
   },
 };
+
+
+
 
 
 
