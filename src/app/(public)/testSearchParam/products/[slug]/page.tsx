@@ -65,7 +65,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: getPublicImageUrl(product.thumbnail_url) || "/fallback.jpg",
+          url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
           width: 1200,
           height: 630,
         },
@@ -80,6 +80,18 @@ export async function generateMetadata({
     },
   };
 }
+
+
+/*
+// Cách 1: Dùng toán tử nullish để đảm bảo luôn truyền string vào hàm
+url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
+
+// Hoặc Cách 2: Nếu bạn chắc chắn thumbnail_url luôn tồn tại khi có product
+url: getPublicImageUrl(product.thumbnail_url!) || "/fallback.jpg",
+*/
+
+
+
 
 // ================= PAGE =================
 
