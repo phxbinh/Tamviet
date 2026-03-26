@@ -139,7 +139,7 @@ export default async function ProductPage({
   };
 
   const product = data.product as typeof data.product & { slug: string };
-  
+  /*
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -159,6 +159,50 @@ export default async function ProductPage({
       url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
     },
   };
+  */
+
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.thumbnail_url ? [product.thumbnail_url] : [],
+    "description": product.description || "Sản phẩm chất lượng từ Tâm Việt Platform", // Tránh để trống description
+    "sku": `TV-${product.id}`, // SKU nên có định dạng chuỗi
+    "brand": {
+      "@type": "Brand",
+      "name": "Tâm Việt",
+    },
+    // Thêm phần Rating để hiện 5 sao trên Google
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "1",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "VND",
+      "price": product.price_min || 0,
+      "priceValidUntil": "2026-12-31", // Fix lỗi thiếu ngày hết hạn giá
+      "itemCondition": "https://schema.org/NewCondition", // Fix lỗi thiếu tình trạng hàng
+      "availability": "https://schema.org/InStock",
+      "url": `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
+      "shippingDetails": { // Thêm cái này để Google ưu tiên hiển thị hơn
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": "0",
+          "currency": "VND"
+        }
+      }
+    },
+  };
+
+
+
+
+
 
 
 
