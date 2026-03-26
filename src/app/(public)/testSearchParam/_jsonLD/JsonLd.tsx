@@ -56,7 +56,7 @@ export default function CategoryJsonLd({
       "itemListElement": products.slice(0, 15).map((product: any, index: number) => ({
         "@type": "ListItem",
         "position": index + 1,
-        "url": `${baseUrl}/san-pham/${product.slug}`,   // ← thay đổi nếu đường dẫn chi tiết sản phẩm khác
+        "url": `${baseUrl}/testSearchParam/products/${product.slug}`,   // ← thay đổi nếu đường dẫn chi tiết sản phẩm khác
         "name": product.name,
         "image": product.thumbnail_url ? product.thumbnail_url : undefined,
         "offers": {
