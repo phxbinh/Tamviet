@@ -49,8 +49,7 @@ export async function generateMetadata({
   return {
     title: `${product.name} | TamViet`,
     description:
-      product.description?.slice(0, 160) ||
-      `Mua ${product.name} chính hãng, giá tốt tại TamViet`,
+      `${product.description?.slice(0, 160)}??. 454545`, // ||`Mua ${product.name} chính hãng, giá tốt tại TamViet`,
 
     alternates: {
       canonical: url,
@@ -58,7 +57,7 @@ export async function generateMetadata({
 
     openGraph: {
       title: product.name,
-      description: `${product.description}. Giá 454.500vnđ` || "",
+      description: product.description || "",
       url,
       siteName: "TamViet",
       locale: "vi_VN",
