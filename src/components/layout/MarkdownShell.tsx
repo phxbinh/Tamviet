@@ -8,8 +8,6 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import { SidebarHeader } from "./SidebarHeaderMarkdown";
 import { Menu } from "lucide-react";
 
-
-
 export default function MarkdownShell({
   children,
 }: {
@@ -22,87 +20,7 @@ export default function MarkdownShell({
 
   return (
     <>
-      {/* 1. Đổi min-h-screen để trang có thể dài ra tự nhiên */}
-      <div className="flex min-h-screen w-full bg-background text-foreground">
-        
-        {/* CỘT 1: SIDEBAR */}
-        <aside
-          className={`
-            fixed md:sticky top-0 inset-y-0 left-0 z-50 w-64 h-screen border-r border-border bg-card/50 backdrop-blur-xl
-            transition-transform duration-300 ease-in-out shrink-0 flex flex-col
-            ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-          `}
-        >
-          <SidebarHeader onClose={closeSidebar} />
-
-          {/* Custom Scrollbar cho Sidebar để không ảnh hưởng bên ngoài */}
-          <div className="flex-1 overflow-y-auto no-scrollbar">
-            <Sidebar onNavigate={closeSidebar} />
-          </div>
-        </aside>
-
-        {/* BACKDROP MOBILE */}
-        {isOpen && (
-          <div
-            onClick={closeSidebar}
-            className="fixed inset-0 bg-black/60 z-40 md:hidden animate-in fade-in duration-200"
-          />
-        )}
-
-        {/* CỘT 2: CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0">
-          
-          {/* HEADER CHÍNH - Chuyển sang sticky để không bị nhảy khi cuộn */}
-          <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/80 backdrop-blur-md flex items-center px-4 shrink-0">
-            <button
-              onClick={openSidebar}
-              className="md:hidden p-2 mr-2 hover:bg-accent rounded-lg transition-colors"
-            >
-              <Menu size={22} />
-            </button>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40 hidden sm:block">
-              System Terminal
-            </div>
-          </header>
-
-          {/* NỘI DUNG CHÍNH - Bỏ overflow-y-auto ở đây để cuộn theo window */}
-          <main className="flex-1 p-4 md:p-10 w-full max-w-5xl mx-auto">
-            {children}
-          </main>
-
-          <footer className="mt-auto py-6 border-t border-border/40 px-6 text-center md:text-left">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest">
-              © 2026 Tâm Việt — All Systems Operational
-            </p>
-          </footer>
-        </div>
-      </div>
-
-      <Toast />
-      
-      {/* Nút ThemeToggle cố định ở góc màn hình */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <ThemeToggle />
-      </div>
-    </>
-  );
-}
-
-
-//export default
-function MarkdownShell_({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const closeSidebar = () => setIsOpen(false);
-  const openSidebar = () => setIsOpen(true);
-
-  return (
-    <>
-      <div className="flex min-h-screen w-full overflow-y-auto no-scrollbar bg-background text-foreground">
+      <div className="flex h-full w-full overflow-hidden bg-background text-foreground">
         
         {/* CỘT 1: SIDEBAR */}
         <aside
@@ -115,7 +33,7 @@ function MarkdownShell_({
           {/* Sử dụng component đã tách */}
           <SidebarHeader onClose={closeSidebar} />
 
-          <div className="flex-1 overflow-y-auto no-scrollbat">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
             <Sidebar onNavigate={closeSidebar} />
           </div>
         </aside>
@@ -145,7 +63,7 @@ function MarkdownShell_({
           </header>
 
           {/* SCROLL AREA */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar flex flex-col bg-transparent">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar flex flex-col bg-transparent">
             <main className="flex-1 p-2 md:p-8 w-full max-w-6xl mx-auto overflow-x-visible shrink-0">
               {children}
             </main>
