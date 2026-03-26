@@ -16,10 +16,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 }
 */
 
-
-
+/*
+import 'server-only' // Đảm bảo code chỉ chạy ở server
 import { MetadataRoute } from 'next'
 import { sql } from "@/lib/neon/sql"; // Giả sử đây là path tới file cấu hình db của bạn
+
+// Cache lại sitemap trong 1 giờ (3600 giây) để đỡ tốn tài nguyên DB
+export const revalidate = 3600 
+
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://tamviet.vercel.app'
@@ -45,3 +49,51 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticRoutes, ...productRoutes]
 }
+*/
+
+import 'server-only';
+import { MetadataRoute } from 'next';
+import { sql } from "@/lib/neon/sql";
+
+// Tự động cập nhật Sitemap sau mỗi 1 giờ để tiết kiệm tài nguyên Database
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = 'https://tamviet.vercel.app';
+
+  // 1. Các trang tĩnh (Priority cao nhất)
+  const staticRoutes = ['', '/test', '/testSearchParam', '/roadmap', '/login'].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: 1.0,
+  }));
+
+  // 2. Lấy Danh mục (Categories) từ Database
+  // Giả sử bạn có bảng 'categories' với trường 'slug' (ví dụ: 'the-thao/cau-long')
+  const categories = await sql`SELECT slug, updated_at FROM categories`;
+  
+  const categoryRoutes = categories.map((cat) => ({
+    url: `${baseUrl}/testSearchParam?cat=${cat.slug}`,
+    lastModified: new Date(cat.updated_at || new Date()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.9, // Thấp hơn trang chủ nhưng cao hơn sản phẩm
+  }));
+
+  // 3. Lấy Sản phẩm (Products) từ Database
+  const products = await sql`SELECT slug, updated_at FROM products WHERE status = 'active'`;
+
+  const productRoutes = products.map((product) => ({
+    url: `${baseUrl}/testSearchParam/products/${product.slug}`,
+    lastModified: new Date(product.updated_at || new Date()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  // Gộp tất cả lại thành một danh sách duy nhất
+  return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+}
+
+
+
+
