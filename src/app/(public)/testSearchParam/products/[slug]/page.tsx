@@ -70,6 +70,13 @@ export async function generateMetadata({
           height: 630,
         },
       ],
+      other: {
+        'product:price:amount': product.price_min || 0,
+        'product:price:currency': 'VND',
+        'product:availability': 'instock',
+        'og:price:amount': product.price_min || 0,
+        'og:price:currency': 'VND',
+      },
     },
 
     twitter: {
@@ -80,6 +87,12 @@ export async function generateMetadata({
     },
   };
 }
+
+
+
+
+
+
 
 
 /*
