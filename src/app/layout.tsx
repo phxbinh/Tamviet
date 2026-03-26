@@ -145,7 +145,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} min-h-screen overflow-y-auto no-scrollbar`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
-          <InstallPrompt />
+          {/* <InstallPrompt /> */}
         </ThemeProvider>
 
         <ServiceWorkerRegister />
