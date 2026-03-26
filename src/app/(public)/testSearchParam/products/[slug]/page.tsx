@@ -49,7 +49,7 @@ export async function generateMetadata({
   return {
     title: `${product.name} | TamViet`,
     description:
-      `${product.description?.slice(0, 160)}??. 454545`, // ||`Mua ${product.name} chính hãng, giá tốt tại TamViet`,
+      product.description?.slice(0, 160) ||`Mua ${product.name} chính hãng, giá tốt tại TamViet`,
 
     alternates: {
       canonical: url,
@@ -80,23 +80,7 @@ export async function generateMetadata({
   };
 }
 
-/*
-      return {
-  // ... title, description, openGraph giữ nguyên ...
 
-  // 🟢 Dùng mảng các object trong 'other' để kiểm soát chính xác 
-  // (Cách này ép Next.js render chuẩn thẻ meta property)
-  other: {
-    'og:price:amount': '454500',
-    'og:price:currency': 'VND',
-    'product:price:amount': '454500',
-    'product:price:currency': 'VND',
-    'product:availability': 'instock',
-    'og:type': 'product', // Quan trọng: Phải là product để Zalo hiện giá
-  },
-};
-
-*/
 
 
 
