@@ -70,6 +70,7 @@ export async function generateMetadata({
           height: 630,
         },
       ],
+    },
       other: {
         'product:price:amount': product.price_min || 0,
         'product:price:currency': 'VND',
@@ -77,8 +78,6 @@ export async function generateMetadata({
         'og:price:amount': product.price_min || 0,
         'og:price:currency': 'VND',
       },
-    },
-
     twitter: {
       card: "summary_large_image",
       title: product.name,
