@@ -60,6 +60,7 @@ export async function generateMetadata({
       title: product.name,
       description: product.description || "",
       url,
+      price: '454500',
       siteName: "TamViet",
       locale: "vi_VN",
       type: "website",
