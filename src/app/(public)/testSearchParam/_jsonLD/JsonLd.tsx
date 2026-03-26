@@ -3,18 +3,24 @@
 
 import Script from 'next/script';
 
-interface JsonLdProps {
-  currentCategory?: any;
-  products: any[];           // mảng products từ getProductsByCategory
-  path: string;
-  baseUrl: string;           // ví dụ: 'https://yourdomain.com'
+interface CategoryJsonLdProps {
+  currentCategory?: any;           // object category từ DB (có name, category_path...)
+  products: any[];                 // mảng products trả về từ getProductsByCategory
+  path: string;                    // giá trị cat từ searchParams
+  baseUrl: string;                 // ví dụ: 'https://tamviet.vercel.app'
 }
 
-export default function CategoryJsonLd({ currentCategory, products, path, baseUrl }: JsonLdProps) {
-  const fullUrl = `${baseUrl}${path ? `/${path}` : ''}`;
+export default function CategoryJsonLd({
+  currentCategory,
+  products,
+  path,
+  baseUrl,
+}: CategoryJsonLdProps) {
+  const categoryName = currentCategory?.name || "Danh mục sản phẩm";
+  const categoryUrl = `${baseUrl}${path ? `/testSearchParam?cat=${encodeURIComponent(path)}` : '/testSearchParam'}`;
 
-  // 1. BreadcrumbList
-  const breadcrumbJson = {
+  // 1. BreadcrumbList (rất quan trọng cho SEO)
+  const breadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
@@ -22,38 +28,45 @@ export default function CategoryJsonLd({ currentCategory, products, path, baseUr
         "@type": "ListItem",
         "position": 1,
         "name": "Trang chủ",
-        "item": baseUrl
+        "item": baseUrl,
       },
-      ...(path ? [{
-        "@type": "ListItem",
-        "position": 2,
-        "name": currentCategory?.name || "Danh mục",
-        "item": fullUrl
-      }] : [])
-    ]
+      ...(path
+        ? [
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": categoryName,
+              "item": categoryUrl,
+            },
+          ]
+        : []),
+    ],
   };
 
-  // 2. ItemList (danh sách sản phẩm)
-  const itemListJson = {
+  // 2. CollectionPage + ItemList (khuyến nghị chính cho category page)
+  const collectionPage = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": currentCategory?.name || "Danh mục sản phẩm",
-    "description": `Danh sách sản phẩm thuộc danh mục ${currentCategory?.name || ''}`,
-    "url": fullUrl,
-    "numberOfItems": products.length,
-    "itemListElement": products.slice(0, 12).map((product: any, index: number) => ({  // giới hạn 12-20 items
-      "@type": "ListItem",
-      "position": index + 1,
-      "url": `${baseUrl}/san-pham/${product.slug}`,   // link chi tiết sản phẩm
-      "name": product.name,
-      "image": product.thumbnail_url ? product.thumbnail_url : undefined,
-      "offers": {
-        "@type": "Offer",
-        "price": product.price_min,
-        "priceCurrency": "VND",          // thay bằng VND nếu shop VN
-        "availability": "https://schema.org/InStock"   // hoặc OutOfStock nếu cần
-      }
-    }))
+    "@type": "CollectionPage",
+    "name": `${categoryName} - Tam Việt`,
+    "description": `Danh sách sản phẩm thuộc danh mục ${categoryName} tại Tam Việt. Chất lượng cao, giá tốt, đa dạng lựa chọn.`,
+    "url": categoryUrl,
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": products.length,
+      "itemListElement": products.slice(0, 15).map((product: any, index: number) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "url": `${baseUrl}/san-pham/${product.slug}`,   // ← thay đổi nếu đường dẫn chi tiết sản phẩm khác
+        "name": product.name,
+        "image": product.thumbnail_url ? product.thumbnail_url : undefined,
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "VND",
+          "price": Number(product.price_min) || 0,
+          "availability": "https://schema.org/InStock",   // hoặc logic kiểm tra stock nếu có
+        },
+      })),
+    },
   };
 
   return (
@@ -62,41 +75,43 @@ export default function CategoryJsonLd({ currentCategory, products, path, baseUr
         id="breadcrumb-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbJson)
+          __html: JSON.stringify(breadcrumb).replace(/</g, '\\u003c'),
         }}
       />
       <Script
-        id="itemlist-jsonld"
+        id="collectionpage-jsonld"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(itemListJson)
+          __html: JSON.stringify(collectionPage).replace(/</g, '\\u003c'),
         }}
       />
     </>
   );
 }
 
-/* Cách dùng
-import CategoryJsonLd from "./_components/JsonLd";   // điều chỉnh đường dẫn
 
-// ... code hiện tại của bạn
+/* Cấch sử dụng
+// ... code hiện tại
+
+import CategoryJsonLd from "./_components/CategoryJsonLd";   // điều chỉnh path nếu cần
 
 return (
   <>
     <SearchUI ... />
 
     <div className="flex flex-col px-1 gap-4 mt-2">
-      // grid sản phẩm
+      // grid sản phẩm và Pagination
       ...
     </div>
 
-    // === THÊM JSON-LD Ở ĐÂY ===
+    // JSON-LD
     <CategoryJsonLd 
       currentCategory={currentCategory}
       products={products}
       path={path}
-      baseUrl="https://yourdomain.com"   // ← thay bằng domain thật của bạn
+      baseUrl="https://tamviet.vercel.app"   // ← đổi thành process.env.NEXT_PUBLIC_BASE_URL nếu muốn động
     />
   </>
 );
+
 */
