@@ -58,11 +58,11 @@ export async function generateMetadata({
 
     openGraph: {
       title: product.name,
-      description: product.description || "",
+      description: `${product.description}. Giá 454.500vnđ` || "",
       url,
       siteName: "TamViet",
       locale: "vi_VN",
-      type: "product",
+      type: "website",
       images: [
         {
           url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
@@ -71,11 +71,7 @@ export async function generateMetadata({
         },
       ],
     },
-      other: {
-    'product:price:amount': '454500',
-    'product:price:currency': 'VND',
-    'product:availability': 'instock',
-      },
+ 
     twitter: {
       card: "summary_large_image",
       title: product.name,
