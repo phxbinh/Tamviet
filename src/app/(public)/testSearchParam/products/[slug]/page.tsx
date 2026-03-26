@@ -65,7 +65,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: product.thumbnail_url || "/fallback.jpg",
+          url: getPublicImageUrl(product.thumbnail_url) || "/fallback.jpg",
           width: 1200,
           height: 630,
         },
@@ -76,7 +76,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: product.name,
       description: product.description || "",
-      images: [product.thumbnail_url || "/fallback.jpg"],
+      images: [getPublicImageUrl(product.thumbnail_url) || "/fallback.jpg"],
     },
   };
 }
