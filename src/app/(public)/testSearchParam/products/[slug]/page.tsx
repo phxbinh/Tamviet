@@ -23,6 +23,7 @@ import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
 import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
 import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
 // ================= ✅ METADATA =================
 export async function generateMetadata({
@@ -161,6 +162,7 @@ export default async function ProductPage({
   };
   */
 
+/*
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -197,6 +199,77 @@ export default async function ProductPage({
       }
     },
   };
+*/
+const productLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: product.name,
+  image: product.thumbnail_url ? [getPublicImageUrl(product.thumbnail_url)] : [],
+  description: product.description || "Sản phẩm chất lượng từ Tâm Việt",
+  sku: `TV-${product.id}`,
+  brand: {
+    "@type": "Brand",
+    name: "Tâm Việt",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "5",
+    reviewCount: "1",
+    bestRating: "5",
+    worstRating: "1",
+  },
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "VND",
+    price: product.price_min || 0,
+    priceValidUntil: "2026-12-31",
+    itemCondition: "https://schema.org/NewCondition",
+    availability: "https://schema.org/InStock",
+    url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      applicableCountry: "VN",
+      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+      merchantReturnDays: 30,
+      returnMethod: "https://schema.org/ReturnByMail",
+      feesCustomerResponsibility: "https://schema.org/FreeReturn",
+    },
+    shippingDetails: {
+      "@type": "OfferShippingDetails",
+      shippingRate: {
+        "@type": "MonetaryAmount",
+        value: "0",
+        currency: "VND",
+      },
+      deliveryTime: {
+        "@type": "ShippingDeliveryTime",
+        handlingTime: {
+          "@type": "QuantitativeValue",
+          minValue: 0,
+          maxValue: 1,
+          unitCode: "d",
+        },
+        transitTime: {
+          "@type": "QuantitativeValue",
+          minValue: 1,
+          maxValue: 3,
+          unitCode: "d",
+        },
+      },
+      shippingDestination: {
+        "@type": "DefinedRegion",
+        addressCountry: "VN",
+      },
+    },
+  },
+};
+
+
+
+
+
+
+
 
   // ================= RELATED =================
   const relatedProducts = await getRelatedProducts(
