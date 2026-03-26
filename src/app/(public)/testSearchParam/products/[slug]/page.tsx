@@ -76,7 +76,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: product.name,
       description: product.description || "",
-      images: [getPublicImageUrl(product.thumbnail_url) || "/fallback.jpg"],
+      images: [getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg"],
     },
   };
 }
