@@ -260,14 +260,17 @@ const productLd = {
         "@type": "DefinedRegion",
         addressCountry: "VN",
       },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "VN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
+        returnMethod: "https://schema.org/ReturnByMail",
+        feesCustomerResponsibility: "https://schema.org/FreeReturn",
+      },
     },
   },
 };
-
-
-
-
-
 
 
 
