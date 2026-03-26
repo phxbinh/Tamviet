@@ -22,7 +22,7 @@ export default function PublicShell({
 
   return (
     <>
-      <div className="flex min-h-screen bg-background">
+     {/* <div className="flex min-h-screen bg-background"> */}
 
         {/* SIDEBAR */}
         <aside
@@ -108,7 +108,7 @@ export default function PublicShell({
           </main>
 
         </div>
-      </div>
+{/*      </div> */}
 
       <Toast />
 
