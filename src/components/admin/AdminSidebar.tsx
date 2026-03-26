@@ -67,7 +67,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link key={item.href} href={item.href} prefetch={false}
+            <Link key={item.href} href={item.href} prefetch={true}
               onClick={() => onNavigate?.()}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group
                 ${isActive ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground hover:bg-foreground/5'}
@@ -97,7 +97,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
           </button>
           {/* BACK TO APP LINK - UI SYNCED */}
           <Link 
-            href="/"
+            href="/" prefetch={true}
             onClick={() => onNavigate?.()}
             className="flex items-center gap-3 px-3 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-foreground/5 rounded-xl transition-all group"
           >
