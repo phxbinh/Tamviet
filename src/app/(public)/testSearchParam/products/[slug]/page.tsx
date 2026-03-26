@@ -230,9 +230,10 @@ const productLd = {
       "@type": "MerchantReturnPolicy",
       applicableCountry: "VN",
       returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-      merchantReturnDays: 30,
+      merchantReturnDays: 7,
       returnMethod: "https://schema.org/ReturnByMail",
-      feesCustomerResponsibility: "https://schema.org/FreeReturn",
+      returnFees: "https://schema.org/ReturnFeesCustomerResponsibility", 
+      feesCustomerResponsibility: "https://schema.org/ReturnFeesCustomerResponsibility",
     },
     shippingDetails: {
       "@type": "OfferShippingDetails",
@@ -259,15 +260,6 @@ const productLd = {
       shippingDestination: {
         "@type": "DefinedRegion",
         addressCountry: "VN",
-      },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "VN",
-        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 30,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility", 
-        feesCustomerResponsibility: "https://schema.org/ReturnFeesCustomerResponsibility",
       },
     },
   },
