@@ -21,23 +21,46 @@ export const viewport: Viewport = {
 
 // 2. Cấu hình Metadata chính
 export const metadata: Metadata = {
-  title: "Tâm Việt Luxury",
-  description: "Nâng tầm trải nghiệm cầu lông cao cấp",
-  manifest: "/manifest.json", // Khai báo file manifest trong thư mục public
+  title: "Tâm Việt | Nâng Tầm Trải Nghiệm Cầu Lông Cao Cấp",
+  description: "Cung cấp trang thiết bị và phụ kiện cầu lông cao cấp. Khám phá hệ sinh thái Tâm Việt Luxury - Nơi đam mê hội tụ.",
+  metadataBase: new URL('https://tamviet.vercel.app'), // Thay bằng domain thật của bạn
+  alternates: {
+    canonical: '/',
+  },
+  manifest: "/manifest.json",
   appleWebApp: {
-    capable: true, // Biến Web thành App khi "Thêm vào MH chính"
-    statusBarStyle: "default", // Hoặc "black-translucent" nếu muốn trong suốt
+    capable: true,
+    statusBarStyle: "default",
     title: "Tâm Việt",
   },
   formatDetection: {
-    telephone: false, // Tránh tự động đổi màu số điện thoại thành link xanh
+    telephone: false,
+  },
+  // Thêm phần này để hiển thị ảnh khi chia sẻ link
+  openGraph: {
+    title: "Tâm Việt Luxury",
+    description: "Nâng tầm trải nghiệm cầu lông cao cấp",
+    url: 'https://tamviet.vercel.app',
+    siteName: 'Tâm Việt Luxury',
+    images: [
+      {
+        url: '/og-image.png', // Bạn cần để 1 tấm ảnh 1200x630 trong thư mục public
+        width: 1200,
+        height: 630,
+        alt: 'Tâm Việt Luxury Preview',
+      },
+    ],
+    locale: 'vi_VN',
+    type: 'website',
   },
   icons: {
+    icon: '/favicon.ico', // Icon nhỏ trên tab trình duyệt
     apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" }, // Icon khi hiện ngoài màn hình iPhone
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
 };
+
 
 const inter = Inter({ subsets: ["latin"] });
 /*
