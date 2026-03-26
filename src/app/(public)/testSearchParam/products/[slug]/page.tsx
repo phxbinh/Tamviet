@@ -72,11 +72,12 @@ export async function generateMetadata({
       ],
     },
       other: {
-        'product:price:amount': '454500',
-        'product:price:currency': 'VND',
-        'product:availability': 'instock',
-        'og:price:amount': '454500',
-        'og:price:currency': 'VND',
+   'og:price:amount': '454500',
+    'og:price:currency': 'VND',
+    'product:price:amount': '454500',
+    'product:price:currency': 'VND',
+    'product:availability': 'instock',
+    'og:type': 'product',
       },
     twitter: {
       card: "summary_large_image",
@@ -88,13 +89,21 @@ export async function generateMetadata({
 }
 
 /*
-      other: {
-        'product:price:amount': product.price_min || 0,
-        'product:price:currency': 'VND',
-        'product:availability': 'instock',
-        'og:price:amount': product.price_min || 0,
-        'og:price:currency': 'VND',
-      },
+      return {
+  // ... title, description, openGraph giữ nguyên ...
+
+  // 🟢 Dùng mảng các object trong 'other' để kiểm soát chính xác 
+  // (Cách này ép Next.js render chuẩn thẻ meta property)
+  other: {
+    'og:price:amount': '454500',
+    'og:price:currency': 'VND',
+    'product:price:amount': '454500',
+    'product:price:currency': 'VND',
+    'product:availability': 'instock',
+    'og:type': 'product', // Quan trọng: Phải là product để Zalo hiện giá
+  },
+};
+
 */
 
 
