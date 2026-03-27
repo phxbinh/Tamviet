@@ -141,7 +141,7 @@ export function ProductGallery({ images, productName, activeImgIndex, setActiveI
     <div className="lg:col-span-7 space-y-4">
       <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-secondary/30 group">
         {/* ... (Các phần Badge, Heart giữ nguyên) ... */}
-        
+        {/*
         <div 
           ref={scrollRef}
           onScroll={handleScroll} // Dùng hàm handleScroll đã có khóa
@@ -153,7 +153,42 @@ className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar
               <img src={getPublicImageUrl(img.url)} alt={productName} className="w-full h-full object-cover select-none" />
             </div>
           )) : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-20 h-20 opacity-10" /></div>}
-        </div>
+        </div> */}
+
+
+<div 
+  ref={scrollRef}
+  onScroll={handleScroll}
+  /* 1. BỎ touch-pan-x hoặc touch-pan-y. 
+     2. Dùng touch-auto để trình duyệt tự quyết định hướng vuốt.
+     3. Thêm overscroll-behavior-x-contain để không bị nhảy trang khi vuốt hết ảnh.
+  */
+  className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-auto overscroll-behavior-x-contain"
+>
+  {images.length > 0 ? images.map((img) => (
+    <div key={img.id} className="h-full w-full flex-none snap-center">
+      <img 
+        src={getPublicImageUrl(img.url)} 
+        alt={productName} 
+        /* QUAN TRỌNG: 
+           - Bỏ pointer-events-none (để còn nhận diện vuốt).
+           - Thêm touch-action: pan-y (chỉ trên thẻ img) để nó không chặn cuộn dọc của trang.
+           - draggable="false" để iPhone không hiểu lầm là bạn đang muốn kéo ảnh đi chỗ khác.
+        */
+        className="w-full h-full object-cover select-none"
+        style={{ touchAction: 'pan-y' }} 
+        draggable={false}
+      />
+    </div>
+  )) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <ShoppingBag className="w-20 h-20 opacity-10" />
+    </div>
+  )}
+</div>
+
+
+
 
         {/* Dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
