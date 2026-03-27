@@ -60,6 +60,7 @@ export default function PublicShell({
         <div className="flex-1 flex flex-col min-w-0 w-full">
 
           {/* HEADER CHÍNH */}
+{/*
           <header className="sticky top-0 z-30 
                            h-16 landscape:h-12 
                            flex items-center px-4 
@@ -89,6 +90,56 @@ export default function PublicShell({
               </Link>
             </div>
           </header>
+*/}
+
+          {/* HEADER CHÍNH - FIX RESPONSIVE & LANDSCAPE */}
+          <header className="sticky top-0 z-30 
+                           h-16 landscape:h-12 
+                           flex items-center 
+                           border-b border-border 
+                           bg-background/80 backdrop-blur-md 
+                           transition-all duration-300 w-full">
+            
+            {/* Giới hạn nội dung Header theo khung của Main Content */}
+            <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-4 md:px-6 lg:px-8 flex items-center h-full">
+              
+              {/* Nút Menu Mobile */}
+              <button
+                onClick={() => setIsOpen(true)}
+                className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md flex-shrink-0"
+              >
+                <Menu size={20} />
+              </button>
+              
+              {/* Logo nhỏ Mobile */}
+              <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50 whitespace-nowrap overflow-hidden text-ellipsis">
+                Tâm Việt Platform
+              </div>
+
+              {/* Cụm icon góc bên phải */}
+              <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+                <Link 
+                  href="/cart" 
+                  className="p-2 hover:bg-foreground/5 rounded-full transition-colors relative text-foreground/80 hover:text-foreground"
+                >
+                  <ShoppingCart size={20} />
+                  {/* Badge số lượng */}
+                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
+                    0
+                  </span>
+                </Link>
+              </div>
+
+            </div>
+          </header>
+
+
+
+
+
+
+
+
 
           {/* MAIN CONTENT - FIX RESPONSIVE TẠI ĐÂY */}
           <main className="flex-1 pb-10">
