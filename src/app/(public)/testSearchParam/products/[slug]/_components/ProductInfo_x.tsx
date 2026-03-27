@@ -163,8 +163,8 @@ export function ProductInfo({
               <Truck className="w-3.5 h-3.5 text-primary transition-transform group-hover:translate-x-0.5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">Express</span>
-              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Shipping</span>
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">Shipping</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Free ship cho đơn từ 200k</span>
             </div>
           </div>
 
@@ -186,7 +186,7 @@ export function ProductInfo({
             </div>
             <div className="flex flex-col">
               <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">7-Day</span>
-              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Returns</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight"Đổi trả vì bất kỳ lý do gì</span>
             </div>
           </div>
 
@@ -196,8 +196,8 @@ export function ProductInfo({
               <Phone className="w-3.5 h-3.5 text-primary animate-breathe-fast" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none group-hover:text-primary transition-colors">Support</span>
-              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight group-hover:text-primary/60">1900 xxxx</span>
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none group-hover:text-primary transition-colors">Hotline 1900.xxxx</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight group-hover:text-primary/60">Hỗ trợ từ 8h30 - 22h</span>
             </div>
           </a>
         </div>
