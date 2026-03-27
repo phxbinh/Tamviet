@@ -65,7 +65,7 @@ export default function RelatedProductsSection({
       </div>
     </div>
 
-    <div className="relative px-0 md:px-0 overflow-hidden">
+    <div className="relative pb-1 px-0 md:px-0 overflow-hidden">
 {/*
       <Swiper
         modules={[Navigation, Pagination, FreeMode, Autoplay]}
@@ -128,7 +128,7 @@ export default function RelatedProductsSection({
     1024: { slidesPerView: 4, spaceBetween: 24 },
   }}
   // 3. Chỉnh lại padding bottom (vì không còn bullet nên không cần khoảng trống bên dưới)
-  className="related-swiper !pb-0" 
+  className="related-swiper !pb-1" 
 >
 
         {relatedProducts.map((item) => (
