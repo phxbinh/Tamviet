@@ -45,36 +45,36 @@ export function ProductInfo({
   }, [attributes, setSelected, selected]);
 
   return (
-    <div className="lg:col-span-5 space-y-4 animate-in fade-in transition-colors duration-300">
+    <div className="lg:col-span-5 space-y-2 animate-in fade-in transition-colors duration-300">
       {/* Header Section */}
       <div className="space-y-1">
         <h1 className="text-2xl xl:text-3xl font-bold tracking-tighter leading-tight uppercase italic text-foreground">
           {product.name}
         </h1>
         {product.short_description && (
-          <p className="text-foreground/60 text-[11px] leading-snug font-medium">
+          <p className="text-foreground/60 text-[10px] leading-snug font-medium">
             {product.short_description}
           </p>
         )}
       </div>
 
       {/* Price Box: Sát viền, dùng biến --border từ globals.css */}
-      <div className="flex items-center justify-between py-2.5 border-y border-border">
+      <div className="flex items-center justify-between py-1 border-y border-border">
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-black tracking-tighter text-foreground">
             {/* Hiển thị giá Variant được chọn, nếu chưa chọn thì hiện giá thấp nhất */}
             {new Intl.NumberFormat('vi-VN').format(selectedVariant ? selectedVariant.price : minPrice)}
           </span>
-          <span className="text-[9px] font-bold text-foreground/40 uppercase">VND</span>
+          <span className="text-[11px] font-bold text-foreground/40 uppercase">VND</span>
         </div>
         
         {selectedVariant ? (
-          <div className={`text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5 border transition-all ${
+          <div className={`text-[10px] font-bold uppercase tracking-tighter px-2 py-0.5 border transition-all ${
             selectedVariant.stock > 0 
               ? 'text-primary border-primary/20 bg-primary/5' 
               : 'text-red-500 border-red-500/20 bg-red-500/5 animate-shake'
           }`}>
-            {selectedVariant.stock > 0 ? `In Stock: ${selectedVariant.stock}` : 'Sold Out'}
+            {selectedVariant.stock > 0 ? `Kho: ${selectedVariant.stock}` : 'Hết'}
           </div>
         ) : (
           <span className="text-[8px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-sm">
@@ -107,7 +107,7 @@ export function ProductInfo({
                     key={v.id}
                     type="button"
                     onClick={() => setSelected((prev: any) => ({ ...prev, [attr.name]: v.value }))}
-                    className={`py-2 text-[10px] font-bold transition-all outline-none
+                    className={`py-1 text-[10px] font-bold transition-all outline-none
                       ${isActive 
                         ? "bg-primary text-white" 
                         : "bg-background text-foreground/70 hover:bg-foreground/[0.03]"}`}
