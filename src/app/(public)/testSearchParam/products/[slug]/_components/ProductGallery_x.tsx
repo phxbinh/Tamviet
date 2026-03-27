@@ -117,6 +117,7 @@ export function ProductGallery({
       </div>
 
       {/* THUMBNAILS: Giữ lại bo góc nhẹ để phân biệt với ảnh chính */}
+{/*
       <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
         {displayImages.map((img, i) => (
           <button
@@ -132,6 +133,31 @@ export function ProductGallery({
           </button>
         ))}
       </div>
+*/}
+      {/* THUMBNAILS: Sát viền, tối giản */}
+      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
+        {displayImages.map((img, i) => (
+          <button
+            key={img.id || i}
+            type="button"
+            onClick={() => scrollToImage(i)}
+            className={`relative flex-none w-16 aspect-[3/4] overflow-hidden transition-all duration-300 border-2 ${
+              activeImgIndex === i 
+                ? "border-blue-500 opacity-100" 
+                : "border-transparent opacity-50 hover:opacity-100"
+            }`}
+          >
+            <img 
+              src={getPublicImageUrl(img.url)} 
+              className="w-full h-full object-cover"
+              alt={`Thumbnail ${i}`}
+            />
+          </button>
+        ))}
+      </div>
+
+
+
     </div>
   );
 }
