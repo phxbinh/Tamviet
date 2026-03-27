@@ -82,7 +82,7 @@ export default function PublicShell({
           </header>
 
           {/* ✅ SCROLL CONTAINER - KHÔNG WRAPPER */}
-          <main className="flex-1 px-1 md:px-8 pb-4 pt-0">
+          <main className="flex-1 px-0 md:px-4 pb-4 pt-0">
             {children}
           </main>
 
