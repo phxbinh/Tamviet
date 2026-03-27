@@ -26,8 +26,8 @@ interface RelatedProductsProps {
 
 export default function RelatedProductsSection({ relatedProducts }: RelatedProductsProps) {
   return (
-    <section className="mt-16 border-t pt-10">
-      <div className="flex justify-between items-end mb-8 px-4">
+    <section className="mt-3 border-t pt-3">
+      <div className="flex justify-between items-end mb-4 px-1">
         <div>
           <h2 className="text-2xl font-bold uppercase tracking-tight">Sản phẩm tương tự</h2>
           <div className="h-1 w-12 bg-black mt-2"></div>
@@ -43,7 +43,7 @@ export default function RelatedProductsSection({ relatedProducts }: RelatedProdu
         </div>
       </div>
 
-      <div className="relative px-4 overflow-hidden">
+      <div className="relative px-1 overflow-hidden">
         <Swiper
           modules={[Navigation, Pagination, FreeMode, Autoplay]} // Đưa Autoplay vào đây
           spaceBetween={20}
