@@ -50,7 +50,7 @@ export default function RelatedProductsSection({
             Xem thêm...
           </Link>
         </div>
-        <div className="h-1 w-12 bg-[hsl(var(--primary))] mt-2"></div>
+        <div className="h-1 w-12 bg-[hsl(var(--primary))] mt-1"></div>
       </div>
 
       {/* Nút điều hướng Swiper bên phải */}
@@ -127,7 +127,7 @@ export default function RelatedProductsSection({
     1024: { slidesPerView: 4, spaceBetween: 24 },
   }}
   // 3. Chỉnh lại padding bottom (vì không còn bullet nên không cần khoảng trống bên dưới)
-  className="related-swiper !pb-2" 
+  className="related-swiper !pb-0" 
 >
 
         {relatedProducts.map((item) => (
