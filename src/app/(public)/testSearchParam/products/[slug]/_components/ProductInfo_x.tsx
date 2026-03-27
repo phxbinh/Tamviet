@@ -144,7 +144,7 @@ export function ProductInfo({
         </button>
         
         {/* Shipping info: Tối giản, dùng font nhỏ nhất */}
-        <div className="grid grid-cols-2 gap-2 text-[8px] font-bold uppercase tracking-tight">
+        <div className="grid grid-cols-2 gap-2 text-[12px] font-bold uppercase tracking-tight">
           <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
             <Truck className="w-3.5 h-3.5 text-primary" /> Express Shipping
           </div>
