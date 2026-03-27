@@ -67,7 +67,7 @@ export function ProductGallery({
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex h-full w-full overflow-x-auto snap-x snap-proximity no-scrollbar scroll-smooth"
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth"
           style={{ touchAction: "pan-y pan-x" }}
         >
           {images.length > 0 ? (
