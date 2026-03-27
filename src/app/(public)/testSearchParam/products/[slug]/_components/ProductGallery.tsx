@@ -159,33 +159,33 @@ className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar
 <div 
   ref={scrollRef}
   onScroll={handleScroll}
-  /* 1. BỎ touch-pan-x hoặc touch-pan-y. 
-     2. Dùng touch-auto để trình duyệt tự quyết định hướng vuốt.
-     3. Thêm overscroll-behavior-x-contain để không bị nhảy trang khi vuốt hết ảnh.
-  */
-  className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-auto overscroll-behavior-x-contain"
+  /* 1. Dùng touch-pan-y ở đây để LUÔN cho phép cuộn trang dọc */
+  className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
+  style={{ 
+    touchAction: 'pan-y', 
+    WebkitOverflowScrolling: 'touch' 
+  }}
 >
-  {images.length > 0 ? images.map((img) => (
+  {images.map((img, i) => (
     <div key={img.id} className="h-full w-full flex-none snap-center">
       <img 
         src={getPublicImageUrl(img.url)} 
         alt={productName} 
-        /* QUAN TRỌNG: 
-           - Bỏ pointer-events-none (để còn nhận diện vuốt).
-           - Thêm touch-action: pan-y (chỉ trên thẻ img) để nó không chặn cuộn dọc của trang.
-           - draggable="false" để iPhone không hiểu lầm là bạn đang muốn kéo ảnh đi chỗ khác.
+        /* 2. GIỮ NGUYÊN pointer-events (để còn nhấn giữ lưu ảnh được)
+           3. NHƯNG chặn 'drag' để không bị dính tay khi vuốt 
         */
         className="w-full h-full object-cover select-none"
-        style={{ touchAction: 'pan-y' }} 
-        draggable={false}
+        draggable={false} 
+        onDragStart={(e) => e.preventDefault()} // Chặn tuyệt đối việc kéo ảnh
+        style={{ 
+          touchAction: 'pan-y', // Ép tấm ảnh cũng phải cho cuộn dọc
+          WebkitUserDrag: 'none' // Lệnh riêng cho Safari chặn kéo ảnh
+        }}
       />
     </div>
-  )) : (
-    <div className="w-full h-full flex items-center justify-center">
-      <ShoppingBag className="w-20 h-20 opacity-10" />
-    </div>
-  )}
+  ))}
 </div>
+
 
 
 
