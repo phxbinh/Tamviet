@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { ProductFull } from "../types";
-import { ProductGallery } from "./ProductGallery__";
+import { ProductGallery } from "./ProductGallery_";
 import { ProductInfo } from "./ProductInfo";
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
