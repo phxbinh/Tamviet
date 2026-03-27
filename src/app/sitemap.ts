@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [...staticRoutes, ...productRoutes]
 }
 */
-
+/*
 import 'server-only';
 import { MetadataRoute } from 'next';
 import { sql } from "@/lib/neon/sql";
@@ -94,6 +94,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [...staticRoutes, ...categoryRoutes, ...productRoutes];
 }
 
+*/
+
+
+import { MetadataRoute } from 'next';
+import { sql } from "@/lib/neon/sql";
+
+// Cấu hình ISR: Cập nhật sitemap mỗi 1 giờ
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = 'https://tamviet.vercel.app';
+
+  // 1. Các trang tĩnh (Priority cao nhất)
+  const staticRoutes: MetadataRoute.Sitemap = ['', '/test', '/testSearchParam', '/roadmap', '/login'].map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: 1.0,
+  }));
+
+  try {
+    // 2. Lấy Danh mục (Categories)
+    const categories = await sql`SELECT slug, updated_at FROM categories`;
+    const categoryRoutes: MetadataRoute.Sitemap = categories.map((cat) => ({
+      url: `${baseUrl}/testSearchParam?cat=${cat.slug}`,
+      lastModified: cat.updated_at ? new Date(cat.updated_at) : new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    }));
+
+    // 3. Lấy Sản phẩm (Products)
+    const products = await sql`SELECT slug, updated_at FROM products WHERE status = 'active'`;
+    const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
+      url: `${baseUrl}/testSearchParam/products/${product.slug}`,
+      lastModified: product.updated_at ? new Date(product.updated_at) : new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
+
+    return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+  } catch (error) {
+    console.error("Sitemap error:", error);
+    // Nếu DB lỗi, vẫn trả về các trang tĩnh để Google không báo lỗi 500
+    return staticRoutes;
+  }
+}
 
 
 
