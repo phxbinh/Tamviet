@@ -38,6 +38,7 @@ export default function RelatedProductsSection({
   <section className="mt-1">
     <div className="flex justify-between items-end mb-2 px-4">
       {/* Cụm tiêu đề bên trái */}
+{/*
       <div>
         <div className="flex items-baseline gap-3">
           <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--foreground))]">
@@ -52,6 +53,24 @@ export default function RelatedProductsSection({
         </div>
         <div className="h-1 w-12 bg-[hsl(var(--primary))] mt-1"></div>
       </div>
+*/}
+
+<div
+  className="flex items-baseline gap-3 bg-[#ccffcc] mt-0 ml-0 mr-0 rounded-xl p-4"
+  style={{ borderRadius: 'inherit' }} // Lấy radius giống với thẻ cha
+>
+  <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tight text-[hsl(var(--foreground))]">
+    {title}
+  </h2>
+  <Link
+    href={`/testSearchParam?page=1&type=${code}`}
+    className="text-xs md:text-sm font-medium text-[hsl(var(--primary))] hover:underline transition-all"
+  >
+    Xem thêm...
+  </Link>
+</div>
+
+
 
       {/* Nút điều hướng Swiper bên phải */}
       <div className="hidden md:flex gap-2">
