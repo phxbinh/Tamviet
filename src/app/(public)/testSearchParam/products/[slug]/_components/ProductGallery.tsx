@@ -166,21 +166,20 @@ className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar
     WebkitOverflowScrolling: 'touch' 
   }}
 >
-  {images.map((img, i) => (
-    <div key={img.id} className="h-full w-full flex-none snap-center">
-      <img 
-        src={getPublicImageUrl(img.url)} 
-        alt={productName} 
-        /* 2. GIỮ NGUYÊN pointer-events (để còn nhấn giữ lưu ảnh được)
-           3. NHƯNG chặn 'drag' để không bị dính tay khi vuốt 
-        */
-        className="w-full h-full object-cover select-none"
-        draggable={false} 
-        onDragStart={(e) => e.preventDefault()} // Chặn tuyệt đối việc kéo ảnh
-        style={{ 
-          touchAction: 'pan-y', // Ép tấm ảnh cũng phải cho cuộn dọc
-          WebkitUserDrag: 'none' // Lệnh riêng cho Safari chặn kéo ảnh
-        }}
+<img 
+  src={getPublicImageUrl(img.url)} 
+  alt={productName} 
+  className="w-full h-full object-cover select-none"
+  /* Chặn kéo ảnh - Đây là chìa khóa để vuốt dọc không bị dính */
+  draggable={false} 
+  onDragStart={(e) => e.preventDefault()} 
+  style={{ 
+    touchAction: 'pan-y',
+    // Ép kiểu để TypeScript cho qua lỗi build
+    ['WebkitUserDrag' as any]: 'none' 
+  }}
+/>
+
       />
     </div>
   ))}
