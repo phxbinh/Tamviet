@@ -312,7 +312,7 @@ const productLd = {
       <ProductDetailClient data={data} />
 
       {relatedProducts.length > 0 && (
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-0">
           <RelatedProductsSection relatedProducts={relatedProducts as any[]} />
         </div>
       )}
