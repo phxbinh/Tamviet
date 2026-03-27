@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
+import { ArrowRight, Truck, ShieldCheck, RotateCcw, Phone } from "lucide-react";
 import { Product, Attribute, Variant } from "../types";
 import { useMemo, useEffect } from "react";
 
@@ -144,6 +144,7 @@ export function ProductInfo({
         </button>
         
         {/* Shipping info: Tối giản, dùng font nhỏ nhất */}
+{/*
         <div className="grid grid-cols-2 gap-2 text-[12px] font-bold uppercase tracking-tight">
           <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
             <Truck className="w-3.5 h-3.5 text-primary" /> Express Shipping
@@ -152,6 +153,43 @@ export function ProductInfo({
             <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Verified Quality
           </div>
         </div>
+*/}
+        {/* Shipping & Support info: Grid 2 cột 2 hàng sát viền */}
+        <div className="grid grid-cols-2 gap-px bg-border border border-border overflow-hidden rounded-sm shadow-sm mt-2">
+          {/* Vận chuyển */}
+          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary group">
+            <Truck className="w-3 h-3 text-primary transition-transform group-hover:translate-x-0.5" /> 
+            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Express Shipping</span>
+          </div>
+
+          {/* Chất lượng */}
+          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary">
+            <ShieldCheck className="w-3 h-3 text-primary" /> 
+            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Verified Quality</span>
+          </div>
+
+          {/* Chính sách đổi trả */}
+          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary">
+            <RotateCcw className="w-3 h-3 text-primary" /> 
+            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">7-Day Returns</span>
+          </div>
+
+          {/* Hotline */}
+          <a 
+            href="tel:0123456789" 
+            className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary group"
+          >
+            <Phone className="w-3 h-3 text-primary animate-pulse" /> 
+            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Hotline: 1900 xxxx</span>
+          </a>
+        </div>
+
+
+
+
+
+
+
       </div>
     </div>
   );
