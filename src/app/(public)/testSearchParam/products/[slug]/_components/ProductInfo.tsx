@@ -1,8 +1,9 @@
 "use client";
 import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
 import { Product, Attribute, Variant } from "../types";
+import { useMemo, useEffect } from "react";
 
-interface InfoProps {
+interface InfoProps_ {
   product: Product;
   attributes: Attribute[];
   selected: Record<string, string>;
@@ -12,7 +13,29 @@ interface InfoProps {
   onAdd: () => void;
 }
 
-export function ProductInfo_({ product, attributes, selected, setSelected, selectedVariant, isAdding, onAdd }: InfoProps) {
+/*
+"use client";
+import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
+import { Product, Attribute, Variant } from "../types";
+import { useMemo, useEffect } from "react";
+*/
+
+interface InfoProps {
+  product: Product;
+  attributes: Attribute[];
+  selected: Record<string, string>;
+  setSelected: (val: any) => void;
+  selectedVariant: Variant | null;
+  variants: Variant[]; // Thêm variants vào props để tính toán
+  isAdding: boolean;
+  onAdd: () => void;
+}
+
+
+
+
+
+export function ProductInfo_({ product, attributes, selected, setSelected, selectedVariant, isAdding, onAdd }: InfoProps_) {
   return (
     <div className="lg:col-span-5 space-y-8">
       <div className="space-y-4">
@@ -78,21 +101,7 @@ export function ProductInfo_({ product, attributes, selected, setSelected, selec
 
 
 
-"use client";
-import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
-import { Product, Attribute, Variant } from "../types";
-import { useMemo, useEffect } from "react";
 
-interface InfoProps {
-  product: Product;
-  attributes: Attribute[];
-  selected: Record<string, string>;
-  setSelected: (val: any) => void;
-  selectedVariant: Variant | null;
-  variants: Variant[]; // Thêm variants vào props để tính toán
-  isAdding: boolean;
-  onAdd: () => void;
-}
 
 export function ProductInfo({ 
   product, 
