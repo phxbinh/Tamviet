@@ -17,21 +17,22 @@ export default function PublicShell({
 
   return (
     <>
-     <div className="flex min-h-screen bg-background transition-colors duration-300">
-
-        {/* SIDEBAR - Giữ nguyên logic của bạn */}
+      <div className="flex min-h-screen bg-background transition-colors duration-300 overflow-x-hidden">
+        
+        {/* SIDEBAR: Ép cứng w-64, flex-shrink-0 để không bị dãn khi xoay ngang */}
         <aside
           className={`
-            fixed inset-y-0 left-0 z-50 w-64 
+            fixed inset-y-0 left-0 z-50 w-64 flex-shrink-0
             bg-card/80 backdrop-blur-2xl border-r border-border
             transition-transform duration-300 ease-in-out
             lg:relative lg:translate-x-0
             ${isOpen ? "translate-x-0" : "-translate-x-full"}
           `}
         >
-          <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border transition-all">
+          {/* Header của Sidebar */}
+          <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border flex-shrink-0">
             <Link href="/" onClick={() => setIsOpen(false)}>
-              <span className="font-bold tracking-tighter text-foreground text-sm uppercase">
+              <span className="font-bold tracking-tighter text-foreground text-sm uppercase whitespace-nowrap">
                 TÂM<span className="text-neon-cyan"> VIỆT</span>
               </span>
             </Link>
@@ -43,7 +44,7 @@ export default function PublicShell({
             </button>
           </div>
 
-          <div className="h-[calc(100vh-4rem)] landscape:h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
+          <div className="h-[calc(100vh-4rem)] landscape:h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar flex-1">
             <Sidebar onNavigate={() => setIsOpen(false)} />
           </div>
         </aside>
@@ -59,26 +60,30 @@ export default function PublicShell({
         {/* MAIN CONTENT AREA */}
         <div className="flex-1 flex flex-col min-w-0 w-full">
 
-          {/* HEADER CHÍNH */}
-{/*
-          <header className="sticky top-0 z-30 
+          {/* HEADER CHÍNH: Đồng bộ lề với Main bên dưới */}
+          <header className="sticky top-0 z-30 flex-shrink-0
                            h-16 landscape:h-12 
-                           flex items-center px-4 
+                           flex items-center 
+                           /* Fix lề: Mobile dọc px-4, xoay ngang/iPad px-6, Desktop px-10 */
+                           px-4 sm:px-6 md:px-10 lg:px-12
                            border-b border-border 
                            bg-background/80 backdrop-blur-md 
                            transition-all duration-300">
+            {/* Nút Menu Mobile */}
             <button
               onClick={() => setIsOpen(true)}
-              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
+              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md flex-shrink-0"
             >
               <Menu size={20} />
             </button>
             
-            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
+            {/* Logo nhỏ Mobile */}
+            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50 whitespace-nowrap">
               Tâm Việt Platform
             </div>
 
-            <div className="ml-auto flex items-center gap-2">
+            {/* Cụm icon góc bên phải */}
+            <div className="ml-auto flex items-center gap-2 flex-shrink-0">
               <Link 
                 href="/cart" 
                 className="p-2 hover:bg-foreground/5 rounded-full transition-colors relative text-foreground/80 hover:text-foreground"
@@ -90,65 +95,17 @@ export default function PublicShell({
               </Link>
             </div>
           </header>
-*/}
 
-          {/* HEADER CHÍNH - FIX RESPONSIVE & LANDSCAPE */}
-          <header className="sticky top-0 z-30 
-                           h-16 landscape:h-12 
-                           flex items-center 
-                           border-b border-border 
-                           bg-background/80 backdrop-blur-md 
-                           transition-all duration-300 w-full">
-            
-            {/* Giới hạn nội dung Header theo khung của Main Content */}
-            <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-4 md:px-6 lg:px-8 flex items-center h-full">
-              
-              {/* Nút Menu Mobile */}
-              <button
-                onClick={() => setIsOpen(true)}
-                className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md flex-shrink-0"
-              >
-                <Menu size={20} />
-              </button>
-              
-              {/* Logo nhỏ Mobile */}
-              <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50 whitespace-nowrap overflow-hidden text-ellipsis">
-                Tâm Việt Platform
-              </div>
-
-              {/* Cụm icon góc bên phải */}
-              <div className="ml-auto flex items-center gap-2 flex-shrink-0">
-                <Link 
-                  href="/cart" 
-                  className="p-2 hover:bg-foreground/5 rounded-full transition-colors relative text-foreground/80 hover:text-foreground"
-                >
-                  <ShoppingCart size={20} />
-                  {/* Badge số lượng */}
-                  <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
-                    0
-                  </span>
-                </Link>
-              </div>
-
-            </div>
-          </header>
-
-
-
-
-
-
-
-
-
-          {/* MAIN CONTENT - FIX RESPONSIVE TẠI ĐÂY */}
-          <main className="flex-1 pb-10">
-            {/* - px-0: Full-width tuyệt đối cho Mobile Portrait (để Gallery tràn viền).
-                - sm:px-4: Có lề khi xoay ngang (Landscape) hoặc điện thoại to.
-                - md:px-6: Lề cho iPad.
-                - lg:px-8: Lề chuẩn Desktop.
-            */}
-            <div className="w-full max-w-[1440px] mx-auto px-0 sm:px-4 md:px-6 lg:px-8">
+          {/* MAIN CONTENT: Thẻ cha quyết định responsive */}
+          <main className="flex-1 w-full max-w-7xl mx-auto transition-all duration-300
+                         /* px-0: Mobile dọc tràn viền hít mép 
+                            sm:px-6: Xoay ngang điện thoại bắt đầu có lề
+                            md:px-10: iPad/Tablet 
+                            lg:px-12: Desktop 
+                         */
+                         px-0 sm:px-6 md:px-10 lg:px-12 
+                         pb-10 pt-0 overflow-y-auto">
+            <div className="w-full h-full">
               {children}
             </div>
           </main>
@@ -158,6 +115,7 @@ export default function PublicShell({
 
       <Toast />
 
+      {/* Theme Toggle */}
       <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
         <ThemeToggle />
       </div>
