@@ -92,7 +92,7 @@ export function ProductInfo({
                 {attr.name}
               </span>
               {selected[attr.name] && (
-                <span className="text-[9px] font-black text-primary uppercase italic tracking-wider animate-in fade-in">
+                <span className="text-[10px] font-black text-primary uppercase italic tracking-wider animate-in fade-in">
                   {selected[attr.name]}
                 </span>
               )}
@@ -107,7 +107,7 @@ export function ProductInfo({
                     key={v.id}
                     type="button"
                     onClick={() => setSelected((prev: any) => ({ ...prev, [attr.name]: v.value }))}
-                    className={`py-1 text-[10px] font-bold transition-all outline-none
+                    className={`py-1 text-[12px] transition-all outline-none
                       ${isActive 
                         ? "bg-primary text-white" 
                         : "bg-background text-foreground/70 hover:bg-foreground/[0.03]"}`}
