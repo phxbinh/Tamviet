@@ -30,7 +30,7 @@ const selectedVariant = useMemo(() => {
 }, [selected, variants, attributes.length]);
 
 return (
-  <div className="max-w-7xl mx-auto px-4 py-4 md:px-6 lg:py-10 transition-colors duration-300">
+  <div className="max-w-7xl mx-auto px-2 py-4 md:px-3 lg:py-10 transition-colors duration-300">
     {/* Responsive Grid: 
         - grid-cols-1: Mobile mặc định 1 cột
         - lg:grid-cols-12: Desktop chia 12 phần
