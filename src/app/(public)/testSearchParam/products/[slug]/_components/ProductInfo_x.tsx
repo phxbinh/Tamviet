@@ -9,7 +9,7 @@ interface InfoProps {
   selected: Record<string, string>;
   setSelected: (val: any) => void;
   selectedVariant: Variant | null;
-  variants: Variant[];
+  variants: Variant[]; // Thêm variants vào props để tính toán
   isAdding: boolean;
   onAdd: () => void;
 }
@@ -25,11 +25,13 @@ export function ProductInfo({
   onAdd 
 }: InfoProps) {
 
+  // 1. Tìm giá thấp nhất khi chưa chọn variant nào (GIỮ NGUYÊN)
   const minPrice = useMemo(() => {
     if (!variants || variants.length === 0) return 0;
     return Math.min(...variants.map(v => v.price));
   }, [variants]);
 
+  // 2. Logic: Tự động chọn thuộc tính đầu tiên nếu chưa chọn gì (GIỮ NGUYÊN)
   useEffect(() => {
     if (Object.keys(selected).length === 0 && attributes.length > 0) {
       const initialSelected: Record<string, string> = {};
@@ -44,7 +46,7 @@ export function ProductInfo({
 
   return (
     <div className="lg:col-span-5 space-y-4 animate-in fade-in transition-colors duration-300">
-      {/* Header: Typography tối giản */}
+      {/* Header Section */}
       <div className="space-y-1">
         <h1 className="text-2xl xl:text-3xl font-bold tracking-tighter leading-tight uppercase italic text-foreground">
           {product.name}
@@ -56,42 +58,47 @@ export function ProductInfo({
         )}
       </div>
 
-      {/* Price Box: Sử dụng --border và --background */}
-      <div className="flex items-center justify-between py-3 border-y border-border">
+      {/* Price Box: Sát viền, dùng biến --border từ globals.css */}
+      <div className="flex items-center justify-between py-2.5 border-y border-border">
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-black tracking-tighter text-foreground">
+            {/* Hiển thị giá Variant được chọn, nếu chưa chọn thì hiện giá thấp nhất */}
             {new Intl.NumberFormat('vi-VN').format(selectedVariant ? selectedVariant.price : minPrice)}
           </span>
           <span className="text-[9px] font-bold text-foreground/40 uppercase">VND</span>
         </div>
         
         {selectedVariant ? (
-          <div className={`text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5 border animate-in fade-in ${
+          <div className={`text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5 border transition-all ${
             selectedVariant.stock > 0 
               ? 'text-primary border-primary/20 bg-primary/5' 
               : 'text-red-500 border-red-500/20 bg-red-500/5 animate-shake'
           }`}>
-            {selectedVariant.stock > 0 ? `Stock: ${selectedVariant.stock}` : 'Sold Out'}
+            {selectedVariant.stock > 0 ? `In Stock: ${selectedVariant.stock}` : 'Sold Out'}
           </div>
         ) : (
-          <span className="text-[8px] font-bold text-foreground/30 uppercase tracking-widest">Starting At</span>
+          <span className="text-[8px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-sm">
+            Starting Price
+          </span>
         )}
       </div>
 
-      {/* Attributes: Grid sát viền với biến CSS --border */}
+      {/* Attributes Selection: Dạng Grid khối sát nhau */}
       <div className="space-y-3">
         {attributes.map((attr) => (
           <div key={attr.id} className="space-y-1.5">
             <div className="flex justify-between items-center px-0.5">
-              <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-foreground/40">
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-foreground/40">
                 {attr.name}
               </span>
-              <span className="text-[9px] font-black text-primary uppercase italic tracking-wider">
-                {selected[attr.name] || "---"}
-              </span>
+              {selected[attr.name] && (
+                <span className="text-[9px] font-black text-primary uppercase italic tracking-wider animate-in fade-in">
+                  {selected[attr.name]}
+                </span>
+              )}
             </div>
-            
-            {/* Grid khối sát nhau sử dụng màu border từ CSS variables */}
+
+            {/* Grid khối phân tách bằng gap-px, màu nền lấy từ --border */}
             <div className="grid grid-cols-4 gap-px bg-border border border-border overflow-hidden rounded-sm shadow-sm">
               {attr.values.map((v) => {
                 const isActive = selected[attr.name] === v.value;
@@ -114,8 +121,8 @@ export function ProductInfo({
         ))}
       </div>
 
-      {/* Actions: Nút bấm & Thông tin vận chuyển */}
-      <div className="space-y-2 pt-2">
+      {/* Action Buttons & Badges */}
+      <div className="space-y-2 pt-1">
         <button
           disabled={!selectedVariant || isAdding || (selectedVariant && selectedVariant.stock <= 0)}
           onClick={onAdd}
@@ -125,21 +132,23 @@ export function ProductInfo({
               : "bg-foreground/5 text-foreground/30 cursor-not-allowed"}`}
         >
           {isAdding ? (
-            <span className="animate-breathe-slow">Processing...</span>
+            <span className="animate-breathe-slow">Adding to Bag...</span>
           ) : (
             <>
-              {selectedVariant?.stock > 0 ? "Add to Bag" : (selectedVariant ? "Sold Out" : "Select Options")}
-              <ArrowRight className="w-3 h-3" />
+              {selectedVariant 
+                ? (selectedVariant.stock > 0 ? "Add to Shopping Bag" : "Out of Stock") 
+                : "Select Options"} 
+              <ArrowRight className="w-3.5 h-3.5" />
             </>
           )}
         </button>
         
-        {/* Info Grid: Màu sắc đồng bộ với theme */}
+        {/* Shipping info: Tối giản, dùng font nhỏ nhất */}
         <div className="grid grid-cols-2 gap-2 text-[8px] font-bold uppercase tracking-tight">
-          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm">
-            <Truck className="w-3.5 h-3.5 text-primary" /> Express Delivery
+          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
+            <Truck className="w-3.5 h-3.5 text-primary" /> Express Shipping
           </div>
-          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm">
+          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Verified Quality
           </div>
         </div>
