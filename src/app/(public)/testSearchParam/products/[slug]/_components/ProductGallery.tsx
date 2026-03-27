@@ -141,54 +141,18 @@ export function ProductGallery({ images, productName, activeImgIndex, setActiveI
     <div className="lg:col-span-7 space-y-4">
       <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-secondary/30 group">
         {/* ... (Các phần Badge, Heart giữ nguyên) ... */}
-        {/*
         <div 
           ref={scrollRef}
           onScroll={handleScroll} // Dùng hàm handleScroll đã có khóa
-          //className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
-className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-y"
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
+          //className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-y"
         >
           {images.length > 0 ? images.map((img) => (
             <div key={img.id} className="h-full w-full flex-none snap-center">
               <img src={getPublicImageUrl(img.url)} alt={productName} className="w-full h-full object-cover select-none" />
             </div>
           )) : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-20 h-20 opacity-10" /></div>}
-        </div> */}
-
-
-<div 
-  ref={scrollRef}
-  onScroll={handleScroll}
-  /* 1. Dùng touch-pan-y ở đây để LUÔN cho phép cuộn trang dọc */
-  className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar"
-  style={{ 
-    touchAction: 'pan-y', 
-    WebkitOverflowScrolling: 'touch' 
-  }}
->
-<img 
-  src={getPublicImageUrl(img.url)} 
-  alt={productName} 
-  className="w-full h-full object-cover select-none"
-  /* Chặn kéo ảnh - Đây là chìa khóa để vuốt dọc không bị dính */
-  draggable={false} 
-  onDragStart={(e) => e.preventDefault()} 
-  style={{ 
-    touchAction: 'pan-y',
-    // Ép kiểu để TypeScript cho qua lỗi build
-    ['WebkitUserDrag' as any]: 'none' 
-  }}
-/>
-
-      />
-    </div>
-  ))}
-</div>
-
-
-
-
-
+        </div> 
         {/* Dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
           {images.map((_, i) => (
