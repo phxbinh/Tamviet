@@ -167,12 +167,13 @@ export default function RootLayout({
 */
 
 
+// RootLayout.tsx
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen overflow-y-auto no-scrollbar`}>
+      <body className={`${inter.className} min-h-screen antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AppShell>{children}</AppShell>
           {/* <InstallPrompt /> */}
