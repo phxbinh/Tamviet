@@ -47,6 +47,7 @@ const selectedVariant = useMemo(() => {
           selected={selected}
           setSelected={setSelected}
           selectedVariant={selectedVariant}
+          variants={variants}
           isAdding={isAdding}
           onAdd={() => { setIsAdding(true); setTimeout(() => setIsAdding(false), 1500); }}
         />
