@@ -19,10 +19,37 @@ export const viewport: Viewport = {
   viewportFit: "cover", // Quan trọng: Tràn màn hình qua cả phần tai thỏ iPhone
 };
 
+
+// app/layout.tsx
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tâm Việt Luxury",
+  description: "Nâng tầm thương hiệu...",
+  // Thêm dòng này vào:
+  verification: {
+    google: "Dòng-Mã-Số-Nào-Đó-Bạn-Vừa-Copy",
+  },
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="vi">
+      <body>{children}</body>
+    </html>
+  );
+}
+
+
+
+
 // 2. Cấu hình Metadata chính
 export const metadata: Metadata = {
   title: "Tâm Việt | Nâng Tầm Trải Nghiệm Cầu Lông Cao Cấp",
   description: "Cung cấp trang thiết bị và phụ kiện cầu lông cao cấp. Khám phá hệ sinh thái Tâm Việt Luxury - Nơi đam mê hội tụ.",
+  verification: {
+    google: "f3lJRo-QGQu7SMmasdZGmvV4MOe3J92lN4icOfGRe64",
+  },
   metadataBase: new URL('https://tamviet.vercel.app'), // Thay bằng domain thật của bạn
   alternates: {
     canonical: '/',
