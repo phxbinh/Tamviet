@@ -155,34 +155,53 @@ export function ProductInfo({
         </div>
 */}
         {/* Shipping & Support info: Grid 2 cột 2 hàng sát viền */}
-        <div className="grid grid-cols-2 gap-px bg-border border border-border overflow-hidden rounded-sm shadow-sm mt-2">
+         {/* Shipping & Support info: Chuẩn globals.css (HSL Variables) */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-md bg-foreground/[0.03] border border-border mt-5 mb-5 animate-in fade-in transition-colors duration-300">
           {/* Vận chuyển */}
-          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary group">
-            <Truck className="w-3 h-3 text-primary transition-transform group-hover:translate-x-0.5" /> 
-            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Express Shipping</span>
+          <div className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-background border border-border transition-all group-hover:border-primary/30 shadow-sm">
+              <Truck className="w-3.5 h-3.5 text-primary transition-transform group-hover:translate-x-0.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">Express</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Shipping</span>
+            </div>
           </div>
 
           {/* Chất lượng */}
-          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary">
-            <ShieldCheck className="w-3 h-3 text-primary" /> 
-            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Verified Quality</span>
+          <div className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-background border border-border shadow-sm">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">Quality</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Verified</span>
+            </div>
           </div>
 
           {/* Chính sách đổi trả */}
-          <div className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary">
-            <RotateCcw className="w-3 h-3 text-primary" /> 
-            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">7-Day Returns</span>
+          <div className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-background border border-border shadow-sm">
+              <RotateCcw className="w-3.5 h-3.5 text-primary" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">7-Day</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Returns</span>
+            </div>
           </div>
 
           {/* Hotline */}
-          <a 
-            href="tel:0123456789" 
-            className="flex items-center gap-2 p-2 bg-background text-foreground/50 transition-colors hover:text-primary group"
-          >
-            <Phone className="w-3 h-3 text-primary animate-pulse" /> 
-            <span className="text-[9px] font-bold uppercase tracking-tighter leading-none">Hotline: 1900 xxxx</span>
+          <a href="tel:0123456789" className="flex items-center gap-2 group transition-colors">
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-background border border-border group-hover:border-primary/40 shadow-sm transition-all group-hover:shadow-[0_0_10px_rgba(var(--primary),0.1)]">
+              <Phone className="w-3.5 h-3.5 text-primary animate-breathe-fast" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none group-hover:text-primary transition-colors">Support</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight group-hover:text-primary/60">1900 xxxx</span>
+            </div>
           </a>
         </div>
+
 
 
 
