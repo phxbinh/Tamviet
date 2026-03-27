@@ -21,7 +21,8 @@ import { getProductDetail_slug } from "./getProductDetail_slug";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
-import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
+//import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
+import RelatedProductsSection from "../_relateproducts/RelatedProductsSection_";
 import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
