@@ -145,7 +145,8 @@ export function ProductGallery({ images, productName, activeImgIndex, setActiveI
         <div 
           ref={scrollRef}
           onScroll={handleScroll} // Dùng hàm handleScroll đã có khóa
-          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
+          //className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
+className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-y"
         >
           {images.length > 0 ? images.map((img) => (
             <div key={img.id} className="h-full w-full flex-none snap-center">
