@@ -185,8 +185,8 @@ export function ProductInfo({
               <RotateCcw className="w-3.5 h-3.5 text-primary" />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">7-Day</span>
-              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight"Đổi trả vì bất kỳ lý do gì</span>
+              <span className="text-[9px] font-black uppercase tracking-wider text-foreground/70 leading-none">7-Days</span>
+              <span className="text-[7px] font-bold text-foreground/40 uppercase tracking-tight">Đổi trả vì bất kỳ lý do gì</span>
             </div>
           </div>
 
