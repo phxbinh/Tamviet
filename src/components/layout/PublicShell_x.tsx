@@ -301,7 +301,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             Tâm Việt Platform
           </div>
 
-          <div className="ml-auto right-10 flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-2">
             <Link href="/cart" className="p-2 relative">
               <ShoppingCart size={20} />
               <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
@@ -311,7 +311,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           </div>
 
           {/* Theme Toggle */}
-          <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
+          <div className="z-[100] landscape:scale-75 transition-transform">
             <ThemeToggle />
           </div>
 
