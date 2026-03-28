@@ -4,7 +4,13 @@ import { Menu, Bell, Search } from 'lucide-react';
 
 export default function AdminHeader({ onMenuClick }: { onMenuClick: () => void }) {
   return (
-    <header className="h-16 border-b border-border bg-background/50 backdrop-blur-md flex items-center justify-between px-4 md:px-8 shrink-0 z-10">
+   // <header className="h-16 border-b border-border bg-background/50 backdrop-blur-md flex items-center justify-between px-4 md:px-8 shrink-0 z-10">
+    <header className="sticky top-0 z-30 
+                         h-16 landscape:h-12 
+                         flex items-center px-4 
+                         border-b border-border 
+                         bg-background/80 backdrop-blur-md 
+                         transition-all duration-300 w-full">
       <div className="flex items-center gap-4">
         <button onClick={onMenuClick} className="md:hidden p-2 hover:bg-foreground/5 rounded-xl">
           <Menu size={20} />
