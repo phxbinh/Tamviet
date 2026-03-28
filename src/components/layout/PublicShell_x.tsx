@@ -325,7 +325,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         {/* ✅ NÚT THEME TOGGLE NẰM Ở ĐÂY */}
         {/* Nó sẽ "dính" theo khung 800px của thẻ div chính này khi xoay ngang */}
         {/* Theme Toggle */}
-        <div className="fixed bottom-4 right-4 landscape:bottom-4 landscape:right-4 z-[100] landscape:scale-75 transition-transform">
+        <div className="fixed bottom-4 right-4 landscape:absolute landscape:bottom-4 landscape:right-4 z-[100] landscape:scale-75 transition-transform">
           <ThemeToggle />
         </div>
       </div>
