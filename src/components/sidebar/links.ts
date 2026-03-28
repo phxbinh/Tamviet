@@ -16,7 +16,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
-    name: 'Bầng nhiệm vụ',
+    name: 'Bảng nhiệm vụ',
     showInSidebar: true,
     children: [
       { name: 'Todos', href: '/todos' },
@@ -27,7 +27,7 @@ export const sidebarLinks: SidebarLink[] = [
   },
 
   { name: 'Giới thiệu', href: '/about', showInSidebar: true },
-  { name: 'Lộ trình', href: '/roadmap', showInSidebar: true },
+  { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Tài liệu', href: '/test', showInSidebar: true },
   { name: 'Sản phẩm', href: '/testSearchParam', showInSidebar: true },
 
