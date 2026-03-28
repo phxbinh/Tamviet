@@ -321,16 +321,23 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         <footer className="p-4 border-t border-border text-center text-[10px] opacity-40 uppercase tracking-widest">
             © 2026 Tâm Việt Platform
         </footer>
-      </div>
 
-      <Toast />
-      {/* Theme Toggle */}
-      <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
-        <ThemeToggle />
+        {/* ✅ NÚT THEME TOGGLE NẰM Ở ĐÂY */}
+        {/* Nó sẽ "dính" theo khung 800px của thẻ div chính này khi xoay ngang */}
+        <div className="fixed bottom-6 right-6 z-[100] 
+                        lg:absolute lg:bottom-10 lg:right-10 
+                        landscape:scale-90 transition-all active:scale-95">
+          <div className="p-2 bg-card/80 backdrop-blur-md border border-border rounded-full shadow-lg hover:shadow-neon-cyan/20 transition-shadow">
+            <ThemeToggle />
+          </div>
+        </div>
       </div>
+      <Toast />
     </div>
   );
 }
+
+
 
 
 
