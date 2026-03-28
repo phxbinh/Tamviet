@@ -1,0 +1,92 @@
+// src/components/layout/PublicShell.tsx
+"use client";
+
+import { useState } from "react";
+import Sidebar from "@/components/sidebar/Sidebar";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Toast } from "@/components/Toast";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+
+export default function PublicShell({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="flex h-svh overflow-hidden bg-background"> {/* Chốt: h-svh và overflow-hidden ở cha */}
+      
+      {/* 1. SIDEBAR (Fixed/Hidden on Mobile) */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64 
+          bg-card/70 backdrop-blur-xl border-r border-border
+          transition-transform duration-300 ease-in-out
+          md:relative md:translate-x-0
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <div className="h-16 flex items-center justify-between px-6 border-b border-border">
+          <Link href="/" onClick={() => setIsOpen(false)}>
+            <span className="font-bold tracking-tighter uppercase">
+              Tâm <span className="text-primary">Việt</span>
+            </span>
+          </Link>
+          <button onClick={() => setIsOpen(false)} className="md:hidden p-2">
+            <X size={20} />
+          </button>
+        </div>
+        
+        {/* Scroll riêng cho Sidebar để không ảnh hưởng trang chính */}
+        <div className="h-[calc(100svh-4rem)] overflow-y-auto custom-scrollbar">
+          <Sidebar onNavigate={() => setIsOpen(false)} />
+        </div>
+      </aside>
+
+      {/* BACKDROP MOBILE */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+        />
+      )}
+
+      {/* RIGHT CONTENT AREA */}
+      <div className="flex-1 flex flex-col min-w-0 h-full">
+        
+        {/* 2. HEADER: Quản lý riêng biệt */}
+        <header className="sticky top-0 z-30 h-14 md:h-16 flex items-center justify-between px-4 border-b border-border bg-background/80 backdrop-blur-md">
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsOpen(true)}
+              className="md:hidden p-2 mr-2 hover:bg-accent rounded-md"
+            >
+              <Menu size={22} />
+            </button>
+            {/* Có thể thêm Breadcrumb hoặc Page Title ở đây */}
+          </div>
+          <div className="flex items-center gap-2">
+             {/* Khu vực cho Search hoặc User Icon */}
+          </div>
+        </header>
+
+        {/* 3. MAIN: Vùng cuộn độc lập */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth bg-secondary/10">
+          <div className="container mx-auto px-4 py-4 md:px-6 md:py-8">
+            {children}
+          </div>
+          
+          {/* 4. FOOTER: Nằm trong vùng cuộn của Main */}
+          <footer className="mt-auto border-t border-border/50 py-6 px-4 text-center text-sm text-muted-foreground">
+             <p>© 2026 TÂM VIỆT. Refined by Lê Nguyễn.</p>
+          </footer>
+        </main>
+      </div>
+
+      <Toast />
+
+      {/* FLOATING ACTION BUTTONS */}
+      <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2">
+        <ThemeToggle />
+      </div>
+    </div>
+  );
+}
