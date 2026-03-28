@@ -93,7 +93,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           </div>
         </main>
 
-        <footer className="p-4 border-t border-border text-center text-[10px] opacity-40 uppercase tracking-widest">
+        <footer className="p-4 border-t border-border text-center text-[10px] uppercase tracking-widest">
             © 2026 Tâm Việt Platform
         </footer>
 
