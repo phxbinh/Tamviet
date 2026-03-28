@@ -24,21 +24,6 @@ export function FilterContent({
   handleCategoryClick
 }: FilterContentProps) {
   return (
-
-    /*<div className="relative h-full overflow-y-auto no-scrollbar">
-Lỗi hiển thị không full FilterPanel
-      {isPending && (
-        <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[10] flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="text-[9px] font-bold uppercase tracking-widest animate-pulse">
-              Updating...
-            </span>
-          </div>
-        </div>
-      )}*/
-
-
 <div className="relative h-full">
       {isPending && (
         <div className="absolute inset-0 bg-card/60 backdrop-blur-[1px] z-[20] flex items-center justify-center">
