@@ -1,6 +1,6 @@
 // src/app/(public)/layout.tsx
 // src/app/(public)/layout.tsx
-import PublicShell from "@/components/layout/PublicShell";
+import PublicShell from "@/components/layout/PublicShell_x";
 
 export default function PublicLayout({
   children,
