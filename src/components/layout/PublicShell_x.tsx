@@ -59,7 +59,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           Bỏ overflow-y-auto ở đây vì bây giờ chúng ta muốn cả thẻ cha ngoài cùng 
           cuộn theo nội dung thay vì chỉ cuộn trong main.
       */}
-      <main className="flex-1 min-w-0 relative p-1 md:p-6 lg:p-12">
+      <main className="mt-16 flex-1 min-w-0 relative p-1 md:p-6 lg:p-12">
         <div className="mx-auto max-w-full">
           {children}
         </div>
