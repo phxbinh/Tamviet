@@ -322,11 +322,11 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             © 2026 Tâm Việt Platform
         </footer>
 
+      </div>
         {/* Theme Toggle */}
         <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
           <ThemeToggle />
         </div>
-      </div>
       <Toast />
     </div>
   );
