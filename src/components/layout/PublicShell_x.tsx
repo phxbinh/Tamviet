@@ -13,7 +13,7 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-svh overflow-hidden bg-background"> {/* Chốt: h-svh và overflow-hidden ở cha */}
+<div className="flex min-h-[100dvh] bg-background overflow-x-hidden"> {/* Chốt: h-svh và overflow-hidden ở cha */}
       
       {/* 1. SIDEBAR (Fixed/Hidden on Mobile) */}
       <aside
