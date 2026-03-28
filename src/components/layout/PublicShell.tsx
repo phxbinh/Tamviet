@@ -50,7 +50,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       )}
 
       {/* 2. KHỐI NỘI DUNG CHÍNH (Gồm Header + Main) */}
-      <div className="flex-1 flex flex-col min-w-0 w-full relative">
+      <div className="flex-1 flex flex-col min-w-0 w-full custom-scrollbar relative">
         
         {/* HEADER CHÍNH: Bây giờ nó sẽ sticky dựa trên thẻ div cha này */}
         <header className="sticky top-0 z-30 
