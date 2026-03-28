@@ -8,14 +8,15 @@ export type SidebarLink = {
 };
 
 export const sidebarLinks: SidebarLink[] = [
+  { name: 'Trang chủ', href: '/', showInSidebar: true },
   { name: 'Welcome', href: '/welcomemot', showInSidebar: true },
-  { name: 'Signup', href: '/signup', showInSidebar: true },
-  { name: 'Forgot pass', href: '/forgot-password-retry', showInSidebar: true },
-  { name: 'Change pass', href: '/change-password', showInSidebar: true },
+  { name: 'Đăng ký', href: '/signup', showInSidebar: true },
+  { name: 'Quên mật mã', href: '/forgot-password-retry', showInSidebar: true },
+  { name: 'Đổi mật mã', href: '/change-password', showInSidebar: true },
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
-    name: 'Todos',
+    name: 'Bầng nhiệm vụ',
     showInSidebar: true,
     children: [
       { name: 'Todos', href: '/todos' },
@@ -25,10 +26,10 @@ export const sidebarLinks: SidebarLink[] = [
     ],
   },
 
-  { name: 'About', href: '/about', showInSidebar: true },
-  { name: 'Road map', href: '/roadmap', showInSidebar: true },
-  { name: 'Markdown', href: '/test', showInSidebar: true },
-  { name: 'Test param', href: '/testSearchParam', showInSidebar: true },
+  { name: 'Giới thiệu', href: '/about', showInSidebar: true },
+  { name: 'Lộ trình', href: '/roadmap', showInSidebar: true },
+  { name: 'Tài liệu', href: '/test', showInSidebar: true },
+  { name: 'Sản phẩm', href: '/testSearchParam', showInSidebar: true },
 
 ];
 
