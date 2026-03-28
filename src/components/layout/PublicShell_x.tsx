@@ -13,12 +13,12 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-<div className="flex flex-1 min-h-[100dvh] bg-background overflow-x-hidden"> {/* Chốt: h-svh và overflow-hidden ở cha */}
+<div className="flex min-h-[100dvh] bg-background overflow-x-hidden"> {/* Chốt: h-svh và overflow-hidden ở cha */}
       
       {/* 1. SIDEBAR (Fixed/Hidden on Mobile) */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-64 
+          fixed inset-y-0 left-5 z-50 w-64 
           bg-card/70 backdrop-blur-xl border-r border-border
           transition-transform duration-300 ease-in-out
           md:relative md:translate-x-0
