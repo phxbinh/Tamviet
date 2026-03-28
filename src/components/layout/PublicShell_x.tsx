@@ -10,6 +10,7 @@ import Link from "next/link";
 
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     /* 1. Thay h-svh bằng min-h-svh: Để chiều cao ít nhất bằng màn hình, 
           nhưng vẫn có thể nới rộng nếu con cao hơn.
