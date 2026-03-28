@@ -8,304 +8,96 @@ import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
-
-
-
-
-
-export default function PublicShell({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PublicShell({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
-     <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-svh w-full flex-col lg:flex-row 
+                    landscape:max-w-[800px] landscape:mx-auto 
+                    border-3 border-red-500 bg-background relative">
 
-        {/* SIDEBAR */}
-        <aside
-          className={`
-            fixed inset-y-0 left-0 z-50 w-64 
-            bg-card/80 backdrop-blur-2xl border-r border-border
-            transition-transform duration-300 ease-in-out
-            lg:relative lg:translate-x-0
-            ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          `}
-        >
-          {/* Header của Sidebar */}
-          <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border transition-all">
-            <Link href="/" onClick={() => setIsOpen(false)}>
-              <span className="font-bold tracking-tighter text-foreground text-sm uppercase">
-                TÂM<span className="text-neon-cyan"> VIỆT</span>
-              </span>
-            </Link>
-            <button 
-              onClick={() => setIsOpen(false)} 
-              className="lg:hidden p-2 hover:bg-foreground/5 rounded-full"
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          <div className="h-[calc(100vh-4rem)] landscape:h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
-            <Sidebar onNavigate={() => setIsOpen(false)} />
-          </div>
-        </aside>
-
-        {/* BACKDROP */}
-        {isOpen && (
-          <div
-            onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
-          />
-        )}
-
-        {/* MAIN CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0">
-
-          {/* HEADER CHÍNH - Nơi chứa icon giỏ hàng bên phải */}
-          <header className="sticky top-0 z-30 
-                           h-16 landscape:h-12 
-                           flex items-center px-4 
-                           border-b border-border 
-                           bg-background/80 backdrop-blur-md 
-                           transition-all duration-300">
-            {/* Nút Menu Mobile */}
-            <button
-              onClick={() => setIsOpen(true)}
-              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
-            >
-              <Menu size={20} />
-            </button>
-            
-            {/* Logo nhỏ Mobile */}
-            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
-              Tâm Việt Platform
-            </div>
-
-            {/* Cụm icon góc bên phải */}
-            <div className="ml-auto flex items-center gap-2">
-              <Link 
-                href="/cart" 
-                className="p-2 hover:bg-foreground/5 rounded-full transition-colors relative text-foreground/80 hover:text-foreground"
-              >
-                <ShoppingCart size={20} />
-                {/* Badge số lượng sản phẩm */}
-                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
-                  0
-                </span>
-              </Link>
-            </div>
-          </header>
-
-          {/* MAIN CONTENT */}
-          <main className="flex-1 px-1 lg:px-8 pb-10 pt-0">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
-          </main>
-
+      {/* 1. SIDEBAR: Giữ nguyên logic Drawer/Relative */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64 
+          bg-card/80 backdrop-blur-2xl border-r border-border
+          transition-transform duration-300 ease-in-out
+          lg:relative lg:translate-x-0
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border">
+          <Link href="/" onClick={() => setIsOpen(false)}>
+            <span className="font-bold tracking-tighter text-sm uppercase">
+              TÂM<span className="text-neon-cyan"> VIỆT</span>
+            </span>
+          </Link>
+          <button onClick={() => setIsOpen(false)} className="lg:hidden p-2">
+            <X size={16} />
+          </button>
         </div>
-      </div>
-
-      <Toast />
-
-      {/* Theme Toggle */}
-      <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
-        <ThemeToggle />
-      </div>
-    </>
-  );
-}
-
-
-
-
-
-
-//export default
-function PublicShell_ok_({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <div className="flex min-h-screen bg-background">
-
-        {/* SIDEBAR */}
-        <aside
-          className={`
-            fixed inset-y-0 left-0 z-50 w-64 
-            bg-card/80 backdrop-blur-2xl border-r border-border
-            transition-transform duration-300 ease-in-out
-            lg:relative lg:translate-x-0
-            ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          `}
-        >
-          {/* Header của Sidebar - Cũng nên mỏng lại khi xoay ngang */}
-          <div className="h-16 landscape:h-12 flex items-center justify-between px-6 border-b border-border transition-all">
-            <Link href="/">
-              <span className="font-bold tracking-tighter text-foreground text-sm uppercase">
-                TÂM<span className="text-neon-cyan"> VIỆT</span>
-              </span>
-            </Link>
-            <button 
-              onClick={() => setIsOpen(false)} 
-              className="lg:hidden p-2 hover:bg-foreground/5 rounded-full"
-            >
-              <X size={16} />
-            </button>
-          </div>
-
-          <div className="h-[calc(100vh-4rem)] landscape:h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
-            <Sidebar onNavigate={() => setIsOpen(false)} />
-          </div>
-        </aside>
-
-        {/* BACKDROP */}
-        {isOpen && (
-          <div
-            onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
-          />
-        )}
-
-        {/* MAIN CONTENT AREA */}
-        <div className="flex-1 flex flex-col min-w-0">
-
-          {/* HEADER - Tối ưu sticky cho landscape */}
-          <header className="sticky top-0 z-30 
-                           h-16 landscape:h-12 
-                           flex items-center px-4 
-                           border-b border-border 
-                           bg-background/80 backdrop-blur-md 
-                           transition-all duration-300">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
-            >
-              <Menu size={20} />
-            </button>
-            
-            {/* Logo nhỏ hiện ở Header khi Menu ẩn (tùy chọn) */}
-            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
-              Tâm Việt Platform
-            </div>
-          </header>
-
-          {/* MAIN CONTENT */}
-          <main className="flex-1 px-1 lg:px-8 pb-10 pt-0">
-            <div className="max-w-7xl mx-auto">
-              {children}
-            </div>
-          </main>
-
+        <div className="h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
+          <Sidebar onNavigate={() => setIsOpen(false)} />
         </div>
-      </div>
+      </aside>
 
-      <Toast />
+      {/* BACKDROP */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+        />
+      )}
 
-      {/* Theme Toggle - Ẩn bớt khi xoay ngang để đỡ vướng nội dung */}
-      <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
-        <ThemeToggle />
-      </div>
-    </>
-  );
-}
+      {/* 2. KHỐI NỘI DUNG CHÍNH (Gồm Header + Main) */}
+      <div className="flex-1 flex flex-col min-w-0 w-full relative">
+        
+        {/* HEADER CHÍNH: Bây giờ nó sẽ sticky dựa trên thẻ div cha này */}
+        <header className="sticky top-0 z-30 
+                         h-16 landscape:h-12 
+                         flex items-center px-4 
+                         border-b border-border 
+                         bg-background/80 backdrop-blur-md 
+                         transition-all duration-300 w-full">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
+          >
+            <Menu size={20} />
+          </button>
+          
+          <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
+            Tâm Việt Platform
+          </div>
 
-
-
-
-
-
-
-
-
-
-//export default
-function PublicShell_({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <>
-      <div className="flex min-h-screen bg-background">
-
-        {/* SIDEBAR */}
-        <aside
-          className={`
-            fixed inset-y-0 left-0 z-50 w-64 
-            bg-card/70 backdrop-blur-xl border-r border-border
-            transform transition-transform duration-300
-            md:relative md:translate-x-0
-            ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          `}
-        >
-          <div className="h-16 flex items-center justify-between px-6 border-b border-border">
-            <Link href="/">
-              <span className="font-bold tracking-tighter">
-                TÂM<span className="text-neon-cyan"> VIỆT</span>
+          <div className="ml-auto flex items-center gap-2">
+            <Link href="/cart" className="p-2 relative">
+              <ShoppingCart size={20} />
+              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
+                0
               </span>
             </Link>
-
-            <button onClick={() => setIsOpen(false)} className="md:hidden p-2">
-              <X size={18} />
-            </button>
           </div>
+        </header>
 
-          <div className="h-[calc(100vh-4rem)] overflow-y-auto">
-            <Sidebar onNavigate={() => setIsOpen(false)} />
-          </div>
-        </aside>
-
-        {/* BACKDROP */}
-        {isOpen && (
-          <div
-            onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
-          />
-        )}
-
-        {/* MAIN */}
-        <div className="flex-1 flex flex-col min-w-0">
-
-          {/* HEADER */}
-          <header className="sticky top-0 z-30 h-16 flex items-center px-4 border-b border-border bg-background/70 backdrop-blur-md">
-            <button
-              onClick={() => setIsOpen(true)}
-              className="md:hidden p-2 mr-2"
-            >
-              <Menu size={22} />
-            </button>
-          </header>
-
-          {/* ✅ SCROLL CONTAINER - KHÔNG WRAPPER */}
-          <main className="flex-1 px-1 md:px-8 pb-4 pt-0">
+        {/* MAIN: Nằm ngay dưới Header trong cùng một Flex-col */}
+        <main className="flex-1 min-w-0 p-1 md:p-6 lg:p-12 bg-background">
+          <div className="mx-auto max-w-full">
             {children}
-          </main>
+          </div>
+        </main>
 
-        </div>
+        <footer className="p-4 border-t border-border text-center text-[10px] opacity-40 uppercase tracking-widest">
+            © 2026 Tâm Việt Platform
+        </footer>
       </div>
-
       <Toast />
-
-      <div className="fixed bottom-6 right-6 z-[100]">
-        <ThemeToggle />
-      </div>
-    </>
+        {/* Theme Toggle */}
+        <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
+          <ThemeToggle />
+        </div>
+    </div>
   );
 }
-
-
-
-
 
 
