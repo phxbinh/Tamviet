@@ -161,6 +161,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
           ">
             <button
               onClick={handleAddToCart}
+              area-label="Thêm sản phẩm vào giỏ hàng"
               className="
                 flex items-center justify-center
                 bg-card/90 p-2.5 rounded-full shadow-md backdrop-blur-sm
