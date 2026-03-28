@@ -44,6 +44,28 @@ export default function AdminShell({
         />
       </div>
 
+      {/* 2. KHỐI NỘI DUNG CHÍNH (Gồm Header + Main) */}
+      <div className="flex-1 flex flex-col min-w-0 w-full relative">
+        
+        {/* HEADER CHÍNH: Bây giờ nó sẽ sticky dựa trên thẻ div cha này */}
+        <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
+
+        {/* MAIN: Nằm ngay dưới Header trong cùng một Flex-col */}
+        <main className="flex-1 min-w-0 p-1 md:p-6 lg:p-12 bg-background">
+          <div className="mx-auto max-w-full">
+            {children}
+          </div>
+        </main>
+
+        <footer className="p-4 border-t border-border text-center text-[10px] opacity-40 uppercase tracking-widest">
+            © 2026 Tâm Việt Platform
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+/*
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
         
@@ -56,7 +78,7 @@ export default function AdminShell({
     </div>
   );
 }
-
+*/
 
 
 
