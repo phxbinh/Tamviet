@@ -2,9 +2,7 @@
 'use client'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, FreeMode, Autoplay } from 'swiper/modules';
-//import { ProductCardSlug } from "../../_tachComponents/ProductCardSlug";
 import { ProductCardSlug } from "../../../_homepage/ProductCardSlug";
-
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -49,33 +47,31 @@ export default function RelatedProductsSection({
     </div>
 
     <div className="relative px-0 md:px-0 overflow-hidden">
-
-
-<Swiper
-  // 1. Xóa Pagination khỏi modules
-  modules={[Navigation, FreeMode, Autoplay]} 
-  spaceBetween={10}
-  slidesPerView={2.1}
-  freeMode={true}
-  grabCursor={true}
-  loop={relatedProducts.length > 4}
-  autoplay={{
-    delay: 4000,
-    disableOnInteraction: false,
-    pauseOnMouseEnter: true,
-  }}
-  navigation={{
-    nextEl: ".swiper-next-button",
-    prevEl: ".swiper-prev-button",
-  }}
-
-  breakpoints={{
-    768: { slidesPerView: 3, spaceBetween: 20 },
-    1024: { slidesPerView: 4, spaceBetween: 24 },
-  }}
-  // 3. Chỉnh lại padding bottom (vì không còn bullet nên không cần khoảng trống bên dưới)
-  className="related-swiper !pb-2" 
->
+      <Swiper
+        // 1. Xóa Pagination khỏi modules
+        modules={[Navigation, FreeMode, Autoplay]} 
+        spaceBetween={10}
+        slidesPerView={2.1}
+        freeMode={true}
+        grabCursor={true}
+        loop={relatedProducts.length > 4}
+        autoplay={{
+          delay: 4000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        navigation={{
+          nextEl: ".swiper-next-button",
+          prevEl: ".swiper-prev-button",
+        }}
+      
+        breakpoints={{
+          768: { slidesPerView: 3, spaceBetween: 20 },
+          1024: { slidesPerView: 4, spaceBetween: 24 },
+        }}
+        // 3. Chỉnh lại padding bottom (vì không còn bullet nên không cần khoảng trống bên dưới)
+        className="related-swiper !pb-2" 
+      >
 
         {relatedProducts.map((item) => (
           <SwiperSlide key={item.id} className="h-auto">
@@ -95,9 +91,7 @@ export default function RelatedProductsSection({
           </SwiperSlide>
         ))}
       </Swiper>
-
-    </div>
-  </section>
-);
-
+      </div>
+    </section>
+  );
 }
