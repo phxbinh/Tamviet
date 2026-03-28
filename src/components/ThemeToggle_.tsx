@@ -1,5 +1,4 @@
 // src/components/ThemeToggle.tsx
-// src/components/ThemeToggle.tsx
 "use client";
 
 import * as React from "react";
@@ -27,12 +26,25 @@ export function ThemeToggle() {
   return (
     <div className="relative flex flex-col items-center bg-transparent select-none">
       
-      {/* MENU CỘT - ĐÃ CHUYỂN XỔ XUỐNG */}
+      {/* NÚT TRIGGER CHÍNH - đặt ở trên */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none focus:outline-none transition-all duration-500 shadow-lg z-20 ${
+          isOpen 
+            ? "bg-neon-cyan border-neon-cyan text-black rotate-45 shadow-[0_0_20px_rgba(34,211,238,0.4)]" 
+            : "bg-card/90 dark:bg-card/80 backdrop-blur-xl border-border/80 text-foreground hover:border-neon-cyan hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+        }`}
+      >
+        {isOpen ? <Plus size={22} strokeWidth={2.5} /> : <CurrentIcon size={18} />}
+      </button>
+
+      {/* MENU CỘT - XỔ XUỐNG DƯỚI NÚT */}
       <div 
-        className={`flex flex-col gap-2 mt-3 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`flex flex-col gap-2 mt-3 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] absolute top-full ${
           isOpen 
             ? "opacity-100 translate-y-0 scale-100 visible" 
-            : "opacity-0 translate-y-[-20px] scale-95 invisible pointer-events-none"
+            : "opacity-0 -translate-y-2 scale-95 invisible pointer-events-none"
         }`}
       >
         {modes.map((mode) => (
@@ -51,26 +63,13 @@ export function ThemeToggle() {
           >
             <mode.icon size={16} className={mode.color} />
             
-            {/* Tooltip */}
+            {/* Tooltip bên phải */}
             <span className="absolute right-12 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
               {mode.label}
             </span>
           </button>
         ))}
       </div>
-
-      {/* NÚT TRIGGER CHÍNH */}
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none focus:outline-none transition-all duration-500 shadow-lg z-10 ${
-          isOpen 
-            ? "bg-neon-cyan border-neon-cyan text-black rotate-45 shadow-[0_0_20px_rgba(34,211,238,0.4)]" 
-            : "bg-card/90 dark:bg-card/80 backdrop-blur-xl border-border/80 text-foreground hover:border-neon-cyan hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
-        }`}
-      >
-        {isOpen ? <Plus size={22} strokeWidth={2.5} /> : <CurrentIcon size={18} />}
-      </button>
     </div>
   );
 }
