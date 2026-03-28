@@ -53,6 +53,10 @@
 
 /* 3. ĐỊNH DẠNG BASE (HTML, BODY, TYPOGRAPHY) */
 @layer base {
+  * {
+    outline: 1px solid red;
+  }
+  
   html {
     scroll-behavior: smooth;
   }
