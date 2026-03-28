@@ -32,7 +32,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
               TÂM<span className="text-neon-cyan"> VIỆT</span>
             </span>
           </Link>
-          <button onClick={() => setIsOpen(false)} className="lg:hidden p-2">
+          <button onClick={() => setIsOpen(false)} area-label="Đóng menu" className="lg:hidden p-2">
             <X size={16} />
           </button>
         </div>
@@ -60,7 +60,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
                          bg-background/80 backdrop-blur-md 
                          transition-all duration-300 w-full">
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={() => setIsOpen(true)} area-label="Menu"
             className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
           >
             <Menu size={20} />
@@ -71,7 +71,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           </div>
 
           <div className="ml-auto mr-4 flex items-center gap-2">
-            <Link href="/cart" className="p-2 relative">
+            <Link href="/cart" className="p-2 relative"> area-label="Giỏ hàng"
               <ShoppingCart size={20} />
               <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
                 0
