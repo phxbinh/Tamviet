@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. Nén dữ liệu để tải nhanh trên iPhone
   compress: true,
 
-  // 2. Cấu hình Headers để Safari không chặn Cache của Service Worker
+  // FIX LỖI SITEMAP: Đảm bảo không tự động thêm dấu gạch chéo cuối trang
+  // Google Bot rất kén việc sitemap.xml bị redirect sang sitemap.xml/
+  trailingSlash: false,
+
   async headers() {
     return [
       {
@@ -15,10 +17,23 @@ const nextConfig = {
           },
         ],
       },
+      // Cấu hình riêng cho Sitemap để Google Bot "đọc là hiểu" ngay
+      {
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/xml",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=3600, stale-while-revalidate=59",
+          },
+        ],
+      },
     ];
   },
 
-  // 3. Cho phép hiển thị ảnh từ các nguồn bên ngoài (nếu có)
   images: {
     remotePatterns: [
       {
