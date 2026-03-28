@@ -38,6 +38,7 @@ export function ThemeToggle() {
       >
         {modes.map((mode) => (
           <button
+            aria-label=`${mode.label`}
             key={mode.id}
             type="button"
             onClick={() => {
@@ -64,6 +65,7 @@ export function ThemeToggle() {
       {/* NÚT TRIGGER CHÍNH */}
       <button
         type="button"
+        aria-label="Đổi chế độ sáng tối"
         onClick={() => setIsOpen(!isOpen)}
         // Loại bỏ focus outline mặc định của trình duyệt gây ra khung hình chữ nhật
         className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none focus:outline-none transition-all duration-500 shadow-lg ${
