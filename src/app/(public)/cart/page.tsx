@@ -1,6 +1,8 @@
 'use client'
 import React from 'react';
 import { ShoppingBag, X, Plus, Minus, Trash2 } from 'lucide-react';
+import Image from 'next/image'
+
 
 const CartComponent = () => {
   return (
@@ -23,11 +25,13 @@ const CartComponent = () => {
           {[1, 2].map((item) => (
             <div key={item} className="flex gap-4 group">
               <div className="relative w-24 h-24 bg-foreground/5 rounded-xl overflow-hidden border border-border">
-                <img 
+                <Image 
                   src="https://defkqhylqphoqiikvbii.supabase.co/storage/v1/object/public/products/cafe.webp" 
                   alt="Sản phẩm"
                   className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
-                  fetchpriority="high"
+                  width={400} 
+                  height={400} 
+                  priority
                 />
               </div>
               <div className="flex-1 flex flex-col justify-between py-1">
@@ -67,8 +71,7 @@ const CartComponent = () => {
 };
 
 export default function Cart() {
-return (
- <CartComponent />
-)
-
+  return (
+   <CartComponent />
+  );
 }
