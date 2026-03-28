@@ -2,7 +2,7 @@
 // src/app/(public)/layout.tsx
 import PublicShell from "@/components/layout/PublicShell";
 
-/*
+
 export default function PublicLayout({
   children,
 }: {
@@ -10,7 +10,7 @@ export default function PublicLayout({
 }) {
   return <PublicShell>{children}</PublicShell>;
 }
-*/
+
 
 /*
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -81,7 +81,8 @@ function Layout_ok({ children }: { children: React.ReactNode }) {
 
 
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+//export default 
+function Layout_Chuan({ children }: { children: React.ReactNode }) {
   return (
     /* 1. Thay h-svh bằng min-h-svh: Để chiều cao ít nhất bằng màn hình, 
           nhưng vẫn có thể nới rộng nếu con cao hơn.
