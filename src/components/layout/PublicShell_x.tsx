@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "@/components/ThemeToggle_";
 import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
@@ -301,7 +301,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             Tâm Việt Platform
           </div>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto right-10 flex items-center gap-2">
             <Link href="/cart" className="p-2 relative">
               <ShoppingCart size={20} />
               <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
@@ -309,6 +309,12 @@ export default function PublicShell({ children }: { children: React.ReactNode })
               </span>
             </Link>
           </div>
+
+          {/* Theme Toggle */}
+          <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
+            <ThemeToggle />
+          </div>
+
         </header>
 
         {/* MAIN: Nằm ngay dưới Header trong cùng một Flex-col */}
@@ -323,10 +329,6 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         </footer>
 
       </div>
-        {/* Theme Toggle */}
-        <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
-          <ThemeToggle />
-        </div>
       <Toast />
     </div>
   );
