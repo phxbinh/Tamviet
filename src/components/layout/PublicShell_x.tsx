@@ -55,6 +55,57 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           </div>
         </aside>
 
+
+
+    {/* BACKDROP */}
+        {isOpen && (
+          <div
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
+          />
+        )}
+
+        {/* MAIN CONTENT AREA */}
+        <div className="flex-1 flex flex-col min-w-0">
+
+          {/* HEADER CHÍNH - Nơi chứa icon giỏ hàng bên phải */}
+          <header className="sticky top-0 z-30 
+                           h-16 landscape:h-12 
+                           flex items-center px-4 
+                           border-b border-border 
+                           bg-background/80 backdrop-blur-md 
+                           transition-all duration-300">
+            {/* Nút Menu Mobile */}
+            <button
+              onClick={() => setIsOpen(true)}
+              className="lg:hidden p-2 mr-2 hover:bg-foreground/5 rounded-md"
+            >
+              <Menu size={20} />
+            </button>
+            
+            {/* Logo nhỏ Mobile */}
+            <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
+              Tâm Việt Platform
+            </div>
+
+            {/* Cụm icon góc bên phải */}
+            <div className="ml-auto flex items-center gap-2">
+              <Link 
+                href="/cart" 
+                className="p-2 hover:bg-foreground/5 rounded-full transition-colors relative text-foreground/80 hover:text-foreground"
+              >
+                <ShoppingCart size={20} />
+                {/* Badge số lượng sản phẩm */}
+                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
+                  0
+                </span>
+              </Link>
+            </div>
+          </header>
+
+
+
+
       {/* MAIN CONTENT AREA 
           Bỏ overflow-y-auto ở đây vì bây giờ chúng ta muốn cả thẻ cha ngoài cùng 
           cuộn theo nội dung thay vì chỉ cuộn trong main.
