@@ -26,6 +26,7 @@ interface RelatedProductsProps {
   code?: string;
 }
 
+
 export default function RelatedProductsSection({ 
   relatedProducts, 
   title = "Sản phẩm tương tự",
@@ -46,6 +47,7 @@ export default function RelatedProductsSection({
           </h2>
           <Link
             href={`/testSearchParam?page=1&type=${code}`}
+            aria-label={`Xem thêm các sản phẩm ${title}`}
             className="text-xs md:text-sm font-medium text-[hsl(var(--primary))] hover:underline transition-all"
           >
             Xem thêm...
