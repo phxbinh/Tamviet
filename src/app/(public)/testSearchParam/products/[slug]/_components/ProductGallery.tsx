@@ -1,7 +1,6 @@
-/*
 "use client";
-import { useEffect, useRef } from "react";
-import { Zap, Heart, ShoppingBag } from "lucide-react";
+import { useEffect, useRef, useMemo } from "react";
+import { ShoppingBag, ChevronLeft, ChevronRight } from "lucide-react";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import { ProductImage } from "../types";
 
@@ -13,202 +12,152 @@ interface GalleryProps {
   variantImage?: string | null;
 }
 
-export function ProductGallery({ images, productName, activeImgIndex, setActiveImgIndex, variantImage }: GalleryProps) {
+export function ProductGallery({
+  images,
+  productName,
+  activeImgIndex,
+  setActiveImgIndex,
+  variantImage
+}: GalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (variantImage) {
-      const index = images.findIndex(img => img.url === variantImage);
-      if (index !== -1) scrollToImage(index);
-    }
-  }, [variantImage, images]);
+  const displayImages = useMemo(() => {
+    if (!variantImage) return images;
+    // Tìm những ảnh có cùng variant_id với ảnh variant đang chọn
+    const selectedVariantId = images.find(i => i.url === variantImage)?.variant_id;
+    const filtered = images.filter(img => img.variant_id === selectedVariantId);
+    return filtered.length > 0 ? filtered : images;
+  }, [images, variantImage]);
 
   const scrollToImage = (index: number) => {
     if (!scrollRef.current) return;
-    scrollRef.current.scrollTo({ left: scrollRef.current.offsetWidth * index, behavior: "smooth" });
-    setActiveImgIndex(index);
-  };
-
-  return (
-    <div className="lg:col-span-7 space-y-4">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-secondary/30 group">
-        <div className="absolute top-6 left-6 z-10">
-          <span className="flex items-center gap-1.5 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
-            <Zap className="w-3 h-3 fill-primary text-primary" /> New Edition
-          </span>
-        </div>
-        
-        <button className="absolute right-6 top-6 z-10 p-4 bg-white/95 backdrop-blur rounded-full shadow-sm hover:scale-110 transition-transform">
-          <Heart className="w-5 h-5 text-foreground" />
-        </button>
-
-        <div 
-          ref={scrollRef}
-          onScroll={(e) => setActiveImgIndex(Math.round(e.currentTarget.scrollLeft / e.currentTarget.offsetWidth))}
-          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide touch-pan-x"
-        >
-          {images.length > 0 ? images.map((img) => (
-            <div key={img.id} className="h-full w-full flex-none snap-center">
-              <img src={getPublicImageUrl(img.url)} alt={productName} className="w-full h-full object-cover select-none" />
-            </div>
-          )) : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-20 h-20 opacity-10" /></div>}
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-          {images.map((_, i) => (
-            <button key={i} onClick={() => scrollToImage(i)} className={`h-1.5 transition-all duration-500 rounded-full ${activeImgIndex === i ? "w-8 bg-white" : "w-1.5 bg-white/40"}`} />
-          ))}
-        </div>
-      </div>
-
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-        {images.map((img, i) => (
-          <button key={img.id} onClick={() => scrollToImage(i)} className={`relative flex-none w-20 aspect-[4/5] rounded-2xl overflow-hidden border-2 transition-all ${activeImgIndex === i ? "border-primary ring-4 ring-primary/10" : "border-transparent opacity-40"}`}>
-            <img src={getPublicImageUrl(img.url)} className="w-full h-full object-cover" />
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-*/
-
-
-"use client";
-import { useEffect, useRef } from "react";
-import { Zap, Heart, ShoppingBag } from "lucide-react";
-import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { ProductImage } from "../types";
-
-interface GalleryProps {
-  images: ProductImage[];
-  productName: string;
-  activeImgIndex: number;
-  setActiveImgIndex: (index: number) => void;
-  variantImage?: string | null;
-}
-
-export function ProductGallery({ images, productName, activeImgIndex, setActiveImgIndex, variantImage }: GalleryProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  // Khóa để chặn onScroll khi đang cuộn chủ động
-  const isInternalScrolling = useRef(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (variantImage) {
-      const index = images.findIndex(img => img.url === variantImage);
-      if (index !== -1) scrollToImage(index);
-    }
-  }, [variantImage, images]);
-
-  const scrollToImage = (index: number) => {
-    if (!scrollRef.current) return;
-    
-    // Bật khóa
-    isInternalScrolling.current = true;
-    
-    scrollRef.current.scrollTo({ 
-      left: scrollRef.current.offsetWidth * index, 
-      behavior: "smooth" 
+    scrollRef.current.scrollTo({
+      left: scrollRef.current.clientWidth * index,
+      behavior: "smooth"
     });
-    
-    setActiveImgIndex(index);
-
-    // Xóa timeout cũ nếu có
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    
-    // Mở khóa sau khi cuộn xong (khoảng 500ms cho smooth scroll)
-    timeoutRef.current = setTimeout(() => {
-      isInternalScrolling.current = false;
-    }, 500);
   };
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    // Nếu đang cuộn bằng hàm scrollToImage thì không chạy logic này
-    if (isInternalScrolling.current) return;
+  useEffect(() => {
+    scrollToImage(0);
+  }, [variantImage]);
 
-    const scrollLeft = e.currentTarget.scrollLeft;
-    const width = e.currentTarget.offsetWidth;
-    const newIndex = Math.round(scrollLeft / width);
-    
-    if (newIndex !== activeImgIndex) {
-      setActiveImgIndex(newIndex);
-    }
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    const index = Math.round(el.scrollLeft / el.clientWidth);
+    if (index !== activeImgIndex) setActiveImgIndex(index);
   };
 
   return (
-    <div className="lg:col-span-7 space-y-4">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-secondary/30 group">
-        {/* ... (Các phần Badge, Heart giữ nguyên) ... */}
-{/*
-        <div 
+    <div className="lg:col-span-7 flex flex-col gap-4">
+      {/* KHUNG ẢNH CHÍNH: Tràn viền hoàn toàn 
+          - Bỏ rounded-[2.5rem]
+          - Bỏ shadow-inner và bg-stone-100 để ảnh "tan" vào nền nếu nền cùng màu
+      */}
+      <div className="group relative aspect-[4/5] overflow-hidden w-full bg-white">
+        
+        <div
           ref={scrollRef}
-          onScroll={handleScroll} // Dùng hàm handleScroll đã có khóa
-          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-x"
-          //className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar touch-pan-y"
+          onScroll={handleScroll}
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth"
         >
-          {images.length > 0 ? images.map((img) => (
-            <div key={img.id} className="h-full w-full flex-none snap-center">
-              <img src={getPublicImageUrl(img.url)} alt={productName} className="w-full h-full object-cover select-none" />
+          {displayImages.length > 0 ? (
+            displayImages.map((img, i) => (
+              <div key={img.id || i} className="h-full w-full flex-none snap-center">
+                {/* ẢNH CHÍNH: Tràn tuyệt đối 
+                    - Bỏ p-1 (padding)
+                    - Bỏ rounded
+                */}
+                <img
+                  src={getPublicImageUrl(img.url)}
+                  alt={`${productName} - ${i}`}
+                  className="w-full h-full object-cover select-none"
+                  draggable={false}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-stone-200">
+              <ShoppingBag className="w-12 h-12 stroke-[1px]" />
             </div>
-          )) : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-20 h-20 opacity-10" /></div>}
-        </div> 
-*/}
-
-<div 
-  ref={scrollRef}
-  onScroll={handleScroll}
-  className="flex h-full w-full overflow-x-auto snap-x snap-proximity no-scrollbar scroll-smooth"
-  style={{ touchAction: 'pan-y' }}
->
-  {images.length > 0 ? images.map((img) => (
-    <div key={img.id} className="h-full w-full flex-none snap-center">
-      <img 
-        src={getPublicImageUrl(img.url)} 
-        alt={productName} 
-        className="w-full h-full object-cover select-none" 
-      />
-    </div>
-  )) : (
-    <div className="w-full h-full flex items-center justify-center">
-      <ShoppingBag className="w-20 h-20 opacity-10" />
-    </div>
-  )}
-</div>
-
-
-
-        {/* Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2">
-          {images.map((_, i) => (
-            <button 
-              key={i} 
-              type="button"
-              onClick={() => scrollToImage(i)} 
-              className={`h-1.5 transition-all duration-500 rounded-full ${activeImgIndex === i ? "w-8 bg-white" : "w-1.5 bg-white/40"}`} 
-            />
-          ))}
+          )}
         </div>
+
+        {/* Nút điều hướng tinh tế hơn cho ảnh tràn viền */}
+        {displayImages.length > 1 && (
+          <>
+            <div className="absolute inset-x-2 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <button 
+                onClick={() => scrollToImage(activeImgIndex - 1)} 
+                className="p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/90 pointer-events-auto transition-all"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button 
+                onClick={() => scrollToImage(activeImgIndex + 1)} 
+                className="p-2 rounded-full bg-white/40 backdrop-blur-sm hover:bg-white/90 pointer-events-auto transition-all"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Dots tối giản lồng vào cạnh dưới */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 rounded-full bg-black/10 backdrop-blur-md">
+              {displayImages.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1 transition-all duration-300 rounded-full ${
+                    activeImgIndex === i ? "w-5 bg-white" : "w-1 bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Thumbnails */}
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide px-1">
-        {images.map((img, i) => (
-          <button 
-            key={img.id} 
-            type="button"
-            onClick={() => scrollToImage(i)} 
-            className={`relative flex-none w-20 aspect-[4/5] rounded-2xl overflow-hidden border-2 transition-all duration-300 ${activeImgIndex === i ? "border-primary ring-4 ring-primary/10 scale-95" : "border-transparent opacity-40 hover:opacity-100"}`}
+      {/* THUMBNAILS: Giữ lại bo góc nhẹ để phân biệt với ảnh chính */}
+{/*
+      <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
+        {displayImages.map((img, i) => (
+          <button
+            key={img.id || i}
+            onClick={() => scrollToImage(i)}
+            className={`relative flex-none w-16 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 ${
+              activeImgIndex === i 
+                ? "ring-1 ring-black ring-offset-2" 
+                : "opacity-40 grayscale hover:grayscale-0 hover:opacity-100"
+            }`}
           >
             <img src={getPublicImageUrl(img.url)} className="w-full h-full object-cover" />
           </button>
         ))}
       </div>
+*/}
+      {/* THUMBNAILS: Sát viền, tối giản */}
+      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
+        {displayImages.map((img, i) => (
+          <button
+            key={img.id || i}
+            type="button"
+            onClick={() => scrollToImage(i)}
+            className={`relative flex-none w-16 aspect-[3/4] overflow-hidden transition-all duration-300 border-2 ${
+              activeImgIndex === i 
+                ? "border-blue-500 opacity-100" 
+                : "border-transparent opacity-50 hover:opacity-100"
+            }`}
+          >
+            <img 
+              src={getPublicImageUrl(img.url)} 
+              className="w-full h-full object-cover"
+              alt={`Thumbnail ${i}`}
+            />
+          </button>
+        ))}
+      </div>
+
+
+
     </div>
   );
 }
-
-
-
-
