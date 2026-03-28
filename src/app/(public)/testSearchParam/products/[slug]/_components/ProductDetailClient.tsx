@@ -1,8 +1,8 @@
 "use client";
 import { useState, useMemo } from "react";
 import { ProductFull } from "../types";
-import { ProductGallery } from "./ProductGallery_x";
-import { ProductInfo } from "./ProductInfo_x";
+import { ProductGallery } from "./ProductGallery";
+import { ProductInfo } from "./ProductInfo";
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
