@@ -1,27 +1,14 @@
-// src/app/(public)/testSearchParam/products/[slug]/page.tsx
 
-
-
-// Tối ưu seo với metadata
 ///==========✳️✳️🔸🔸🔸
-// src/app/(public)/testSearchParam/products/[slug]/page.tsx
 // src/app/(public)/testSearchParam/products/[slug]/page.tsx
 
 import type { Metadata } from "next";
-
-//import ProductDetailClient from "./DetailProductClient";
-//import ProductDetailClient from "./DetailProductClient_";
 import ProductDetailClient from "./_components/ProductDetailClient";
-
 import { headers } from "next/headers";
-
-//import { getProductDetail_slug } from "@/lib/server/products/getProductDetail_slug";
 import { getProductDetail_slug } from "./getProductDetail_slug";
-
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
 import { sql } from "@/lib/neon/sql";
-//import RelatedProductsSection from "../_relateproducts/RelateProductSectionO";
 import RelatedProductsSection from "../_relateproducts/RelatedProductsSection_";
 import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
@@ -81,24 +68,7 @@ export async function generateMetadata({
   };
 }
 
-
-
-
-
-
-/*
-// Cách 1: Dùng toán tử nullish để đảm bảo luôn truyền string vào hàm
-url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
-
-// Hoặc Cách 2: Nếu bạn chắc chắn thumbnail_url luôn tồn tại khi có product
-url: getPublicImageUrl(product.thumbnail_url!) || "/fallback.jpg",
-*/
-
-
-
-
 // ================= PAGE =================
-
 // ✳️ Breadcrumb type
 interface BreadcrumbItem {
   label: string;
@@ -156,135 +126,71 @@ export default async function ProductPage({
   };
 
   const product = data.product as typeof data.product & { slug: string };
-  /*
+  
   const productLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    image: product.thumbnail_url ? [product.thumbnail_url] : [],
-    description: product.description || "",
-    sku: product.id,
+    image: product.thumbnail_url ? [getPublicImageUrl(product.thumbnail_url)] : [],
+    description: product.description || "Sản phẩm chất lượng từ Tâm Việt",
+    sku: `TV-${product.id}`,
     brand: {
       "@type": "Brand",
-      name: "TamViet",
+      name: "Tâm Việt",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "5",
+      reviewCount: "1",
+      bestRating: "5",
+      worstRating: "1",
     },
     offers: {
       "@type": "Offer",
       priceCurrency: "VND",
       price: product.price_min || 0,
+      priceValidUntil: "2026-12-31",
+      itemCondition: "https://schema.org/NewCondition",
       availability: "https://schema.org/InStock",
       url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
-    },
-  };
-  */
-
-/*
-  const productLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": product.name,
-    "image": product.thumbnail_url ? [product.thumbnail_url] : [],
-    "description": product.description || "Sản phẩm chất lượng từ Tâm Việt Platform", // Tránh để trống description
-    "sku": `TV-${product.id}`,
-    "brand": {
-      "@type": "Brand",
-      "name": "Tâm Việt",
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "5",
-      "reviewCount": "1",
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "offers": {
-      "@type": "Offer",
-      "priceCurrency": "VND",
-      "price": product.price_min || 0,
-      "priceValidUntil": "2026-12-31", 
-      "itemCondition": "https://schema.org/NewCondition", 
-      "availability": "https://schema.org/InStock",
-      "url": `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
-      "shippingDetails": { 
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "VN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility", 
+        feesCustomerResponsibility: "https://schema.org/ReturnFeesCustomerResponsibility",
+      },
+      shippingDetails: {
         "@type": "OfferShippingDetails",
-        "shippingRate": {
+        shippingRate: {
           "@type": "MonetaryAmount",
-          "value": "0",
-          "currency": "VND"
-        }
-      }
+          value: "0",
+          currency: "VND",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 0,
+            maxValue: 1,
+            unitCode: "d",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 3,
+            unitCode: "d",
+          },
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "VN",
+        },
+      },
     },
   };
-*/
-const productLd = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  name: product.name,
-  image: product.thumbnail_url ? [getPublicImageUrl(product.thumbnail_url)] : [],
-  description: product.description || "Sản phẩm chất lượng từ Tâm Việt",
-  sku: `TV-${product.id}`,
-  brand: {
-    "@type": "Brand",
-    name: "Tâm Việt",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5",
-    reviewCount: "1",
-    bestRating: "5",
-    worstRating: "1",
-  },
-  offers: {
-    "@type": "Offer",
-    priceCurrency: "VND",
-    price: product.price_min || 0,
-    priceValidUntil: "2026-12-31",
-    itemCondition: "https://schema.org/NewCondition",
-    availability: "https://schema.org/InStock",
-    url: `https://tamviet.vercel.app/testSearchParam/products/${product.slug}`,
-    hasMerchantReturnPolicy: {
-      "@type": "MerchantReturnPolicy",
-      applicableCountry: "VN",
-      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-      merchantReturnDays: 7,
-      returnMethod: "https://schema.org/ReturnByMail",
-      returnFees: "https://schema.org/ReturnFeesCustomerResponsibility", 
-      feesCustomerResponsibility: "https://schema.org/ReturnFeesCustomerResponsibility",
-    },
-    shippingDetails: {
-      "@type": "OfferShippingDetails",
-      shippingRate: {
-        "@type": "MonetaryAmount",
-        value: "0",
-        currency: "VND",
-      },
-      deliveryTime: {
-        "@type": "ShippingDeliveryTime",
-        handlingTime: {
-          "@type": "QuantitativeValue",
-          minValue: 0,
-          maxValue: 1,
-          unitCode: "d",
-        },
-        transitTime: {
-          "@type": "QuantitativeValue",
-          minValue: 1,
-          maxValue: 3,
-          unitCode: "d",
-        },
-      },
-      shippingDestination: {
-        "@type": "DefinedRegion",
-        addressCountry: "VN",
-      },
-    },
-  },
-};
-
-
-
-
-
 
   // ================= RELATED =================
   const relatedProducts = await getRelatedProducts(
@@ -307,8 +213,6 @@ const productLd = {
       />
 
       <Breadcrumb items={breadcrumbs} />
-
-      {/* <h1>{data.product.name}</h1> */}
 
       <ProductDetailClient data={data} />
 
