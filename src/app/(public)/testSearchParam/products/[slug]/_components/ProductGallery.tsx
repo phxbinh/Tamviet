@@ -51,7 +51,7 @@ export function ProductGallery({
   return (
     <div className="lg:col-span-7 flex flex-col gap-4">
       {/* KHUNG ẢNH CHÍNH: Tràn viền hoàn toàn 
-          - Bỏ rounded-[2.5rem]
+          - Bỏ rounded-[2.5rem].
           - Bỏ shadow-inner và bg-stone-100 để ảnh "tan" vào nền nếu nền cùng màu
       */}
       <div className="group relative aspect-[4/5] overflow-hidden w-full bg-white">
