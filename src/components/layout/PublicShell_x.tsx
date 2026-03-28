@@ -102,6 +102,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
               </Link>
             </div>
           </header>
+        </div>
 
 
 
