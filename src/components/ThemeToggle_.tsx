@@ -29,6 +29,7 @@ export function ThemeToggle() {
       {/* NÚT TRIGGER CHÍNH - đặt ở trên */}
       <button
         type="button"
+        aria-label="Đổi chế độ sáng tối"
         onClick={() => setIsOpen(!isOpen)}
         className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none focus:outline-none transition-all duration-500 shadow-lg z-20 ${
           isOpen 
@@ -49,6 +50,7 @@ export function ThemeToggle() {
       >
         {modes.map((mode) => (
           <button
+            aria-label=`${mode.label}`
             key={mode.id}
             type="button"
             onClick={() => {
