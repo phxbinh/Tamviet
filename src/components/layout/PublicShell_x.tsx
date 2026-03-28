@@ -66,7 +66,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             <Menu size={20} />
           </button>
           
-          <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-50">
+          <div className="lg:hidden font-bold text-[10px] tracking-[0.2em] uppercase opacity-90">
             Tâm Việt Platform
           </div>
 
