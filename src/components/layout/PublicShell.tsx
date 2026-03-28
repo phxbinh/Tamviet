@@ -14,7 +14,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-svh w-full flex-col lg:flex-row 
                     landscape:max-w-[800px] landscape:mx-auto 
-                    border-3 border-red-500 bg-background relative">
+                    border-3 border-red-500 bg-background relative custom-scrollbar">
 
       {/* 1. SIDEBAR: Giữ nguyên logic Drawer/Relative */}
       <aside
