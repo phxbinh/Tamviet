@@ -53,35 +53,20 @@
 
 /* 3. ĐỊNH DẠNG BASE (HTML, BODY, TYPOGRAPHY) */
 @layer base {
-  /*
-  * {
-    outline: 1px solid red;
-    max-width: 100%;
-  }*/
-  
   html {
     scroll-behavior: smooth;
   }
-/*
+
   html, body {
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
   }
-  
+  /*
   html, body {
   overflow: hidden;
-}
-*/
-
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
+}*/
 
   body {
     background-color: hsl(var(--background));
@@ -103,21 +88,13 @@ body {
   }
 
   /* Định dạng mặc định cho nội dung Render từ Markdown */
-  /*
   .markdown-body img {
     max-width: 100%;
     height: auto;
     display: block;
-    Aspect-ratio giúp tránh hiện tượng nhảy layout khi ảnh đang load
+    /* Aspect-ratio giúp tránh hiện tượng nhảy layout khi ảnh đang load */
     aspect-ratio: attr(width) / attr(height); 
   }
-*/
-
-.markdown-body img {
-  max-width: 100%;
-  height: auto;
-}
-
 
   /* Scroll margin cho Heading khi click link neo */
   [id] {
@@ -177,6 +154,7 @@ body {
 
 
 @layer utilities {
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
