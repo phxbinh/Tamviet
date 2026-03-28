@@ -35,7 +35,7 @@ export default function RelatedProductsSection({
   if (!relatedProducts || relatedProducts.length === 0) return null;
 
   return (
-  <section className="mt-1">
+  <section className="mt-1 w-full max-w-full overflow-hidden">
     <div className="flex justify-between items-end mb-2 px-4">
       {/* Cụm tiêu đề bên trái */}
 
@@ -65,7 +65,7 @@ export default function RelatedProductsSection({
       </div>
     </div>
 
-    <div className="relative pb-1 px-0 md:px-0 overflow-hidden">
+    <div className="relative pb-1 px-0 md:px-0 w-full overflow-hidden">
 {/*
       <Swiper
         modules={[Navigation, Pagination, FreeMode, Autoplay]}
