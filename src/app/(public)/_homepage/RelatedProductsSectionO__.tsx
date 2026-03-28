@@ -58,10 +58,10 @@ export default function RelatedProductsSection({
 
       {/* Nút điều hướng Swiper bên phải */}
       <div className="hidden md:flex gap-2">
-        <button area-label="Xem ảnh phía trước" className="swiper-prev-button p-2 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] transition-all disabled:opacity-20 active:scale-95">
+        <button aria-label="Xem ảnh phía trước" className="swiper-prev-button p-2 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] transition-all disabled:opacity-20 active:scale-95">
           <ChevronLeft size={20} />
         </button>
-        <button area-label="Xem ảnh phía sau" className="swiper-next-button p-2 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] transition-all disabled:opacity-20 active:scale-95">
+        <button aria-label="Xem ảnh phía sau" className="swiper-next-button p-2 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))] hover:text-[hsl(var(--background))] transition-all disabled:opacity-20 active:scale-95">
           <ChevronRight size={20} />
         </button>
       </div>
