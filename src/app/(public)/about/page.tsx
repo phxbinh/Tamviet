@@ -1,7 +1,8 @@
+'use client'
 import React from 'react';
 import { ShieldCheck, Leaf, Zap } from 'lucide-react';
 
-export const AboutComponent = () => {
+const AboutComponent = () => {
   return (
     <section className="py-16 px-6 max-w-4xl mx-auto space-y-12">
       {/* Tiêu đề chính */}
@@ -54,3 +55,12 @@ export const AboutComponent = () => {
     </section>
   );
 };
+
+export default function About() {
+  return (
+   <AboutComponent />
+  );
+}
+
+
+
