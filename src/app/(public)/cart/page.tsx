@@ -1,7 +1,8 @@
+'use client'
 import React from 'react';
 import { ShoppingBag, X, Plus, Minus, Trash2 } from 'lucide-react';
 
-export const CartComponent = () => {
+const CartComponent = () => {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm animate-in fade-in">
       <div className="w-full max-w-md bg-card border-l border-border h-full shadow-2xl flex flex-col animate-in slide-in-from-right-full">
@@ -64,3 +65,10 @@ export const CartComponent = () => {
     </div>
   );
 };
+
+export default function Cart() {
+return (
+ <CartComponent />
+)
+
+}
