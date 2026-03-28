@@ -13,7 +13,7 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-<div className="flex min-h-[100dvh] bg-background overflow-x-hidden border-blue-400"> {/* Chốt: h-svh và overflow-hidden ở cha */}
+<div className="flex min-h-[100dvh] bg-background overflow-x-hidden border border-blue-400"> {/* Chốt: h-svh và overflow-hidden ở cha */}
       
       {/* 1. SIDEBAR (Fixed/Hidden on Mobile) */}
       <aside
@@ -51,7 +51,7 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
       )}
 
       {/* RIGHT CONTENT AREA */}
-      <div className="flex-1 flex flex-col min-w-0 h-full border-yellow-400">
+      <div className="flex-1 flex flex-col min-w-0 h-full border border-yellow-400">
         
         {/* 2. HEADER: Quản lý riêng biệt */}
         <header className="sticky top-0 z-30 h-14 md:h-16 flex items-center justify-between px-4 border-b border-border bg-background/80 backdrop-blur-md">
