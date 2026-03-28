@@ -308,10 +308,6 @@ export default function PublicShell({ children }: { children: React.ReactNode })
                 0
               </span>
             </Link>
-            {/* Thêm nút ThemeToggle ở đây nếu muốn quản lý tập trung */}
-            <div className="hidden md:block">
-               <ThemeToggle />
-            </div>
           </div>
         </header>
 
@@ -328,6 +324,10 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       </div>
 
       <Toast />
+      {/* Theme Toggle */}
+      <div className="fixed bottom-4 right-4 z-[100] landscape:scale-75 transition-transform">
+        <ThemeToggle />
+      </div>
     </div>
   );
 }
