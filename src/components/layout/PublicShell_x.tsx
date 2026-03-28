@@ -325,14 +325,28 @@ export default function PublicShell({ children }: { children: React.ReactNode })
         {/* ✅ NÚT THEME TOGGLE NẰM Ở ĐÂY */}
         {/* Nó sẽ "dính" theo khung 800px của thẻ div chính này khi xoay ngang */}
         {/* Theme Toggle */}
-        <div className="fixed bottom-4 right-4 landscape:fixed landscape:bottom-4 landscape:right-4 z-[100] landscape:scale-75 transition-transform">
-          <ThemeToggle />
-        </div>
+  {/* ✅ LỚP VỎ TÀNG HÌNH: Cao bằng thẻ cha, chiều ngang nằm trong 800px */}
+  <div className="absolute inset-y-0 right-0 w-full pointer-events-none z-[100]">
+    
+    {/* ✅ NÚT THẬT: Dùng sticky để nó luôn bám theo màn hình */}
+    <div className="sticky top-[calc(100vh-80px)] landscape:top-[calc(100vh-60px)] 
+                    flex justify-end pr-6 landscape:pr-4 pointer-events-auto">
+      
+      <div className="p-2 bg-card/80 backdrop-blur-md border border-border 
+                      rounded-full shadow-lg landscape:scale-75 transition-all">
+        <ThemeToggle />
+      </div>
+
+    </div>
+  </div>
       </div>
       <Toast />
     </div>
   );
 }
+
+
+
 
 
 
