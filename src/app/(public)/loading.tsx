@@ -1,4 +1,5 @@
-export default function Loading() {
+//export default 
+function Loading_draft() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background transition-colors duration-500">
       {/* Container chính với hiệu ứng breathe-slow từ globals.css của bạn */}
@@ -51,3 +52,23 @@ export default function Loading() {
     </div>
   );
 }
+
+
+
+// app/loading.tsx
+import { SectionSkeleton } from "@/components/skeletons/HomeSkeleton";
+
+export default function Loading() {
+  return (
+    <div className="space-y-6">
+      {/* Giả lập 3 hàng section để lấp đầy màn hình mobile đầu tiên */}
+      <SectionSkeleton />
+      <SectionSkeleton />
+      <SectionSkeleton />
+    </div>
+  );
+}
+
+
+
+
