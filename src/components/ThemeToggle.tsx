@@ -38,7 +38,7 @@ export function ThemeToggle() {
       >
         {modes.map((mode) => (
           <button
-            aria-label=`${mode.label}`
+            aria-label={`${mode.label}`}
             key={mode.id}
             type="button"
             onClick={() => {
