@@ -205,7 +205,9 @@ export default function AdminShell({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen w-full bg-background relative overflow-hidden">
+    <div className="flex min-h-svh w-full flex-col lg:flex-row 
+                    landscape:max-w-[800px] landscape:mx-auto 
+                    border-3 border-red-500 bg-background relative">
       
       {/* SIDEBAR CHO DESKTOP (Luôn hiện trên lg) */}
       <div className="hidden lg:flex h-screen sticky top-0">
