@@ -29,7 +29,7 @@ export const sidebarLinks: SidebarLink[] = [
     name: 'Environments',
     showInSidebar: true,
     children: [
-      { name: 'Hiếu khí', href: '/wastewater/AerationTank' },
+      { name: 'Hiếu khí', href: '/wastewater/aerationTank' },
     ],
   },
 
