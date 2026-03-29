@@ -25,12 +25,23 @@ export async function generateMetadata({
   const { slug } = await params;
 
   const data = await getProductDetail_slug(slug);
-
+/*
   if (!data) {
     return {
       title: "Sản phẩm không tồn tại",
     };
   }
+*/
+if (!data) {
+  return {
+    title: "Sản phẩm không tồn tại",
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
 
   // 🔥 fix type tại chỗ, không đụng hệ thống
   const product = data.product as typeof data.product & { slug: string };
@@ -58,6 +69,7 @@ export async function generateMetadata({
           url: getPublicImageUrl(product.thumbnail_url ?? "") || "/fallback.jpg",
           width: 1200,
           height: 630,
+          alt: product.name,
         },
       ],
     },
