@@ -49,7 +49,14 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
   ];
 
   return (
-    <aside className="flex flex-col h-full bg-card/50 backdrop-blur-xl border-r border-border w-64 transition-all duration-300">
+    /*<aside className="flex flex-col h-full bg-card/50 backdrop-blur-xl border-r border-border w-64 transition-all duration-300">*/
+      <aside className={`
+          fixed inset-y-0 left-0 z-50 w-64 
+          bg-card/80 backdrop-blur-2xl border-r border-border
+          transition-transform duration-300 ease-in-out
+          lg:relative lg:translate-x-0
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
       {/* LOGO */}
       <div className="h-16 flex items-center px-6 border-b border-border shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2 group">
