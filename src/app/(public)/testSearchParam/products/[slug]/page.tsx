@@ -13,6 +13,9 @@ import RelatedProductsSection from "../_relateproducts/RelatedProductsSection_";
 import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
+// Thêm dòng này để cho phép Cache trang trên toàn cầu (Edge Network)
+export const revalidate = 3600; // Tự động cập nhật lại mỗi 1 tiếng
+
 // ================= ✅ METADATA =================
 export async function generateMetadata({
   params,
