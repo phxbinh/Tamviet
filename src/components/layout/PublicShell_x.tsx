@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle_";
 import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat";
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -92,6 +93,8 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             {children}
           </div>
         </main>
+
+        <SupportPolicies />
 
         <footer className="p-4 border-t border-border text-center text-[10px] uppercase tracking-widest">
             © 2026 Tâm Việt Platform
