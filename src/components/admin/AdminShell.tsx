@@ -9,14 +9,10 @@ import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
-//import { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-
-
-//export default
-function AdminShell_({ 
+export default function AdminShell({ 
   children, 
   user 
 }: { 
@@ -195,7 +191,8 @@ import AdminHeader from './AdminHeader';
 */
 
 
-export default function AdminShell({ 
+//export default 
+function AdminShell__({ 
   children, 
   user 
 }: { 
