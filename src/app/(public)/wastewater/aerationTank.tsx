@@ -1,7 +1,7 @@
-import AerationFeature from "@/components/environments/wastewater/AerationTank"
+import AerationTank from "@/components/environments/wastewater/AerationTank"
 
 export default function AerationTankCal() {
     return (
-       <AerationFeature />
+       <AerationTank />
     );
 }
