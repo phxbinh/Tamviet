@@ -15,6 +15,10 @@ const nextConfig = {
             key: "X-Content-Type-Options",
             value: "nosniff",
           },
+          {
+            key: "Cache-Control",
+            value: "public, s-maxage=3600, stale-while-revalidate=59",
+          },
         ],
       },
       // Cấu hình riêng cho Sitemap để Google Bot "đọc là hiểu" ngay
