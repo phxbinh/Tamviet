@@ -56,7 +56,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
           transition-transform duration-300 ease-in-out
           lg:relative lg:translate-x-0
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
+        `}>
       {/* LOGO */}
       <div className="h-16 flex items-center px-6 border-b border-border shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2 group">
