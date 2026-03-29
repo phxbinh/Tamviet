@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { useAerationStore } from '@/store/useAerationStore';
+import { useAerationStore } from './store/useAerationStore';
 
 interface InputGroupProps {
   label: string;
