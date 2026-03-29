@@ -44,8 +44,7 @@ interface AdminSidebarProps {
   onNavigate?: () => void;
 }
 
-//export default 
-function AdminSidebar_({ user, onNavigate }: AdminSidebarProps) {
+export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const menuItems = [
@@ -154,7 +153,8 @@ interface AdminSidebarProps {
 }
 */
 
-export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
+//export default 
+function AdminSidebar_({ user, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
 
   const menuItems = [
