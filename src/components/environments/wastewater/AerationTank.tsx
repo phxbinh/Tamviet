@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAerationStore } from '@/components/environments/wastewater/store/useAerationStore'; // Store Zustand đã tạo ở trên
+import { useAerationStore } from './store/useAerationStore'; // Store Zustand đã tạo ở trên
 
 const AerationFeature = () => {
   const { Q, S0, S, MLSS, thetaC, results, updateInput } = useAerationStore();
