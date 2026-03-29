@@ -1,4 +1,5 @@
 
+/*
 "use client";
 
 import { useState } from "react";
@@ -11,8 +12,11 @@ import Link from "next/link";
 //import { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
+*/
 
-export default function AdminShell({ 
+
+//export default
+function AdminShell_({ 
   children, 
   user 
 }: { 
@@ -178,6 +182,79 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+
+
+// FILE SỐ 1: AdminShell.tsx
+/*
+"use client";
+
+import { useState } from "react";
+import AdminSidebar from './AdminSidebar';
+import AdminHeader from './AdminHeader';
+*/
+
+
+export default function AdminShell({ 
+  children, 
+  user 
+}: { 
+  children: React.ReactNode; 
+  user: any 
+}) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex min-h-screen w-full bg-background relative overflow-hidden">
+      
+      {/* SIDEBAR CHO DESKTOP (Luôn hiện trên lg) */}
+      <div className="hidden lg:flex h-screen sticky top-0">
+        <AdminSidebar user={user} />
+      </div>
+
+      {/* SIDEBAR CHO MOBILE (Overlay + Drawer) */}
+      <div className={`
+        fixed inset-0 z-[100] lg:hidden transition-opacity duration-300
+        ${isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
+      `}>
+        {/* Lớp nền mờ (Backdrop) */}
+        <div 
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm" 
+          onClick={() => setIsSidebarOpen(false)} 
+        />
+        
+        {/* Nội dung Sidebar trượt ra */}
+        <div className={`
+          absolute left-0 top-0 h-full w-64 transition-transform duration-300 ease-out
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        `}>
+           <AdminSidebar user={user} onNavigate={() => setIsSidebarOpen(false)} />
+        </div>
+      </div>
+
+      {/* KHỐI NỘI DUNG CHÍNH */}
+      <div className="flex-1 flex flex-col min-w-0 w-full relative">
+        <AdminHeader onMenuClick={() => setIsSidebarOpen(true)} />
+
+        <main className="flex-1 p-4 md:p-6 lg:p-10 bg-background">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+
+        <footer className="p-4 border-t border-border text-center text-[10px] opacity-40 uppercase tracking-widest">
+            © 2026 Tâm Việt Platform
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
 
 
 
