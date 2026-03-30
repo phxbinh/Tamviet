@@ -40,7 +40,7 @@ export function ThemeToggle() {
         {isOpen ? <Plus size={22} strokeWidth={2.5} /> : <CurrentIcon size={18} />}
       </button>
 
-      {/* MENU XỔ NGANG (TRÁI → PHẢI) */}
+      {/* MENU XỔ NGANG (TRÁI → PHẢI) */} {/*
       <div 
         className={`flex flex-row items-center gap-2 absolute right-full mr-3 top-1/2 -translate-y-1/2
           transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
@@ -70,14 +70,58 @@ export function ThemeToggle() {
             `}
           >
             <mode.icon size={16} className={mode.color} />
-            
-            {/* Tooltip */}
+          
             <span className="absolute right-12 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
               {mode.label}
             </span>
           </button>
         ))}
-      </div>
+      </div>*/}
+
+
+{/* MENU XỔ NGANG CHUẨN */}
+<div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
+  {modes.map((mode, index) => (
+    <button
+      key={mode.id}
+      aria-label={mode.label}
+      type="button"
+      onClick={() => {
+        setTheme(mode.id);
+        setIsOpen(false);
+      }}
+      className={`group absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 rounded-full
+        bg-card/80 dark:bg-card/90 backdrop-blur-lg border border-border/60 
+        shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+        ${theme === mode.id 
+          ? "ring-2 ring-neon-cyan/50 border-neon-cyan" 
+          : "hover:border-neon-cyan/50"}
+      `}
+      style={{
+        right: 0,
+        transform: `
+          translateY(-50%) 
+          translateX(${isOpen ? `-${(index + 1) * 44}px` : "0px"})
+          scale(${isOpen ? 1 : 0.8})
+        `,
+        opacity: isOpen ? 1 : 0,
+        transitionDelay: isOpen ? `${index * 60}ms` : "0ms",
+        pointerEvents: isOpen ? "auto" : "none",
+      }}
+    >
+      <mode.icon size={16} className={mode.color} />
+
+      {/* Tooltip */}
+      <span className="absolute right-12 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
+        {mode.label}
+      </span>
+    </button>
+  ))}
+</div>
+
+
+
+
     </div>
   );
 }
