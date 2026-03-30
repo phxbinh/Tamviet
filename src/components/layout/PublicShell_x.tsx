@@ -154,6 +154,11 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           <button onClick={() => setIsOpen(false)} className="lg:hidden p-2">
             <X size={16} />
           </button>
+
+         {/* Theme Toggle */}
+          <div className="z-[100] scale-80 landscape:scale-80 transition-transform">
+            <ThemeToggle />
+          </div>
         </div>
         <div className="h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
           <Sidebar onNavigate={() => setIsOpen(false)} />
