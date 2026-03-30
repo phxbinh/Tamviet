@@ -119,7 +119,7 @@ const PolicyAccordion = () => {
               key={index} 
               className="group border-b border-gray-800 last:border-b-0"
             >
-              <summary className="flex items-center justify-between py-6 cursor-pointer list-none select-none hover:bg-white/5 transition-colors px-2">
+              <summary className="flex items-center justify-between py-2 cursor-pointer list-none select-none hover:bg-white/5 transition-colors px-2">
                 <div className="flex items-center gap-4">
                   {/* Mũi tên bên trái giống hình */}
                   <span className="text-[10px] transition-transform duration-300 group-open:rotate-90">
