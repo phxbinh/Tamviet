@@ -1,7 +1,7 @@
 // src/components/sidebar/Sidebar.tsx
 import SidebarClient from './SidebarClient';
 import { sidebarLinks } from './links';
-import {ThemeToggle} from '@/components/ThemeToggle_';
+import {ThemeToggle} from '@/components/ThemeToggle_lr';
 
 export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const visibleLinks = sidebarLinks.filter((l) => l.showInSidebar !== false);
