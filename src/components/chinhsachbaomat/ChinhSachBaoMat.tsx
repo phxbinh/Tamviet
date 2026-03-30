@@ -159,7 +159,6 @@ const PolicyAccordion = () => {
   );
 };
 
-export default PolicyAccordion;
 
 
 
