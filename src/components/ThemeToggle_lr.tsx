@@ -24,104 +24,54 @@ export function ThemeToggle() {
   const CurrentIcon = currentMode.icon;
 
   return (
+    // Thay flex-col thành flex-row để các phần tử nằm ngang
     <div className="relative flex items-center bg-transparent select-none">
       
-      {/* NÚT TRIGGER */}
+      {/* NÚT TRIGGER CHÍNH */}
       <button
         type="button"
         aria-label="Đổi chế độ sáng tối"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none transition-all duration-500 shadow-lg z-20 ${
+        className={`w-10 h-10 rounded-full flex items-center justify-center border outline-none focus:outline-none transition-all duration-500 shadow-lg z-20 ${
           isOpen 
-            ? "bg-neon-cyan border-neon-cyan text-black rotate-45 shadow-[0_0_20px_rgba(34,211,238,0.4)]" 
-            : "bg-card/90 dark:bg-card/80 backdrop-blur-xl border-border/80 text-foreground hover:border-neon-cyan hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+            ? "bg-cyan-500 border-cyan-400 text-black rotate-45 shadow-[0_0_20px_rgba(34,211,238,0.4)]" 
+            : "bg-card/90 dark:bg-card/80 backdrop-blur-xl border-border/80 text-foreground hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]"
         }`}
       >
         {isOpen ? <Plus size={22} strokeWidth={2.5} /> : <CurrentIcon size={18} />}
       </button>
 
-      {/* MENU XỔ NGANG (TRÁI → PHẢI) */} {/*
+      {/* MENU NGANG - XỔ SANG PHẢI */}
       <div 
-        className={`flex flex-row items-center gap-2 absolute right-full mr-3 top-1/2 -translate-y-1/2
-          transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-          ${isOpen 
+        className={`flex flex-row gap-2 ml-3 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] absolute left-full ${
+          isOpen 
             ? "opacity-100 translate-x-0 scale-100 visible" 
-            : "opacity-0 translate-x-2 scale-95 invisible pointer-events-none"
-          }`}
+            : "opacity-0 -translate-x-4 scale-95 invisible pointer-events-none"
+        }`}
       >
-        {modes.map((mode, index) => (
+        {modes.map((mode) => (
           <button
-            aria-label={mode.label}
             key={mode.id}
             type="button"
             onClick={() => {
               setTheme(mode.id);
               setIsOpen(false);
             }}
-            style={{
-              transitionDelay: isOpen ? `${index * 50}ms` : "0ms"
-            }}
             className={`group relative flex items-center justify-center w-9 h-9 rounded-full 
               bg-card/80 dark:bg-card/90 backdrop-blur-lg border border-border/60 
-              shadow-sm transition-all duration-300 hover:scale-110 active:scale-95
-              ${theme === mode.id 
-                ? "ring-2 ring-neon-cyan/50 border-neon-cyan" 
-                : "hover:border-neon-cyan/50"}
+              shadow-sm transition-all hover:scale-110 active:scale-95
+              ${theme === mode.id ? "ring-2 ring-cyan-400/50 border-cyan-400" : "hover:border-cyan-400/50"}
             `}
           >
             <mode.icon size={16} className={mode.color} />
-          
-            <span className="absolute right-12 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
+            
+            {/* Tooltip nhảy lên phía trên nút khi hover */}
+            <span className="absolute -top-10 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
               {mode.label}
             </span>
           </button>
         ))}
-      </div>*/}
-
-
-{/* MENU XỔ NGANG CHUẨN */}
-<div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none">
-  {modes.map((mode, index) => (
-    <button
-      key={mode.id}
-      aria-label={mode.label}
-      type="button"
-      onClick={() => {
-        setTheme(mode.id);
-        setIsOpen(false);
-      }}
-      className={`group absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9 rounded-full
-        bg-card/80 dark:bg-card/90 backdrop-blur-lg border border-border/60 
-        shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-        ${theme === mode.id 
-          ? "ring-2 ring-neon-cyan/50 border-neon-cyan" 
-          : "hover:border-neon-cyan/50"}
-      `}
-      style={{
-        right: 0,
-        transform: `
-          translateY(-50%) 
-          translateX(${isOpen ? `-${(index + 1) * 44}px` : "0px"})
-          scale(${isOpen ? 1 : 0.8})
-        `,
-        opacity: isOpen ? 1 : 0,
-        transitionDelay: isOpen ? `${index * 60}ms` : "0ms",
-        pointerEvents: isOpen ? "auto" : "none",
-      }}
-    >
-      <mode.icon size={16} className={mode.color} />
-
-      {/* Tooltip */}
-      <span className="absolute right-12 px-2 py-1 rounded-md bg-popover/90 backdrop-blur-md text-[10px] font-bold border border-border whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
-        {mode.label}
-      </span>
-    </button>
-  ))}
-</div>
-
-
-
-
+      </div>
     </div>
   );
 }
