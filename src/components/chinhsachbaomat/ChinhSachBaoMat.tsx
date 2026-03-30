@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, CreditCard, Truck, ShoppingBag, FileText, RefreshCw, ChevronDown, Scale } from 'lucide-react';
 
-const PolicyAccordion = () => {
+const PolicyAccordion_ = () => {
   const policies = [
     { 
       title: "Chính sách bảo mật", 
@@ -88,5 +88,81 @@ const PolicyAccordion = () => {
     </section>
   );
 };
+
+
+const PolicyAccordion = () => {
+  const policies = [
+    { title: "CHÍNH SÁCH BẢO MẬT", content: "Chúng tôi cam kết bảo vệ dữ liệu cá nhân của bạn với tiêu chuẩn mã hóa cao nhất. Thông tin chỉ được sử dụng để cải thiện trải nghiệm dịch vụ." },
+    { title: "CHÍNH SÁCH ĐỔI TRẢ", content: "Hỗ trợ đổi trả trong vòng 7 ngày kể từ khi nhận hàng nếu có lỗi từ nhà sản xuất. Quy trình nhanh chóng, minh bạch." },
+    { title: "CHÍNH SÁCH THANH TOÁN", content: "Hỗ trợ đa dạng phương thức: Thẻ nội địa, Quốc tế, Ví điện tử và COD. Mọi giao dịch đều được giám sát bởi hệ thống an ninh ngân hàng." },
+    { title: "CHÍNH SÁCH VẬN CHUYỂN", content: "Hợp tác với các đơn vị vận chuyển uy tín. Thời gian giao hàng dự kiến từ 2-4 ngày làm việc tùy khu vực." },
+    { title: "CHÍNH SÁCH MUA HÀNG", content: "Hướng dẫn chi tiết từng bước đặt hàng, kiểm tra giỏ hàng và xác nhận đơn hàng qua Email/SMS." },
+    { title: "ĐIỀU KHOẢN DỊCH VỤ", content: "Quy định về quyền và trách nhiệm của người dùng khi truy cập website. Đảm bảo môi trường mua sắm văn minh, công bằng." },
+  ];
+
+  return (
+    <section className="w-full bg-[#1a1a1a] text-white py-10 font-sans">
+      <div className="max-w-4xl mx-auto px-4">
+        
+        {/* Header - Overstock Style */}
+        <div className="mb-8 border-b border-gray-700 pb-6">
+           <h2 className="text-xl font-bold tracking-wider uppercase flex items-center gap-2">
+             <Scale size={20} className="text-white" />
+             Trung tâm Hỗ trợ & Pháp lý
+           </h2>
+        </div>
+
+        {/* Accordion List */}
+        <div className="flex flex-col">
+          {policies.map((policy, index) => (
+            <details 
+              key={index} 
+              className="group border-b border-gray-800 last:border-b-0"
+            >
+              <summary className="flex items-center justify-between py-6 cursor-pointer list-none select-none hover:bg-white/5 transition-colors px-2">
+                <div className="flex items-center gap-4">
+                  {/* Mũi tên bên trái giống hình */}
+                  <span className="text-[10px] transition-transform duration-300 group-open:rotate-90">
+                    ▶
+                  </span>
+                  <span className="text-[14px] font-bold tracking-[0.05em] uppercase text-gray-200">
+                    {policy.title}
+                  </span>
+                </div>
+                {/* Mũi tên bên phải */}
+                <ChevronDown 
+                  size={18} 
+                  className="text-gray-400 transition-transform duration-300 group-open:rotate-180" 
+                />
+              </summary>
+              
+              <div className="px-10 pb-6 text-sm leading-relaxed text-gray-400 transition-all">
+                <p className="max-w-2xl">
+                  {policy.content}
+                </p>
+              </div>
+            </details>
+          ))}
+        </div>
+
+        {/* Bottom Links / Copyright */}
+        <div className="mt-12 pt-8 border-t border-gray-800 text-[12px] text-gray-500 space-y-4">
+          <p>© 2026 Tâm Việt Platform</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 underline underline-offset-4">
+            <a href="#" className="hover:text-white">Do Not Share My Information</a>
+            <a href="#" className="hover:text-white">Privacy Policy</a>
+            <a href="#" className="hover:text-white">Terms & Conditions</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PolicyAccordion;
+
+
+
+
 
 export default PolicyAccordion;
