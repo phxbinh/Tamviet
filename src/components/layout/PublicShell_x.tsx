@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ThemeToggle_";
 import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat";
+import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
 
 //export default 
 function PublicShell_({ children }: { children: React.ReactNode }) {
