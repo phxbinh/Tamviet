@@ -81,10 +81,10 @@ function PublicShell_({ children }: { children: React.ReactNode }) {
             </Link>
           </div>
 
-          {/* Theme Toggle */}
+          {/* Theme Toggle */} {/*
           <div className="z-[100] scale-80 landscape:scale-80 transition-transform">
             <ThemeToggle />
-          </div>
+          </div>*/}
 
         </header>
 
