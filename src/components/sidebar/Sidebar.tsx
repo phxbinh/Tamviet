@@ -9,7 +9,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="py-4 z-50">
       <SidebarClient links={visibleLinks} onNavigate={onNavigate} />
-      <ThemeToggle/>
     </div>
+    <ThemeToggle/>
   );
 }
