@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { ThemeToggle } from "@/components/ThemeToggle_lr";
+import { ThemeToggle } from "@/components/ThemeToggle_";
 import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart } from "lucide-react";
 import Link from "next/link";
