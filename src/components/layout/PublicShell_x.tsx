@@ -196,7 +196,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
               </span>
             </Link>
           </div>
-          <ThemeToggle />
+          {/*<ThemeToggle /> */}
         </header>
 
         {/* FEATURE: STICKY PRODUCT TYPES FILTER */}
