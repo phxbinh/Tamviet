@@ -199,7 +199,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
           {/*<ThemeToggle /> */}
         </header>
 
-        {/* FEATURE: STICKY PRODUCT TYPES FILTER */}
+        {/* FEATURE: STICKY PRODUCT TYPES FILTER */} {/*
         <nav className="sticky top-16 landscape:top-12 z-20 
                         w-full border-b border-border 
                         bg-background/90 backdrop-blur-sm
@@ -221,7 +221,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
             ))}
           </div>
         </nav>
-
+*/}
         {/* MAIN */}
         <main className="flex-1 min-w-0 p-1 md:p-6 lg:p-12 bg-background">
           <div className="mx-auto max-w-full">
