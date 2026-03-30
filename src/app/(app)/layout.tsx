@@ -2,6 +2,7 @@
 
 import { Toast } from "@/components/Toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
+export const dynamic = "force-dynamic"; // Ép trang này luôn render mới, không cache kết quả SQL
 
 export default async function AuthLayout({
   children,
