@@ -8,7 +8,7 @@ export function useOrders() {
   async function fetchOrders() {
     setLoading(true);
     try {
-      const res = await fetch("/api/orders");
+      const res = await fetch("/api/order");
       const data = await res.json();
       setOrders(data.orders || []);
     } catch (err) {
