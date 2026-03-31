@@ -79,48 +79,69 @@ export default function Cart() {
 }
 */
 
+
 "use client";
 
 import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
 export default function CartPage() {
-  const { cart, setCart, fetchCart } = useCart();
+  const { cart, setCart, fetchCart, loading } = useCart();
 
-  if (!cart) return <div className="p-6">Loading...</div>;
+  if (loading || !cart) {
+    return <div className="p-6">Loading...</div>;
+  }
 
-  const total = cart.items.reduce(
+  const total = cart.items.reduce<number>(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
   async function updateQty(variantId: string, quantity: number) {
-    // optimistic UI
-    setCart((prev) => ({
-      ...prev,
-      items: prev.items.map((i) =>
-        i.variant_id === variantId ? { ...i, quantity } : i
-      ),
-    }));
+    if (quantity < 1) return; // ❗ chặn số âm / 0
 
-    await fetch("/api/cart", {
-      method: "PATCH",
-      body: JSON.stringify({ variantId, quantity }),
+    // optimistic UI (safe)
+    setCart((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        items: prev.items.map((i) =>
+          i.variant_id === variantId ? { ...i, quantity } : i
+        ),
+      };
     });
+
+    try {
+      await fetch("/api/cart", {
+        method: "PATCH",
+        body: JSON.stringify({ variantId, quantity }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
 
     fetchCart(); // sync lại
   }
 
   async function removeItem(variantId: string) {
-    setCart((prev) => ({
-      ...prev,
-      items: prev.items.filter((i) => i.variant_id !== variantId),
-    }));
+    setCart((prev) => {
+      if (!prev) return prev;
 
-    await fetch("/api/cart", {
-      method: "DELETE",
-      body: JSON.stringify({ variantId }),
+      return {
+        ...prev,
+        items: prev.items.filter((i) => i.variant_id !== variantId),
+      };
     });
+
+    try {
+      await fetch("/api/cart", {
+        method: "DELETE",
+        body: JSON.stringify({ variantId }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
 
     fetchCart();
   }
@@ -197,6 +218,4 @@ export default function CartPage() {
     </div>
   );
 }
-
-
 
