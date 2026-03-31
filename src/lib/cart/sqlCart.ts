@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
+//import { cookies } from "next/headers";
 //import { getUser } from "@/lib/auth"; // supabase
-import { getCurrentUser } from '@/lib/authActions/getUser';
-
+//import { getCurrentUser } from '@/lib/authActions/getUser';
 
 import { cookies } from "next/headers";
 import { getCurrentUser } from "@/lib/auth/getCurrentUser";
