@@ -13,6 +13,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Đăng ký', href: '/signup', showInSidebar: true },
   { name: 'Quên mật mã', href: '/forgot-password-retry', showInSidebar: true },
   { name: 'Đổi mật mã', href: '/change-password', showInSidebar: true },
+  { name: 'Orders', href: '/orders', showInSidebar: true },
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
