@@ -8,6 +8,16 @@ import { sql } from '@/lib/neon/sql';
 
 import { syncUser, ensureProfile } from '../neon/users';
 
+
+/**
+ * DÙNG CHO GIỎ HÀNG
+ */
+import { cookies } from "next/headers";
+import { mergeCart } from "@/lib/cart/mergeCart";
+
+
+
+
 /**
  * SIGN UP
  * - Supabase tạo user
@@ -83,6 +93,24 @@ export async function signIn(formData: FormData) {
   });
 
   await ensureProfile(user.id);
+
+  // Merge Cart
+  // 🔥 👇 THÊM Ở ĐÂY (CHUẨN NHẤT)
+  const guestId = cookies().get("guest_id")?.value;
+
+  if (guestId) {
+    await mergeCart({
+      userId: user.id,
+      guestId,
+    });
+
+    // optional (khuyên dùng)
+    cookies().delete("guest_id");
+  }
+
+
+
+
 
   // 🔎 LẤY ROLE TỪ NEON
   const rows = await sql`
