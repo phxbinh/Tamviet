@@ -25,10 +25,12 @@
   
     "zustand": "^5.0.0",
     "date-fns": "^4.1.0",
+    
     "@neondatabase/serverless": "^0.9.5",
     "@supabase/supabase-js": "^2.33.0",
     "@supabase/ssr": "^0.4.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
+    "pg": "^8.x.x",
   
     "slugify": "^1.6.6",
     "use-debounce": "^10.0.4",
@@ -54,6 +56,8 @@
     "@types/node": "^22.7.4",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/sanitize-html": "^2.13.0",
+    
+    "@types/pg": "^8.x.x",
   
     "tailwindcss": "^4.0.0",
     "@tailwindcss/postcss": "^4.0.0",
@@ -68,8 +72,6 @@
     "serwist": "^9.5.7"
   }
 }
-
-
 
 
 
