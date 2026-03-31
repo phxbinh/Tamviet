@@ -1,4 +1,4 @@
-import { sql } from "@/lib/neon/sql";
+import { sqlApp } from "@/lib/neon/sql";
 
 export async function mergeCart({
   userId,
@@ -9,8 +9,11 @@ export async function mergeCart({
 }) {
   if (!guestId) return;
 
-  return await sql.begin(async (tx) => {
-    // 1. lấy guest cart
+  await sqlApp.transaction(async (tx) => {
+    // 🔑 set context user cho RLS
+    await tx`SELECT set_config('app.user_id', ${userId}, true)`;
+
+    // 1. guest cart
     const guestCart = await tx`
       SELECT id FROM carts
       WHERE guest_id = ${guestId}
@@ -20,7 +23,9 @@ export async function mergeCart({
 
     if (guestCart.length === 0) return;
 
-    // 2. lấy hoặc tạo user cart
+    const guestCartId = guestCart[0].id;
+
+    // 2. user cart
     let userCart = await tx`
       SELECT id FROM carts
       WHERE user_id = ${userId}
@@ -36,10 +41,9 @@ export async function mergeCart({
       `;
     }
 
-    const guestCartId = guestCart[0].id;
     const userCartId = userCart[0].id;
 
-    // 3. MERGE ITEMS (QUAN TRỌNG NHẤT)
+    // 🔥 3. MERGE ITEMS (CORE)
     await tx`
       INSERT INTO cart_items (cart_id, variant_id, quantity)
       SELECT
@@ -54,13 +58,13 @@ export async function mergeCart({
         updated_at = now()
     `;
 
-    // 4. xoá guest cart items
+    // 4. delete guest items
     await tx`
       DELETE FROM cart_items
       WHERE cart_id = ${guestCartId}
     `;
 
-    // 5. xoá guest cart
+    // 5. delete guest cart
     await tx`
       DELETE FROM carts
       WHERE id = ${guestCartId}
