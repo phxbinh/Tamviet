@@ -13,7 +13,8 @@ export async function checkout({
     // 1. lấy cart
     const cartRes = await client.query(
       `
-      SELECT id FROM carts
+      SELECT id 
+      FROM carts
       WHERE user_id = $1 AND status = 'active'
       LIMIT 1
       `,
@@ -48,47 +49,60 @@ export async function checkout({
       throw new Error("Cart is empty");
     }
 
-    // 3. check stock
+    // 3. check stock + tính total
+    let totalPrice = 0;
+
     for (const item of items) {
-      if (item.stock < item.quantity) {
+      const price = Number(item.price);
+      const stock = Number(item.stock);
+      const quantity = Number(item.quantity);
+
+      if (stock < quantity) {
         throw new Error(`Out of stock: ${item.variant_id}`);
       }
+
+      totalPrice += price * quantity;
     }
 
-    // 4. tạo order
+    // 4. tạo order (FIX total_price)
     const orderRes = await client.query(
       `
-      INSERT INTO orders (user_id, status)
-      VALUES ($1, 'pending')
+      INSERT INTO orders (user_id, total_price, status)
+      VALUES ($1, $2, 'pending')
       RETURNING id
       `,
-      [userId]
+      [userId, totalPrice]
     );
 
     const orderId = orderRes.rows[0].id;
 
-    // 5. insert order_items
-    for (const item of items) {
-      await client.query(
-        `
-        INSERT INTO order_items (order_id, variant_id, quantity, price)
-        VALUES ($1, $2, $3, $4)
-        `,
-        [orderId, item.variant_id, item.quantity, item.price]
-      );
-    }
+    // 5. insert order_items (BATCH - nhanh hơn loop)
+    await client.query(
+      `
+      INSERT INTO order_items (order_id, variant_id, quantity, price)
+      SELECT
+        $1,
+        ci.variant_id,
+        ci.quantity,
+        pv.price
+      FROM cart_items ci
+      JOIN product_variants pv ON pv.id = ci.variant_id
+      WHERE ci.cart_id = $2
+      `,
+      [orderId, cartId]
+    );
 
-    // 6. trừ stock
-    for (const item of items) {
-      await client.query(
-        `
-        UPDATE product_variants
-        SET stock = stock - $1
-        WHERE id = $2
-        `,
-        [item.quantity, item.variant_id]
-      );
-    }
+    // 6. trừ stock (BATCH)
+    await client.query(
+      `
+      UPDATE product_variants pv
+      SET stock = pv.stock - ci.quantity
+      FROM cart_items ci
+      WHERE ci.variant_id = pv.id
+      AND ci.cart_id = $1
+      `,
+      [cartId]
+    );
 
     // 7. clear cart
     await client.query(
@@ -103,7 +117,8 @@ export async function checkout({
     await client.query(
       `
       UPDATE carts
-      SET status = 'checked_out'
+      SET status = 'checked_out',
+          updated_at = now()
       WHERE id = $1
       `,
       [cartId]
