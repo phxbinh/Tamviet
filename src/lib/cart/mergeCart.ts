@@ -9,65 +9,66 @@ export async function mergeCart({
 }) {
   if (!guestId) return;
 
-  await sqlApp.transaction(async (tx) => {
-    // 🔑 set context user cho RLS
-    await tx`SELECT set_config('app.user_id', ${userId}, true)`;
+  await sqlApp.transaction((tx) => [
+    // 🔑 set context RLS
+    tx`SELECT set_config('app.user_id', ${userId}, true)`,
 
-    // 1. guest cart
-    const guestCart = await tx`
-      SELECT id FROM carts
-      WHERE guest_id = ${guestId}
-      AND status = 'active'
-      LIMIT 1
-    `;
-
-    if (guestCart.length === 0) return;
-
-    const guestCartId = guestCart[0].id;
-
-    // 2. user cart
-    let userCart = await tx`
-      SELECT id FROM carts
-      WHERE user_id = ${userId}
-      AND status = 'active'
-      LIMIT 1
-    `;
-
-    if (userCart.length === 0) {
-      userCart = await tx`
+    // 1. lấy guest cart
+    tx`
+      WITH guest_cart AS (
+        SELECT id FROM carts
+        WHERE guest_id = ${guestId}
+        AND status = 'active'
+        LIMIT 1
+      ),
+      user_cart AS (
         INSERT INTO carts (user_id)
-        VALUES (${userId})
+        SELECT ${userId}
+        WHERE NOT EXISTS (
+          SELECT 1 FROM carts
+          WHERE user_id = ${userId}
+          AND status = 'active'
+        )
         RETURNING id
-      `;
-    }
+      ),
+      final_user_cart AS (
+        SELECT id FROM user_cart
+        UNION
+        SELECT id FROM carts
+        WHERE user_id = ${userId}
+        AND status = 'active'
+        LIMIT 1
+      )
 
-    const userCartId = userCart[0].id;
-
-    // 🔥 3. MERGE ITEMS (CORE)
-    await tx`
       INSERT INTO cart_items (cart_id, variant_id, quantity)
       SELECT
-        ${userCartId},
-        variant_id,
-        quantity
-      FROM cart_items
-      WHERE cart_id = ${guestCartId}
+        (SELECT id FROM final_user_cart),
+        ci.variant_id,
+        ci.quantity
+      FROM cart_items ci
+      WHERE ci.cart_id = (SELECT id FROM guest_cart)
+
       ON CONFLICT (cart_id, variant_id)
       DO UPDATE SET
         quantity = cart_items.quantity + EXCLUDED.quantity,
         updated_at = now()
-    `;
+    `,
 
-    // 4. delete guest items
-    await tx`
+    // 2. delete guest items
+    tx`
       DELETE FROM cart_items
-      WHERE cart_id = ${guestCartId}
-    `;
+      WHERE cart_id IN (
+        SELECT id FROM carts
+        WHERE guest_id = ${guestId}
+        AND status = 'active'
+      )
+    `,
 
-    // 5. delete guest cart
-    await tx`
+    // 3. delete guest cart
+    tx`
       DELETE FROM carts
-      WHERE id = ${guestCartId}
-    `;
-  });
+      WHERE guest_id = ${guestId}
+      AND status = 'active'
+    `,
+  ]);
 }
