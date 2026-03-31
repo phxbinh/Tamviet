@@ -13,7 +13,7 @@ export async function getCartIdentity() {
     };
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   let guestId = cookieStore.get("guest_id")?.value;
 
   if (!guestId) {
