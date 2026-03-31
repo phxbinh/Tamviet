@@ -1,5 +1,5 @@
 // app/api/checkout/route.ts
-import { checkout } from "@/lib/cart/checkout/checkout";
+import { checkout } from "@/lib/cart/checkout";
 import { getCurrentUser } from "@/lib/authActions/getUser";
 
 export async function POST() {
