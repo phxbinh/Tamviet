@@ -1,0 +1,70 @@
+import { pool } from "@/lib/db/pg";
+import { getCurrentUser } from "@/lib/authActions/getUser";
+import { cookies } from "next/headers";
+
+export async function GET(
+  _: Request,
+  { params }: { params: { id: string } }
+) {
+  const client = await pool.connect();
+
+  try {
+    const user = await getCurrentUser();
+    const cookieStore = await cookies();
+    const guestId = cookieStore.get("guest_id")?.value;
+
+    const orderId = params.id;
+
+    // 🔥 lấy order (check ownership)
+    const orderRes = await client.query(
+      `
+      SELECT *
+      FROM orders
+      WHERE id = $1
+      AND (
+        (user_id = $2 AND $2 IS NOT NULL)
+        OR
+        (guest_id = $3 AND $3 IS NOT NULL)
+      )
+      LIMIT 1
+      `,
+      [orderId, user?.id ?? null, guestId ?? null]
+    );
+
+    if (orderRes.rows.length === 0) {
+      return Response.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    const order = orderRes.rows[0];
+
+    // 🔥 items
+    const itemsRes = await client.query(
+      `
+      SELECT 
+        oi.variant_id,
+        oi.quantity,
+        oi.price_at_time,
+        p.name,
+        p.slug
+      FROM order_items oi
+      JOIN product_variants pv ON pv.id = oi.variant_id
+      JOIN products p ON p.id = pv.product_id
+      WHERE oi.order_id = $1
+      `,
+      [orderId]
+    );
+
+    return Response.json({
+      ...order,
+      items: itemsRes.rows,
+    });
+  } catch (err: any) {
+    console.error(err);
+    return Response.json(
+      { error: err.message || "Failed" },
+      { status: 500 }
+    );
+  } finally {
+    client.release();
+  }
+}
