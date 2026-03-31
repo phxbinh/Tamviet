@@ -1,30 +1,65 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
-type CartItem = {
+/* =========================
+   TYPES
+========================= */
+
+export type CartItem = {
   variant_id: string;
   name: string;
   price: number;
   quantity: number;
 };
 
-type Cart = {
+export type Cart = {
   cartId: string;
   items: CartItem[];
 };
 
-const CartContext = createContext<any>(null);
+type CartContextType = {
+  cart: Cart | null;
+  loading: boolean;
+  setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
+  fetchCart: () => Promise<void>;
+};
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+/* =========================
+   CONTEXT
+========================= */
+
+const CartContext = createContext<CartContextType | null>(null);
+
+/* =========================
+   PROVIDER
+========================= */
+
+export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function fetchCart() {
-    const res = await fetch("/api/cart");
-    const data = await res.json();
-    setCart(data);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/cart");
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch cart");
+      }
+
+      const data: Cart = await res.json();
+      setCart(data);
+    } catch (err) {
+      console.error("Cart fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -32,12 +67,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <CartContext.Provider value={{ cart, setCart, fetchCart }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        loading,
+        setCart,
+        fetchCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 }
 
+/* =========================
+   HOOK
+========================= */
+
 export function useCart() {
-  return useContext(CartContext);
+  const context = useContext(CartContext);
+
+  if (!context) {
+    throw new Error("useCart must be used within CartProvider");
+  }
+
+  return context;
 }
