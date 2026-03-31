@@ -88,7 +88,7 @@ export default function CartPage() {
   
       await fetchCart();
   
-      window.location.href = `/order/${data.orderId}`;
+      //window.location.href = `/order/${data.orderId}`;
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
