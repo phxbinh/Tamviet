@@ -9,7 +9,7 @@ export async function mergeCart({
 }) {
   if (!guestId) return;
 
-  return await sql.transaction(async (tx) => {
+  return await sql.begin(async (tx) => {
     // 1. lấy guest cart
     const guestCart = await tx`
       SELECT id FROM carts
