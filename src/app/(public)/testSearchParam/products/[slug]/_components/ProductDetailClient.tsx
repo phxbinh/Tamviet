@@ -87,11 +87,12 @@ return (
           selectedVariant={selectedVariant}
           variants={variants}
           isAdding={isAdding}
-          onAdd={() => { 
-            setIsAdding(true); 
-            setTimeout(() => setIsAdding(false), 1500);
-            handleAddToCart;
-          }}
+          /*onAdd={() => { 
+            //setIsAdding(true); 
+            //setTimeout(() => setIsAdding(false), 1500);
+            handleAddToCart();
+          }}*/
+          onAdd={handleAddToCart}
         />
       </div>
 
