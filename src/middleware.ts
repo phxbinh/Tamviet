@@ -167,6 +167,22 @@ export async function middleware(request: NextRequest) {
     request: { headers: request.headers },
   })
 
+
+  // ✅ FIX: luôn đảm bảo có guest_id -> Cart
+  let guestId = request.cookies.get("guest_id")?.value;
+
+  if (!guestId) {
+    guestId = crypto.randomUUID();
+
+    response.cookies.set("guest_id", guestId, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+    });
+  } // <- Cart
+
+
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
