@@ -96,16 +96,16 @@ export async function signIn(formData: FormData) {
 
   // Merge Cart
   // 🔥 👇 THÊM Ở ĐÂY (CHUẨN NHẤT)
-  const guestId = cookies().get("guest_id")?.value;
-
+  const cookieStore = await cookies();
+  const guestId = cookieStore.get("guest_id")?.value;
+  
   if (guestId) {
     await mergeCart({
       userId: user.id,
       guestId,
     });
-
-    // optional (khuyên dùng)
-    cookies().delete("guest_id");
+  
+    cookieStore.delete("guest_id");
   }
 
 
