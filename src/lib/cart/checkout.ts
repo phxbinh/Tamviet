@@ -2,23 +2,30 @@ import { pool } from "@/lib/db/pg";
 
 export async function checkout({
   userId,
+  guestId,
 }: {
-  userId: string;
+  userId?: string;
+  guestId?: string;
 }) {
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-    // 1. lấy cart
+    // 1. lấy cart theo user hoặc guest
     const cartRes = await client.query(
       `
       SELECT id 
       FROM carts
-      WHERE user_id = $1 AND status = 'active'
+      WHERE status = 'active'
+      AND (
+        (user_id = $1 AND $1 IS NOT NULL)
+        OR
+        (guest_id = $2 AND $2 IS NOT NULL)
+      )
       LIMIT 1
       `,
-      [userId]
+      [userId ?? null, guestId ?? null]
     );
 
     if (cartRes.rows.length === 0) {
@@ -64,22 +71,22 @@ export async function checkout({
       totalPrice += price * quantity;
     }
 
-    // 4. tạo order (FIX total_price)
+    // 4. tạo order (đúng schema)
     const orderRes = await client.query(
       `
-      INSERT INTO orders (user_id, total_price, status)
-      VALUES ($1, $2, 'pending')
+      INSERT INTO orders (user_id, guest_id, total_price, status)
+      VALUES ($1, $2, $3, 'pending')
       RETURNING id
       `,
-      [userId, totalPrice]
+      [userId ?? null, guestId ?? null, totalPrice]
     );
 
     const orderId = orderRes.rows[0].id;
 
-    // 5. insert order_items (BATCH - nhanh hơn loop)
+    // 5. insert order_items (đúng column: price_at_time)
     await client.query(
       `
-      INSERT INTO order_items (order_id, variant_id, quantity, price)
+      INSERT INTO order_items (order_id, variant_id, quantity, price_at_time)
       SELECT
         $1,
         ci.variant_id,
@@ -92,7 +99,7 @@ export async function checkout({
       [orderId, cartId]
     );
 
-    // 6. trừ stock (BATCH)
+    // 6. trừ stock
     await client.query(
       `
       UPDATE product_variants pv
@@ -104,7 +111,7 @@ export async function checkout({
       [cartId]
     );
 
-    // 7. clear cart
+    // 7. clear cart_items
     await client.query(
       `
       DELETE FROM cart_items
@@ -113,7 +120,7 @@ export async function checkout({
       [cartId]
     );
 
-    // 8. mark cart done
+    // 8. update cart status
     await client.query(
       `
       UPDATE carts
