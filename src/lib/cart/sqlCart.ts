@@ -1,3 +1,4 @@
+/*
 import { cookies } from "next/headers";
 import { getCurrentUser } from "../authActions/getUser";
 
@@ -34,6 +35,45 @@ export async function getCartIdentity(): Promise<CartIdentity> {
     guestId,
   };
 }
+*/
+
+import { cookies } from "next/headers";
+import { getCurrentUser } from "../authActions/getUser";
+
+export type CartIdentity =
+  | { userId: string; guestId?: null }
+  | { userId?: null; guestId: string };
+
+export async function getCartIdentity(): Promise<CartIdentity> {
+  const user = await getCurrentUser();
+
+  if (user) {
+    return {
+      userId: user.id,
+      guestId: null,
+    };
+  }
+
+  const cookieStore = await cookies();
+  const guestId = cookieStore.get("guest_id")?.value;
+
+  if (!guestId) {
+    throw new Error("guest_id missing"); // 👈 không tự tạo nữa
+  }
+
+  return {
+    userId: null,
+    guestId,
+  };
+}
+
+
+
+
+
+
+
+
 
 import { sql } from "@/lib/neon/sql";
 //import { getCartIdentity, CartIdentity } from "./getCartIdentity";
