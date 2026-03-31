@@ -8,7 +8,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json();
-console.log(body.variantId);
   await addToCart({
     variantId: body.variantId,
     quantity: body.quantity || 1,
