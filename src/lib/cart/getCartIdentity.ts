@@ -1,3 +1,4 @@
+/*
 import { cookies } from "next/headers";
 import { getUser } from "@/lib/auth"; // supabase
 
@@ -30,3 +31,5 @@ export async function getCartIdentity() {
     guestId,
   };
 }
+
+*/
