@@ -2,18 +2,36 @@ import { cookies } from "next/headers";
 //import { getUser } from "@/lib/auth"; // supabase
 import { getCurrentUser } from '@/lib/authActions/getUser';
 
-export async function getCartIdentity() {
+
+import { cookies } from "next/headers";
+import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+
+/* =========================
+   TYPE (PHẢI MATCH sqlCart)
+========================= */
+
+export type CartIdentity =
+  | { userId: string; guestId?: null }
+  | { userId?: null; guestId: string };
+
+/* =========================
+   GET IDENTITY
+========================= */
+
+export async function getCartIdentity(): Promise<CartIdentity> {
   const user = await getCurrentUser();
 
+  // ✅ USER
   if (user) {
     return {
-      type: "user",
       userId: user.id,
       guestId: null,
     };
   }
 
+  // ✅ GUEST
   const cookieStore = await cookies();
+
   let guestId = cookieStore.get("guest_id")?.value;
 
   if (!guestId) {
@@ -22,23 +40,61 @@ export async function getCartIdentity() {
     cookieStore.set("guest_id", guestId, {
       httpOnly: true,
       path: "/",
+      sameSite: "lax", // ✅ chống CSRF cơ bản
     });
   }
 
   return {
-    type: "guest",
     userId: null,
     guestId,
   };
 }
 
 
-import { sql } from "@/lib/neon/sql";
 
-export async function getOrCreateCart(identity) {
+import { sql } from "@/lib/neon/sql";
+//import { getCartIdentity } from "./getCartIdentity";
+
+/* =========================
+   TYPES
+========================= */
+
+/*
+type CartIdentity =
+  | { userId: string; guestId?: null }
+  | { userId?: null; guestId: string };
+*/
+
+type CartRow = {
+  id: string;
+  user_id: string | null;
+  guest_id: string | null;
+  status: string;
+};
+
+type CartItemRow = {
+  quantity: number;
+  variant_id: string;
+  price: number;
+  stock: number;
+  name: string;
+  slug: string;
+};
+
+/* =========================
+   GET OR CREATE CART
+========================= */
+
+export async function getOrCreateCart(
+  identity: CartIdentity
+): Promise<CartRow> {
   const { userId, guestId } = identity;
 
-  let cart = await sql`
+  if (!userId && !guestId) {
+    throw new Error("Missing cart identity");
+  }
+
+  const carts = await sql<CartRow[]>`
     select * from carts
     where status = 'active'
     and (
@@ -49,9 +105,9 @@ export async function getOrCreateCart(identity) {
     limit 1
   `;
 
-  if (cart.length > 0) return cart[0];
+  if (carts.length > 0) return carts[0];
 
-  const newCart = await sql`
+  const newCart = await sql<CartRow[]>`
     insert into carts (user_id, guest_id)
     values (${userId}, ${guestId})
     returning *
@@ -60,9 +116,19 @@ export async function getOrCreateCart(identity) {
   return newCart[0];
 }
 
+/* =========================
+   ADD TO CART
+========================= */
 
-// Add to cart
-export async function addToCart({ variantId, quantity }) {
+export async function addToCart({
+  variantId,
+  quantity,
+}: {
+  variantId: string;
+  quantity: number;
+}) {
+  if (quantity <= 0) return;
+
   const identity = await getCartIdentity();
   const cart = await getOrCreateCart(identity);
 
@@ -70,15 +136,25 @@ export async function addToCart({ variantId, quantity }) {
     insert into cart_items (cart_id, variant_id, quantity)
     values (${cart.id}, ${variantId}, ${quantity})
     on conflict (cart_id, variant_id)
-    do update set quantity = cart_items.quantity + ${quantity},
-                  updated_at = now()
+    do update set 
+      quantity = cart_items.quantity + ${quantity},
+      updated_at = now()
   `;
 
   return cart.id;
 }
 
-// Update quantity
-export async function updateCartItem({ variantId, quantity }) {
+/* =========================
+   UPDATE ITEM
+========================= */
+
+export async function updateCartItem({
+  variantId,
+  quantity,
+}: {
+  variantId: string;
+  quantity: number;
+}) {
   const identity = await getCartIdentity();
   const cart = await getOrCreateCart(identity);
 
@@ -100,7 +176,10 @@ export async function updateCartItem({ variantId, quantity }) {
   `;
 }
 
-// Remove Items
+/* =========================
+   REMOVE ITEM
+========================= */
+
 export async function removeCartItem(variantId: string) {
   const identity = await getCartIdentity();
   const cart = await getOrCreateCart(identity);
@@ -112,12 +191,18 @@ export async function removeCartItem(variantId: string) {
   `;
 }
 
-// Get full data cart
-export async function getCart() {
+/* =========================
+   GET FULL CART
+========================= */
+
+export async function getCart(): Promise<{
+  cartId: string;
+  items: CartItemRow[];
+}> {
   const identity = await getCartIdentity();
   const cart = await getOrCreateCart(identity);
 
-  const items = await sql`
+  const items = await sql<CartItemRow[]>`
     select 
       ci.quantity,
       pv.id as variant_id,
