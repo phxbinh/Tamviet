@@ -14,7 +14,9 @@ import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRe
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 
 // Thêm dòng này để cho phép Cache trang trên toàn cầu (Edge Network)
-export const revalidate = 3600; // Tự động cập nhật lại mỗi 1 tiếng
+// -> Ẩnh hưởng tới Add to cart và hiển thị cart
+// TẠM TẮT CACHE
+//export const revalidate = 3600; // Tự động cập nhật lại mỗi 1 tiếng
 
 // ================= ✅ METADATA =================
 export async function generateMetadata({
