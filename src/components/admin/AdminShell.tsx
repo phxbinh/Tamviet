@@ -21,10 +21,12 @@ export default function AdminShell({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+// border-3 border-red-500
+
   return (
     <div className="flex min-h-svh w-full flex-col lg:flex-row 
                     landscape:max-w-[800px] landscape:mx-auto 
-                    border-3 border-red-500 bg-background relative">
+                    bg-background relative">
       {/* Sidebar cho Desktop */}
       <div className="hidden md:flex h-full">
         <AdminSidebar user={user} />
