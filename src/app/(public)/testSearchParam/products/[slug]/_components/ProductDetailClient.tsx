@@ -29,6 +29,31 @@ const selectedVariant = useMemo(() => {
   ) || null; 
 }, [selected, variants, attributes.length]);
 
+
+async function handleAddToCart() {
+  if (!selectedVariant) return;
+
+  try {
+    setIsAdding(true);
+
+    await fetch("/api/cart", {
+      method: "POST",
+      body: JSON.stringify({
+        variantId: selectedVariant.id,
+        quantity: 1,
+      }),
+    });
+
+  } catch (err) {
+    console.error("Add to cart failed", err);
+  } finally {
+    setTimeout(() => setIsAdding(false), 800);
+  }
+}
+
+
+
+
 return (
   <div className="max-w-7xl mx-auto px-2 py-4 md:px-3 lg:py-10 transition-colors duration-300">
     {/* Responsive Grid: 
@@ -64,7 +89,8 @@ return (
           isAdding={isAdding}
           onAdd={() => { 
             setIsAdding(true); 
-            setTimeout(() => setIsAdding(false), 1500); 
+            setTimeout(() => setIsAdding(false), 1500);
+            handleAddToCart;
           }}
         />
       </div>
