@@ -1,6 +1,7 @@
 "use client";
 
 import { useOrders } from "@/hooks/useOrders";
+import Link from "next/link";
 
 export default function OrdersPage() {
   const { orders, loading } = useOrders();
@@ -16,9 +17,10 @@ export default function OrdersPage() {
       <h1 className="text-2xl font-bold">Your Orders</h1>
 
       {orders.map((order) => (
-        <div
-          key={order.id}
-          className="border rounded-xl p-4 space-y-4"
+        <Link
+            key={order.id}
+            href={`/orders/${order.id}`}
+            className="block border p-4 rounded-xl hover:bg-gray-50 transition"
         >
           {/* Header */}
           <div className="flex justify-between">
@@ -64,8 +66,23 @@ export default function OrdersPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
 }
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
