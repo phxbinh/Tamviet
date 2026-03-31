@@ -81,7 +81,7 @@ export default function Cart() {
 
 "use client";
 
-import { useCart } from "@/components/CartProvider";
+import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
 export default function CartPage() {
