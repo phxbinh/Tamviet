@@ -1,26 +1,13 @@
-//import { cookies } from "next/headers";
-//import { getUser } from "@/lib/auth"; // supabase
-//import { getCurrentUser } from '@/lib/authActions/getUser';
-
 import { cookies } from "next/headers";
 import { getCurrentUser } from "../authActions/getUser";
-
-/* =========================
-   TYPE (PHẢI MATCH sqlCart)
-========================= */
 
 export type CartIdentity =
   | { userId: string; guestId?: null }
   | { userId?: null; guestId: string };
 
-/* =========================
-   GET IDENTITY
-========================= */
-
 export async function getCartIdentity(): Promise<CartIdentity> {
   const user = await getCurrentUser();
 
-  // ✅ USER
   if (user) {
     return {
       userId: user.id,
@@ -28,7 +15,6 @@ export async function getCartIdentity(): Promise<CartIdentity> {
     };
   }
 
-  // ✅ GUEST
   const cookieStore = await cookies();
 
   let guestId = cookieStore.get("guest_id")?.value;
@@ -39,7 +25,7 @@ export async function getCartIdentity(): Promise<CartIdentity> {
     cookieStore.set("guest_id", guestId, {
       httpOnly: true,
       path: "/",
-      sameSite: "lax", // ✅ chống CSRF cơ bản
+      sameSite: "lax",
     });
   }
 
@@ -49,20 +35,12 @@ export async function getCartIdentity(): Promise<CartIdentity> {
   };
 }
 
-
-
 import { sql } from "@/lib/neon/sql";
-//import { getCartIdentity } from "./getCartIdentity";
+//import { getCartIdentity, CartIdentity } from "./getCartIdentity";
 
 /* =========================
    TYPES
 ========================= */
-
-/*
-type CartIdentity =
-  | { userId: string; guestId?: null }
-  | { userId?: null; guestId: string };
-*/
 
 type CartRow = {
   id: string;
@@ -93,24 +71,34 @@ export async function getOrCreateCart(
     throw new Error("Missing cart identity");
   }
 
-  const carts = await sql<CartRow[]>`
-    select * from carts
-    where status = 'active'
-    and (
-      (${userId}::uuid is not null and user_id = ${userId})
-      or
-      (${guestId}::text is not null and guest_id = ${guestId})
-    )
-    limit 1
-  `;
+  let carts: CartRow[] = [];
+
+  // ✅ FIX: tách logic ra JS
+  if (userId) {
+    carts = (await sql`
+      SELECT *
+      FROM carts
+      WHERE status = 'active'
+        AND user_id = ${userId}
+      LIMIT 1
+    `) as CartRow[];
+  } else {
+    carts = (await sql`
+      SELECT *
+      FROM carts
+      WHERE status = 'active'
+        AND guest_id = ${guestId}
+      LIMIT 1
+    `) as CartRow[];
+  }
 
   if (carts.length > 0) return carts[0];
 
-  const newCart = await sql<CartRow[]>`
-    insert into carts (user_id, guest_id)
-    values (${userId}, ${guestId})
-    returning *
-  `;
+  const newCart = (await sql`
+    INSERT INTO carts (user_id, guest_id)
+    VALUES (${userId ?? null}, ${guestId ?? null})
+    RETURNING *
+  `) as CartRow[];
 
   return newCart[0];
 }
@@ -132,10 +120,10 @@ export async function addToCart({
   const cart = await getOrCreateCart(identity);
 
   await sql`
-    insert into cart_items (cart_id, variant_id, quantity)
-    values (${cart.id}, ${variantId}, ${quantity})
-    on conflict (cart_id, variant_id)
-    do update set 
+    INSERT INTO cart_items (cart_id, variant_id, quantity)
+    VALUES (${cart.id}, ${variantId}, ${quantity})
+    ON CONFLICT (cart_id, variant_id)
+    DO UPDATE SET 
       quantity = cart_items.quantity + ${quantity},
       updated_at = now()
   `;
@@ -159,19 +147,19 @@ export async function updateCartItem({
 
   if (quantity <= 0) {
     await sql`
-      delete from cart_items
-      where cart_id = ${cart.id}
-      and variant_id = ${variantId}
+      DELETE FROM cart_items
+      WHERE cart_id = ${cart.id}
+      AND variant_id = ${variantId}
     `;
     return;
   }
 
   await sql`
-    update cart_items
-    set quantity = ${quantity},
+    UPDATE cart_items
+    SET quantity = ${quantity},
         updated_at = now()
-    where cart_id = ${cart.id}
-    and variant_id = ${variantId}
+    WHERE cart_id = ${cart.id}
+    AND variant_id = ${variantId}
   `;
 }
 
@@ -184,9 +172,9 @@ export async function removeCartItem(variantId: string) {
   const cart = await getOrCreateCart(identity);
 
   await sql`
-    delete from cart_items
-    where cart_id = ${cart.id}
-    and variant_id = ${variantId}
+    DELETE FROM cart_items
+    WHERE cart_id = ${cart.id}
+    AND variant_id = ${variantId}
   `;
 }
 
@@ -201,31 +189,23 @@ export async function getCart(): Promise<{
   const identity = await getCartIdentity();
   const cart = await getOrCreateCart(identity);
 
-  const items = await sql<CartItemRow[]>`
-    select 
+  const items = (await sql`
+    SELECT 
       ci.quantity,
       pv.id as variant_id,
       pv.price,
       pv.stock,
       p.name,
       p.slug
-    from cart_items ci
-    join product_variants pv on pv.id = ci.variant_id
-    join products p on p.id = pv.product_id
-    where ci.cart_id = ${cart.id}
-  `;
+    FROM cart_items ci
+    JOIN product_variants pv ON pv.id = ci.variant_id
+    JOIN products p ON p.id = pv.product_id
+    WHERE ci.cart_id = ${cart.id}
+  `) as CartItemRow[];
 
   return {
     cartId: cart.id,
     items,
   };
 }
-
-
-
-
-
-
-
-
 
