@@ -3,7 +3,7 @@
 //import { getCurrentUser } from '@/lib/authActions/getUser';
 
 import { cookies } from "next/headers";
-import { getCurrentUser } from "@/lib/auth/getCurrentUser";
+import { getCurrentUser } from "@/lib/authActions/getCurrentUser";
 
 /* =========================
    TYPE (PHẢI MATCH sqlCart)
