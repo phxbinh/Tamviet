@@ -12,7 +12,8 @@ import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import OrderDetailSkeleton from "@/components/order/OrderDetailSkeleton";
 
-export default function OrderDetailPage() {
+//export default 
+function OrderDetailPage__() {
   const params = useParams(); // Next 13 App Router hook
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -108,8 +109,7 @@ export default function OrderDetailPage() {
 
 
 
-//export default
-function OrderDetailPage_() {
+export default function OrderDetailPage() {
   const params = useParams();
   const id = params?.id as string;
 
