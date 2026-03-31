@@ -3,19 +3,18 @@ import { getCurrentUser } from "@/lib/authActions/getUser";
 import { cookies } from "next/headers";
 
 export async function GET(
-  _: Request,
-  { params }: { params: { id: string } }
+  req: Request,
+  context: { params: Promise<{ id: string }> }
 ) {
   const client = await pool.connect();
 
   try {
+    const { id } = await context.params;
+
     const user = await getCurrentUser();
     const cookieStore = await cookies();
     const guestId = cookieStore.get("guest_id")?.value;
 
-    const orderId = params.id;
-
-    // 🔥 lấy order (check ownership)
     const orderRes = await client.query(
       `
       SELECT *
@@ -28,7 +27,7 @@ export async function GET(
       )
       LIMIT 1
       `,
-      [orderId, user?.id ?? null, guestId ?? null]
+      [id, user?.id ?? null, guestId ?? null]
     );
 
     if (orderRes.rows.length === 0) {
@@ -37,7 +36,6 @@ export async function GET(
 
     const order = orderRes.rows[0];
 
-    // 🔥 items
     const itemsRes = await client.query(
       `
       SELECT 
@@ -51,7 +49,7 @@ export async function GET(
       JOIN products p ON p.id = pv.product_id
       WHERE oi.order_id = $1
       `,
-      [orderId]
+      [id]
     );
 
     return Response.json({
