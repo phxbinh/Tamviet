@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
-import { getUser } from "@/lib/auth"; // supabase
+//import { getUser } from "@/lib/auth"; // supabase
+import { getCurrentUser } from '@/lib/authActions/getUser';
 
 export async function getCartIdentity() {
-  const user = await getUser();
+  const user = await getCurrentUser();
 
   if (user) {
     return {
