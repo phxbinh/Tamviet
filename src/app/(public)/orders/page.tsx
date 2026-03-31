@@ -19,7 +19,7 @@ export default function OrdersPage() {
       {orders.map((order) => (
         <Link
             key={order.id}
-            href={`/orders/${order.id}`}
+            href={`/orders/${order.id}`} prefetch={true}
             className="block border p-4 rounded-xl hover:bg-gray-50 transition"
         >
           {/* Header */}
