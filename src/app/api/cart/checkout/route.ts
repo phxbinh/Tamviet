@@ -17,25 +17,35 @@ export async function POST() {
 */
 
 // app/api/checkout/route.ts
+// app/api/cart/checkout/route.ts
 import { checkout } from "@/lib/cart/checkout";
 import { getCartIdentity } from "@/lib/cart/sqlCart"; // Import hàm bạn đã tạo
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  // 1. Lấy danh tính (userId hoặc guestId từ cookie)
-  const identity = await getCartIdentity();
+  try {
+    // 1. Lấy định danh (đã xử lý logic User/Guest bên trong)
+    const identity = await getCartIdentity();
 
-  // 2. Kiểm tra xem có định danh nào không (phòng trường hợp lỗi cookie)
-  if (!identity.userId && !identity.guestId) {
-    return Response.json({ error: "Không tìm thấy thông tin giỏ hàng" }, { status: 400 });
+    /**
+     * FIX LỖI TYPE: 
+     * Chuyển đổi 'null' từ CartIdentity thành 'undefined' để khớp tham số 
+     * { userId?: string; guestId?: string } của hàm checkout.
+     */
+    const result = await checkout({
+      userId: identity.userId ?? undefined,
+      guestId: identity.guestId ?? undefined,
+    });
+
+    return NextResponse.json(result);
+  } catch (err: any) {
+    console.error("Checkout Error:", err.message);
+    
+    // Trả về lỗi cụ thể (ví dụ: Out of stock, Cart empty) để UI hiển thị
+    return NextResponse.json(
+      { error: err.message || "Thanh toán thất bại" },
+      { status: 400 }
+    );
   }
-
-  // 3. Truyền identity vào hàm checkout
-  // Hàm checkout của bạn cần cập nhật để nhận { userId?: string, guestId?: string }
-  const result = await checkout(identity);
-
-  if (result.error) {
-    return Response.json({ error: result.error }, { status: 400 });
-  }
-
-  return Response.json(result);
 }
+
