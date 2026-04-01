@@ -2,6 +2,7 @@
 
 import { checkoutAction } from "./checkout_step2";
 
+// Cấch dùng: {showCheckout && <CheckoutForm />}
 export function CheckoutForm() {
   return (
     <form action={checkoutAction} className="border p-4 rounded-xl space-y-3">
