@@ -88,7 +88,7 @@ const PolicyAccordion = () => {
           ))}
         </div>
 
-        {/* Bottom Footer - Theo style Overstock của số 2 */}
+        {/* Bottom Footer - Theo style Overstock của số 2 */} {/*
         <div className="mt-12 pt-8 border-t border-border text-[12px] text-foreground/50 space-y-4">
           <p className="font-medium">© 2026 Tâm Việt Platform</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2 underline underline-offset-4">
@@ -96,7 +96,7 @@ const PolicyAccordion = () => {
             <a href="#" className="hover:text-primary transition-colors">Điều khoản sử dụng</a>
             <a href="#" className="hover:text-primary transition-colors">Yêu cầu hỗ trợ</a>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
