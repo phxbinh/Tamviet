@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { ShoppingBag, ArrowRight } from "lucide-react";
-import { CartItem } from "./CartItem_";
+import { CartItem } from "./_componentsCart/CartItem_";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function CartPage() {
