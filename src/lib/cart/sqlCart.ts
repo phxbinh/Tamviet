@@ -37,7 +37,7 @@ export async function getCartIdentity(): Promise<CartIdentity> {
 }
 */
 
-/* Chạy được nhưng guest không checkout được
+//Chạy được nhưng guest không checkout được
 import { cookies } from "next/headers";
 import { getCurrentUser } from "../authActions/getUser";
 
@@ -67,8 +67,8 @@ export async function getCartIdentity(): Promise<CartIdentity> {
     guestId,
   };
 }
-*/
 
+/*
 import { cookies } from "next/headers";
 import { getCurrentUser } from "../authActions/getUser";
 import crypto from "crypto";
@@ -77,9 +77,7 @@ export type CartIdentity =
   | { userId: string; guestId?: null }
   | { userId?: null; guestId: string };
 
-/**
- * Lấy guest_id từ cookie hoặc tự tạo UUID mới nếu chưa có.
- */
+//Lấy guest_id từ cookie hoặc tự tạo UUID mới nếu chưa có.
 async function getGuestId(): Promise<string> {
   const cookieStore = await cookies();
   let guestId = cookieStore.get("guest_id")?.value;
@@ -99,9 +97,9 @@ async function getGuestId(): Promise<string> {
   return guestId;
 }
 
-/**
- * Lấy CartIdentity: userId nếu đã login, guestId nếu chưa login
- */
+
+//Lấy CartIdentity: userId nếu đã login, guestId nếu chưa login
+
 export async function getCartIdentity(): Promise<CartIdentity> {
   const user = await getCurrentUser();
 
@@ -112,7 +110,7 @@ export async function getCartIdentity(): Promise<CartIdentity> {
   const guestId = await getGuestId(); // tự tạo nếu chưa có
   return { userId: null, guestId };
 }
-
+*/
 
 
 
