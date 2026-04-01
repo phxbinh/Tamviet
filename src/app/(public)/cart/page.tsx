@@ -81,7 +81,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen text-foreground">
+    <div className="max-w-4xl mx-auto p-1 space-y-8 min-h-screen text-foreground">
       <header className="flex items-center gap-2 border-b border-border pb-4">
         <ShoppingBag className="text-primary" />
         <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng</h1>
