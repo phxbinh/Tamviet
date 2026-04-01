@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Minus, Plus, Trash2, ChevronLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface ItemProps {
   item: any;
@@ -14,59 +14,59 @@ export function CartItem({ item, onUpdateQty, onRemove }: ItemProps) {
   const [showDelete, setShowDelete] = useState(false);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-background group select-none">
-      {/* Lớp nền đỏ và nút xóa nằm cố định bên dưới */}
-      <div 
-        className="absolute inset-0 bg-red-500 flex justify-end items-center px-6 cursor-pointer"
+    <div className="relative overflow-hidden rounded-xl bg-red-500 group select-none">
+      {/* Lớp nền xóa nằm dưới */}
+      <button 
         onClick={() => onRemove(item.variant_id)}
+        className="absolute inset-0 flex justify-end items-center px-5 text-white gap-1"
       >
-        <div className="flex flex-col items-center text-white gap-1">
-          <Trash2 size={20} className="animate-bounce" />
-          <span className="text-[10px] font-bold uppercase tracking-wider">Xóa</span>
+        <div className="flex flex-col items-center">
+          <Trash2 size={18} />
+          <span className="text-[9px] font-black uppercase">Xóa</span>
         </div>
-      </div>
+      </button>
 
-      {/* Nội dung sản phẩm trượt lên trên */}
+      {/* Nội dung sản phẩm - p-3 thay vì p-4 */}
       <motion.div
-        animate={{ x: showDelete ? -80 : 0 }}
-        transition={{ type: "spring", stiffness: 400, damping: 35 }}
+        animate={{ x: showDelete ? -70 : 0 }}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
         onClick={() => setShowDelete(!showDelete)}
-        className="relative z-10 flex items-center gap-4 bg-card border border-border p-4 rounded-2xl cursor-pointer"
+        className="relative z-10 flex items-center gap-3 bg-card border border-border p-3 rounded-xl cursor-pointer"
       >
-        {/* Info */}
+        {/* Info - Font chữ nhỏ lại */}
         <div className="flex-1 min-w-0">
-          <h2 className="font-bold text-base text-foreground truncate uppercase tracking-tight">
+          <h2 className="font-bold text-sm text-foreground truncate leading-tight uppercase tracking-tight">
             {item.name}
           </h2>
-          <p className="text-sm font-medium text-primary">
+          <p className="text-xs font-semibold text-primary/80 mt-0.5">
             {item.price.toLocaleString()}đ
           </p>
         </div>
 
-        {/* Quantity - Ngăn chặn sụ kiện click lan ra ngoài để không bị đóng/mở nút xóa vô ý */}
+        {/* Quantity Controls - Compact hơn */}
         <div 
-          className="flex items-center border border-border rounded-lg bg-background"
+          className="flex items-center border border-border/60 rounded-md bg-background/50 h-8"
           onClick={(e) => e.stopPropagation()} 
         >
           <button
             onClick={() => onUpdateQty(item.variant_id, item.quantity - 1)}
-            className="p-1.5 hover:bg-secondary transition-colors disabled:opacity-20"
+            className="w-7 h-full flex items-center justify-center hover:bg-secondary disabled:opacity-20"
             disabled={item.quantity <= 1}
           >
-            <Minus size={14} />
+            <Minus size={12} />
           </button>
-          <span className="w-6 text-center text-xs font-bold">{item.quantity}</span>
+          <span className="w-5 text-center text-[11px] font-bold">{item.quantity}</span>
           <button
             onClick={() => onUpdateQty(item.variant_id, item.quantity + 1)}
-            className="p-1.5 hover:bg-secondary transition-colors"
+            className="w-7 h-full flex items-center justify-center hover:bg-secondary"
           >
-            <Plus size={14} />
+            <Plus size={12} />
           </button>
         </div>
 
-        {/* Indicator cho người dùng biết có thể vuốt/bấm */}
-        <div className="text-muted-foreground/30">
-          <ChevronLeft size={16} className={showDelete ? "rotate-180 transition-transform" : ""} />
+        {/* Indicator */}
+        <div className="text-muted-foreground/20">
+          <ChevronLeft size={14} className={showDelete ? "rotate-180 transition-transform" : ""} />
         </div>
       </motion.div>
     </div>
