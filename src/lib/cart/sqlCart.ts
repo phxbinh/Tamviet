@@ -37,6 +37,7 @@ export async function getCartIdentity(): Promise<CartIdentity> {
 }
 */
 
+/* Chạy được nhưng guest không checkout được
 import { cookies } from "next/headers";
 import { getCurrentUser } from "../authActions/getUser";
 
@@ -66,7 +67,51 @@ export async function getCartIdentity(): Promise<CartIdentity> {
     guestId,
   };
 }
+*/
 
+import { cookies } from "next/headers";
+import { getCurrentUser } from "../authActions/getUser";
+import crypto from "crypto";
+
+export type CartIdentity =
+  | { userId: string; guestId?: null }
+  | { userId?: null; guestId: string };
+
+/**
+ * Lấy guest_id từ cookie hoặc tự tạo UUID mới nếu chưa có.
+ */
+async function getGuestId(): Promise<string> {
+  const cookieStore = await cookies();
+  let guestId = cookieStore.get("guest_id")?.value;
+
+  if (!guestId) {
+    guestId = crypto.randomUUID(); // UUID v4 chuẩn
+
+    // Lưu cookie tồn tại 30 ngày
+    cookieStore.set("guest_id", guestId, {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  }
+
+  return guestId;
+}
+
+/**
+ * Lấy CartIdentity: userId nếu đã login, guestId nếu chưa login
+ */
+export async function getCartIdentity(): Promise<CartIdentity> {
+  const user = await getCurrentUser();
+
+  if (user) {
+    return { userId: user.id, guestId: null };
+  }
+
+  const guestId = await getGuestId(); // tự tạo nếu chưa có
+  return { userId: null, guestId };
+}
 
 
 
