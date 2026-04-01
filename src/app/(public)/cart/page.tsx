@@ -1,9 +1,17 @@
-"use client";
+/*"use client";
 
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { ShoppingBag } from "lucide-react";
 import { CartItem } from "./_componentsCart/CartItem"; // Import component vừa tạo
+import { AnimatePresence, motion } from "framer-motion";
+*/
+"use client";
+
+import { useState } from 'react';
+import { useCart } from "@/components/cart/CartProvider";
+import { ShoppingBag, ArrowRight } from "lucide-react";
+import { CartItem } from "./_componentsCart/CartItem_"; // Import component vừa tạo
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function CartPage() {
@@ -11,26 +19,25 @@ export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
-    return <div className="p-6 text-foreground animate-pulse">Đang tải giỏ hàng...</div>;
+    return (
+      <div className="max-w-md mx-auto p-6 space-y-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-20 w-full bg-muted animate-pulse rounded-2xl" />
+        ))}
+      </div>
+    );
   }
 
-  const total = cart.items.reduce<number>(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const total = cart.items.reduce<number>((sum, item) => sum + item.price * item.quantity, 0);
 
   const updateQty = async (variantId: string, quantity: number) => {
     if (quantity < 1) return;
     setCart((prev) => {
       if (!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.map((i) => i.variant_id === variantId ? { ...i, quantity } : i),
-      };
+      return { ...prev, items: prev.items.map((i) => i.variant_id === variantId ? { ...i, quantity } : i) };
     });
     try {
       await fetch("/api/cart", { method: "PATCH", body: JSON.stringify({ variantId, quantity }) });
-      fetchCart();
     } catch (err) { console.error(err); }
   };
 
@@ -45,70 +52,65 @@ export default function CartPage() {
     } catch (err) { console.error(err); }
   };
 
-  const handleCheckout = async () => {
-    if (isCheckingOut) return;
-    setIsCheckingOut(true);
-    try {
-      const res = await fetch("/api/cart/checkout", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      window.location.href = `/orders/${data.orderId}`;
-    } catch (err: any) {
-      alert(err.message || "Lỗi thanh toán");
-    } finally { setIsCheckingOut(false); }
-  };
-
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen text-foreground">
-      <header className="flex items-center gap-2 border-b border-border pb-4">
-        <ShoppingBag className="text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng</h1>
+    <div className="max-w-2xl mx-auto min-h-screen bg-background flex flex-col">
+      {/* Header */}
+      <header className="p-6 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-20">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <ShoppingBag className="text-primary" size={24} />
+          </div>
+          <h1 className="text-xl font-black tracking-tight uppercase">Giỏ hàng</h1>
+        </div>
+        <span className="text-xs font-bold px-3 py-1 bg-secondary rounded-full">
+          {cart.items.length} món
+        </span>
       </header>
 
-      {cart.items.length === 0 ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 bg-card rounded-3xl border border-border">
-          <p className="text-muted-foreground italic">Giỏ hàng trống</p>
-        </motion.div>
-      ) : (
-        <div className="space-y-4">
-          <AnimatePresence mode="popLayout">
-            {cart.items.map((item) => (
-              <motion.div
-                key={item.variant_id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.2 }}
-              >
-                <CartItem 
-                  item={item} 
-                  onUpdateQty={updateQty} 
-                  onRemove={removeItem} 
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          <div className="mt-10 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-medium opacity-80">Tổng cộng</span>
-              <span className="text-3xl font-black text-primary">
-                {total.toLocaleString()}đ
-              </span>
-            </div>
-
-            <button
-              onClick={handleCheckout}
-              disabled={cart.items.length === 0 || isCheckingOut}
-              className={`w-full py-4 rounded-2xl font-bold text-white transition-all 
-                ${isCheckingOut ? "bg-primary/50 animate-pulse" : "bg-primary shadow-lg shadow-primary/20 hover:brightness-110"}`}
+      {/* List Items */}
+      <div className="flex-1 px-6 space-y-3 custom-scrollbar">
+        <AnimatePresence mode="popLayout">
+          {cart.items.map((item) => (
+            <motion.div
+              key={item.variant_id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, x: -50 }}
+              transition={{ duration: 0.2 }}
             >
-              {isCheckingOut ? "Đang xử lý..." : "Thanh toán ngay"}
-            </button>
-          </div>
+              <CartItem 
+                item={item} 
+                onUpdateQty={updateQty} 
+                onRemove={removeItem} 
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
+        {cart.items.length === 0 && (
+          <div className="py-20 text-center opacity-40 italic">Giỏ hàng đang trống...</div>
+        )}
+      </div>
+
+      {/* Sticky Footer - Tránh lỗi tràn */}
+      <footer className="p-6 border-t border-border bg-card/50 mt-auto">
+        <div className="flex justify-between items-end mb-4">
+          <span className="text-sm font-bold opacity-50 uppercase tracking-widest">Tổng cộng</span>
+          <span className="text-2xl font-black text-primary">
+            {total.toLocaleString()}đ
+          </span>
         </div>
-      )}
+
+        <button
+          onClick={() => !isCheckingOut && cart.items.length > 0 && alert("Checkout!")}
+          disabled={cart.items.length === 0 || isCheckingOut}
+          className="w-full h-14 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale"
+        >
+          {isCheckingOut ? "Đang xử lý..." : "Thanh toán"}
+          {!isCheckingOut && <ArrowRight size={18} />}
+        </button>
+      </footer>
     </div>
   );
 }
