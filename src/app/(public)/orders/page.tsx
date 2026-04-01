@@ -41,7 +41,7 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {/* Items */}
+          {/* Items */} {/*
           <div className="space-y-3">
             {order.items.map((item: any) => (
               <div
@@ -65,7 +65,7 @@ export default function OrdersPage() {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </Link>
       ))}
     </div>
