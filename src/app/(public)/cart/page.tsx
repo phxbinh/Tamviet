@@ -2,128 +2,177 @@
 
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 
 export default function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
-    return (
-      <div className="max-w-md mx-auto p-4 space-y-3">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 w-full bg-muted animate-pulse rounded-xl" />
-        ))}
-      </div>
-    );
+    return <div className="p-6 text-foreground animate-pulse">Loading...</div>;
   }
 
-  const total = cart.items.reduce<number>((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.items.reduce<number>(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
-  // Logic update/remove giữ nguyên nhưng tối ưu fetchCart()
   async function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
     setCart((prev) => {
       if (!prev) return prev;
-      return { ...prev, items: prev.items.map((i) => i.variant_id === variantId ? { ...i, quantity } : i) };
+      return {
+        ...prev,
+        items: prev.items.map((i) =>
+          i.variant_id === variantId ? { ...i, quantity } : i
+        ),
+      };
     });
+
     try {
-      await fetch("/api/cart", { method: "PATCH", body: JSON.stringify({ variantId, quantity }) });
-      fetchCart();
-    } catch (err) { console.error(err); }
+      await fetch("/api/cart", {
+        method: "PATCH",
+        body: JSON.stringify({ variantId, quantity }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    fetchCart();
   }
 
   async function removeItem(variantId: string) {
     setCart((prev) => {
       if (!prev) return prev;
-      return { ...prev, items: prev.items.filter((i) => i.variant_id !== variantId) };
+      return {
+        ...prev,
+        items: prev.items.filter((i) => i.variant_id !== variantId),
+      };
     });
+
     try {
-      await fetch("/api/cart", { method: "DELETE", body: JSON.stringify({ variantId }) });
-      fetchCart();
-    } catch (err) { console.error(err); }
+      await fetch("/api/cart", {
+        method: "DELETE",
+        body: JSON.stringify({ variantId }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    fetchCart();
+  }
+
+  async function handleCheckout() {
+    if (isCheckingOut) return;
+    setIsCheckingOut(true);
+    try {
+      const res = await fetch("/api/cart/checkout", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Checkout failed");
+        return;
+      }
+      await fetchCart();
+      window.location.href = `/orders/${data.orderId}`;
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    } finally {
+      setIsCheckingOut(false);
+    }
   }
 
   return (
-    <div className="w-full max-w-md md:max-w-2xl mx-auto min-h-screen bg-background flex flex-col border-x border-border/40">
-      {/* Header - Nhỏ gọn, sticky */}
-      <header className="p-4 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-20 border-b border-border/50">
-        <div className="flex items-center gap-2">
-          <ShoppingBag size={18} className="text-primary" />
-          <h1 className="text-base font-black uppercase tracking-tight">Giỏ hàng</h1>
-        </div>
-        <span className="text-[10px] font-bold px-2 py-0.5 bg-secondary rounded-full">
-          {cart.items.length} món
-        </span>
+    <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen text-foreground">
+      <header className="flex items-center gap-2 border-b border-border pb-4">
+        <ShoppingBag className="text-primary" />
+        <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng</h1>
       </header>
 
-      <div className="flex-1 p-4 space-y-3">
-        {cart.items.length === 0 ? (
-          <div className="py-20 text-center opacity-40 text-xs italic">Giỏ hàng trống</div>
-        ) : (
-          cart.items.map((item) => (
+      {cart.items.length === 0 ? (
+        <div className="text-center py-20 bg-card rounded-3xl border border-border">
+          <p className="text-muted-foreground italic">Giỏ hàng của bạn đang trống</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {cart.items.map((item) => (
             <div
               key={item.variant_id}
-              className="flex items-center gap-3 bg-card border border-border p-3 rounded-xl transition-all"
+              className="flex items-center justify-between bg-card border border-border p-5 rounded-2xl transition-all hover:shadow-md hover:border-primary/30 group animate-in fade-in"
             >
-              {/* Info - Text nhỏ lại */}
-              <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-sm truncate uppercase tracking-tight leading-tight">
+              {/* Info */}
+              <div className="flex-1">
+                <h2 className="font-bold text-lg group-hover:text-primary transition-colors">
                   {item.name}
                 </h2>
-                <p className="text-[11px] font-semibold text-primary/80 mt-0.5">
+                <p className="text-sm opacity-70">
                   {item.price.toLocaleString()}đ
                 </p>
               </div>
 
-              {/* Quantity Control - Co lại cực khít */}
-              <div className="flex items-center border border-border/60 rounded-md bg-background/50 h-8">
-                <button
-                  onClick={() => updateQty(item.variant_id, item.quantity - 1)}
-                  className="w-7 h-full flex items-center justify-center hover:bg-secondary disabled:opacity-20"
-                  disabled={item.quantity <= 1}
-                >
-                  <Minus size={12} />
-                </button>
-                <span className="w-5 text-center text-[11px] font-bold">{item.quantity}</span>
-                <button
-                  onClick={() => updateQty(item.variant_id, item.quantity + 1)}
-                  className="w-7 h-full flex items-center justify-center hover:bg-secondary"
-                >
-                  <Plus size={12} />
-                </button>
+              {/* Quantity Control */}
+              <div className="flex items-center gap-4 px-4">
+                <div className="flex items-center border border-border rounded-lg bg-background/50">
+                  <button
+                    onClick={() => updateQty(item.variant_id, item.quantity - 1)}
+                    className="p-2 hover:text-primary transition-colors disabled:opacity-30"
+                    disabled={item.quantity <= 1}
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span className="w-8 text-center font-medium">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQty(item.variant_id, item.quantity + 1)}
+                    className="p-2 hover:text-primary transition-colors"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
               </div>
 
-              {/* Remove */}
+              {/* Subtotal */}
+              <div className="w-32 text-right font-bold text-primary">
+                {(item.price * item.quantity).toLocaleString()}đ
+              </div>
+
+              {/* Remove Action */}
               <button
                 onClick={() => removeItem(item.variant_id)}
-                className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors"
+                className="ml-4 p-2 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-full transition-all"
+                title="Xóa khỏi giỏ hàng"
               >
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </button>
             </div>
-          ))
-        )}
-      </div>
+          ))}
 
-      {/* Checkout Section - Gọn gàng ở đáy */}
-      <footer className="p-4 border-t border-border bg-card/30 mt-auto">
-        <div className="flex justify-between items-center mb-4 px-1">
-          <span className="text-[10px] font-bold opacity-50 uppercase tracking-widest">Tổng cộng</span>
-          <span className="text-xl font-black text-primary">
-            {total.toLocaleString()}đ
-          </span>
+          {/* Checkout Section */}
+          <div className="mt-10 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-medium opacity-80">Tổng cộng</span>
+              <span className="text-3xl font-black text-primary">
+                {total.toLocaleString()}đ
+              </span>
+            </div>
+
+            <button
+              onClick={handleCheckout}
+              disabled={cart.items.length === 0 || isCheckingOut}
+              className={`w-full py-4 rounded-2xl font-bold text-white transition-all 
+                ${isCheckingOut 
+                  ? "bg-primary/50 cursor-not-allowed animate-breathe-slow" 
+                  : "bg-primary hover:scale-[1.01] active:scale-[0.98] shadow-lg shadow-primary/20"
+                } disabled:opacity-50`}
+            >
+              {isCheckingOut ? (
+                <span className="flex items-center justify-center gap-2">
+                   Đang xử lý...
+                </span>
+              ) : (
+                "Thanh toán ngay"
+              )}
+            </button>
+          </div>
         </div>
-
-        <button
-          onClick={() => !isCheckingOut && cart.items.length > 0 && alert("Checkout!")}
-          disabled={cart.items.length === 0 || isCheckingOut}
-          className="w-full h-12 bg-primary text-primary-foreground rounded-xl font-bold uppercase text-[11px] tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-primary/10 active:scale-[0.98] transition-all disabled:opacity-50"
-        >
-          {isCheckingOut ? "Đang xử lý..." : "Thanh toán ngay"}
-          {!isCheckingOut && <ArrowRight size={14} />}
-        </button>
-      </footer>
+      )}
     </div>
   );
 }
