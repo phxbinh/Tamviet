@@ -1,4 +1,4 @@
-/*
+
 'use client';
 
 import React from 'react';
@@ -68,55 +68,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
 };
 
 export default StoreMap;
-*/
 
-'use client';
-
-import React from 'react';
-
-interface StoreMapProps {
-  // Bạn copy cái link src từ Google Maps rồi dán vào đây
-  embedUrl: string; 
-  // Địa chỉ để khi click nó mở App điện thoại
-  fullAddress: string; 
-}
-
-const StoreMap = ({ embedUrl, fullAddress }: StoreMapProps) => {
-  
-  const handleOpenMap = () => {
-    const query = encodeURIComponent(fullAddress);
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const url = isIOS 
-      ? `maps://maps.apple.com/?q=${query}` 
-      : `https://www.google.com/maps/search/?api=1&query=${query}`;
-    
-    window.open(url, '_blank');
-  };
-
-  return (
-    <div className="relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-200 shadow-md">
-      {/* Sử dụng Embed URL chính chủ từ Google Maps - Ghim chuẩn 100% */}
-      <iframe
-        title="Store Location"
-        width="100%"
-        height="100%"
-        style={{ border: 0 }}
-        src={embedUrl}
-        loading="lazy"
-        allowFullScreen
-      />
-
-      {/* Lớp phủ trong suốt để click phát là mở App dẫn đường ngay */}
-      <div 
-        onClick={handleOpenMap}
-        className="absolute inset-0 cursor-pointer bg-transparent"
-        title="Click để chỉ đường"
-      />
-    </div>
-  );
-};
-
-export default StoreMap;
 
 
 
