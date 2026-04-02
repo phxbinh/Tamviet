@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { MapPin, Navigation } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Navigation, Plus, Minus } from 'lucide-react';
 
 interface StoreMapProps {
   address: string;
@@ -11,6 +11,20 @@ interface StoreMapProps {
 }
 
 const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
+
+  const [zoom, setZoom] = useState(16); // Mặc định zoom 16
+
+  const handleZoomIn = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (zoom < 21) setZoom(zoom + 1);
+  };
+
+  const handleZoomOut = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (zoom > 1) setZoom(zoom - 1);
+  };
+
+
   // query dùng cho việc tìm kiếm text hoặc hiển thị tên
   const query = encodeURIComponent(`${shopName}`);
 
@@ -50,6 +64,33 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
   // Lưu ý phần q=${lat},${lng}(${encodeURIComponent(shopName)})
   src={`https://maps.google.com/maps?q=${lat},${lng}(${encodeURIComponent(shopName)})&t=&z=${zoom}&ie=UTF8&iwloc=B&output=embed`}
 />
+
+
+
+      {/* 3. Bộ điều khiển Zoom: Phải có z-20 để nằm trên lớp phủ overlay */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
+        <button 
+          onClick={handleZoomIn}
+          className="p-2 bg-black/70 backdrop-blur-md border border-white/10 rounded-lg text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-95"
+        >
+          <Plus size={20} />
+        </button>
+        <button 
+          onClick={handleZoomOut}
+          className="p-2 bg-black/70 backdrop-blur-md border border-white/10 rounded-lg text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-95"
+        >
+          <Minus size={20} />
+        </button>
+      </div>
+
+      {/* 4. Label Zoom Level: Đã fix lỗi đóng thẻ div */}
+      <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] text-gray-300 border border-white/10 uppercase tracking-widest pointer-events-none">
+        Zoom Level: {zoom}
+      </div>
+
+
+
+
 
 
 
@@ -169,6 +210,84 @@ export default StoreMap;
 
 
 
+*/
+
+
+
+/*
+'use client';
+
+import React, { useState } from 'react';
+import { Plus, Minus } from 'lucide-react';
+
+const StoreMap = () => {
+  const [zoom, setZoom] = useState(16);
+  const lat = 10.845694;
+  const lng = 106.656222;
+  const shopName = "Tâm Việt Studio";
+
+  const handleZoomIn = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (zoom < 21) setZoom(zoom + 1);
+  };
+
+  const handleZoomOut = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (zoom > 1) setZoom(zoom - 1);
+  };
+
+  const openApp = () => {
+    const query = encodeURIComponent(shopName);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const url = isIOS 
+      ? `maps://maps.apple.com/?q=${query}&ll=${lat},${lng}` 
+      : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    window.open(url, '_blank');
+  };
+
+  return (
+    <div className="relative w-full h-[400px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
+      
+      
+      <iframe
+        title="Store Map"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        src={`https://maps.google.com/maps?q=${lat},${lng}(${encodeURIComponent(shopName)})&t=&z=${zoom}&ie=UTF8&iwloc=B&output=embed`}
+      />
+
+      
+      <div 
+        className="absolute inset-0 cursor-pointer bg-transparent" 
+        onClick={openApp} 
+      />
+
+      
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
+        <button 
+          onClick={handleZoomIn}
+          className="p-2 bg-black/70 backdrop-blur-md border border-white/10 rounded-lg text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-95"
+        >
+          <Plus size={20} />
+        </button>
+        <button 
+          onClick={handleZoomOut}
+          className="p-2 bg-black/70 backdrop-blur-md border border-white/10 rounded-lg text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-95"
+        >
+          <Minus size={20} />
+        </button>
+      </div>
+
+      
+      <div className="absolute top-4 left-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full text-[10px] text-gray-300 border border-white/10 uppercase tracking-widest pointer-events-none">
+        Zoom Level: {zoom}
+      </div>
+    </div>
+  );
+};
+
+export default StoreMap;
 */
 
 
