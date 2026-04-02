@@ -99,21 +99,10 @@ return (
     ))}
   </div>
   <div className="max-w-3xl mx-auto p-1">
-{/*
       <StoreMap 
         shopName="Tâm Việt"
         address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
-      />*/}
-
-<StoreMap 
-  fullAddress="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
-  embedUrl="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.460232428334!2d106.664876!3d10.775267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f2479e0f3bb%3A0x6b44760a9203a3d5!2zVMOibSBWaeG7h3Q!5e0!3m2!1svi!2svn!4v1711111111111" 
-/>
-
-
-
-
-
+      />
   </div>
 </>
 );
