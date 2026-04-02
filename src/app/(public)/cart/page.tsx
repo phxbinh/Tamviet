@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
+import { formatCurrency } from "@/utils/formatNumber";
 
 /*
 "use client";
@@ -109,14 +110,15 @@ export default function CartPage() {
                     </h2>
                   </div>
                   <p className="text-xs text-white/40 font-light tracking-widest uppercase">
-                    {item.price.toLocaleString()} VND
+                    {formatCurrency(item.price)}
                   </p>
+{/* {item.price.toLocaleString()} VND */}
                 </div>
 
                 {/* Interaction Section */}
                 <div className="flex items-center gap-12">
                   {/* Quantity - Ultra Slim */}
-                  <div className="flex items-center gap-6 group/qty">
+                  <div className="flex w-[55px] items-center gap-6 group/qty">
                     <button
                       onClick={() => updateQty(item.variant_id, item.quantity - 1)}
                       className="text-white/20 hover:text-neon-cyan transition-colors disabled:opacity-0"
@@ -136,7 +138,7 @@ export default function CartPage() {
                   {/* Subtotal - Elegant Bold */}
                   <div className="w-32 text-right">
                     <span className="text-lg font-medium tracking-tighter">
-                      {(item.price * item.quantity).toLocaleString()}
+                      {formatCurrency(item.price * item.quantity)}
                     </span>
                     <span className="text-[10px] ml-1 text-white/30 italic">VND</span>
                   </div>
