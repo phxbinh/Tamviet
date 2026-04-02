@@ -140,7 +140,7 @@ export async function checkoutAction() {
       success: true,
       orderId,
     };
-  } catch (err) {
+  } catch (err: Any) {
     await client.query("ROLLBACK");
     //throw err;
     return { success: false, error: err.message || "Thanh toán thất bại" };
