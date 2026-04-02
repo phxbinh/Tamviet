@@ -1,4 +1,4 @@
-
+/*
 'use server' // Bắt buộc phải có dòng này
 
 import { pool } from "@/lib/db/pg";
@@ -149,8 +149,10 @@ export async function checkoutAction() {
     client.release();
   }
 }
+*/
 
-/*
+// Bản đã được: được tối ưu hóa bằng kỹ thuật CTE (Common Table Expressions).
+// Thay vì thực hiện 8 lần await lẻ tẻ gửi đi gửi lại giữa Server và Database
 'use server'
 
 import { pool } from "@/lib/db/pg";
@@ -243,7 +245,7 @@ export async function checkoutAction() {
     client.release();
   }
 }
-*/
+
 
 
 
