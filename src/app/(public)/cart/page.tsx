@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
-import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 
 /*
@@ -13,14 +13,16 @@ import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 */
 
-
 export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background text-foreground animate-pulse">
-        <p className="tracking-widest uppercase text-sm">Đang tải giỏ hàng...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#050505] text-white/20 uppercase tracking-[0.5em] text-xs">
+        <div className="animate-breathe-slow mb-4">Loading Digital Cart</div>
+        <div className="w-48 h-[1px] bg-white/5 overflow-hidden">
+          <div className="w-full h-full bg-neon-cyan animate-slide-in-from-right-full" />
+        </div>
       </div>
     );
   }
@@ -71,102 +73,112 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-10 min-h-screen animate-in fade-in">
-      {/* Header với phong cách tối giản */}
-      <header className="flex items-center gap-4 border-b border-border pb-6">
-        <div className="p-3 bg-neon-cyan/10 rounded-2xl">
-          <ShoppingBag className="text-neon-cyan w-8 h-8" />
+    <div className="max-w-[1400px] mx-auto p-6 md:p-12 min-h-screen bg-[#050505] text-white selection:bg-neon-cyan/30">
+      
+      {/* Minimal Header */}
+      <header className="mb-16 flex justify-between items-end">
+        <div className="space-y-2">
+          <h1 className="text-5xl font-extralight tracking-tighter italic flex items-center gap-4">
+            Shopping <span className="text-neon-cyan font-black not-italic">Cart</span>
+          </h1>
+          <p className="text-[10px] tracking-[0.6em] text-white/30 uppercase pl-1">Selected Essentials / {cart.items.length} Items</p>
         </div>
-        <div>
-          <h1 className="text-4xl font-black tracking-tighter uppercase italic">Giỏ hàng</h1>
-          <p className="text-muted-foreground text-xs tracking-[0.3em] uppercase">Tâm Việt / Store</p>
-        </div>
+        <ShoppingBag className="text-white/10 w-12 h-12 mb-2" />
       </header>
 
       {cart.items.length === 0 ? (
-        <div className="text-center py-32 bg-card border border-border rounded-[2rem] shadow-2xl">
-          <p className="text-muted-foreground italic tracking-widest uppercase text-sm">Giỏ hàng của bạn đang trống</p>
+        <div className="h-[40vh] flex flex-col items-center justify-center border border-white/5 rounded-[3rem] bg-white/[0.02]">
+          <p className="text-white/20 uppercase tracking-[0.4em] text-sm italic">Empty Repository</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           
-          {/* DANH SÁCH SẢN PHẨM (Lấy tone dark/light từ theme) */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* LIST ITEMS - REFINED DESIGN */}
+          <div className="lg:col-span-7 space-y-8">
             {cart.items.map((item) => (
               <div
                 key={item.variant_id}
-                className="flex flex-col md:flex-row items-center justify-between bg-card border border-border p-6 rounded-[1.5rem] transition-all hover:border-neon-cyan/40 group relative overflow-hidden"
+                className="group relative flex items-center justify-between pb-8 border-b border-white/5 hover:border-white/20 transition-all duration-700"
               >
-                {/* Background trang trí ẩn */}
-                <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                   <ShoppingBag size={120} />
-                </div>
-
-                <div className="flex-1 space-y-1 z-10">
-                  <h2 className="font-bold text-xl group-hover:text-neon-cyan transition-colors tracking-tight">
-                    {item.name}
-                  </h2>
-                  <p className="text-sm font-mono opacity-60 italic">
-                    {item.price.toLocaleString()}đ
+                {/* Info Section */}
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono text-neon-cyan/50 tracking-tighter">#ID-{item.variant_id.slice(-4)}</span>
+                    <h2 className="text-xl font-light tracking-tight group-hover:tracking-wide transition-all duration-500">
+                      {item.name}
+                    </h2>
+                  </div>
+                  <p className="text-xs text-white/40 font-light tracking-widest uppercase">
+                    {item.price.toLocaleString()} VND
                   </p>
                 </div>
 
-                <div className="flex items-center gap-8 mt-4 md:mt-0 z-10">
-                  {/* Quantity Control */}
-                  <div className="flex items-center border border-border rounded-xl bg-background overflow-hidden h-11">
+                {/* Interaction Section */}
+                <div className="flex items-center gap-12">
+                  {/* Quantity - Ultra Slim */}
+                  <div className="flex items-center gap-6 group/qty">
                     <button
                       onClick={() => updateQty(item.variant_id, item.quantity - 1)}
-                      className="px-4 hover:bg-neon-cyan/10 hover:text-neon-cyan transition-all disabled:opacity-20"
+                      className="text-white/20 hover:text-neon-cyan transition-colors disabled:opacity-0"
                       disabled={item.quantity <= 1}
                     >
-                      <Minus size={14} />
+                      <Minus size={12} strokeWidth={1} />
                     </button>
-                    <span className="w-10 text-center font-bold text-sm">{item.quantity}</span>
+                    <span className="text-sm font-light w-4 text-center tabular-nums">{item.quantity}</span>
                     <button
                       onClick={() => updateQty(item.variant_id, item.quantity + 1)}
-                      className="px-4 hover:bg-neon-cyan/10 hover:text-neon-cyan transition-all"
+                      className="text-white/20 hover:text-neon-cyan transition-colors"
                     >
-                      <Plus size={14} />
+                      <Plus size={12} strokeWidth={1} />
                     </button>
                   </div>
 
-                  {/* Subtotal */}
-                  <div className="w-28 text-right font-black text-lg text-neon-cyan">
-                    {(item.price * item.quantity).toLocaleString()}đ
+                  {/* Subtotal - Elegant Bold */}
+                  <div className="w-32 text-right">
+                    <span className="text-lg font-medium tracking-tighter">
+                      {(item.price * item.quantity).toLocaleString()}
+                    </span>
+                    <span className="text-[10px] ml-1 text-white/30 italic">VND</span>
                   </div>
 
-                  {/* Remove */}
+                  {/* Remove - Ghost Style */}
                   <button
                     onClick={() => removeItem(item.variant_id)}
-                    className="p-3 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-2 text-white/20 hover:text-red-500 transition-all duration-500 translate-x-4 group-hover:translate-x-0"
                   >
-                    <Trash2 size={20} />
+                    <Trash2 size={16} strokeWidth={1.5} />
                   </button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* CHECKOUT FORM (Sử dụng Glassmorphism từ biến màu của bạn) */}
-          <div className="lg:col-span-5 sticky top-8">
-            <div className="p-8 bg-card border border-border rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] space-y-8 relative overflow-hidden">
-              {/* Ánh sáng neon trang trí phía sau */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-neon-cyan/10 blur-[60px] -z-10" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-neon-purple/10 blur-[60px] -z-10" />
-
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <span className="text-muted-foreground uppercase tracking-[0.2em] text-[10px] font-bold">Tổng thanh toán</span>
-                  <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple italic">
-                    {total.toLocaleString()}đ
-                  </span>
+          {/* CHECKOUT SIDEBAR - GLASSMOPRHISM */}
+          <div className="lg:col-span-5 relative">
+            <div className="sticky top-12 p-10 rounded-[3rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl shadow-2xl overflow-hidden group/card">
+              {/* Decorative Glow */}
+              <div className="absolute -top-24 -right-24 w-64 h-64 bg-neon-cyan/10 blur-[100px] rounded-full group-hover/card:bg-neon-cyan/20 transition-all duration-1000" />
+              
+              <div className="relative z-10 space-y-10">
+                <div className="space-y-4">
+                  <p className="text-[10px] tracking-[0.5em] text-white/30 uppercase">Order Summary</p>
+                  <div className="flex justify-between items-baseline">
+                    <h3 className="text-sm font-light text-white/60">Total Amount</h3>
+                    <div className="text-right">
+                      <span className="text-4xl font-black italic tracking-tighter text-white">
+                        {total.toLocaleString()}
+                      </span>
+                      <span className="text-xs text-neon-cyan ml-2 tracking-widest">VND</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-border to-transparent" />
-              </div>
 
-              {/* Tích hợp Form */}
-              <div className="animate-in fade-in slide-in-from-right-full duration-700">
-                 <CheckoutForm /> 
+                <div className="h-[1px] bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
+
+                {/* Form Integration */}
+                <div className="animate-in fade-in slide-in-from-bottom-4">
+                   <CheckoutForm /> 
+                </div>
               </div>
             </div>
           </div>
@@ -176,6 +188,7 @@ export default function CartPage() {
     </div>
   );
 }
+
 
 
 
