@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { checkoutAction } from "@/lib/cart/checkoutAction";
 
 export default function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -60,6 +61,7 @@ export default function CartPage() {
     fetchCart();
   }
 
+/*
   async function handleCheckout() {
     if (isCheckingOut) return;
     setIsCheckingOut(true);
@@ -79,6 +81,43 @@ export default function CartPage() {
       setIsCheckingOut(false);
     }
   }
+*/
+
+  async function handleCheckout() {
+    if (isCheckingOut) return;
+    setIsCheckingOut(true);
+
+    try {
+      // GỌI TRỰC TIẾP HÀM SERVER ACTION Ở ĐÂY
+      const result = await checkoutAction();
+
+      if (!result.success) {
+        alert(result.error);
+        return;
+      }
+
+      // Nếu thành công, xóa giỏ hàng ở client và chuyển trang
+      await fetchCart(); 
+      window.location.href = `/orders/${result.orderId}`;
+    } catch (err) {
+      console.error(err);
+      alert("Đã xảy ra lỗi kết nối");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen text-foreground">
