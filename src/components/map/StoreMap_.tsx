@@ -4,12 +4,15 @@
 import React from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 
+
 interface StoreMapProps {
   address: string;
+  lat?: number;
+  lng?: number;
   shopName: string;
 }
 
-const StoreMap = ({ address, shopName }: StoreMapProps) => {
+const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
   const encodedAddress = encodeURIComponent(address);
   
   const handleOpenMap = () => {
@@ -18,6 +21,16 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
     const appleMapsUrl = `maps://maps.apple.com/?q=${encodedAddress}`;
     
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    window.open(isIOS ? appleMapsUrl : googleMapsUrl, '_blank');
+  };
+
+  const handleOpenMap_ = () => {
+    // Tự động chuyển hướng dựa trên thiết bị (iOS ưu tiên Apple Maps)
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    const appleMapsUrl = `maps://maps.apple.com/?daddr=${lat},${lng}`;
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    
     window.open(isIOS ? appleMapsUrl : googleMapsUrl, '_blank');
   };
 
@@ -44,7 +57,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
       />
 
     
-      <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/40">
+      <div onClick={handleOpenMap_} className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <h3 className="text-white font-semibold flex items-center gap-2">
