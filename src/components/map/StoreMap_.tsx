@@ -1,3 +1,4 @@
+/*
 'use client';
 
 import React from 'react';
@@ -23,7 +24,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
   return (
     <div className="group relative w-full h-[350px] rounded-2xl overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-2xl">
       
-      {/* Google Maps Embed chuẩn - FREE 100% */}
+  
       <iframe
         title="Store Location"
         width="100%"
@@ -36,13 +37,13 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
         src={`https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
       />
 
-      {/* Lớp chặn để click mở App - Giúp scroll trang web không bị kẹt vào Map */}
+    
       <div 
         onClick={handleOpenMap}
         className="absolute inset-0 cursor-pointer bg-transparent"
       />
 
-      {/* UI Info Card - Phong cách Forest Green & Glassmorphism */}
+    
       <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -67,3 +68,55 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
 };
 
 export default StoreMap;
+*/
+
+
+'use client';
+
+import React from 'react';
+
+interface StoreMapProps {
+  address: string;
+  shopName: string;
+}
+
+const StoreMap = ({ address, shopName }: StoreMapProps) => {
+  // Kết hợp Tên Shop và Địa chỉ để Google tìm chính xác và hiện tên lên ghim
+  const query = encodeURIComponent(`${shopName}, ${address}`);
+
+  const handleOpenMap = () => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const url = isIOS 
+      ? `maps://maps.apple.com/?q=${query}` 
+      : `https://www.google.com/maps/search/?api=1&query=${query}`;
+    
+    window.open(url, '_blank');
+  };
+
+  return (
+    <div className="relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-300 shadow-md">
+      {/* URL NÀY LÀ CHÌA KHÓA: Phải có /maps?q=... và &output=embed */}
+      <iframe
+        title="Store Location"
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        loading="lazy"
+        allowFullScreen
+        referrerPolicy="no-referrer-when-downgrade"
+        src={`https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=B&output=embed`}
+      />
+
+      {/* Lớp phủ trong suốt để khi khách click vào là mở ngay App dẫn đường */}
+      <div 
+        onClick={handleOpenMap}
+        className="absolute inset-0 cursor-pointer bg-transparent"
+        title="Click để chỉ đường"
+      />
+    </div>
+  );
+};
+
+export default StoreMap;
+
+
