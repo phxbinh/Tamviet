@@ -66,14 +66,14 @@ export default function CheckoutForm() {
   return (
     <form 
       onSubmit={handleSubmit} 
-      className="max-w-2xl mx-auto p-2 md:p-6 space-y-2 bg-card border border-border rounded-2xl shadow-xl transition-colors duration-300"
+      className="max-w-2xl mx-auto p-4 md:p-6 space-y-2 bg-card border border-border rounded-2xl shadow-xl transition-colors duration-300"
     >
-      <h2 className="text-xl font-bold text-primary mb-2 md:mb-6 tracking-wide uppercase">
+      <h2 className="text-xl font-bold text-primary mb-3 md:mb-6 tracking-wide uppercase">
         Thông tin nhận hàng
       </h2>
       
       {/* Name & Phone */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input 
           placeholder="Họ tên" 
           className="bg-background border border-border p-3 rounded-lg focus:border-primary outline-none text-foreground transition-all placeholder:opacity-50"
