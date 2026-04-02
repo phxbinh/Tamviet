@@ -70,21 +70,21 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
 export default StoreMap;
 */
 
-
 'use client';
 
 import React from 'react';
 
 interface StoreMapProps {
-  address: string;
-  shopName: string;
+  // Bạn copy cái link src từ Google Maps rồi dán vào đây
+  embedUrl: string; 
+  // Địa chỉ để khi click nó mở App điện thoại
+  fullAddress: string; 
 }
 
-const StoreMap = ({ address, shopName }: StoreMapProps) => {
-  // Kết hợp Tên Shop và Địa chỉ để Google tìm chính xác và hiện tên lên ghim
-  const query = encodeURIComponent(`${shopName}, ${address}`);
-
+const StoreMap = ({ embedUrl, fullAddress }: StoreMapProps) => {
+  
   const handleOpenMap = () => {
+    const query = encodeURIComponent(fullAddress);
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const url = isIOS 
       ? `maps://maps.apple.com/?q=${query}` 
@@ -94,20 +94,19 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
   };
 
   return (
-    <div className="relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-300 shadow-md">
-      {/* URL NÀY LÀ CHÌA KHÓA: Phải có /maps?q=... và &output=embed */}
+    <div className="relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-200 shadow-md">
+      {/* Sử dụng Embed URL chính chủ từ Google Maps - Ghim chuẩn 100% */}
       <iframe
         title="Store Location"
         width="100%"
         height="100%"
         style={{ border: 0 }}
+        src={embedUrl}
         loading="lazy"
         allowFullScreen
-        referrerPolicy="no-referrer-when-downgrade"
-        src={`https://maps.google.com/maps?q=${query}&t=&z=15&ie=UTF8&iwloc=B&output=embed`}
       />
 
-      {/* Lớp phủ trong suốt để khi khách click vào là mở ngay App dẫn đường */}
+      {/* Lớp phủ trong suốt để click phát là mở App dẫn đường ngay */}
       <div 
         onClick={handleOpenMap}
         className="absolute inset-0 cursor-pointer bg-transparent"
@@ -118,5 +117,6 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
 };
 
 export default StoreMap;
+
 
 
