@@ -2,6 +2,7 @@
 'use client'
 import { useState } from 'react';
 import { checkoutAction } from "./checkouAction_Add";
+import { CheckoutSchema, CheckoutInput } from "../typeInterfaces/orderAddress";
 
 export default function CheckoutForm() {
   const [isPending, setIsPending] = useState(false);
