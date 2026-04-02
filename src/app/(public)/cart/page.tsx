@@ -144,7 +144,7 @@ export default function CartPage() {
 
           {/* FORM THANH TOÁN */}
           <div className="lg:col-span-5">
-            <div className="sticky top-6 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
+            <div className="sticky top-6 p-2 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
               <div className="flex justify-between items-center border-b border-border pb-4">
                 <span className="opacity-70">Tổng cộng</span>
                 <span className="text-3xl font-black text-primary">
