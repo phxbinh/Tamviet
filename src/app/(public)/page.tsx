@@ -69,7 +69,7 @@ export const revalidate = 300;
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
-import StoreMap from '@/components/map/StoreMap';
+import StoreMap from '@/components/map/StoreMap_';
 
 
 
@@ -101,16 +101,26 @@ return (
 <hr/>
     <div className="max-w-3xl mx-auto p-10">
       <StoreMap 
-        shopName="Tâm Việt Studio"
-        address="123 Đường ABC, Quận 1, TP. Hồ Chí Minh"
-        lat={10.762622} 
-        lng={106.660172} 
+        shopName="Tâm Việt"
+        address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
     </div>
 </>
 );
 
 }
+
+/*
+    <div className="max-w-3xl mx-auto p-10">
+      <StoreMap 
+        shopName="Tâm Việt Studio"
+        address="123 Đường ABC, Quận 1, TP. Hồ Chí Minh"
+        lat={10.762622} 
+        lng={106.660172} 
+      />
+    </div>
+
+*/
 
 
 
