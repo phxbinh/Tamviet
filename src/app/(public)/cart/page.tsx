@@ -85,53 +85,60 @@ export default function CartPage() {
           {/* DANH SÁCH SẢN PHẨM */}
           <div className="lg:col-span-7 space-y-4">
             {cart.items.map((item) => (
-              <div
-                key={item.variant_id}
-                className="flex items-center justify-between bg-card border border-border p-5 rounded-2xl transition-all hover:border-primary/50 group"
-              >
-                {/* Info */}
-                <div className="flex-1">
-                  <h2 className="font-bold text-lg group-hover:text-primary transition-colors">
-                    {item.name}
-                  </h2>
-                  <p className="text-sm opacity-70">
-                    {formatCurrency(item.price)}
-                  </p>
-                </div>
+<div
+  key={item.variant_id}
+  className="flex flex-col gap-4 bg-card border border-border p-5 rounded-2xl transition-all hover:border-primary/50 group"
+>
+  {/* HÀNG TRÊN: Info */}
+  <div className="flex justify-between items-start">
+    <div className="flex-1">
+      <h2 className="font-bold text-lg group-hover:text-primary transition-colors line-clamp-1">
+        {item.name}
+      </h2>
+      <p className="text-sm opacity-70">
+        Đơn giá: {formatCurrency(item.price)}
+      </p>
+    </div>
+    
+    {/* Nút xóa được đưa lên góc trên hoặc để dưới tùy ý, ở đây tôi để ở góc để hàng dưới thoáng hơn */}
+    <button
+      onClick={() => removeItem(item.variant_id)}
+      className="p-2 text-red-500/50 hover:text-red-500 transition-all hover:animate-shake"
+    >
+      <Trash2 size={18} />
+    </button>
+  </div>
 
-                {/* Quantity Control */}
-                <div className="flex items-center gap-4 px-4">
-                  <div className="flex items-center border border-border rounded-lg bg-background/50">
-                    <button
-                      onClick={() => updateQty(item.variant_id, item.quantity - 1)}
-                      className="p-2 hover:text-primary disabled:opacity-30 disabled:hover:text-foreground"
-                      disabled={item.quantity <= 1}
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <span className="w-8 text-center font-medium">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQty(item.variant_id, item.quantity + 1)}
-                      className="p-2 hover:text-primary"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
-                </div>
+  {/* HÀNG DƯỚI: Phần còn lại (Quantity, Subtotal) */}
+  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+    {/* Quantity Control */}
+    <div className="flex items-center border border-border rounded-lg bg-background/50 scale-90 origin-left">
+      <button
+        onClick={() => updateQty(item.variant_id, item.quantity - 1)}
+        className="p-2 hover:text-primary disabled:opacity-30 disabled:hover:text-foreground"
+        disabled={item.quantity <= 1}
+      >
+        <Minus size={14} />
+      </button>
+      <span className="w-8 text-center font-medium">{item.quantity}</span>
+      <button
+        onClick={() => updateQty(item.variant_id, item.quantity + 1)}
+        className="p-2 hover:text-primary"
+      >
+        <Plus size={14} />
+      </button>
+    </div>
 
-                {/* Subtotal */}
-                <div className="w-32 text-right font-bold text-primary">
-                  {formatCurrency(item.price * item.quantity)}
-                </div>
+    {/* Subtotal */}
+    <div className="text-right">
+      <span className="text-xs opacity-50 block">Thành tiền</span>
+      <span className="font-bold text-primary text-lg">
+        {formatCurrency(item.price * item.quantity)}
+      </span>
+    </div>
+  </div>
+</div>
 
-                {/* Remove Action */}
-                <button
-                  onClick={() => removeItem(item.variant_id)}
-                  className="ml-4 p-2 text-red-500/50 hover:text-red-500 transition-all hover:animate-shake"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
             ))}
           </div>
 
