@@ -69,6 +69,9 @@ export const revalidate = 300;
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
+import StoreMap from '@/components/StoreMap';
+
+
 
 
 export default async function HomePage() {
@@ -79,6 +82,7 @@ export default async function HomePage() {
   //const sections = await getHomeSections_array( ['coffee', 'clothes', 'pumps', 'beverage'], 8);
 
 return (
+<>
   <div className="space-y-6">
     {sections.map((section) => (
       // CẬP NHẬT DÒNG NÀY
@@ -94,6 +98,16 @@ return (
       </div>
     ))}
   </div>
+<hr/>
+    <div className="max-w-3xl mx-auto p-10">
+      <StoreMap 
+        shopName="Tâm Việt Studio"
+        address="123 Đường ABC, Quận 1, TP. Hồ Chí Minh"
+        lat={10.762622} 
+        lng={106.660172} 
+      />
+    </div>
+</>
 );
 
 }
