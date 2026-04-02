@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ShippingAddressSchema = z.object({
-  order_id: z.string(),
+  //order_id: z.string(),
   // Liên hệ
   full_name: z.string().min(2, "Họ tên quá ngắn"),
   phone: z.string().regex(/(0[3|5|7|8|9])+([0-9]{8})\b/, "Số điện thoại không hợp lệ"),
@@ -30,7 +30,7 @@ export type ShippingAddress = z.infer<typeof ShippingAddressSchema>;
 
 // Dùng cái bên dưới ----------------------
 export const CheckoutSchema = z.object({
-  order_id: z.string(),
+  //order_id: z.string(),
   full_name: z.string().min(2, "Họ tên quá ngắn"),
   phone: z.string().regex(/(0[3|5|7|8|9])+([0-9]{8})\b/, "SĐT không hợp lệ"),
   email: z.string().email().optional().or(z.literal("")),
