@@ -95,7 +95,7 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
       {/* Info Card */}
       <div 
         onClick={(e) => { e.stopPropagation(); handleOpenMap(); }} 
-        className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 hover:bg-emerald-500/10 hover:border-emerald-500/30 cursor-pointer z-10 group/card"
+        className="absolute bottom-6 left-6 right-6 p-3 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 hover:bg-emerald-500/10 hover:border-emerald-500/30 cursor-pointer z-10 group/card"
       >
         <div className="flex items-center justify-between">
           <div className="space-y-1 overflow-hidden">
@@ -103,7 +103,7 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
               <MapPin size={18} className="text-emerald-500 shrink-0 animate-pulse" />
               <span className="truncate uppercase tracking-tight">{shopName}</span>
             </h3>
-            <p className="text-gray-400 text-xs truncate font-light italic">{address}</p>
+            <p className="text-green-400 text-xs truncate font-bold italic">{address}</p>
           </div>
           <div className="flex flex-col items-center shrink-0 ml-4">
             <div className="p-3 rounded-full bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-transform group-hover/card:scale-110">
