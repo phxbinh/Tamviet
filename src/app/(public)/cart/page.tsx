@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 import { formatCurrency } from "@/utils/formatNumber";
 
@@ -10,7 +11,12 @@ export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
-    return <div className="p-6 text-foreground animate-pulse text-white">Loading...</div>;
+    // Sử dụng text-foreground và animate-breathe-slow từ cấu hình Số 2
+    return (
+      <div className="p-6 text-foreground animate-breathe-slow flex items-center justify-center min-h-screen">
+        Đang tải giỏ hàng...
+      </div>
+    );
   }
 
   const total = cart.items.reduce<number>(
@@ -62,29 +68,30 @@ export default function CartPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8 min-h-screen text-white bg-[#0a0a0a]">
-      <header className="flex items-center gap-2 border-b border-white/10 pb-4">
-        <ShoppingBag className="text-forest-green" />
+    // bg-background và text-foreground lấy từ định nghĩa :root/dark của Số 2
+    <div className="max-w-6xl mx-auto p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
+      <header className="flex items-center gap-2 border-b border-border pb-4">
+        <ShoppingBag className="text-primary" />
         <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
       </header>
 
       {cart.items.length === 0 ? (
-        <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
-          <p className="text-gray-500 italic">Giỏ hàng đang trống</p>
+        <div className="text-center py-20 bg-card rounded-3xl border border-border animate-in fade-in">
+          <p className="text-muted-foreground italic">Giỏ hàng đang trống</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* PHẦN DANH SÁCH SẢN PHẨM (Bên trái - Chiếm 7 cột) */}
+          {/* DANH SÁCH SẢN PHẨM */}
           <div className="lg:col-span-7 space-y-4">
             {cart.items.map((item) => (
               <div
                 key={item.variant_id}
-                className="flex items-center justify-between bg-[#111] border border-white/10 p-5 rounded-2xl transition-all hover:border-forest-green/50 group"
+                className="flex items-center justify-between bg-card border border-border p-5 rounded-2xl transition-all hover:border-primary/50 group"
               >
                 {/* Info */}
                 <div className="flex-1">
-                  <h2 className="font-bold text-lg group-hover:text-forest-green transition-colors">
+                  <h2 className="font-bold text-lg group-hover:text-primary transition-colors">
                     {item.name}
                   </h2>
                   <p className="text-sm opacity-70">
@@ -94,10 +101,10 @@ export default function CartPage() {
 
                 {/* Quantity Control */}
                 <div className="flex items-center gap-4 px-4">
-                  <div className="flex items-center border border-white/10 rounded-lg bg-black/50">
+                  <div className="flex items-center border border-border rounded-lg bg-background/50">
                     <button
                       onClick={() => updateQty(item.variant_id, item.quantity - 1)}
-                      className="p-2 hover:text-forest-green disabled:opacity-30"
+                      className="p-2 hover:text-primary disabled:opacity-30 disabled:hover:text-foreground"
                       disabled={item.quantity <= 1}
                     >
                       <Minus size={14} />
@@ -105,7 +112,7 @@ export default function CartPage() {
                     <span className="w-8 text-center font-medium">{item.quantity}</span>
                     <button
                       onClick={() => updateQty(item.variant_id, item.quantity + 1)}
-                      className="p-2 hover:text-forest-green"
+                      className="p-2 hover:text-primary"
                     >
                       <Plus size={14} />
                     </button>
@@ -113,40 +120,43 @@ export default function CartPage() {
                 </div>
 
                 {/* Subtotal */}
-                <div className="w-32 text-right font-bold text-forest-green">
+                <div className="w-32 text-right font-bold text-primary">
                   {formatCurrency(item.price * item.quantity)}
                 </div>
 
                 {/* Remove Action */}
                 <button
                   onClick={() => removeItem(item.variant_id)}
-                  className="ml-4 p-2 text-red-500/50 hover:text-red-500 transition-all"
+                  className="ml-4 p-2 text-red-500/50 hover:text-red-500 transition-all hover:animate-shake"
                 >
                   <Trash2 size={18} />
                 </button>
               </div>
             ))}
-          </div> {/* ĐÓNG lg:col-span-7 */}
+          </div>
 
-          {/* PHẦN FORM NHẬP TIN & THANH TOÁN (Bên phải - Chiếm 5 cột) */}
+          {/* FORM THANH TOÁN */}
           <div className="lg:col-span-5">
-            <div className="sticky top-6 p-6 bg-white/5 border border-white/10 rounded-3xl space-y-6">
-              <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                <span className="text-gray-400">Tổng cộng</span>
-                <span className="text-3xl font-black text-forest-green">
+            <div className="sticky top-6 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
+              <div className="flex justify-between items-center border-b border-border pb-4">
+                <span className="opacity-70">Tổng cộng</span>
+                <span className="text-3xl font-black text-primary">
                   {total.toLocaleString()}đ
                 </span>
               </div>
 
-              {/* Form nhập liệu và nút bấm nằm trong này */}
-              <CheckoutForm /> 
+              {/* Form nhập liệu */}
+              <div className="animate-in fade-in">
+                <CheckoutForm /> 
+              </div>
             </div>
-          </div> {/* ĐÓNG lg:col-span-5 */}
+          </div>
 
-        </div> /* ĐÓNG grid */
+        </div>
       )}
-    </div> /* ĐÓNG container chính */
+    </div>
   );
 }
+
 
 
