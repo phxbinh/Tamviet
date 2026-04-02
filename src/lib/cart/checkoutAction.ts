@@ -142,8 +142,8 @@ export async function checkoutAction() {
     };
   } catch (err) {
     await client.query("ROLLBACK");
-    throw err;
-    //return { success: false, error: err.message || "Thanh toán thất bại" };
+    //throw err;
+    return { success: false, error: err.message || "Thanh toán thất bại" };
   } finally {
     client.release();
   }
