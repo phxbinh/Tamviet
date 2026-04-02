@@ -101,6 +101,8 @@ return (
   <div className="max-w-3xl mx-auto p-1">
       <StoreMap 
         shopName="Tâm Việt"
+        lat={10.845694} 
+        lng={106.656222} 
         address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
   </div>
@@ -114,8 +116,8 @@ return (
       <StoreMap 
         shopName="Tâm Việt Studio"
         address="123 Đường ABC, Quận 1, TP. Hồ Chí Minh"
-        lat={10.762622} 
-        lng={106.660172} 
+        lat={10.845694} 
+        lng={106.656222} 
       />
     </div>
 
