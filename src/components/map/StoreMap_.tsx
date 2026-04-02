@@ -9,11 +9,10 @@ interface StoreMapProps {
 }
 
 const StoreMap = ({ address, shopName }: StoreMapProps) => {
-  // Encode địa chỉ để đưa vào URL
   const encodedAddress = encodeURIComponent(address);
   
-  // Link mở app bản đồ thực tế khi khách click
   const handleOpenMap = () => {
+    // URL chuẩn để mở ứng dụng Bản đồ trên thiết bị
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
     const appleMapsUrl = `maps://maps.apple.com/?q=${encodedAddress}`;
     
@@ -22,49 +21,47 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
   };
 
   return (
-    <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-white/10 bg-[#121212] shadow-2xl">
+    <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-2xl">
       
-      {/* 1. Bản đồ Google Maps nhúng (Hoàn toàn miễn phí) */}
+      {/* Google Maps Embed chuẩn - FREE 100% */}
       <iframe
         title="Store Location"
         width="100%"
         height="100%"
-        style={{ border: 0, filter: 'grayscale(1) invert(0.9) contrast(0.8)' }} // Làm bản đồ tối đi cho sang
+        style={{ 
+          border: 0, 
+          filter: 'grayscale(1) invert(0.92) contrast(0.85)' // Biến Map sang Dark Mode sang trọng
+        }}
         loading="lazy"
-        allowFullScreen
-        src={`https://www.google.com/maps/embed/v1/place?key=Mày_không_cần_Key_ở_đây_đâu_nhưng_dùng_URL_này_mới_chuẩn: https://www.google.com/maps?q=${encodedAddress}&output=embed`}
-      ></iframe>
+        src={`https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+      />
 
-      {/* 2. Lớp phủ trong suốt để chặn tương tác cuộn vô tình trên map, chỉ cho click */}
+      {/* Lớp chặn để click mở App - Giúp scroll trang web không bị kẹt vào Map */}
       <div 
         onClick={handleOpenMap}
         className="absolute inset-0 cursor-pointer bg-transparent"
       />
 
-      {/* 3. Card thông tin phong cách Glassmorphism */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] p-6 rounded-2xl border border-white/20 bg-black/40 backdrop-blur-xl shadow-2xl pointer-events-none transition-all duration-500 group-hover:border-emerald-500/40">
+      {/* UI Info Card - Phong cách Forest Green & Glassmorphism */}
+      <div className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h3 className="text-white font-bold text-lg flex items-center gap-2">
-              <MapPin size={20} className="text-emerald-400" />
+            <h3 className="text-white font-semibold flex items-center gap-2">
+              <MapPin size={18} className="text-emerald-500" />
               {shopName}
             </h3>
-            <p className="text-gray-300 text-sm italic">
+            <p className="text-gray-400 text-sm max-w-[200px] truncate md:max-w-none">
               {address}
             </p>
           </div>
           
-          <div className="flex flex-col items-center gap-2">
-            <div className="p-4 rounded-full bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] group-hover:scale-110 transition-transform">
-              <Navigation size={22} fill="currentColor" />
+          <div className="flex flex-col items-center">
+            <div className="p-3 rounded-full bg-emerald-500 text-black shadow-lg transition-transform group-hover:scale-110">
+              <Navigation size={18} fill="currentColor" />
             </div>
-            <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest">Chỉ đường</span>
           </div>
         </div>
       </div>
-
-      {/* Hiệu ứng viền sáng chạy quanh khi hover cho đúng chất Next.js 15 */}
-      <div className="absolute inset-0 border-2 border-transparent group-hover:border-emerald-500/20 rounded-2xl pointer-events-none transition-all duration-700" />
     </div>
   );
 };
