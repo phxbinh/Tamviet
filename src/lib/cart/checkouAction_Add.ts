@@ -49,7 +49,7 @@ export async function checkoutAction(rawInput: CheckoutInput) {
       WHERE id = (SELECT id FROM target_cart)
       RETURNING (SELECT id FROM new_order) as order_id;
     `, [
-      userId, guestId, data.full_name, data.phone, data.email || null,
+      userId, guestId, data.order_id, data.full_name, data.phone, data.email || null,
       data.address_line1, data.province_id, data.province_name,
       data.district_id, data.district_name, data.ward_code, data.ward_name
     ]);
