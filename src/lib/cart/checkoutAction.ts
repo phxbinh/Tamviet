@@ -1,4 +1,4 @@
-/*
+
 'use server' // Bắt buộc phải có dòng này
 
 import { pool } from "@/lib/db/pg";
@@ -149,7 +149,8 @@ export async function checkoutAction() {
     client.release();
   }
 }
-*/
+
+/*
 'use server'
 
 import { pool } from "@/lib/db/pg";
@@ -242,7 +243,7 @@ export async function checkoutAction() {
     client.release();
   }
 }
-
+*/
 
 
 
