@@ -98,13 +98,12 @@ return (
       </div>
     ))}
   </div>
-<hr/>
-    <div className="max-w-3xl mx-auto p-10">
+  <div className="max-w-3xl mx-auto p-1">
       <StoreMap 
         shopName="Tâm Việt"
         address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
-    </div>
+  </div>
 </>
 );
 
