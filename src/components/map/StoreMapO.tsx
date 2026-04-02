@@ -69,7 +69,7 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
       {/* Click Overlay */}
       <div className="absolute inset-0 cursor-pointer z-0" onClick={handleOpenMap} />
 
-      {/* Info Card */}
+      {/* Info Card */} {/*
       <div 
         onClick={(e) => { e.stopPropagation(); handleOpenMap(); }} 
         className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 hover:bg-emerald-500/20 hover:border-emerald-500/40 cursor-pointer z-10"
@@ -90,7 +90,30 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
             <span className="text-[10px] text-emerald-400 font-bold mt-1 uppercase">Chỉ đường</span>
           </div>
         </div>
+      </div>*/}
+
+      {/* Info Card */}
+      <div 
+        onClick={(e) => { e.stopPropagation(); handleOpenMap(); }} 
+        className="absolute bottom-6 left-6 right-6 p-5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-md transition-all duration-300 hover:bg-emerald-500/10 hover:border-emerald-500/30 cursor-pointer z-10 group/card"
+      >
+        <div className="flex items-center justify-between">
+          <div className="space-y-1 overflow-hidden">
+            <h3 className="text-white font-semibold flex items-center gap-2 truncate">
+              <MapPin size={18} className="text-emerald-500 shrink-0 animate-pulse" />
+              <span className="truncate uppercase tracking-tight">{shopName}</span>
+            </h3>
+            <p className="text-gray-400 text-xs truncate font-light italic">{address}</p>
+          </div>
+          <div className="flex flex-col items-center shrink-0 ml-4">
+            <div className="p-3 rounded-full bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.5)] transition-transform group-hover/card:scale-110">
+              <Navigation size={18} fill="currentColor" />
+            </div>
+            <span className="text-[9px] text-emerald-500 font-black mt-1 uppercase tracking-widest">Route</span>
+          </div>
+        </div>
       </div>
+
     </div>
   );
 };
