@@ -30,14 +30,34 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
     <div className="group relative w-full h-[350px] rounded-2xl overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-2xl">
       
       {/* NHÚNG LAT/LNG VÀO ĐÂY: t=&z=15 là độ zoom, q=${lat},${lng} để cắm ghim */}
-      <iframe
+      {/*<iframe
         title="Store Location"
         width="100%"
         height="100%"
         style={{ border: 0 }}
         loading="lazy"
         src={`https://maps.google.com/maps?q=${lat},${lng}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-      />
+      />*/}
+
+
+
+<iframe
+  title="Store Location"
+  width="100%"
+  height="100%"
+  style={{ border: 0 }}
+  loading="lazy"
+  // Lưu ý phần q=${lat},${lng}(${encodeURIComponent(shopName)})
+  src={`https://maps.google.com/maps?q=${lat},${lng}(${encodeURIComponent(shopName)})&t=&z=${zoom}&ie=UTF8&iwloc=B&output=embed`}
+/>
+
+
+
+
+
+
+
+
 
       {/* Lớp phủ chặn tương tác Iframe để ưu tiên click mở App */}
       <div 
