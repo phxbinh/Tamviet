@@ -5,6 +5,9 @@ import { checkoutAction } from "./checkouAction_Add";
 import { CheckoutInput } from "../typeInterfaces/orderAddress";
 // Import Mock Data
 import { MOCK_PROVINCES, MOCK_DISTRICTS, MOCK_WARDS } from "./addressMock";
+import { revalidatePath } from "next/cache";
+//revalidatePath('/cart');
+
 
 export default function CheckoutForm() {
   const [isPending, setIsPending] = useState(false);
@@ -44,7 +47,7 @@ export default function CheckoutForm() {
     try {
       const res = await checkoutAction(form);
       if (res.success) {
-        window.location.href = `/thank-you?id=${res.orderId}`;
+        window.location.href = `/orders/${res.orderId}`;
       } else {
         alert(res.error);
       }
