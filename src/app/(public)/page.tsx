@@ -69,7 +69,7 @@ export const revalidate = 300;
 
 import { getHomeSections, getHomeSections_array } from "./_homepage/getHomeSections"; // Đường dẫn file chứa hàm SQL mới
 import RelatedProductsSection from "./_homepage/RelatedProductsSectionO__";
-import StoreMap from '@/components/map/StoreMap_';
+import StoreMap from '@/components/map/StoreMap__';
 
 
 
