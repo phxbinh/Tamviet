@@ -4,8 +4,25 @@ import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { checkoutAction } from "@/lib/cart/checkoutAction";
+import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 
-export default function CartPage() {
+
+
+/*
+"use client";
+
+import { useState } from 'react';
+import { useCart } from "@/components/cart/CartProvider";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+// Import cái Form bạn đã có
+import CheckoutForm from "@/components/checkout/CheckoutForm"; 
+*/
+
+
+
+
+//export default 
+function CartPage//() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { cart, setCart, fetchCart, loading } = useCart();
 
@@ -215,3 +232,136 @@ export default function CartPage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+// @/app/cart/page.tsx
+/*
+"use client";
+
+import { useState } from 'react';
+import { useCart } from "@/components/cart/CartProvider";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+// Import cái Form bạn đã có
+import CheckoutForm from "@/components/checkout/CheckoutForm"; 
+*/
+
+
+
+export default function CartPage() {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const { cart, setCart, fetchCart, loading } = useCart();
+
+  if (loading || !cart) {
+    return <div className="p-6 text-foreground animate-pulse">Loading...</div>;
+  }
+
+  const total = cart.items.reduce<number>(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  async function updateQty(variantId: string, quantity: number) {
+    if (quantity < 1) return;
+    setCart((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        items: prev.items.map((i) =>
+          i.variant_id === variantId ? { ...i, quantity } : i
+        ),
+      };
+    });
+
+    try {
+      await fetch("/api/cart", {
+        method: "PATCH",
+        body: JSON.stringify({ variantId, quantity }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    fetchCart();
+  }
+
+  async function removeItem(variantId: string) {
+    setCart((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        items: prev.items.filter((i) => i.variant_id !== variantId),
+      };
+    });
+
+    try {
+      await fetch("/api/cart", {
+        method: "DELETE",
+        body: JSON.stringify({ variantId }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+    fetchCart();
+  }
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-8 min-h-screen text-white bg-[#0a0a0a]">
+      <header className="flex items-center gap-2 border-b border-white/10 pb-4">
+        <ShoppingBag className="text-forest-green" />
+        <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
+      </header>
+
+      {cart.items.length === 0 ? (
+        <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+          <p className="text-gray-500 italic">Giỏ hàng đang trống</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* PHẦN DANH SÁCH SẢN PHẨM (Bên trái) */}
+          <div className="lg:col-span-7 space-y-4">
+            {cart.items.map((item) => (
+              <div key={item.variant_id} className="flex items-center justify-between bg-white/5 border border-white/10 p-4 rounded-2xl">
+                 <div className="flex-1">
+                    <h2 className="font-bold">{item.name}</h2>
+                    <p className="text-sm text-gray-400">{item.price.toLocaleString()}đ</p>
+                 </div>
+                 {/* Quantity controls ... */}
+                 <button onClick={() => removeItem(item.variant_id)} className="text-red-500/50 hover:text-red-500 ml-4">
+                    <Trash2 size={18} />
+                 </button>
+              </div>
+            ))}
+          </div>
+
+          {/* PHẦN FORM NHẬP TIN & THANH TOÁN (Bên phải) */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="p-6 bg-white/5 border border-white/10 rounded-3xl">
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-gray-400">Tổng cộng</span>
+                <span className="text-2xl font-black text-forest-green">{total.toLocaleString()}đ</span>
+              </div>
+
+              {/* DÙNG LUÔN CÁI FORM BẠN ĐÃ VIẾT Ở ĐÂY */}
+              <CheckoutForm /> 
+              
+            </div>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+
+
+
+
+
