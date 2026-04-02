@@ -22,7 +22,7 @@ import CheckoutForm from "@/components/checkout/CheckoutForm";
 
 
 //export default 
-function CartPage//() {
+function CartPage__() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { cart, setCart, fetchCart, loading } = useCart();
 
