@@ -21,7 +21,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
   };
 
   return (
-    <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-2xl">
+    <div className="group relative w-full h-[350px] rounded-2xl overflow-hidden border border-white/10 bg-[#0f0f0f] shadow-2xl">
       
       {/* Google Maps Embed chuẩn - FREE 100% */}
       <iframe
@@ -50,7 +50,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
               <MapPin size={18} className="text-emerald-500" />
               {shopName}
             </h3>
-            <p className="text-gray-400 text-sm max-w-[200px] truncate md:max-w-none">
+            <p className="text-green-400 text-sm max-w-[200px] truncate md:max-w-none">
               {address}
             </p>
           </div>
