@@ -2,7 +2,8 @@
 'use server'
 import { pool } from "@/lib/db/pg";
 import { getCartIdentity } from "@/lib/cart/sqlCart";
-import { CheckoutSchema, CheckoutInput } from "@/lib/typeInterfaces/orderAddress";
+import { CheckoutSchema, CheckoutInput } from "../typeInterfaces/orderAddress";
+//src/lib/typeInterfaces/orderAddress.ts
 
 export async function checkoutAction(rawInput: CheckoutInput) {
   // Validate lại ở Server cho chắc
