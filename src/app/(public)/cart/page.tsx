@@ -69,7 +69,7 @@ export default function CartPage() {
 
   return (
     // bg-background và text-foreground lấy từ định nghĩa :root/dark của Số 2
-    <div className="max-w-6xl mx-auto p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="max-w-6xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
       <header className="flex items-center gap-2 border-b border-border pb-4">
         <ShoppingBag className="text-primary" />
         <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
@@ -87,7 +87,7 @@ export default function CartPage() {
             {cart.items.map((item) => (
 <div
   key={item.variant_id}
-  className="flex flex-col gap-4 bg-card border border-border p-5 rounded-2xl transition-all hover:border-primary/50 group"
+  className="flex flex-col gap-2 md:gap-4 bg-card border border-border p-2 md:p-5 rounded-2xl transition-all hover:border-primary/50 group"
 >
   {/* HÀNG TRÊN: Info */}
   <div className="flex justify-between items-start">
@@ -110,7 +110,7 @@ export default function CartPage() {
   </div>
 
   {/* HÀNG DƯỚI: Phần còn lại (Quantity, Subtotal) */}
-  <div className="flex items-center justify-between pt-4 border-t border-border/50">
+  <div className="flex items-center justify-between pt-2 border-t border-border/50">
     {/* Quantity Control */}
     <div className="flex items-center border border-border rounded-lg bg-background/50 scale-90 origin-left">
       <button
@@ -148,7 +148,7 @@ export default function CartPage() {
               <div className="flex justify-between items-center border-b border-border pb-4">
                 <span className="opacity-70">Tổng cộng</span>
                 <span className="text-3xl font-black text-primary">
-                  {total.toLocaleString()}đ
+                  {formatCurrency(total)}
                 </span>
               </div>
 
