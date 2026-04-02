@@ -30,7 +30,7 @@ const StoreMap = ({ address, shopName }: StoreMapProps) => {
         height="100%"
         style={{ 
           border: 0, 
-          filter: 'grayscale(1) invert(0.92) contrast(0.85)' // Biến Map sang Dark Mode sang trọng
+          //filter: 'grayscale(1) invert(0.92) contrast(0.85)' // Biến Map sang Dark Mode sang trọng
         }}
         loading="lazy"
         src={`https://maps.google.com/maps?q=${encodedAddress}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
