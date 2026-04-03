@@ -16,7 +16,7 @@ export default function MapsPage() {
   const address = params.get('address') || '';
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full ">
 {/* Cố định tham số
       <StoreMap
         shopName="Tâm Việt"
