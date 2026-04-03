@@ -66,9 +66,9 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
         Zoom: {zoom}
       </div>
 
-      {/* Click Overlay */}
+      {/* Click Overlay */} {/*
       <div className="absolute inset-0 cursor-pointer z-0" onClick={handleOpenMap} />
-
+*/}
       {/* Info Card */} {/*
       <div 
         onClick={(e) => { e.stopPropagation(); handleOpenMap(); }} 
