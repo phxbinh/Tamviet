@@ -40,32 +40,6 @@ export default function OrdersPage() {
               </p>
             </div>
           </div>
-
-          {/* Items */} {/*
-          <div className="space-y-3">
-            {order.items.map((item: any) => (
-              <div
-                key={item.variant_id}
-                className="flex justify-between border p-3 rounded-lg"
-              >
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-500">
-                    x{item.quantity}
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <p>
-                    {Number(item.price_at_time).toLocaleString()}đ
-                  </p>
-                  <p className="font-semibold">
-                    {(item.price_at_time * item.quantity).toLocaleString()}đ
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div> */}
         </Link>
       ))}
     </div>
