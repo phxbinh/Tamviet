@@ -18,11 +18,8 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Orders', href: '/orders', showInSidebar: true },
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
-  {
-    name: 'Bản đồ',
-    href: '/map',
-    showInSidebar: true,
-  },
+//  { name: 'Bản đồ', href: '/map', showInSidebar: true },
+
   {
     name: 'Environments',
     showInSidebar: true,
