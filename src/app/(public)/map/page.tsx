@@ -17,12 +17,14 @@ export default function MapsPage() {
 
   return (
     <div className="w-full h-screen">
+{/* Cố định tham số
       <StoreMap
         shopName="Tâm Việt"
         lat={10.845694} 
         lng={106.656222} 
         address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
+*/}
       <StoreMap
         lat={lat}
         lng={lng}
