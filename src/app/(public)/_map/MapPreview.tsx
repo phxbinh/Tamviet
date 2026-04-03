@@ -31,38 +31,46 @@ export default function MapPreview({
   return (
     <div
       onClick={handleNavigation}
-      className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 hover:border-emerald-500/30"
+      className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 hover:border-emerald-500/40"
     >
-      {/* Info Section - Sử dụng Gradient khớp với style tối của bạn */}
-      <div className="bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4">
-        <div className="flex items-center justify-between gap-2">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 font-semibold text-white">
-              {/* Sử dụng animation breathe-slow từ globals.css */}
+      {/* Content Container */}
+      <div className="bg-gradient-to-t from-black/95 via-black/60 to-transparent p-4">
+        <div className="flex items-start justify-between gap-4">
+          
+          <div className="flex-1 min-w-0">
+            {/* Shop Name - Giữ truncate vì tên quá dài sẽ đẩy layout, nhưng địa chỉ thì không */}
+            <div className="flex items-center gap-2 font-bold text-white mb-1.5">
               <MapPin size={18} className="text-emerald-400 shrink-0 animate-breathe-slow" />
-              <span className="truncate uppercase tracking-tight">{shopName}</span>
+              <span className="truncate uppercase tracking-tight text-sm md:text-base">
+                {shopName}
+              </span>
             </div>
-            <p className="mt-1 truncate text-xs italic text-gray-400">
+
+            {/* Address - ĐÃ FIX: Không ngắt quãng, cho phép xuống dòng thoải mái */}
+            <p className="text-xs md:text-sm text-gray-300 leading-relaxed italic break-words">
               {address}
             </p>
           </div>
 
-          {/* Nút tròn nhỏ bên phải giống số 2 nhưng gọn hơn */}
-          <div className="flex shrink-0 items-center justify-center p-2 rounded-full bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-transform group-hover:scale-110">
-            <Navigation size={14} fill="currentColor" />
+          {/* Icon chỉ đường nhanh */}
+          <div className="shrink-0 mt-1">
+            <div className="p-2.5 rounded-full bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-transform group-hover:scale-110 active:scale-95">
+              <Navigation size={16} fill="currentColor" />
+            </div>
           </div>
         </div>
       </div>
   
-      {/* CTA Button Section */}
-      <div className="flex justify-center pb-4 pt-2">
-        <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-emerald-400 transition-all group-hover:bg-emerald-500 group-hover:text-black">
-          Xem bản đồ
+      {/* Bottom Action */}
+      <div className="flex justify-center pb-4 pt-1">
+        <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 transition-all group-hover:bg-emerald-500 group-hover:text-black">
+          Mở bản đồ chi tiết
         </div>
       </div>
     </div>
   );
 }
+
 
 
 
