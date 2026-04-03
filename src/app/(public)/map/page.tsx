@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
-const StoreMap = dynamic(() => import('./_map/StoreMap'), {
+const StoreMap = dynamic(() => import('../_map/StoreMap'), {
   ssr: false,
 });
 
