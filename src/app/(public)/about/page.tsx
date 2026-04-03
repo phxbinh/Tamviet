@@ -1,9 +1,11 @@
 'use client'
 import React from 'react';
 import { ShieldCheck, Leaf, Zap } from 'lucide-react';
+import ClientTracker from "../userInfo/ClientTracker";
 
 const AboutComponent = () => {
   return (
+    <ClientTracker />
     <section className="py-16 px-6 max-w-4xl mx-auto space-y-12">
       {/* Tiêu đề chính */}
       <div className="text-center space-y-4">
