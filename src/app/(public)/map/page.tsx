@@ -18,10 +18,10 @@ export default function MapsPage() {
   return (
     <div className="w-full h-screen">
       <StoreMap
-        lat={lat}
-        lng={lng}
-        shopName={decodeURIComponent(shopName)}
-        address={decodeURIComponent(address)}
+        shopName="Tâm Việt"
+        lat={10.845694} 
+        lng={106.656222} 
+        address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
     </div>
   );
