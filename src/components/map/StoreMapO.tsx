@@ -14,10 +14,21 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
   const [zoom, setZoom] = useState(16);
 
   // Memoize URL để tránh re-render iframe không cần thiết
+/*
   const mapUrl = useMemo(() => {
     const encodedName = encodeURIComponent(shopName);
     return `https://maps.google.com/maps?q=${lat},${lng}(${encodedName})&t=&z=${zoom}&ie=UTF8&iwloc=B&output=embed`;
   }, [lat, lng, zoom, shopName]);
+*/
+
+const mapUrl = useMemo(() => {
+  const encodedName = encodeURIComponent(shopName);
+  return `https://maps.google.com/maps?q=${encodedName}%20@${lat},${lng}&z=${zoom}&output=embed`;
+}, [lat, lng, zoom, shopName]);
+
+
+
+
 
   const handleOpenMap = () => {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
