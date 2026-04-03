@@ -31,6 +31,82 @@ export default function MapPreview({
   return (
     <div
       onClick={handleNavigation}
+      className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 hover:border-emerald-500/50"
+    >
+      {/* Container chính: dùng flex-col để giãn nở theo nội dung */}
+      <div className="flex flex-col">
+        
+        {/* Info Section: Sử dụng Gradient và Flex để chứa tên & icon điều hướng */}
+        <div className="bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pb-2">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              {/* Tên Shop */}
+              <div className="flex items-center gap-2 font-bold text-white mb-2">
+                {/* Sử dụng animation animate-breathe-slow từ globals.css */}
+                <MapPin size={18} className="text-emerald-400 shrink-0 animate-breathe-slow" />
+                <span className="truncate uppercase tracking-tight text-sm md:text-base">
+                  {shopName}
+                </span>
+              </div>
+
+              {/* Địa chỉ: HIỆN ĐẦY ĐỦ, KHÔNG CẮT BỚT */}
+              <p className="text-xs md:text-sm text-gray-300 leading-relaxed italic break-words">
+                {address}
+              </p>
+            </div>
+
+            {/* Icon Button (Visual feedback giống số 2) */}
+            <div className="shrink-0">
+              <div className="p-2.5 rounded-full bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-transform group-hover:scale-110 active:scale-90">
+                <Navigation size={16} fill="currentColor" />
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        {/* Bottom Bar: Nút bấm giả để tăng trải nghiệm người dùng */}
+        <div className="px-4 pb-4 pt-2">
+          <div className="w-full rounded-xl bg-emerald-500/10 border border-emerald-500/20 py-2 text-center text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 transition-all group-hover:bg-emerald-500 group-hover:text-black">
+            Xem đường đi chi tiết
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+//export default
+function MapPreview__ok_({
+  lat,
+  lng,
+  shopName,
+  address,
+}: Props) {
+  const router = useRouter();
+
+  const handleNavigation = () => {
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lng: lng.toString(),
+      name: shopName,
+      address: address
+    });
+    router.push(`/map?${params.toString()}`);
+  };
+  
+  return (
+    <div
+      onClick={handleNavigation}
       className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 hover:border-emerald-500/40"
     >
       {/* Content Container */}
@@ -58,13 +134,6 @@ export default function MapPreview({
               <Navigation size={16} fill="currentColor" />
             </div>
           </div>
-        </div>
-      </div>
-  
-      {/* Bottom Action */}
-      <div className="flex justify-center pb-4 pt-1">
-        <div className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 transition-all group-hover:bg-emerald-500 group-hover:text-black">
-          Mở bản đồ chi tiết
         </div>
       </div>
     </div>
