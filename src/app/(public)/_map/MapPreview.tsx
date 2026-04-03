@@ -17,6 +17,8 @@ export default function MapPreview({
   address,
 }: Props) {
 
+  const router = useRouter();
+
   const handleNavigation = () => {
     const params = new URLSearchParams({
       lat: lat.toString(),
