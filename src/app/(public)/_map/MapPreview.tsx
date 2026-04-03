@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, Map as MapIcon, ExternalLink } from 'lucide-react';
 
 interface Props {
   lat: number;
@@ -11,6 +11,98 @@ interface Props {
 
 
 export default function MapPreview({
+  lat,
+  lng,
+  shopName,
+  address,
+}: Props) {
+  const router = useRouter();
+
+  // Điều hướng nội bộ (Trang Map của bạn)
+  const handleViewMap = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Ngăn sự kiện click của thẻ cha
+    const params = new URLSearchParams({
+      lat: lat.toString(),
+      lng: lng.toString(),
+      name: shopName,
+      address: address
+    });
+    router.push(`/map?${params.toString()}`);
+  };
+
+  // Mở Google Maps bên ngoài để chỉ đường
+  const handleGetDirections = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const url = isIOS
+      ? `maps://maps.apple.com/?daddr=${lat},${lng}&q=${encodeURIComponent(shopName)}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(url, '_blank');
+  };
+
+  return (
+    <div
+      onClick={handleViewMap}
+      className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-card shadow-2xl transition-all duration-300 hover:border-emerald-500/40"
+    >
+      <div className="flex flex-col p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+        
+        {/* Header: ShopName + Actions */}
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <MapPin size={18} className="text-emerald-400 shrink-0 animate-breathe-slow" />
+            <h3 className="truncate uppercase tracking-tight font-bold text-white text-sm md:text-base">
+              {shopName}
+            </h3>
+          </div>
+
+          {/* Hai nút chức năng bên cạnh tên Shop */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Nút Xem bản đồ nội bộ */}
+            <button
+              onClick={handleViewMap}
+              title="Xem bản đồ"
+              className="p-2 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-emerald-500 hover:text-black transition-colors"
+            >
+              <MapIcon size={14} />
+            </button>
+
+            {/* Nút Chỉ đường bên ngoài */}
+            <button
+              onClick={handleGetDirections}
+              title="Chỉ đường"
+              className="p-2 rounded-lg bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:scale-110 active:scale-90 transition-transform"
+            >
+              <Navigation size={14} fill="currentColor" />
+            </button>
+          </div>
+        </div>
+
+        {/* Address: Hiển thị đầy đủ */}
+        <p className="text-xs md:text-sm text-gray-300 leading-relaxed italic break-words pr-2">
+          {address}
+        </p>
+
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//export default 
+function MapPreview_Ok_ok({
   lat,
   lng,
   shopName,
