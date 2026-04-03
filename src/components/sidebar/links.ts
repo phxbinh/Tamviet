@@ -11,20 +11,17 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Trang chủ', href: '/', showInSidebar: true },
   { name: 'Welcome', href: '/welcomemot', showInSidebar: true },
   { name: 'Đăng ký', href: '/signup', showInSidebar: true },
+/*
   { name: 'Quên mật mã', href: '/forgot-password-retry', showInSidebar: true },
   { name: 'Đổi mật mã', href: '/change-password', showInSidebar: true },
+*/
   { name: 'Orders', href: '/orders', showInSidebar: true },
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
 
   {
-    name: 'Bảng nhiệm vụ',
+    name: 'Bản đồ',
+    href: '/map',
     showInSidebar: true,
-    children: [
-      { name: 'Todos', href: '/todos' },
-      { name: 'Todo list (no images)', href: '/todoimages' },
-      { name: 'Todo with images', href: '/todowithimage' },
-      { name: 'TodoImageGrok', href: '/todoImageGrok' },
-    ],
   },
   {
     name: 'Environments',
