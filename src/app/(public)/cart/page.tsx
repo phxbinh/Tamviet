@@ -3,30 +3,37 @@
 
 import { useState } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
-//import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 import { formatCurrency } from "@/utils/formatNumber";
 
 
-//import { useState } from 'react';
-//import { useCart } from "@/components/cart/CartProvider";
-import { Minus, Plus, Trash2, ShoppingBag, X, Truck, CreditCard, Headphones } from "lucide-react";
-//import { formatCurrency } from "@/utils/formatNumber";
+
+/*
+"use client";
+
+import { useState } from 'react';
+import { useCart } from "@/components/cart/CartProvider";
+import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
+import { formatCurrency } from "@/utils/formatNumber";
+*/
 
 export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse text-lg font-medium">Đang tải giỏ hàng...</div>
+      <div className="p-6 text-foreground animate-breathe-slow flex items-center justify-center min-h-screen">
+        Đang tải giỏ hàng...
       </div>
     );
   }
 
-  const subTotal = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discount = 10; // Giả định theo hình
-  const total = subTotal - discount;
+  const total = cart.items.reduce<number>(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
   async function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
@@ -34,157 +41,159 @@ export default function CartPage() {
       if (!prev) return prev;
       return {
         ...prev,
-        items: prev.items.map((i) => (i.variant_id === variantId ? { ...i, quantity } : i)),
+        items: prev.items.map((i) =>
+          i.variant_id === variantId ? { ...i, quantity } : i
+        ),
       };
     });
-    await fetch("/api/cart", { method: "PATCH", body: JSON.stringify({ variantId, quantity }) });
+
+    try {
+      await fetch("/api/cart", {
+        method: "PATCH",
+        body: JSON.stringify({ variantId, quantity }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
     fetchCart();
   }
 
   async function removeItem(variantId: string) {
     setCart((prev) => {
       if (!prev) return prev;
-      return { ...prev, items: prev.items.filter((i) => i.variant_id !== variantId) };
+      return {
+        ...prev,
+        items: prev.items.filter((i) => i.variant_id !== variantId),
+      };
     });
-    await fetch("/api/cart", { method: "DELETE", body: JSON.stringify({ variantId }) });
+
+    try {
+      await fetch("/api/cart", {
+        method: "DELETE",
+        body: JSON.stringify({ variantId }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
     fetchCart();
   }
 
   return (
-    <div className="bg-white min-h-screen font-sans">
-      {/* Header Breadcrumb */}
-      <div className="text-center py-10 bg-gray-50 border-b">
-        <h1 className="text-4xl font-bold text-gray-800">Shopping Cart</h1>
-        <p className="text-gray-500 mt-2 text-sm">Home / Shopping Cart</p>
-      </div>
+    <div className="max-w-7xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
+      <header className="flex items-center gap-2 border-b border-border pb-4">
+        <ShoppingBag className="text-primary" />
+        <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {cart.items.length === 0 ? (
+        <div className="text-center py-20 bg-card rounded-3xl border border-border animate-in fade-in">
+          <p className="text-muted-foreground italic">Giỏ hàng đang trống</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* LEFT: PRODUCT TABLE */}
-          <div className="lg:col-span-2 overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px] md:min-w-full">
-              <thead>
-                <tr className="bg-[#F6C636] text-gray-800">
-                  <th className="p-4 rounded-tl-xl font-semibold">Product</th>
-                  <th className="p-4 font-semibold">Price</th>
-                  <th className="p-4 font-semibold">Quantity</th>
-                  <th className="p-4 rounded-tr-xl font-semibold">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {cart.items.map((item) => (
-                  <tr key={item.variant_id} className="group border-b">
-                    {/* Info */}
-                    <td className="p-4 flex items-center gap-4">
-                      <button onClick={() => removeItem(item.variant_id)} className="text-gray-400 hover:text-red-500">
-                        <X size={18} />
-                      </button>
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                         <img src={item.image || "/placeholder-fruit.png"} alt={item.name} className="object-cover" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-800 leading-tight">{item.name}</p>
-                        <p className="text-xs text-gray-400 mt-1">500 g</p>
-                      </div>
-                    </td>
-                    {/* Price */}
-                    <td className="p-4 font-bold text-gray-700">{formatCurrency(item.price)}</td>
-                    {/* Qty */}
-                    <td className="p-4">
-                      <div className="flex items-center border border-gray-200 rounded-full w-max px-2 py-1">
-                        <button onClick={() => updateQty(item.variant_id, item.quantity - 1)} className="p-1 text-gray-400 hover:text-black">
-                          <Minus size={14} />
-                        </button>
-                        <span className="w-8 text-center text-sm font-bold">{item.quantity}</span>
-                        <button onClick={() => updateQty(item.variant_id, item.quantity + 1)} className="p-1 text-gray-400 hover:text-black">
-                          <Plus size={14} />
-                        </button>
-                      </div>
-                    </td>
-                    {/* Subtotal */}
-                    <td className="p-4 font-bold text-gray-800">{formatCurrency(item.price * item.quantity)}</td>
+          {/* DANH SÁCH SẢN PHẨM (BẢNG) */}
+          <div className="lg:col-span-8 overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto border border-border rounded-2xl bg-card">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th className="p-4 font-semibold text-sm">Sản phẩm</th>
+                    <th className="p-4 font-semibold text-sm">Giá</th>
+                    <th className="p-4 font-semibold text-sm">Số lượng</th>
+                    <th className="p-4 font-semibold text-sm text-right">Tổng</th>
+                    <th className="p-4"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  {cart.items.map((item) => (
+                    <tr key={item.variant_id} className="hover:bg-muted/10 transition-colors">
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          {/* Image Placeholder */}
+                          <div className="w-12 h-12 bg-muted rounded-md flex-shrink-0" />
+                          <span className="font-medium line-clamp-1">{item.name}</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm opacity-80">{formatCurrency(item.price)}</td>
+                      <td className="p-4">
+                        <div className="flex items-center border border-border rounded-lg w-fit bg-background">
+                          <button
+                            onClick={() => updateQty(item.variant_id, item.quantity - 1)}
+                            className="p-2 hover:text-primary disabled:opacity-30"
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-8 text-center text-sm font-bold">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQty(item.variant_id, item.quantity + 1)}
+                            className="p-2 hover:text-primary"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="p-4 text-right font-bold text-primary">
+                        {formatCurrency(item.price * item.quantity)}
+                      </td>
+                      <td className="p-4 text-right">
+                        <button
+                          onClick={() => removeItem(item.variant_id)}
+                          className="p-2 text-red-500/50 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            {/* Coupon Section */}
-            <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex w-full md:w-auto border border-gray-200 rounded-full overflow-hidden">
-                <input type="text" placeholder="Coupon Code" className="px-6 py-3 outline-none flex-1 text-sm" />
-                <button className="bg-[#1D8252] text-white px-8 py-3 font-semibold text-sm hover:bg-[#166641] transition-colors">
-                  Apply Coupon
-                </button>
+            {/* Mobile Card View (Dành cho màn hình nhỏ) */}
+            <div className="md:hidden space-y-4">
+              {cart.items.map((item) => (
+                <div key={item.variant_id} className="p-4 bg-card border border-border rounded-2xl space-y-3">
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-bold">{item.name}</h3>
+                    <button onClick={() => removeItem(item.variant_id)} className="text-red-500/50">
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center border border-border rounded-lg bg-background">
+                      <button onClick={() => updateQty(item.variant_id, item.quantity - 1)} className="p-2" disabled={item.quantity <= 1}>
+                        <Minus size={12} />
+                      </button>
+                      <span className="px-2 text-sm">{item.quantity}</span>
+                      <button onClick={() => updateQty(item.variant_id, item.quantity + 1)} className="p-2">
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                    <span className="font-bold text-primary">{formatCurrency(item.price * item.quantity)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FORM THANH TOÁN (STICKY) */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-6 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
+              <div className="flex justify-between items-center border-b border-border pb-4">
+                <span className="text-lg opacity-70">Tổng cộng</span>
+                <span className="text-3xl font-black text-primary">
+                  {formatCurrency(total)}
+                </span>
               </div>
-              <button className="text-[#1D8252] font-semibold border-b-2 border-[#1D8252] pb-1">
-                Clear Shopping Cart
-              </button>
+              <CheckoutForm /> 
             </div>
           </div>
 
-          {/* RIGHT: ORDER SUMMARY */}
-          <div className="lg:col-span-1">
-            <div className="border border-gray-100 rounded-2xl p-8 bg-white shadow-sm ring-1 ring-gray-900/5">
-              <h2 className="text-xl font-bold mb-6 text-gray-800 border-b pb-4">Order Summary</h2>
-              <div className="space-y-4 text-gray-500 font-medium">
-                <div className="flex justify-between">
-                  <span>Items</span>
-                  <span className="text-gray-900 font-bold">{cart.items.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sub Total</span>
-                  <span className="text-gray-900 font-bold">{formatCurrency(subTotal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="text-gray-900 font-bold">$00.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Taxes</span>
-                  <span className="text-gray-900 font-bold">$00.00</span>
-                </div>
-                <div className="flex justify-between text-red-500">
-                  <span>Coupon Discount</span>
-                  <span className="font-bold">-${discount}.00</span>
-                </div>
-                <div className="flex justify-between text-xl border-t pt-6 text-gray-900 font-black">
-                  <span>Total</span>
-                  <span className="text-[#1D8252]">{formatCurrency(total)}</span>
-                </div>
-              </div>
-              <button className="w-full bg-[#1D8252] text-white rounded-full py-4 mt-8 font-bold hover:bg-[#166641] transition-all shadow-lg shadow-green-100">
-                Proceed to Checkout
-              </button>
-            </div>
-          </div>
         </div>
-
-        {/* FOOTER INFO */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 border-t pt-10">
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-yellow-100 rounded-xl text-yellow-600"><Truck size={24} /></div>
-            <div>
-              <h4 className="font-bold text-gray-800">Free Shipping</h4>
-              <p className="text-sm text-gray-500">Free shipping for orders above $50</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-yellow-100 rounded-xl text-yellow-600"><CreditCard size={24} /></div>
-            <div>
-              <h4 className="font-bold text-gray-800">Flexible Payment</h4>
-              <p className="text-sm text-gray-500">Multiple secure payment options</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="p-4 bg-yellow-100 rounded-xl text-yellow-600"><Headphones size={24} /></div>
-            <div>
-              <h4 className="font-bold text-gray-800">24x7 Support</h4>
-              <p className="text-sm text-gray-500">We support online all days.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -192,7 +201,11 @@ export default function CartPage() {
 
 
 
-// File gốc
+
+
+
+
+
 //export default 
 function CartPage__() {
   const { cart, setCart, fetchCart, loading } = useCart();
