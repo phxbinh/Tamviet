@@ -53,15 +53,13 @@ export default function OrdersPage() {
 import { useOrders } from "@/hooks/useOrders";
 import Link from "next/link";
 import { ShoppingBag, Calendar, CreditCard, ChevronRight } from "lucide-react";
+import SkeletonOrders from "./SkeletonOrders";
+
 
 export default function OrdersPage() {
   const { orders, loading } = useOrders();
 
-  if (loading) return (
-    <div className="p-6 text-foreground animate-breathe-slow flex items-center justify-center min-h-screen">
-      Đang tải danh sách đơn hàng...
-    </div>
-  );
+  if (loading) return <SkeletonOrders />;
 
   if (orders.length === 0) {
     return (
@@ -73,7 +71,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 bg-background text-foreground transition-colors duration-300">
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
