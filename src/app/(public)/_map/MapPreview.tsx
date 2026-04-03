@@ -9,7 +9,7 @@ interface Props {
   address: string;
 }
 
-function MapPreview({
+export default function MapPreview({
   lat,
   lng,
   shopName,
