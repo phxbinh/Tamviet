@@ -9,8 +9,8 @@ export async function getClientData() {
   const ip = forwarded ? forwarded.split(',')[0] : 'Unknown';
 
   // Lấy vị trí từ Vercel Edge
-  const rawCity = headerList.get('x-vercel-ip-city') || 'Ho Chi Minh City';
-  const country = headerList.get('x-vercel-ip-country') || 'VN';
+  const rawCity = headerList.get('x-vercel-ip-city') || 'Not found - City';
+  const country = headerList.get('x-vercel-ip-country') || 'Not found - Country';
   
   // Fix lỗi %20 ngay tại đây để Client nhận data sạch
   const city = decodeURIComponent(rawCity).replace(/\+/g, ' ');
