@@ -39,7 +39,7 @@ const PolicyAccordion = () => {
     <section className="w-full bg-background text-foreground py-12 transition-colors duration-300 border-t border-border">
       <div className="max-w-4xl mx-auto px-4">
         
-        {/* Header - Style đồng bộ với CSS biến số 2 */}
+        {/* Header - Style đồng bộ với CSS biến số 2 */} {/*
         <div className="mb-8 border-b border-border pb-6">
            <h2 className="text-xl font-bold tracking-wider uppercase flex items-center gap-3">
              <div className="p-2 rounded-lg bg-primary/10">
@@ -51,6 +51,7 @@ const PolicyAccordion = () => {
              Mọi hoạt động của chúng tôi đều dựa trên sự đồng thuận và minh bạch tuyệt đối.
            </p>
         </div>
+*/}
 
         {/* Accordion List */}
         <div className="flex flex-col">
