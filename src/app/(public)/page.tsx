@@ -29,7 +29,7 @@ export default async function HomePage() {
           />
         </div>
       ))}
-    </div>
+    </div> {/*
     <div className="max-w-3xl mx-auto p-1">
         <StoreMap 
           shopName="Tâm Việt"
@@ -37,7 +37,7 @@ export default async function HomePage() {
           lng={106.656222} 
           address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
         />
-    </div>
+    </div>*/}
     <div className="max-w-3xl mx-auto p-1">
         <MapPreview 
           shopName="Tâm Việt"
