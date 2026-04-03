@@ -23,6 +23,16 @@ export default function MapsPage() {
         lng={106.656222} 
         address="319/22 Đ. Lê Văn Thọ, Phường 9, Thông Tây Hội, Hồ Chí Minh"
       />
+      <StoreMap
+        lat={lat}
+        lng={lng}
+        shopName={decodeURIComponent(shopName)}
+        address={decodeURIComponent(address)}
+      />
     </div>
   );
 }
+
+
+
+
