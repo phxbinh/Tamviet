@@ -216,63 +216,54 @@ export default function OrderDetailPage() {
       </div>
 
       {/* TIMELINE TRẠNG THÁI */}
-      <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm animate-in fade-in">
+      <div className="bg-card border border-border rounded-3xl p-8 md:p-10 animate-in fade-in">
         <div className="relative flex justify-between items-center max-w-4xl mx-auto px-2">
           
-          {/* Thanh nền (Line Background) */}
-          <div className="absolute top-5 left-0 w-full h-[2px] bg-border -translate-y-1/2 z-0" />
+          {/* Thanh nối nền */}
+          <div className="absolute top-4 left-0 w-full h-[1px] bg-border -translate-y-1/2 z-0" />
           
-          {/* Thanh trạng thái chạy (Active Line) */}
+          {/* Thanh nối active */}
           <div 
-            className="absolute top-5 left-0 h-[2px] bg-primary -translate-y-1/2 z-0 transition-all duration-1000 ease-in-out" 
+            className="absolute top-4 left-0 h-[1px] bg-primary -translate-y-1/2 z-0 transition-all duration-700" 
             style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
           />
 
           {steps.map((step, index) => {
             const isCompleted = index <= currentStepIndex;
-            const isCurrent = index === currentStepIndex;
 
             return (
-              <div key={step} className="relative z-10 flex flex-col items-center gap-4">
-                {/* Icon Container */}
+              <div key={step} className="relative z-10 flex flex-col items-center gap-3">
+                {/* Dot/Icon */}
                 <div 
                   className={`
-                    w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500
-                    /* Tạo vòng đệm trắng bằng ring thay vì border dày */
-                    ring-4 ring-card 
+                    w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300
+                    border bg-card
                     ${isCompleted 
-                      ? 'bg-primary text-background shadow-[0_0_15px_rgba(var(--primary),0.3)]' 
-                      : 'bg-muted text-muted-foreground'
+                      ? 'border-primary text-primary' 
+                      : 'border-border text-muted-foreground/30'
                     }
-                    ${isCurrent ? 'scale-125 ring-primary/20 shadow-lg' : 'scale-100'}
                   `}
                 >
                   {isCompleted ? (
-                    <CheckCircle2 size={18} strokeWidth={3} />
+                    <CheckCircle2 size={16} />
                   ) : (
-                    <div className="w-2 h-2 rounded-full bg-muted-foreground/40" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-current" />
                   )}
                 </div>
 
                 {/* Text Label */}
-                <div className="flex flex-col items-center">
-                   <span className={`
-                    text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] transition-colors duration-300
-                    ${isCompleted ? 'text-primary' : 'text-muted-foreground opacity-40'}
-                    ${isCurrent ? 'opacity-100 scale-105' : ''}
-                  `}>
-                    {step}
-                  </span>
-                  {/* Chấm nhỏ bên dưới chữ cho step hiện tại */}
-                  {isCurrent && (
-                    <div className="w-1 h-1 bg-primary rounded-full mt-1 animate-pulse" />
-                  )}
-                </div>
+                <span className={`
+                  text-[10px] font-bold uppercase tracking-wider
+                  ${isCompleted ? 'text-foreground' : 'text-muted-foreground opacity-40'}
+                `}>
+                  {step}
+                </span>
               </div>
             );
           })}
         </div>
       </div>
+
 
 
       {/* BẢNG SẢN PHẨM */}
