@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ShieldCheck, LogIn, UserPlus, LogOut, User } from "lucide-react";
 import { UserAvatar } from '@/components/dashboard/UserAvatar';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { signOut } from '@/lib/authActions/auth';
 
 interface UserMenuProps {
   user: any;
@@ -51,7 +52,7 @@ export const UserMenuCapsule = ({ user }: UserMenuProps) => {
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild>
-                <Link href="/register" className="flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none hover:bg-neon-cyan/10 hover:text-neon-cyan rounded-lg transition-colors cursor-pointer">
+                <Link href="/signup" className="flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none hover:bg-neon-cyan/10 hover:text-neon-cyan rounded-lg transition-colors cursor-pointer">
                   <UserPlus size={14} /> Đăng ký
                 </Link>
               </DropdownMenu.Item>
@@ -59,7 +60,7 @@ export const UserMenuCapsule = ({ user }: UserMenuProps) => {
           ) : (
             <>
               <DropdownMenu.Item asChild>
-                <Link href="/profile" className="flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none hover:bg-neon-cyan/10 hover:text-neon-cyan rounded-lg transition-colors cursor-pointer">
+                <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none hover:bg-neon-cyan/10 hover:text-neon-cyan rounded-lg transition-colors cursor-pointer">
                   <User size={14} /> Tài khoản
                 </Link>
               </DropdownMenu.Item>
@@ -67,7 +68,7 @@ export const UserMenuCapsule = ({ user }: UserMenuProps) => {
               <DropdownMenu.Separator className="h-px bg-border my-1" />
               
               <DropdownMenu.Item 
-                onClick={() => {/* Gọi hàm logout của bạn ở đây */}}
+                onClick={() => signOut()}
                 className="flex items-center gap-2 px-3 py-2 text-xs font-medium outline-none hover:bg-red-500/10 hover:text-red-500 rounded-lg transition-colors cursor-pointer"
               >
                 <LogOut size={14} /> Đăng xuất
@@ -79,3 +80,4 @@ export const UserMenuCapsule = ({ user }: UserMenuProps) => {
     </DropdownMenu.Root>
   );
 };
+
