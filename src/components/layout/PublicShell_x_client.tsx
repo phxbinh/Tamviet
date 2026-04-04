@@ -1,4 +1,4 @@
-Số 1:
+
 // src/components/layout/PublicShell.tsx
 "use client";
 
