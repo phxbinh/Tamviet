@@ -111,14 +111,14 @@ export default function PublicShell({ children, user }: { children: React.ReactN
                 <UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="sm" />
               </div>
               
-              <div className="hidden sm:flex flex-col justify-center max-w-[100px]">
+              <div className="sm:flex flex-col justify-center max-w-[100px]">
                 <span className="text-[11px] font-semibold leading-tight truncate">
                   {user?.email?.split('@')[0] || 'Guest'}
                 </span>
                 <div className="flex items-center gap-1 opacity-70">
                   <ShieldCheck size={10} className="text-neon-cyan" />
                   <span className="text-[8px] uppercase font-bold tracking-tighter">
-                    {user?.role || 'User'}
+                    {user?.role || ''}
                   </span>
                 </div>
               </div>
