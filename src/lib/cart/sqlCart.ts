@@ -292,3 +292,38 @@ export async function getCart(): Promise<{
   };
 }
 
+// Lấy totals product ở carts table
+export async function getCartAllItems(): Promise<{
+  cartId: string;
+  items: CartItemRow[];
+  totalQuantity: number;
+}> {
+  const identity = await getCartIdentity();
+  const cart = await getOrCreateCart(identity);
+
+  const rows = await sql`
+    SELECT 
+      ci.quantity,
+      pv.id as variant_id,
+      pv.price,
+      pv.stock,
+      p.name,
+      p.slug,
+      SUM(ci.quantity) OVER() as total_quantity
+    FROM cart_items ci
+    JOIN product_variants pv ON pv.id = ci.variant_id
+    JOIN products p ON p.id = pv.product_id
+    WHERE ci.cart_id = ${cart.id}
+  `;
+
+  const items = rows as CartItemRow[];
+
+  const totalQuantity =
+    rows.length > 0 ? Number(rows[0].total_quantity) : 0;
+
+  return {
+    cartId: cart.id,
+    items,
+    totalQuantity,
+  };
+}
