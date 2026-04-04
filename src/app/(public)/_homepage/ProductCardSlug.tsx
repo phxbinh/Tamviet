@@ -144,7 +144,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
               alt={name}
               className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.03]"
               loading="eager"
-              priority
+              fetchPriority="high"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-foreground/10">
