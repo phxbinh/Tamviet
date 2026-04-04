@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { addToCart, updateCartItem, removeCartItem, getCart } from "@/lib/cart/sqlCart";
+import { addToCart, updateCartItem, removeCartItem, getCart, getCartAllItems } from "@/lib/cart/sqlCart";
 
 export async function GET() {
-  const data = await getCart();
+  //const data = await getCart();
+  const data = await getCartAllItems();
   return NextResponse.json(data);
 }
 
