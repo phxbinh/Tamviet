@@ -10,6 +10,7 @@ import { Menu, X, ShoppingCart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
 import { UserAvatar } from '@/components/dashboard/UserAvatar';
+import { useCart } from "@/components/cart/CartProvider";
 
 /* Cách dùng ở App route 
 import { getCurrentUser } from '@/lib/authActions/getUser';
@@ -31,6 +32,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
 export default function PublicShell({ children, user }: { children: React.ReactNode; user: any }) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeType, setActiveType] = useState("Tất cả");
+  // Lấy số lượng sản phẩm trong giỏ hàng
+  const { cart, loading } = useCart();
+  const totalQty = cart?.totalQuantity ?? 0;
 
   return (
     <div className="flex min-h-svh w-full flex-col lg:flex-row 
@@ -97,13 +101,26 @@ export default function PublicShell({ children, user }: { children: React.ReactN
           {/* Nhóm bên phải: Cart & User Profile */}
           <div className="flex items-center gap-1 sm:gap-3">
             
-            {/* Cart Icon */}
+            {/* Cart Icon */} {/*
             <Link href="/cart" className="p-2 relative hover:bg-foreground/5 rounded-full transition-colors"> 
               <ShoppingCart size={20} className="text-foreground/80" />
               <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
                 0
               </span>
-            </Link>
+            </Link>*/}
+{/* Cart Icon */}
+<Link
+  href="/cart"
+  className="p-2 relative hover:bg-foreground/5 rounded-full transition-colors"
+>
+  <ShoppingCart size={20} className="text-foreground/80" />
+
+  {!loading && totalQty > 0 && (
+    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neon-cyan text-[9px] text-black font-bold border-2 border-background">
+      {totalQty}
+    </span>
+  )}
+</Link>
         
             {/* User Profile Capsule */}
             <div className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-secondary/50 border border-border/50 hover:border-neon-cyan/30 transition-all cursor-pointer">
