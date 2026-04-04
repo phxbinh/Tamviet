@@ -36,7 +36,7 @@ const PolicyAccordion = () => {
   ];
 
   return (
-    <section className="w-full bg-background text-foreground py-12 transition-colors duration-300 border-t border-border">
+    <section className="w-full bg-background text-foreground py-4 transition-colors duration-300 border-t border-border">
       <div className="max-w-4xl mx-auto px-4">
         
         {/* Header - Style đồng bộ với CSS biến số 2 */} {/*
