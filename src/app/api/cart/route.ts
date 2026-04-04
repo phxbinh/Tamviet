@@ -3,7 +3,8 @@ import { addToCart, updateCartItem, removeCartItem, getCart, getCartAllItems } f
 
 export async function GET() {
   //const data = await getCart();
-  const data = await getCartAllItems();
+  //const data = await getCartAllItems();
+  const data = await getCartAllItems_();
   return NextResponse.json(data);
 }
 
