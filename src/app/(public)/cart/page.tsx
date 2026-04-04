@@ -169,6 +169,7 @@ export default function CartPage() {
 
             {/* Mobile Card View (Dành cho màn hình nhỏ) */}
             <div className="md:hidden space-y-4">
+{/*
               {cart.items.map((item) => (
                 <div key={item.variant_id} className="p-4 bg-card border border-border rounded-2xl space-y-3">
                   <div className="flex justify-between items-start">
@@ -191,6 +192,79 @@ export default function CartPage() {
                   </div>
                 </div>
               ))}
+*/
+
+
+{cart.items.map((item) => (
+  <div
+    key={item.variant_id}
+    className="p-4 bg-card border border-border rounded-2xl flex gap-4"
+  >
+    {/* 👇 IMAGE LEFT */}
+    <div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
+      {item.image_item ? (
+        <Image
+          src={getPublicImageUrl(item.image_item)}
+          alt={item.name}
+          fill
+          sizes="48px"
+          className="object-cover"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+          No image
+        </div>
+      )}
+    </div>
+
+    {/* 👇 CONTENT RIGHT */}
+    <div className="flex-1 space-y-3">
+      <div className="flex justify-between items-start">
+        <h3 className="font-bold line-clamp-2">{item.name}</h3>
+        <button
+          onClick={() => removeItem(item.variant_id)}
+          className="text-red-500/50"
+        >
+          <Trash2 size={18} />
+        </button>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <div className="flex items-center border border-border rounded-lg bg-background">
+          <button
+            onClick={() =>
+              updateQty(item.variant_id, item.quantity - 1)
+            }
+            className="p-2"
+            disabled={item.quantity <= 1}
+          >
+            <Minus size={12} />
+          </button>
+
+          <span className="px-2 text-sm">{item.quantity}</span>
+
+          <button
+            onClick={() =>
+              updateQty(item.variant_id, item.quantity + 1)
+            }
+            className="p-2"
+          >
+            <Plus size={12} />
+          </button>
+        </div>
+
+        <span className="font-bold text-primary">
+          {formatCurrency(item.price * item.quantity)}
+        </span>
+      </div>
+    </div>
+  </div>
+))}
+
+
+
+
+
             </div>
           </div>
 
