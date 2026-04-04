@@ -36,6 +36,7 @@ export async function GET(
 
     const order = orderRes.rows[0];
 
+/*
     const itemsRes = await client.query(
       `
       SELECT 
@@ -51,6 +52,45 @@ export async function GET(
       `,
       [id]
     );
+*/
+
+const itemsRes = await client.query(
+  `
+  SELECT 
+    oi.variant_id,
+    oi.quantity,
+    oi.price_at_time,
+    p.name,
+    p.slug,
+
+    -- 👇 thêm ảnh
+    img.image_url as image_item
+
+  FROM order_items oi
+
+  JOIN product_variants pv 
+    ON pv.id = oi.variant_id
+
+  JOIN products p 
+    ON p.id = pv.product_id
+
+  -- 👇 lấy đúng 1 ảnh
+  LEFT JOIN LATERAL (
+    SELECT image_url
+    FROM product_images
+    WHERE 
+      variant_id = pv.id
+      OR (product_id = p.id AND variant_id IS NULL)
+    ORDER BY 
+      (variant_id IS NOT NULL) DESC,
+      id ASC
+    LIMIT 1
+  ) img ON true
+
+  WHERE oi.order_id = $1
+  `,
+  [id]
+);
 
     return Response.json({
       ...order,
