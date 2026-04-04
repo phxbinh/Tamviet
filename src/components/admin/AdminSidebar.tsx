@@ -32,7 +32,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-  LogOut, Zap, ShieldCheck, ChevronLeft, LayoutDashboard, 
+  LogOut, Zap, ShieldCheck, ChevronLeft, LayoutDashboard, BadgeCheck,
   UserCircle, Layers, Package, Beaker, FolderTree, 
   Fingerprint, TableProperties, GitBranch, FileText, Settings2 
 } from 'lucide-react';
@@ -58,6 +58,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: TableProperties, label: 'Product type attributes', href: '/admin/product-type-attributes' },
     { icon: GitBranch, label: 'Product variants', href: '/admin/product-variants' },
     { icon: FileText, label: 'Details all products', href: '/admin/product-details' },
+    { icon: BadgeCheck, label: 'Healthy order cart', href: '/admin/order-cart' },
     { icon: Settings2, label: 'Cài đặt', href: '/admin/setting' },
   ];
 
