@@ -210,7 +210,7 @@ export async function middleware(request: NextRequest) {
   // 2. Định nghĩa các nhóm Route
   const isGuestOnlyPage = ['/login', '/signup', '/forgot-password'].includes(pathname)
   const isAdminRoute = pathname.startsWith('/admin')
-  const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/welcome') || isAdminRoute
+  const isProtectedRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/welcomemot') || isAdminRoute
 
   // 3. --- LOGIC PHÂN QUYỀN ---
 
