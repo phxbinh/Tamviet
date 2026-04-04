@@ -1,4 +1,4 @@
-import { auditCartAndOrders } from "@/lib/cart/auditCartOder";
+import { auditCartAndOrders } from "@/lib/cart/auditCartOrder";
 import { Section } from "./Section";
 
 export default async function SystemHealthPage() {
