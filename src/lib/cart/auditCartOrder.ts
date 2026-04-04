@@ -73,6 +73,7 @@ export async function auditCartAndOrders() {
     WHERE oa.id IS NULL
   `;
 
+/*
   const paymentMismatch = await sql`
     SELECT 
       o.id,
@@ -83,7 +84,7 @@ export async function auditCartAndOrders() {
     GROUP BY o.id
     HAVING COALESCE(SUM(op.amount), 0) <> o.total_price
   `;
-
+*/
   // ========================
   // 📊 RESULT
   // ========================
@@ -100,7 +101,7 @@ export async function auditCartAndOrders() {
       wrongTotalOrders,
       invalidOrderItems,
       ordersWithoutAddress,
-      paymentMismatch,
+      //paymentMismatch,
     },
   };
 }
