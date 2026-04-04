@@ -3,12 +3,15 @@ import { useState, useMemo } from "react";
 import { ProductFull } from "../types";
 import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
+import { useCart } from "@/components/cart/CartProvider";
+
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
+  const { fetchCart } = useCart();
 /*
   const selectedVariant = useMemo(() => {
     if (Object.keys(selected).length < attributes.length) return null;
@@ -43,6 +46,8 @@ async function handleAddToCart() {
         quantity: 1,
       }),
     });
+
+    await fetchCart();
 
   } catch (err) {
     console.error("Add to cart failed", err);
