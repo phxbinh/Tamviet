@@ -6,7 +6,8 @@ import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
 import { formatCurrency } from "@/utils/formatNumber";
-
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
+import Image from "next/image";
 
 
 /*
@@ -112,7 +113,21 @@ export default function CartPage() {
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {/* Image Placeholder */}
-                          <div className="w-12 h-12 bg-muted rounded-md flex-shrink-0" />
+<div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
+  {item.image_item ? (
+    <Image
+      src={getPublicImageUrl(item.image_item)}
+      alt={item.name}
+      fill
+      sizes="48px"
+      className="object-cover"
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+      No image
+    </div>
+  )}
+</div>
                           <span className="font-medium line-clamp-1">{item.name}</span>
                         </div>
                       </td>
