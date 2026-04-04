@@ -10,6 +10,7 @@ import { Menu, X, ShoppingCart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
 import { UserAvatar } from '@/components/dashboard/UserAvatar';
+import { CartProvider } from "@/components/cart/CartProvider";
 import { useCart } from "@/components/cart/CartProvider";
 
 /* Cách dùng ở App route 
@@ -109,6 +110,7 @@ export default function PublicShell({ children, user }: { children: React.ReactN
               </span>
             </Link>*/}
 {/* Cart Icon */}
+<CartProvider>
 <Link
   href="/cart"
   className="p-2 relative hover:bg-foreground/5 rounded-full transition-colors"
@@ -121,7 +123,8 @@ export default function PublicShell({ children, user }: { children: React.ReactN
     </span>
   )}
 </Link>
-        
+</CartProvider>
+
             {/* User Profile Capsule */}
             <div className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-secondary/50 border border-border/50 hover:border-neon-cyan/30 transition-all cursor-pointer">
               <div className="ring-2 ring-background rounded-full overflow-hidden">
