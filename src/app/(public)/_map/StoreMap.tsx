@@ -35,7 +35,7 @@ const StoreMap = ({ address, lat, lng, shopName }: StoreMapProps) => {
       {/* Map */}
       <iframe
         title="Store Location"
-        className="w-full h-[720px] border-0 shadow-inner rounded-t-2xl rounded-b-none"
+        className="w-full h-[580px] border-0 shadow-inner rounded-t-2xl rounded-b-none"
         loading="lazy"
         src={mapUrl}
       />
