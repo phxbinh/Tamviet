@@ -157,6 +157,8 @@ import { ChevronLeft, Package, Calendar, Tag, CheckCircle2 } from "lucide-react"
 import Link from "next/link";
 import { formatCurrency } from "@/utils/formatNumber";
 import SkeletonOrderDetail from "./SkeletonOrderDetail";
+import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
+import Image from "next/image";
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -283,7 +285,22 @@ export default function OrderDetailPage() {
                 <tr key={item.variant_id} className="hover:bg-background/50 transition-colors">
                   <td className="p-5">
                     <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-muted rounded-xl flex-shrink-0 border border-border" />
+                      
+<div className="w-14 h-14 relative bg-muted rounded-xl flex-shrink-0 border border-border overflow-hidden">
+  {item.image_item ? (
+    <Image
+      src={getPublicImageUrl(item.image_item)}
+      alt={item.name}
+      fill
+      sizes="56px"
+      className="object-cover"
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+      No image
+    </div>
+  )}
+</div>
                       <div>
                         <p className="font-bold text-gray-800 dark:text-gray-200 leading-tight">{item.name}</p>
                         <p className="text-[10px] opacity-50 uppercase mt-1 font-bold">Variant: {item.variant_id.slice(0, 5)}</p>
