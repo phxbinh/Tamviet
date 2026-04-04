@@ -22,6 +22,7 @@ export type CartItem = {
 export type Cart = {
   cartId: string;
   items: CartItem[];
+  totalQuantity?: number;
 };
 
 type CartContextType = {
