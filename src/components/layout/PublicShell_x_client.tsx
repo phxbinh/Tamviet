@@ -110,7 +110,6 @@ export default function PublicShell({ children, user }: { children: React.ReactN
               </span>
             </Link>*/}
 {/* Cart Icon */}
-<CartProvider>
 <Link
   href="/cart"
   className="p-2 relative hover:bg-foreground/5 rounded-full transition-colors"
@@ -123,7 +122,7 @@ export default function PublicShell({ children, user }: { children: React.ReactN
     </span>
   )}
 </Link>
-</CartProvider>
+
 
             {/* User Profile Capsule */}
             <div className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-secondary/50 border border-border/50 hover:border-neon-cyan/30 transition-all cursor-pointer">
