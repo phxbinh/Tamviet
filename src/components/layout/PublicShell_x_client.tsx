@@ -10,8 +10,13 @@ import { Menu, X, ShoppingCart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
 import { UserAvatar } from '@/components/dashboard/UserAvatar';
-import { CartProvider } from "@/components/cart/CartProvider";
+
+// Cập nhật số lượng sản phẩm ở icon giỏ hàng
 import { useCart } from "@/components/cart/CartProvider";
+
+// Trong PublicShell.tsx
+import { UserMenuCapsule } from './UserMenuCapsule';
+
 
 /* Cách dùng ở App route 
 import { getCurrentUser } from '@/lib/authActions/getUser';
@@ -124,7 +129,7 @@ export default function PublicShell({ children, user }: { children: React.ReactN
 </Link>
 
 
-            {/* User Profile Capsule */}
+            {/* User Profile Capsule */} {/*
             <div className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-secondary/50 border border-border/50 hover:border-neon-cyan/30 transition-all cursor-pointer">
               <div className="ring-2 ring-background rounded-full overflow-hidden">
                 <UserAvatar email={user?.email || ''} avatarUrl={user?.avatar_url} size="sm" />
@@ -141,7 +146,9 @@ export default function PublicShell({ children, user }: { children: React.ReactN
                   </span>
                 </div>
               </div>
-            </div>
+            </div>*/}
+
+            <UserMenuCapsule user={user} />
         
           </div>
         </header>
