@@ -8,11 +8,12 @@ export async function auditCartAndOrders() {
   // ========================
 
   const cartsWithoutItems = await sql`
-    SELECT c.id
-    FROM carts c
-    LEFT JOIN cart_items ci ON ci.cart_id = c.id
-    WHERE ci.id IS NULL
+    SELECT c.id, c.user_id, c.guest_id, c.created_at, c.updated_at
+    FROM carts c 
+    LEFT JOIN cart_items ci ON ci.cart_id = c.id 
+    WHERE ci.id IS NULL 
       AND c.status = 'active'
+      AND (c.user_id IS NOT NULL OR c.guest_id IS NOT NULL);   
   `;
 
   const duplicateUserCarts = await sql`
