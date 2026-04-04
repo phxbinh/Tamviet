@@ -192,7 +192,7 @@ export default function CartPage() {
                   </div>
                 </div>
               ))}
-*/
+*/}
 
 
 {cart.items.map((item) => (
