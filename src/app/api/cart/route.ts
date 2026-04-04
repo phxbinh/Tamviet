@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addToCart, updateCartItem, removeCartItem, getCart, getCartAllItems } from "@/lib/cart/sqlCart";
+import { addToCart, updateCartItem, removeCartItem, getCart, getCartAllItems, getCartAllItems_ } from "@/lib/cart/sqlCart";
 
 export async function GET() {
   //const data = await getCart();
