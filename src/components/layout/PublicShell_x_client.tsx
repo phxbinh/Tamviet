@@ -9,7 +9,7 @@ import { Toast } from "@/components/Toast";
 import { Menu, X, ShoppingCart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
-import { UserAvatar } from '@/dashboard/UserAvatar';
+import { UserAvatar } from '@/components/dashboard/UserAvatar';
 
 /* Cách dùng ở App route 
 import { getCurrentUser } from '@/lib/authActions/getUser';
