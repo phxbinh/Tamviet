@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import AppShell from "@/components/layout/AppShell";
+import { CartProvider } from "@/components/cart/CartProvider";
 
 // src/app/layout.tsx
 import { InstallPrompt } from "@/components/InstallPrompt"; // Đường dẫn đến file bạn vừa tạo
@@ -80,8 +81,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AppShell>{children}</AppShell>
-          {/* <InstallPrompt /> */}
+          <CartProvider>
+            <AppShell>{children}</AppShell>
+            {/* <InstallPrompt /> */}
+          </CartProvider>
         </ThemeProvider>
 
         <ServiceWorkerRegister />
