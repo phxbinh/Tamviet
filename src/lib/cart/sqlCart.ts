@@ -327,3 +327,72 @@ export async function getCartAllItems(): Promise<{
     totalQuantity,
   };
 }
+
+// Lấy totals product ở carts table + imageItem
+export type CartItemRow_ = {
+  quantity: number;
+  variant_id: string;
+  price: number;
+  stock: number;
+  name: string;
+  slug: string;
+  image_item: string | null; // 👈 thêm dòng này
+};
+export async function getCartAllItems_(): Promise<{
+  cartId: string;
+  items: CartItemRow[];
+  totalQuantity: number;
+}> {
+  const identity = await getCartIdentity();
+  const cart = await getOrCreateCart(identity);
+
+  const rows = await sql`
+    SELECT 
+      ci.quantity,
+      pv.id as variant_id,
+      pv.price,
+      pv.stock,
+      p.name,
+      p.slug,
+
+      -- 👇 thêm imageItem
+      img.image_url as image_item,
+
+      SUM(ci.quantity) OVER() as total_quantity
+
+    FROM cart_items ci
+
+    JOIN product_variants pv 
+      ON pv.id = ci.variant_id
+
+    JOIN products p 
+      ON p.id = pv.product_id
+
+    -- 👇 lấy đúng 1 ảnh (variant ưu tiên)
+    LEFT JOIN LATERAL (
+      SELECT image_url
+      FROM product_images
+      WHERE 
+        variant_id = pv.id
+        OR (product_id = p.id AND variant_id IS NULL)
+      ORDER BY 
+        (variant_id IS NOT NULL) DESC,
+        id ASC
+      LIMIT 1
+    ) img ON true
+
+    WHERE ci.cart_id = ${cart.id}
+  `;
+
+  const items = rows as CartItemRow_[];
+
+  const totalQuantity =
+    rows.length > 0 ? Number(rows[0].total_quantity) : 0;
+
+  return {
+    cartId: cart.id,
+    items,
+    totalQuantity,
+  };
+}
+
