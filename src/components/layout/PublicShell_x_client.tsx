@@ -116,7 +116,7 @@ export default function PublicShell({ children, user }: { children: React.ReactN
                   {user?.email?.split('@')[0] || 'Guest'}
                 </span>
                 <div className="flex items-center gap-1 opacity-70">
-                  <ShieldCheck size={10} className="text-neon-cyan" />
+                  {user?.role && (<ShieldCheck size={10} className="text-neon-cyan" />)}
                   <span className="text-[8px] uppercase font-bold tracking-tighter">
                     {user?.role || ''}
                   </span>
