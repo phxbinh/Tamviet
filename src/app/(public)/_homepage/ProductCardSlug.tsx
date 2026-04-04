@@ -143,7 +143,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
               src={thumbnail_url}
               alt={name}
               className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-[1.03]"
-              loading="lazy"
+              loading="eager"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-foreground/10">
