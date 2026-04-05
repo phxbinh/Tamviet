@@ -32,6 +32,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Tài liệu', href: '/test', showInSidebar: true },
   { name: 'Sản phẩm', href: '/testSearchParam', showInSidebar: true },
+  { name: 'Blog', href: '/blog', showInSidebar: true },
 
 ];
 
