@@ -15,6 +15,7 @@ export default function ClientTracker() {
 
     // 2. Xin quyền truy cập vị trí chính xác (GPS)
     if ("geolocation" in navigator) {
+/*
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCoords({
@@ -27,7 +28,37 @@ export default function ClientTracker() {
           console.warn("Lỗi Geolocation:", error.message);
         },
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
+      );*/
+
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    setCoords({
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
+    });
+  },
+  (error) => {
+    // Thêm log này để debug trên điện thoại
+    let msg = "";
+    switch(error.code) {
+      case error.PERMISSION_DENIED: msg = "Bạn cần cho phép truy cập vị trí"; break;
+      case error.POSITION_UNAVAILABLE: msg = "Không tìm thấy sóng GPS"; break;
+      case error.TIMEOUT: msg = "Hết thời gian chờ (4G yếu)"; break;
+      default: msg = "Lỗi không xác định";
+    }
+    setGeoError(msg);
+    console.error("Lỗi chi tiết:", error);
+  },
+  { 
+    enableHighAccuracy: false, // Để False sẽ ưu tiên lấy tọa độ từ trạm phát sóng (nhanh hơn)
+    timeout: 15000,            // Tăng lên 15 giây
+    maximumAge: 30000          // Cho phép dùng lại vị trí cũ trong vòng 30s để tăng tốc
+  }
+);
+
+
+
+
     }
   }, []);
 
