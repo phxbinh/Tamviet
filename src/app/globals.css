@@ -230,3 +230,61 @@ body {
 }
 
 
+/* 5. ĐỊNH DẠNG MDX EDITOR (MATCHING THEME SỐ 2) */
+@layer base {
+  .luxury-editor {
+    /* Sử dụng biến từ hệ thống số 2 */
+    --mdx-editor-toolbar-bg: hsl(var(--card) / 0.5);
+    @apply min-h-[500px] rounded-xl border border-white/10 transition-all duration-300;
+  }
+
+  /* Toolbar Glassmorphism */
+  .luxury-editor .mdxeditor-toolbar {
+    background-color: hsl(var(--card) / 0.3) !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
+    @apply px-4 py-2 flex flex-wrap gap-1 sticky top-0 z-10;
+  }
+
+  /* Nội dung soạn thảo */
+  .luxury-editor .mdxeditor-root-content {
+    @apply p-6 lg:p-10 font-sans leading-relaxed;
+    background: transparent !important;
+  }
+
+  /* Buttons trong Toolbar */
+  .luxury-editor button[data-state="on"] {
+    background-color: hsl(var(--primary) / 0.2) !important;
+    color: hsl(var(--primary)) !important;
+  }
+
+  .luxury-editor button:hover:not([data-state="on"]) {
+    background-color: hsl(var(--foreground) / 0.05) !important;
+  }
+
+  /* Table Style matching Luxury */
+  .luxury-editor table {
+    @apply w-full border-collapse my-6 rounded-lg overflow-hidden;
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .luxury-editor th {
+    background-color: hsl(var(--foreground) / 0.05);
+    @apply p-3 text-left font-bold border-b border-[hsl(var(--border)/0.5)];
+  }
+
+  .luxury-editor td {
+    @apply p-3 border-b border-[hsl(var(--border)/0.3)];
+  }
+
+  /* List phân cấp 1.1, 1.2 logic của bạn */
+  .luxury-editor ol {
+    @apply list-decimal pl-6 space-y-2;
+  }
+  
+  .luxury-editor ul {
+    @apply list-disc pl-6 space-y-2;
+  }
+}
+
+
