@@ -60,6 +60,7 @@ import { supabase } from '@/lib/supabase/clientSupabase';
 
 
 // Logic Upload ảnh trực tiếp lên Supabase Storage
+/*
 async function imageUploadHandler_(image: File) {
   //const supabase = createClient();
   const fileExt = image.name.split('.').pop();
@@ -77,6 +78,7 @@ async function imageUploadHandler_(image: File) {
 
   return publicUrl;
 }
+*/
 
 interface EditorProps_ {
   markdown: string;
@@ -100,7 +102,7 @@ function MdxEditor_({ markdown, editorRef, onChange }: EditorProps_) {
         linkDialogPlugin(),
         tablePlugin(),
         thematicBreakPlugin(),
-        imagePlugin({ imageUploadHandler_ }),
+        imagePlugin({ imageUploadHandler }),
         toolbarPlugin({
           toolbarContents: () => (
             <div className="flex flex-wrap items-center gap-1">
