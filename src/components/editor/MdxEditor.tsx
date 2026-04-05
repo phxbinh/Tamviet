@@ -161,8 +161,7 @@ interface EditorProps {
  * COMPONENT: MdxEditor Luxury Version
  * Đã tích hợp các class từ Layer Utilities của Số 2 (animate-in, fade-in, custom-scrollbar)
  */
-//export default 
-function MdxEditor__({ markdown, editorRef, onChange }: EditorProps) {
+export default function MdxEditor({ markdown, editorRef, onChange }: EditorProps) {
   return (
     <div className="dark w-full rounded-xl overflow-hidden border border-white/10 bg-card/30 backdrop-blur-md">
       <MDXEditor
@@ -226,7 +225,8 @@ function MdxEditor__({ markdown, editorRef, onChange }: EditorProps) {
 }
 
 
-export default function MdxEditor({ markdown, editorRef, onChange }: EditorProps) {
+//export default 
+function MdxEditor__({ markdown, editorRef, onChange }: EditorProps) {
   return (
     <div className="luxury-editor-container group rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950 shadow-2xl shadow-black/80 animate-in fade-in duration-300">
       {/* Toolbar wrapper - để dễ style riêng nếu cần */}
