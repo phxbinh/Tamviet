@@ -84,7 +84,8 @@ interface EditorProps_ {
   onChange: (markdown: string) => void;
 }
 
-export default function MdxEditor_({ markdown, editorRef, onChange }: EditorProps_) {
+//export default 
+function MdxEditor_({ markdown, editorRef, onChange }: EditorProps_) {
   return (
     <MDXEditor
       ref={editorRef}
