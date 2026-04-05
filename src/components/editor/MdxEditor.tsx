@@ -161,7 +161,8 @@ interface EditorProps {
  * COMPONENT: MdxEditor Luxury Version
  * Đã tích hợp các class từ Layer Utilities của Số 2 (animate-in, fade-in, custom-scrollbar)
  */
-export default function MdxEditor({ markdown, editorRef, onChange }: EditorProps) {
+//export default 
+function MdxEditor__({ markdown, editorRef, onChange }: EditorProps) {
   return (
     <div className="dark w-full rounded-xl overflow-hidden border border-white/10 bg-card/30 backdrop-blur-md">
       <MDXEditor
@@ -223,6 +224,57 @@ export default function MdxEditor({ markdown, editorRef, onChange }: EditorProps
     </div>
   );
 }
+
+
+export default function MdxEditor({ markdown, editorRef, onChange }: EditorProps) {
+  return (
+    <div className="luxury-editor-container rounded-xl overflow-hidden animate-in fade-in">
+      <MDXEditor
+        ref={editorRef}
+        markdown={markdown}
+        onChange={onChange}
+        className="luxury-editor prose prose-invert max-w-none custom-scrollbar"
+        plugins={[
+          headingsPlugin(),
+          listsPlugin(),
+          quotePlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          tablePlugin(),
+          thematicBreakPlugin(),
+          imagePlugin({ imageUploadHandler }),
+          toolbarPlugin({
+            toolbarContents: () => (
+              <div className="flex flex-wrap items-center gap-1 p-1">
+                <UndoRedo />
+                <Separator />
+                <BoldItalicUnderlineToggles />
+                <CreateLink />
+                <Separator />
+                <ListsToggle />
+                <Separator />
+                <InsertTable />
+                <InsertImage />
+              </div>
+            )
+          })
+        ]}
+      />
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
