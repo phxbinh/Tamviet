@@ -230,89 +230,37 @@ body {
 }
 
 
-/* 5. ĐỊNH DẠNG MDX EDITOR (MATCHING THEME SỐ 2) */
+/* ============================================================
+   MDX EDITOR LUXURY THEME - ĐỒNG BỘ TAILWIND V4
+   ============================================================ */
 @layer base {
-  .luxury-editor {
-    /* Sử dụng biến từ hệ thống số 2 */
-    --mdx-editor-toolbar-bg: hsl(var(--card) / 0.5);
-    @apply min-h-[500px] rounded-xl border border-white/10 transition-all duration-300;
-  }
-
-  /* Toolbar Glassmorphism */
-  .luxury-editor .mdxeditor-toolbar {
-    background-color: hsl(var(--card) / 0.3) !important;
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
-    @apply px-4 py-2 flex flex-wrap gap-1 sticky top-0 z-10;
-  }
-
-  /* Nội dung soạn thảo */
-  .luxury-editor .mdxeditor-root-content {
-    @apply p-6 lg:p-10 font-sans leading-relaxed;
-    background: transparent !important;
-  }
-
-  /* Buttons trong Toolbar */
-  .luxury-editor button[data-state="on"] {
-    background-color: hsl(var(--primary) / 0.2) !important;
-    color: hsl(var(--primary)) !important;
-  }
-
-  .luxury-editor button:hover:not([data-state="on"]) {
-    background-color: hsl(var(--foreground) / 0.05) !important;
-  }
-
-  /* Table Style matching Luxury */
-  .luxury-editor table {
-    @apply w-full border-collapse my-6 rounded-lg overflow-hidden;
-    border: 1px solid hsl(var(--border) / 0.5);
-  }
-
-  .luxury-editor th {
-    background-color: hsl(var(--foreground) / 0.05);
-    @apply p-3 text-left font-bold border-b border-[hsl(var(--border)/0.5)];
-  }
-
-  .luxury-editor td {
-    @apply p-3 border-b border-[hsl(var(--border)/0.3)];
-  }
-
-  /* List phân cấp 1.1, 1.2 logic của bạn */
-  .luxury-editor ol {
-    @apply list-decimal pl-6 space-y-2;
-  }
-  
-  .luxury-editor ul {
-    @apply list-disc pl-6 space-y-2;
-  }
-}
-
-/* FIX ĐÀNG HOÀNG CHO MDX EDITOR */
-@layer base {
-  /* Ép màu nền cho container của Editor */
+  /* Container tổng thể bọc bên ngoài */
   .luxury-editor-container {
     background-color: hsl(var(--card) / 0.5) !important;
     border: 1px solid hsl(var(--border) / 0.5);
     color: hsl(var(--foreground)) !important;
+    backdrop-filter: blur(8px);
+    @apply rounded-xl overflow-hidden transition-all duration-300;
   }
 
-  /* Fix màu chữ trong vùng soạn thảo - Quan trọng nhất */
-  .luxury-editor .mdxeditor-root-content {
-    color: #e5e7eb !important; /* Màu xám sáng để nổi trên nền tối */
-    background-color: transparent !important;
-    line-height: 1.8;
+  /* Cấu trúc lõi của Editor */
+  .luxury-editor {
+    @apply min-h-[500px];
   }
 
-  /* Fix Toolbar: Làm cho icon và nút bấm rõ ràng */
-  .luxury-editor [role="toolbar"] {
+  /* TOOLBAR: Glassmorphism & Logic Nút bấm */
+  .luxury-editor [role="toolbar"],
+  .luxury-editor .mdxeditor-toolbar {
     background-color: rgba(255, 255, 255, 0.03) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 8px !important;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
+    @apply px-4 py-2 flex flex-wrap gap-1 sticky top-0 z-10 !important;
   }
 
+  /* Icon và Nút bấm trên Toolbar */
   .luxury-editor [role="toolbar"] button {
-    color: #9ca3af !important; /* Màu icon mặc định */
-    transition: all 0.2s;
+    color: #9ca3af !important; /* Xám trung tính */
+    @apply transition-all duration-200 rounded-md !important;
   }
 
   .luxury-editor [role="toolbar"] button:hover {
@@ -320,24 +268,60 @@ body {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
 
-  .luxury-editor [role="toolbar"] button[data-state="on"] {
-    color: #22d3ee !important; /* Màu Cyan Neon từ theme của bạn */
+  /* Nút đang kích hoạt (Active State) - Dùng màu Cyan Neon */
+  .luxury-editor [role="toolbar"] button[data-state="on"],
+  .luxury-editor button[data-active="true"] {
+    color: #22d3ee !important; 
     background-color: rgba(34, 211, 238, 0.1) !important;
   }
 
-  /* Fix màu cho các dropdown và input bên trong editor */
+  /* VÙNG SOẠN THẢO: Fix màu chữ và Typography */
+  .luxury-editor .mdxeditor-root-content {
+    color: #e5e7eb !important; /* Xám sáng (Gray 200) - Chống tàng hình */
+    background-color: transparent !important;
+    line-height: 1.8 !important;
+    @apply p-6 lg:p-10 font-sans outline-none !important;
+  }
+
+  /* Placeholder (Chữ gợi ý khi trống) */
+  .luxury-editor .public-DraftEditorPlaceholder-root {
+    color: #4b5563 !important; /* Gray 600 */
+    @apply absolute p-6 lg:p-10 !important;
+  }
+
+  /* FORM ELEMENTS: Dropdown, Input bên trong Editor */
   .luxury-editor select, 
   .luxury-editor input {
     background-color: #1f2937 !important;
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid hsl(var(--border) / 0.8) !important;
+    @apply rounded px-2 py-1 text-sm !important;
   }
 
-  /* Placeholder cho dễ nhìn */
-  .luxury-editor .public-DraftEditorPlaceholder-root {
-    color: #4b5563 !important;
+  /* TABLE: Style kỹ thuật chuyên nghiệp */
+  .luxury-editor table {
+    @apply w-full border-collapse my-6 rounded-lg overflow-hidden border border-white/10 !important;
+  }
+
+  .luxury-editor th {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    @apply p-3 text-left font-bold border-b border-white/10 !important;
+  }
+
+  .luxury-editor td {
+    @apply p-3 border-b border-white/5 !important;
+  }
+
+  /* LIST: Định dạng phân cấp */
+  .luxury-editor ol { @apply list-decimal pl-6 space-y-2 !important; }
+  .luxury-editor ul { @apply list-disc pl-6 space-y-2 !important; }
+
+  /* SVG Icons */
+  .luxury-editor svg {
+    @apply w-5 h-5 !important;
   }
 }
+
 
 
 
