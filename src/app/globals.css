@@ -232,54 +232,56 @@ body {
 
 /* FIX ĐÀNG HOÀNG CHO MDX EDITOR */
 @layer base {
-  /* Ép màu nền cho container của Editor */
-  .luxury-editor-container {
-    background-color: hsl(var(--card) / 0.5) !important;
-    border: 1px solid hsl(var(--border) / 0.5);
-    color: hsl(var(--foreground)) !important;
-  }
+/* Luxury Editor Styles */
+.luxury-editor-container {
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+}
 
-  /* Fix màu chữ trong vùng soạn thảo - Quan trọng nhất */
-  .luxury-editor .mdxeditor-root-content {
-    color: #e5e7eb !important; /* Màu xám sáng để nổi trên nền tối */
-    background-color: transparent !important;
-    line-height: 1.8;
-  }
+/* Custom Scrollbar - sang trọng */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #18181b; /* zinc-900 */
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* zinc-700 */
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
 
-  /* Fix Toolbar: Làm cho icon và nút bấm rõ ràng */
-  .luxury-editor [role="toolbar"] {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 8px !important;
-  }
+/* Prose improvements cho nội dung MDX */
+.luxury-editor.prose {
+  color: #e4e4e7; /* zinc-200 */
+  font-size: 15.5px;
+  line-height: 1.75;
+}
 
-  .luxury-editor [role="toolbar"] button {
-    color: #9ca3af !important; /* Màu icon mặc định */
-    transition: all 0.2s;
-  }
+.luxury-editor.prose h1,
+.luxury-editor.prose h2,
+.luxury-editor.prose h3 {
+  color: #fafafa;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
 
-  .luxury-editor [role="toolbar"] button:hover {
-    color: #ffffff !important;
-    background-color: rgba(255, 255, 255, 0.1) !important;
-  }
+.luxury-editor.prose a {
+  color: #a1a1aa;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 
-  .luxury-editor [role="toolbar"] button[data-state="on"] {
-    color: #22d3ee !important; /* Màu Cyan Neon từ theme của bạn */
-    background-color: rgba(34, 211, 238, 0.1) !important;
-  }
+.luxury-editor.prose a:hover {
+  color: #d4d4d8;
+}
 
-  /* Fix màu cho các dropdown và input bên trong editor */
-  .luxury-editor select, 
-  .luxury-editor input {
-    background-color: #1f2937 !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  }
-
-  /* Placeholder cho dễ nhìn */
-  .luxury-editor .public-DraftEditorPlaceholder-root {
-    color: #4b5563 !important;
-  }
+/* Toolbar buttons đẹp hơn (nếu MDXEditor cho phép override) */
+.luxury-editor .toolbar button {
+  @apply hover:bg-zinc-800 active:bg-zinc-700 transition-colors rounded-lg px-2 py-1.5 text-zinc-300 hover:text-white;
+}
 }
 
 
