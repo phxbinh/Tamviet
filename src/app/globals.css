@@ -287,4 +287,57 @@ body {
   }
 }
 
+/* FIX ĐÀNG HOÀNG CHO MDX EDITOR */
+@layer base {
+  /* Ép màu nền cho container của Editor */
+  .luxury-editor-container {
+    background-color: hsl(var(--card) / 0.5) !important;
+    border: 1px solid hsl(var(--border) / 0.5);
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Fix màu chữ trong vùng soạn thảo - Quan trọng nhất */
+  .luxury-editor .mdxeditor-root-content {
+    color: #e5e7eb !important; /* Màu xám sáng để nổi trên nền tối */
+    background-color: transparent !important;
+    line-height: 1.8;
+  }
+
+  /* Fix Toolbar: Làm cho icon và nút bấm rõ ràng */
+  .luxury-editor [role="toolbar"] {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 8px !important;
+  }
+
+  .luxury-editor [role="toolbar"] button {
+    color: #9ca3af !important; /* Màu icon mặc định */
+    transition: all 0.2s;
+  }
+
+  .luxury-editor [role="toolbar"] button:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .luxury-editor [role="toolbar"] button[data-state="on"] {
+    color: #22d3ee !important; /* Màu Cyan Neon từ theme của bạn */
+    background-color: rgba(34, 211, 238, 0.1) !important;
+  }
+
+  /* Fix màu cho các dropdown và input bên trong editor */
+  .luxury-editor select, 
+  .luxury-editor input {
+    background-color: #1f2937 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Placeholder cho dễ nhìn */
+  .luxury-editor .public-DraftEditorPlaceholder-root {
+    color: #4b5563 !important;
+  }
+}
+
+
 
