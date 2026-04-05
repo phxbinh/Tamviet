@@ -21,7 +21,7 @@ import {
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import { ForwardedRef } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { supabase } from '@/lib/supabase/clientSupabase';
 
 // Logic Upload ảnh trực tiếp lên Supabase Storage
 async function imageUploadHandler(image: File) {
