@@ -25,7 +25,7 @@ import { supabase } from '@/lib/supabase/clientSupabase';
 
 // Logic Upload ảnh trực tiếp lên Supabase Storage
 async function imageUploadHandler(image: File) {
-  const supabase = createClient();
+  //const supabase = createClient();
   const fileExt = image.name.split('.').pop();
   const fileName = `${Math.random()}-${Date.now()}.${fileExt}`;
   
