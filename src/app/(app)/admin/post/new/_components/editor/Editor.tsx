@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { Block } from "../../_server/lib/blocks";
+import BlockEditor from "./BlockEditor";
 import { createPost } from "../../_server/lib/createPost";
 import { v4 as uuid } from "uuid";
 
