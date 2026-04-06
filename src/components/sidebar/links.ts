@@ -9,9 +9,9 @@ export type SidebarLink = {
 
 export const sidebarLinks: SidebarLink[] = [
   { name: 'Trang chủ', href: '/', showInSidebar: true },
+/*
   { name: 'Welcome', href: '/welcomemot', showInSidebar: true },
   { name: 'Đăng ký', href: '/signup', showInSidebar: true },
-/*
   { name: 'Quên mật mã', href: '/forgot-password-retry', showInSidebar: true },
   { name: 'Đổi mật mã', href: '/change-password', showInSidebar: true },
 */
