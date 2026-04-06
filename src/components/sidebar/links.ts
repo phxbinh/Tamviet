@@ -9,6 +9,7 @@ export type SidebarLink = {
 
 export const sidebarLinks: SidebarLink[] = [
   { name: 'Trang chủ', href: '/', showInSidebar: true },
+  { name: 'Sản phẩm', href: '/testSearchParam', showInSidebar: true },
 /*
   { name: 'Welcome', href: '/welcomemot', showInSidebar: true },
   { name: 'Đăng ký', href: '/signup', showInSidebar: true },
@@ -17,9 +18,6 @@ export const sidebarLinks: SidebarLink[] = [
 */
   { name: 'Orders', href: '/orders', showInSidebar: true },
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
-
-//  { name: 'Bản đồ', href: '/map', showInSidebar: true },
-
   {
     name: 'Environments',
     showInSidebar: true,
@@ -28,11 +26,10 @@ export const sidebarLinks: SidebarLink[] = [
     ],
   },
 
-  { name: 'Giới thiệu', href: '/about', showInSidebar: true },
-  { name: 'Road map', href: '/roadmap', showInSidebar: true },
-  { name: 'Tài liệu', href: '/test', showInSidebar: true },
-  { name: 'Sản phẩm', href: '/testSearchParam', showInSidebar: true },
   { name: 'Blog', href: '/blog', showInSidebar: true },
+  { name: 'Tài liệu', href: '/test', showInSidebar: true },
+  { name: 'Road map', href: '/roadmap', showInSidebar: true },
+  { name: 'Giới thiệu', href: '/about', showInSidebar: true },
 
 ];
 
