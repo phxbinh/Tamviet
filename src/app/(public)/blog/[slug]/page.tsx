@@ -2,13 +2,14 @@
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "./Renderer";
 
-export default async function BlogPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+import { useParams } from "next/navigation";
+
+
+export default async function BlogPage() {
+  const params = useParams();
+  const slug = params?.slug as string;
   const post = await sql`
-    SELECT * FROM posts WHERE slug = ${params.slug}
+    SELECT * FROM posts WHERE slug = ${slug}
   `;
 
   if (!post[0]) {
