@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Block } from "@/lib/blocks";
+import { Block } from "../../_server/lib/blocks";
 import { v4 as uuid } from "uuid";
 
 export default function Editor() {
