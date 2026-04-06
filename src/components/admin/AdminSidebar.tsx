@@ -34,7 +34,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LogOut, Zap, ShieldCheck, ChevronLeft, LayoutDashboard, BadgeCheck,
   UserCircle, Layers, Package, Beaker, FolderTree, 
-  Fingerprint, TableProperties, GitBranch, FileText, Settings2 
+  Fingerprint, TableProperties, GitBranch, FileText, Settings2, Box 
 } from 'lucide-react';
 import { UserAvatar } from '../dashboard/UserAvatar';
 import { signOut } from '@/lib/authActions/auth';
@@ -60,6 +60,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: FileText, label: 'Details all products', href: '/admin/product-details' },
     { icon: BadgeCheck, label: 'Healthy order cart', href: '/admin/order-cart' },
     { icon: Settings2, label: 'Cài đặt', href: '/admin/setting' },
+    { icon: Box, label: 'Post', href: '/admin/post/new' },
   ];
 
   return (
