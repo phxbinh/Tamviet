@@ -3,7 +3,9 @@
 
 import { useState } from "react";
 import { Block } from "../../_server/lib/blocks";
+import { createPost } from "../../_server/lib/createPost";
 import { v4 as uuid } from "uuid";
+
 
 export default function Editor() {
   const [blocks, setBlocks] = useState<(Block & { id: string })[]>([]);
@@ -30,6 +32,25 @@ export default function Editor() {
     setBlocks((prev) => prev.filter((b) => b.id !== id));
   };
 
+
+  async function handleSave() {
+    try {
+      await createPost({
+        title: "test-post", // tạm hardcode, lát nữa sẽ input
+        content: {
+          type: "doc",
+          blocks,
+        },
+      });
+  
+      alert("Saved!");
+    } catch (err) {
+      console.error(err);
+      alert("Save failed!");
+    }
+  }
+
+
   return (
     <div className="space-y-4">
       {/* Toolbar */}
@@ -39,6 +60,14 @@ export default function Editor() {
         <button onClick={() => addBlock("image")}>+ Image</button>
         <button onClick={() => addBlock("code")}>+ Code</button>
         <button onClick={() => addBlock("list")}>+ List</button>
+
+        {/* 👇 thêm cái này */}
+        <button
+          onClick={handleSave}
+          className="bg-green-500 text-white px-3 py-1 rounded"
+        >
+          Save
+        </button>
       </div>
 
       {/* Blocks */}
