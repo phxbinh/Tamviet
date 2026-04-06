@@ -60,7 +60,6 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: FileText, label: 'Details all products', href: '/admin/product-details' },
     { icon: BadgeCheck, label: 'Healthy order cart', href: '/admin/order-cart' },
     { icon: Settings2, label: 'Cài đặt', href: '/admin/setting' },
-    { icon: Settings2, label: 'Posts', href: '/admin/posts/new' },
   ];
 
   return (
