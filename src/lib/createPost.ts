@@ -18,8 +18,14 @@ const CreatePostSchema = z.object({
   content: DocumentSchema,
 });
 
-export async function createPost(data: unknown): Promise<PostRow> {
-  const parsed = CreatePostSchema.parse(data);
+export async function createPost(formData: FormData) {
+  const title = formData.get("title");
+  const content = formData.get("content");
+
+  const parsed = CreatePostSchema.parse({
+    title,
+    content: JSON.parse(content as string),
+  });
 
   // slug base
   const baseSlug = parsed.title
@@ -52,3 +58,5 @@ export async function createPost(data: unknown): Promise<PostRow> {
 
   return newPost[0];
 }
+
+
