@@ -1,25 +1,22 @@
-// src/lib/blocks.ts
 import { z } from "zod";
 
 export const BlockSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("heading"),
-    level: z.number().min(1).max(6),
-    text: z.string().min(1),
+    level: z.number(),
+    text: z.string(),
   }),
   z.object({
     type: z.literal("paragraph"),
-    text: z.string().min(1),
+    text: z.string(),
   }),
   z.object({
     type: z.literal("image"),
-    src: z.string().url(),
-    alt: z.string().optional(),
+    src: z.string(),
   }),
   z.object({
     type: z.literal("code"),
     code: z.string(),
-    language: z.string().optional(),
   }),
   z.object({
     type: z.literal("list"),
