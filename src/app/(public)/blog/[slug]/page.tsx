@@ -1,9 +1,10 @@
 // src/app/blog/[slug]/page.tsx
+// app/blog/[slug]/page.tsx
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/components/editor/Renderer";
 import { parseContent } from "@/lib/parseContent";
 
-export default async function BlogPage({
+export default async function Page({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -14,19 +15,9 @@ export default async function BlogPage({
     SELECT * FROM posts WHERE slug = ${slug}
   `;
 
-  if (!post[0]) {
-    return <div className="p-6">Not found</div>;
-  }
+  if (!post[0]) return <div>Not found</div>;
 
   const content = parseContent(post[0].content_json);
 
-  return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">
-        {post[0].title}
-      </h1>
-
-      <Renderer content={content} />
-    </div>
-  );
+  return <Renderer content={content} />;
 }
