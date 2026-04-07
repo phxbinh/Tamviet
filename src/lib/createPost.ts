@@ -18,7 +18,7 @@ const CreatePostSchema = z.object({
   content: DocumentSchema,
 });
 
-export async function createPost(formData: FormData): Promise<PostRow> {
+export async function createPost(formData: FormData): Promise<void> {
   const title = formData.get("title");
   const content = formData.get("content");
 
@@ -27,7 +27,6 @@ export async function createPost(formData: FormData): Promise<PostRow> {
     content: JSON.parse(content as string),
   });
 
-  // slug base
   const baseSlug = parsed.title
     .toLowerCase()
     .normalize("NFD")
@@ -35,7 +34,6 @@ export async function createPost(formData: FormData): Promise<PostRow> {
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "");
 
-  // unique slug
   let slug = baseSlug;
   let counter = 1;
 
@@ -47,14 +45,13 @@ export async function createPost(formData: FormData): Promise<PostRow> {
     slug = `${baseSlug}-${counter++}`;
   }
 
-  const newPost = (await sql`
+  await sql`
     INSERT INTO posts (title, slug, content_json)
     VALUES (${parsed.title}, ${slug}, ${JSON.stringify(parsed.content)})
-    RETURNING *
-  `) as PostRow[];
+  `;
 
   revalidatePath("/blog");
   revalidatePath(`/blog/${slug}`);
 
-  return newPost[0];
+  // ❌ KHÔNG return gì
 }
