@@ -1,26 +1,22 @@
+// lib/actions.ts
 "use server";
 
 import { z } from "zod";
 import { DocumentSchema } from "./blocks";
 import { sql } from "@/lib/neon/sql";
-import { revalidatePath } from "next/cache";
 
-const Schema = z.object({
-  title: z.string(),
+const CreatePostSchema = z.object({
+  title: z.string().min(1),
   content: DocumentSchema,
 });
 
-export async function createPost(data: unknown) {
-  const parsed = Schema.parse(data);
+type CreatePostInput = z.infer<typeof CreatePostSchema>;
 
-  const slug = parsed.title
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+export async function createPost(data: unknown) {
+  const parsed: CreatePostInput = CreatePostSchema.parse(data);
 
   await sql`
-    INSERT INTO posts (title, slug, content_json)
-    VALUES (${parsed.title}, ${slug}, ${JSON.stringify(parsed.content)})
+    INSERT INTO posts (title, content_json)
+    VALUES (${parsed.title}, ${JSON.stringify(parsed.content)})
   `;
-
-  revalidatePath("/blog");
 }
