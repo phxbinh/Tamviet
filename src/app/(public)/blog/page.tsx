@@ -88,7 +88,7 @@ export default async function Page() {
         <section className="lg:col-span-3 space-y-12">
           {/* Featured Post */}
           <article className="group cursor-pointer">
-            <Link href={`/blog/${featuredPost.slug}`} className="space-y-4">
+            <Link href={`/blog/${featuredPost.slug}`} prefetch={true} className="space-y-4">
               <div className="overflow-hidden bg-card border border-border rounded-sm aspect-video mb-4 group-hover:shadow-xl transition-all duration-500">
                 {/* Thay bằng thẻ <img> nếu bạn có p.image_url */}
                 <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-700 font-serif text-4xl animate-breathe-slow">
@@ -118,7 +118,7 @@ export default async function Page() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {otherPosts.map((p) => (
               <article key={p.id} className="group border-b border-border pb-8 md:border-b-0 md:pb-0">
-                <Link href={`/blog/${p.slug}`} className="flex flex-col gap-4">
+                <Link href={`/blog/${p.slug}`} prefetch={true} className="flex flex-col gap-4">
                   <h3 className="text-xl font-bold font-serif group-hover:text-primary transition-colors leading-snug">
                     {p.title}
                   </h3>
@@ -142,7 +142,7 @@ export default async function Page() {
           <div className="divide-y divide-border">
             {posts.slice(0, 5).map((p, idx) => (
               <div key={idx} className="py-4 first:pt-0 group cursor-pointer">
-                <Link href={`/blog/${p.slug}`}>
+                <Link prefetch={true} href={`/blog/${p.slug}`}>
                   <span className="text-primary font-bold text-xs uppercase tracking-widest">#{idx + 1}</span>
                   <h5 className="font-serif font-bold text-base mt-1 group-hover:underline decoration-primary underline-offset-4">
                     {p.title}
