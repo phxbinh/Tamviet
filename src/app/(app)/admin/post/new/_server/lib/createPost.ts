@@ -5,42 +5,53 @@ import { DocumentSchema } from "./blocks";
 import { sql } from "@/lib/neon/sql";
 import { revalidatePath } from "next/cache";
 
+/* =========================
+   TYPES
+========================= */
+
+type PostRow = {
+  id: string;
+  title: string;
+  slug: string;
+  content_json: any;
+  created_at: Date;
+};
+
+// Schema để validate dữ liệu đầu vào
 const CreatePostSchema = z.object({
-  title: z.string().min(1, "Tiêu đề không được để trống"),
+  title: z.string().min(1),
   content: DocumentSchema,
 });
 
-export async function createPost(data: unknown) {
-  // 1. Kiểm tra dữ liệu an toàn
-  const result = CreatePostSchema.safeParse(data);
+/* =========================
+   CREATE POST ACTION
+========================= */
 
-  if (!result.success) {
-    return { error: result.error.flatten().fieldErrors };
-  }
+export async function createPost(data: unknown): Promise<PostRow> {
+  // 1. Validate dữ liệu
+  const parsed = CreatePostSchema.parse(data);
 
-  const { title, content } = result.data;
-
-  // 2. Tạo slug (Cân nhắc dùng thư viện slugify nếu có tiếng Việt)
-  const slug = title
+  // 2. Logic tạo slug
+  const slug = parsed.title
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Khử dấu tiếng Việt
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "");
 
-  try {
-    // 3. Insert Database
-    await sql`
-      INSERT INTO posts (title, slug, content_json)
-      VALUES (${title}, ${slug}, ${JSON.stringify(content)})
-    `;
+  // 3. Thực thi SQL với Type Casting giống style của bạn
+  const newPost = (await sql`
+    INSERT INTO posts (title, slug, content_json)
+    VALUES (
+      ${parsed.title}, 
+      ${slug}, 
+      ${JSON.stringify(parsed.content)}
+    )
+    RETURNING *
+  `) as PostRow[];
 
-    // 4. Làm mới cache
-    revalidatePath("/blog"); // Ví dụ trang danh sách bài viết
-    return { success: true };
-    
-  } catch (error) {
-    console.error("Database Error:", error);
-    return { error: "Không thể tạo bài viết, vui lòng thử lại sau." };
-  }
+  // 4. Làm mới cache nếu cần
+  revalidatePath("/blog");
+
+  return newPost[0];
 }
