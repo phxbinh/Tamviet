@@ -5,14 +5,14 @@ import { useState } from "react";
 import { Block } from "@/lib/blocks";
 import BlockEditor from "./BlockEditor";
 import { createPost } from "@/lib/createPost";
-import { v4 as uuid } from "uuid";
+
 
 
 export default function Editor() {
   const [blocks, setBlocks] = useState<(Block & { id: string })[]>([]);
 
   const addBlock = (type: Block["type"]) => {
-    const newBlock: any = { id: uuid(), type };
+    const newBlock: any = { id: crypto.randomUUID(), type };
 
     if (type === "heading") newBlock.level = 1;
     if (type === "paragraph") newBlock.text = "";
