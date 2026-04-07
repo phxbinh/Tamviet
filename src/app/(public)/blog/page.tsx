@@ -30,7 +30,7 @@ export default async function Page() {
       <h1 className="text-3xl font-bold mb-4">Blog</h1>
 
       {posts.map((p) => (
-        <Link key={p.id} href={`/blog/${p.slug}`}>
+        <Link key={p.id} prefetch={true} href={`/blog/${p.slug}`}>
           <div className="border rounded-xl p-4 hover:shadow-md transition cursor-pointer bg-white">
             
             {/* Title */}
