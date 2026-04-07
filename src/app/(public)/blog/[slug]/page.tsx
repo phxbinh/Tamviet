@@ -6,7 +6,7 @@ export default async function BlogPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}): Promise<Metadata>  {
+}) {
   const { slug } = await params;
   const post = await sql`
     SELECT * FROM posts WHERE slug = ${slug}
