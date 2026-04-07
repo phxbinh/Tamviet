@@ -18,7 +18,7 @@ const CreatePostSchema = z.object({
   content: DocumentSchema,
 });
 
-export async function createPost(formData: FormData) {
+export async function createPost(formData: FormData): Promise<PostRow> {
   const title = formData.get("title");
   const content = formData.get("content");
 
@@ -35,7 +35,7 @@ export async function createPost(formData: FormData) {
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "");
 
-  // ensure unique slug
+  // unique slug
   let slug = baseSlug;
   let counter = 1;
 
@@ -58,5 +58,3 @@ export async function createPost(formData: FormData) {
 
   return newPost[0];
 }
-
-
