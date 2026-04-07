@@ -1,4 +1,4 @@
-// lib/blocks.ts
+// src/lib/blocks.ts
 import { z } from "zod";
 
 export const BlockSchema = z.discriminatedUnion("type", [
