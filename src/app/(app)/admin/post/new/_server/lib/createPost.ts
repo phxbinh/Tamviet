@@ -1,57 +1,54 @@
 "use server";
 
 import { z } from "zod";
-import { DocumentSchema } from "./blocks";
+import { DocumentSchema, Document } from "./blocks";
 import { sql } from "@/lib/neon/sql";
 import { revalidatePath } from "next/cache";
-
-/* =========================
-   TYPES
-========================= */
 
 type PostRow = {
   id: string;
   title: string;
   slug: string;
-  content_json: any;
+  content_json: Document;
   created_at: Date;
 };
 
-// Schema để validate dữ liệu đầu vào
 const CreatePostSchema = z.object({
   title: z.string().min(1),
   content: DocumentSchema,
 });
 
-/* =========================
-   CREATE POST ACTION
-========================= */
-
 export async function createPost(data: unknown): Promise<PostRow> {
-  // 1. Validate dữ liệu
   const parsed = CreatePostSchema.parse(data);
 
-  // 2. Logic tạo slug
-  const slug = parsed.title
+  // slug base
+  const baseSlug = parsed.title
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "-")
     .replace(/[^\w-]+/g, "");
 
-  // 3. Thực thi SQL với Type Casting giống style của bạn
+  // ensure unique slug
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await sql`
+      SELECT 1 FROM posts WHERE slug = ${slug} LIMIT 1
+    `;
+    if (existing.length === 0) break;
+    slug = `${baseSlug}-${counter++}`;
+  }
+
   const newPost = (await sql`
     INSERT INTO posts (title, slug, content_json)
-    VALUES (
-      ${parsed.title}, 
-      ${slug}, 
-      ${JSON.stringify(parsed.content)}
-    )
+    VALUES (${parsed.title}, ${slug}, ${JSON.stringify(parsed.content)})
     RETURNING *
   `) as PostRow[];
 
-  // 4. Làm mới cache nếu cần
   revalidatePath("/blog");
+  revalidatePath(`/blog/${slug}`);
 
   return newPost[0];
 }
