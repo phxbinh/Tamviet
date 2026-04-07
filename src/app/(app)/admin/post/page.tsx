@@ -1,5 +1,5 @@
 // app/admin/posts/page.tsx
-import { sql } from "@/lib/db";
+import { sql } from "@/lib/neon/sql";
 import Link from "next/link";
 
 export default async function AdminPostsPage() {
