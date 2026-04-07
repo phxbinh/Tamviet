@@ -9,12 +9,12 @@ import { createPost } from "@/lib/createPost";
 type BlockWithId = Block & { id: string };
 
 export default function Editor() {
+  const [title, setTitle] = useState("");
   const [blocks, setBlocks] = useState<BlockWithId[]>([]);
 
   /* =========================
      ADD BLOCK
   ========================= */
-
   const addBlock = (type: Block["type"]) => {
     const id = crypto.randomUUID();
 
@@ -36,84 +36,94 @@ export default function Editor() {
   };
 
   /* =========================
-     UPDATE BLOCK (FIX CHÍNH)
+     UPDATE BLOCK
   ========================= */
-
   const updateBlock = (id: string, newBlock: Block) => {
     setBlocks((prev) =>
-      prev.map((b) =>
-        b.id === id ? { ...newBlock, id } : b
-      )
+      prev.map((b) => (b.id === id ? { ...newBlock, id } : b))
     );
   };
 
   /* =========================
      REMOVE
   ========================= */
-
   const removeBlock = (id: string) => {
     setBlocks((prev) => prev.filter((b) => b.id !== id));
   };
 
   /* =========================
-     SAVE
+     PREPARE DATA (REMOVE ID)
   ========================= */
-
-  async function handleSave() {
-    try {
-      await createPost({
-        title: "test-post",
-        content: {
-          type: "doc",
-          blocks,
-        },
-      });
-
-      alert("Saved!");
-    } catch (err) {
-      console.error(err);
-      alert("Save failed!");
-    }
-  }
+  const cleanBlocks = blocks.map(({ id, ...rest }) => rest);
 
   /* =========================
      UI
   ========================= */
-
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
+    <form action={createPost} className="space-y-4">
+      {/* TITLE */}
+      <input
+        name="title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Nhập tiêu đề..."
+        className="border p-2 w-full"
+      />
+
+      {/* CONTENT JSON */}
+      <input
+        type="hidden"
+        name="content"
+        value={JSON.stringify({
+          type: "doc",
+          blocks: cleanBlocks,
+        })}
+      />
+
+      {/* TOOLBAR */}
       <div className="flex gap-2">
-        <button onClick={() => addBlock("heading")}>+ Heading</button>
-        <button onClick={() => addBlock("paragraph")}>+ Text</button>
-        <button onClick={() => addBlock("image")}>+ Image</button>
-        <button onClick={() => addBlock("code")}>+ Code</button>
-        <button onClick={() => addBlock("list")}>+ List</button>
+        <button type="button" onClick={() => addBlock("heading")}>
+          + Heading
+        </button>
+
+        <button type="button" onClick={() => addBlock("paragraph")}>
+          + Text
+        </button>
+
+        <button type="button" onClick={() => addBlock("image")}>
+          + Image
+        </button>
+
+        <button type="button" onClick={() => addBlock("code")}>
+          + Code
+        </button>
+
+        <button type="button" onClick={() => addBlock("list")}>
+          + List
+        </button>
 
         <button
-          onClick={handleSave}
+          type="submit"
           className="bg-green-500 text-white px-3 py-1 rounded"
         >
           Save
         </button>
       </div>
 
-      {/* Blocks */}
+      {/* BLOCKS */}
       {blocks.map((block) => (
         <BlockEditor
           key={block.id}
           block={block}
-          onChange={(newBlock) =>
-            updateBlock(block.id, newBlock)
-          }
+          onChange={(newBlock) => updateBlock(block.id, newBlock)}
           onDelete={() => removeBlock(block.id)}
         />
       ))}
 
-      {/* Debug */}
+      {/* DEBUG */}
       <pre className="bg-black text-green-400 p-4 rounded">
         {JSON.stringify({ type: "doc", blocks }, null, 2)}
       </pre>
-    </div>
+    </form>
   );
 }
