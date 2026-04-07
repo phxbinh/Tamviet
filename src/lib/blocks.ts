@@ -13,7 +13,10 @@ export const BlockSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("image"),
-    src: z.string().url(),
+    src: z.string().refine(
+  (val) => val.startsWith("/") || val.startsWith("http"),
+  "Invalid image src"
+),
     alt: z.string().optional(),
   }),
   z.object({
