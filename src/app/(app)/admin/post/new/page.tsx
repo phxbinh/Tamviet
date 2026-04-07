@@ -1,5 +1,5 @@
 // app/admin/posts/new/page.tsx
-import Editor from "/_components/editor/Editor";
+import Editor from "./_components/editor/Editor";
 
 export default function NewPostPage() {
   return (
