@@ -1,5 +1,7 @@
-// components/editor/Renderer.tsx
-export function Renderer({ content }) {
+// src/components/editor/Renderer.tsx
+import { Document } from "./blocks";
+
+export function Renderer({ content }: { content: Document }) {
   return (
     <div className="prose">
       {content.blocks.map((block, i) => {
