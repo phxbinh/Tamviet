@@ -6,44 +6,69 @@ import { Block } from "@/lib/blocks";
 import BlockEditor from "./BlockEditor";
 import { createPost } from "@/lib/createPost";
 
-
+type BlockWithId = Block & { id: string };
 
 export default function Editor() {
-  const [blocks, setBlocks] = useState<(Block & { id: string })[]>([]);
+  const [blocks, setBlocks] = useState<BlockWithId[]>([]);
+
+  /* =========================
+     ADD BLOCK
+  ========================= */
 
   const addBlock = (type: Block["type"]) => {
-    const newBlock: any = { id: crypto.randomUUID(), type };
+    const id = crypto.randomUUID();
 
-    if (type === "heading") newBlock.level = 1;
-    if (type === "paragraph") newBlock.text = "";
-    if (type === "image") newBlock.src = "";
-    if (type === "code") newBlock.code = "";
-    if (type === "list") newBlock.items = [""];
+    let newBlock: BlockWithId;
 
-    setBlocks([...blocks, newBlock]);
+    if (type === "heading") {
+      newBlock = { id, type, level: 1, text: "" };
+    } else if (type === "paragraph") {
+      newBlock = { id, type, text: "" };
+    } else if (type === "image") {
+      newBlock = { id, type, src: "" };
+    } else if (type === "code") {
+      newBlock = { id, type, code: "" };
+    } else {
+      newBlock = { id, type: "list", items: [""] };
+    }
+
+    setBlocks((prev) => [...prev, newBlock]);
   };
 
-  const updateBlock = (id: string, data: Partial<Block>) => {
+  /* =========================
+     UPDATE BLOCK (FIX CHÍNH)
+  ========================= */
+
+  const updateBlock = (id: string, newBlock: Block) => {
     setBlocks((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...data } : b))
+      prev.map((b) =>
+        b.id === id ? { ...newBlock, id } : b
+      )
     );
   };
+
+  /* =========================
+     REMOVE
+  ========================= */
 
   const removeBlock = (id: string) => {
     setBlocks((prev) => prev.filter((b) => b.id !== id));
   };
 
+  /* =========================
+     SAVE
+  ========================= */
 
   async function handleSave() {
     try {
       await createPost({
-        title: "test-post", // tạm hardcode, lát nữa sẽ input
+        title: "test-post",
         content: {
           type: "doc",
           blocks,
         },
       });
-  
+
       alert("Saved!");
     } catch (err) {
       console.error(err);
@@ -51,6 +76,9 @@ export default function Editor() {
     }
   }
 
+  /* =========================
+     UI
+  ========================= */
 
   return (
     <div className="space-y-4">
@@ -62,7 +90,6 @@ export default function Editor() {
         <button onClick={() => addBlock("code")}>+ Code</button>
         <button onClick={() => addBlock("list")}>+ List</button>
 
-        {/* 👇 thêm cái này */}
         <button
           onClick={handleSave}
           className="bg-green-500 text-white px-3 py-1 rounded"
@@ -76,12 +103,14 @@ export default function Editor() {
         <BlockEditor
           key={block.id}
           block={block}
-          onChange={(data) => updateBlock(block.id, data)}
+          onChange={(newBlock) =>
+            updateBlock(block.id, newBlock)
+          }
           onDelete={() => removeBlock(block.id)}
         />
       ))}
 
-      {/* Output JSON */}
+      {/* Debug */}
       <pre className="bg-black text-green-400 p-4 rounded">
         {JSON.stringify({ type: "doc", blocks }, null, 2)}
       </pre>
