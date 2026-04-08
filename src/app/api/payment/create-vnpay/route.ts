@@ -40,7 +40,6 @@ export async function POST(req: Request) {
 */
 
 // Chạy được
-/*
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
@@ -98,13 +97,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
-*/
 
 
 // app/api/payment/create/route.ts  (hoặc đường dẫn bạn đang dùng)
 
 // src/app/api/payment/create-vnpay/route.ts
-
+/*
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
@@ -176,6 +174,6 @@ export async function POST(req: Request) {
   }
 }
 
-
+*/
 
 
