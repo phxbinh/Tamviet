@@ -40,7 +40,7 @@ export default function CheckoutForm() {
     return form.district_id ? MOCK_WARDS[form.district_id] || [] : [];
   }, [form.district_id]);
 
-/*
+/* Gốc chạy được
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -78,22 +78,24 @@ export default function CheckoutForm() {
     try {
       const res = await checkoutAction(form);
       if (res.success) {
-
-        // 2. Nếu tạo xong record trong DB, gọi tiếp API VNPay
-        const vnpRes = await fetch('/api/payment/create-vnpay', {
-          method: 'POST',
-          body: JSON.stringify({
-            orderId: res.orderCode, // Mã ORD-... mà action trả về
-            totalPrice: res.totalPrice     // total từ CartPage truyền xuống
-          })
-        });
-        alert('Mã đơn: '+res.orderCode)
-        const { url } = await vnpRes.json();
-        if (url) {
-          window.location.href = url; // Nhảy sang trang thanh toán VNPay
+        if (paymentMethod === 'vnpay') {
+          // 2. Nếu tạo xong record trong DB, gọi tiếp API VNPay
+          const vnpRes = await fetch('/api/payment/create-vnpay', {
+            method: 'POST',
+            body: JSON.stringify({
+              orderId: res.orderCode, // Mã ORD-... mà action trả về
+              totalPrice: res.totalPrice     // total từ CartPage truyền xuống
+            })
+          });
+          alert('Mã đơn: '+res.orderCode)
+          const { url } = await vnpRes.json();
+          if (url) {
+            window.location.href = url; // Nhảy sang trang thanh toán VNPay
+          }
+        } else {
+          // Nếu là COD thì về trang thành công luôn
+          window.location.href = `/orders/${res.orderId}`;
         }
-   
-        //window.location.href = `/orders/${res.orderId}`;
       } else {
         alert(res.error);
       }
@@ -249,6 +251,21 @@ const handleSubmit = async (e: React.FormEvent) => {
         required 
       />
 
+     {/* THÊM PHẦN CHỌN PHƯƠNG THỨC THANH TOÁN */}
+      <div className="space-y-3 pt-2">
+        <p className="text-sm font-semibold opacity-70">Phương thức thanh toán</p>
+        <div className="grid grid-cols-2 gap-3">
+          <label className={`flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+            <input type="radio" className="hidden" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} />
+            <span className="text-sm font-medium">Tiền mặt (COD)</span>
+          </label>
+          <label className={`flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'vnpay' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+            <input type="radio" className="hidden" name="payment" value="vnpay" checked={paymentMethod === 'vnpay'} onChange={() => setPaymentMethod('vnpay')} />
+            <span className="text-sm font-medium">VNPay (QR/Thẻ)</span>
+          </label>
+        </div>
+      </div>
+
       <button 
         disabled={isPending}
         className={`w-full py-4 rounded-full font-bold tracking-[0.2em] transition-all duration-500 uppercase text-sm mt-4 
@@ -267,6 +284,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 //export default 
 function CheckoutForm__() {
   const [isPending, setIsPending] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'vnpay'>('cod'); // Mặc định là COD
+
   const [form, setForm] = useState<CheckoutInput>({
     full_name: '', 
     phone: '', 
@@ -406,6 +425,21 @@ function CheckoutForm__() {
         required 
       />
 
+     {/* THÊM PHẦN CHỌN PHƯƠNG THỨC THANH TOÁN */}
+      <div className="space-y-3 pt-2">
+        <p className="text-sm font-semibold opacity-70">Phương thức thanh toán</p>
+        <div className="grid grid-cols-2 gap-3">
+          <label className={`flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+            <input type="radio" className="hidden" name="payment" value="cod" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} />
+            <span className="text-sm font-medium">Tiền mặt (COD)</span>
+          </label>
+          <label className={`flex items-center justify-center p-3 border rounded-xl cursor-pointer transition-all ${paymentMethod === 'vnpay' ? 'border-primary bg-primary/10' : 'border-border'}`}>
+            <input type="radio" className="hidden" name="payment" value="vnpay" checked={paymentMethod === 'vnpay'} onChange={() => setPaymentMethod('vnpay')} />
+            <span className="text-sm font-medium">VNPay (QR/Thẻ)</span>
+          </label>
+        </div>
+      </div>
+
       <button 
         disabled={isPending}
         className="w-full py-4 bg-white text-black rounded-full font-bold tracking-[0.2em] hover:bg-neon-cyan hover:text-white transition-all duration-500 disabled:opacity-50 uppercase text-sm mt-4"
@@ -415,3 +449,14 @@ function CheckoutForm__() {
     </form>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
