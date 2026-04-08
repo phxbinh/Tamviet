@@ -40,7 +40,6 @@ export async function POST(req: Request) {
 */
 
 // Chạy được
-/*
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
@@ -98,8 +97,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
-*/
 
+/*
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
@@ -166,7 +165,7 @@ export async function POST(req: Request) {
     );
   }
 }
-
+*/
 
 
 
