@@ -49,12 +49,11 @@ export async function checkoutAction(rawInput: CheckoutInput) {
         FOR UPDATE
       ),
 
-      -- 🔥 THÊM validate stock (bạn đang thiếu)
       validate_stock AS (
         SELECT 1 FROM check_items WHERE stock < quantity
       ),
 
-      -- 🔥 TẠO ORDER + order_id
+      -- 🔥 TẠO ORDER + total_price + order_id
       new_order AS (
         INSERT INTO orders (
           user_id, 
@@ -66,12 +65,12 @@ export async function checkoutAction(rawInput: CheckoutInput) {
         SELECT 
           $1, 
           $2, 
-          SUM(price * quantity), 
+          COALESCE(SUM(price * quantity), 0), 
           'pending',
           'ORD-' || to_char(now(), 'YYYYMMDD') || '-' || substr(gen_random_uuid()::text, 1, 6)
         FROM check_items
         WHERE NOT EXISTS (SELECT 1 FROM validate_stock)
-        RETURNING id, order_id
+        RETURNING id, order_id, total_price
       ),
 
       insert_address AS (
@@ -108,6 +107,12 @@ export async function checkoutAction(rawInput: CheckoutInput) {
         AND EXISTS (SELECT 1 FROM new_order)
       ),
 
+      clear_cart AS (
+        DELETE FROM cart_items 
+        WHERE cart_id = (SELECT id FROM target_cart)
+        AND EXISTS (SELECT 1 FROM new_order)
+      ),
+
       close_cart AS (
         UPDATE carts 
         SET status = 'checked_out', updated_at = now()
@@ -116,11 +121,12 @@ export async function checkoutAction(rawInput: CheckoutInput) {
         RETURNING 1
       )
 
-      -- 🔥 FINAL RETURN
+      -- 🔥 FINAL RESULT (SẠCH)
       SELECT 
-        (SELECT id FROM new_order) as id,
-        (SELECT order_id FROM new_order) as order_code,
-        (SELECT total_price FROM new_order) as total_price;
+        no.id,
+        no.order_id AS order_code,
+        no.total_price
+      FROM new_order no;
     `, [
       userId, 
       guestId, 
@@ -144,9 +150,9 @@ export async function checkoutAction(rawInput: CheckoutInput) {
 
     return {
       success: true,
-      orderId: row.id,           // UUID (internal)
-      orderCode: row.order_code,  // ORD-xxxx (hiển thị)
-      totalPrice: row.total_price
+      orderId: row.id,                      // UUID
+      orderCode: row.order_code,           // ORD-xxxx
+      totalPrice: Number(row.total_price)  // 🔥 fix NaN
     };
 
   } catch (err: any) {
@@ -156,7 +162,6 @@ export async function checkoutAction(rawInput: CheckoutInput) {
     client.release();
   }
 }
-
 
 
 
