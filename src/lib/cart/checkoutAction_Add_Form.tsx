@@ -40,6 +40,7 @@ export default function CheckoutForm() {
     return form.district_id ? MOCK_WARDS[form.district_id] || [] : [];
   }, [form.district_id]);
 
+/*
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -63,6 +64,93 @@ export default function CheckoutForm() {
       setIsPending(false);
     }
   };
+*/
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (form.province_id === 0 || form.district_id === 0 || !form.ward_code) {
+      alert("Vui lòng chọn đầy đủ Tỉnh, Quận và Phường");
+      return;
+    }
+
+    setIsPending(true);
+    try {
+      const res = await checkoutAction(form);
+      if (res.success) {
+
+        // 2. Nếu tạo xong record trong DB, gọi tiếp API VNPay
+        const vnpRes = await fetch('/api/payment/create-vnpay', {
+          method: 'POST',
+          body: JSON.stringify({
+            orderId: res.orderCode, // Mã ORD-... mà action trả về
+            totalPrice: res.totalPrice     // total từ CartPage truyền xuống
+          })
+        });
+        alert('Mã đơn: '+res.orderCode)
+        const { url } = await vnpRes.json();
+        if (url) {
+          window.location.href = url; // Nhảy sang trang thanh toán VNPay
+        }
+   
+        //window.location.href = `/orders/${res.orderId}`;
+      } else {
+        alert(res.error);
+      }
+    } catch (error) {
+      alert("Có lỗi xảy ra khi xử lý đơn hàng");
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+
+
+
+
+/*
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsPending(true);
+
+  try {
+    // 1. Chạy Server Action để tạo đơn hàng trong DB trước
+    const res = await checkoutAction(form); 
+
+    if (res.success) {
+      // 2. Nếu tạo xong record trong DB, gọi tiếp API VNPay
+      const vnpRes = await fetch('/api/payment/vnpay/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          orderId: res.orderIdText, // Mã ORD-... mà action trả về
+          totalPrice: totalPrice     // total từ CartPage truyền xuống
+        })
+      });
+
+      const { url } = await vnpRes.json();
+      if (url) {
+        window.location.href = url; // Nhảy sang trang thanh toán VNPay
+      }
+    }
+  } catch (err) {
+    alert("Lỗi rồi!");
+  } finally {
+    setIsPending(false);
+  }
+};
+*/
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <form 
