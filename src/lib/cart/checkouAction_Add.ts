@@ -119,7 +119,8 @@ export async function checkoutAction(rawInput: CheckoutInput) {
       -- 🔥 FINAL RETURN
       SELECT 
         (SELECT id FROM new_order) as id,
-        (SELECT order_id FROM new_order) as order_code;
+        (SELECT order_id FROM new_order) as order_code,
+        (SELECT total_price FROM orders WHERE id = (SELECT id FROM new_order)) as total_price;
     `, [
       userId, 
       guestId, 
@@ -144,7 +145,8 @@ export async function checkoutAction(rawInput: CheckoutInput) {
     return {
       success: true,
       orderId: row.id,           // UUID (internal)
-      orderCode: row.order_code  // ORD-xxxx (hiển thị)
+      orderCode: row.order_code,  // ORD-xxxx (hiển thị)
+      totalPrice: row.total_price
     };
 
   } catch (err: any) {
