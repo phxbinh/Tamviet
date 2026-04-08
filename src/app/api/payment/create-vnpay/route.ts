@@ -42,7 +42,6 @@ export async function POST(req: Request) {
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
-import qs from 'qs';
 
 export async function POST(req: Request) {
   try {
@@ -53,9 +52,10 @@ export async function POST(req: Request) {
     const tmnCode = process.env.NEXT_PUBLIC_VNP_TMN_CODE!;
     const returnUrl = process.env.VNP_RETURN_URL!;
 
-    // 1. Lấy IP người dùng thực tế
+    const date = new Date();
+    const createDate = moment(date).format('YYYYMMDDHHmmss');
     const ipAddr = req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
-    
+
     let vnp_Params: any = {
       vnp_Version: '2.1.0',
       vnp_Command: 'pay',
@@ -63,38 +63,40 @@ export async function POST(req: Request) {
       vnp_Locale: 'vn',
       vnp_CurrCode: 'VND',
       vnp_TxnRef: orderId,
-      vnp_OrderInfo: `Thanh toan don hang ${orderId}`,
+      vnp_OrderInfo: 'Thanh toan cho ma don hang: ' + orderId,
       vnp_OrderType: 'other',
-      // 2. Chuẩn hoá số tiền chính xác
       vnp_Amount: Math.round(Number(totalPrice)) * 100,
       vnp_ReturnUrl: returnUrl,
       vnp_IpAddr: ipAddr,
-      vnp_CreateDate: moment().format('YYYYMMDDHHmmss'),
+      vnp_CreateDate: createDate,
     };
 
-    // 3. Sắp xếp tham số A-Z (Bắt buộc)
-    vnp_Params = Object.keys(vnp_Params).sort().reduce((obj: any, key) => {
-      obj[key] = vnp_Params[key];
-      return obj;
-    }, {});
-
-    // 4. Tạo chữ ký (Dùng encode: false ở bước này)
-    const signData = qs.stringify(vnp_Params, { encode: false });
-    const signed = crypto
-      .createHmac("sha512", secretKey)
-      .update(Buffer.from(signData, 'utf-8'))
-      .digest("hex");
+    // 1. Sắp xếp các tham số theo alphabet
+    const sortedKeys = Object.keys(vnp_Params).sort();
     
-    vnp_Params['vnp_SecureHash'] = signed;
+    // 2. Tạo chuỗi dữ liệu để ký (Query String không encode)
+    const signData = sortedKeys
+      .map((key) => `${key}=${encodeURIComponent(vnp_Params[key]).replace(/%20/g, '+')}`)
+      .join('&');
 
-    // 5. Trả về URL (Dùng encode: true ở bước này - mặc định của qs)
-    const paymentUrl = vnpUrl + '?' + qs.stringify(vnp_Params, { encode: true });
+    // 3. Tạo chuỗi query để nối vào URL (Có encode)
+    const queryData = sortedKeys
+      .map((key) => `${key}=${encodeURIComponent(vnp_Params[key]).replace(/%20/g, '+')}`)
+      .join('&');
 
-    return NextResponse.json({ url: paymentUrl });
+    // 4. Thực hiện băm HMAC-SHA512
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+
+    // 5. Build URL cuối cùng
+    const finalUrl = `${vnpUrl}?${queryData}&vnp_SecureHash=${signed}`;
+
+    return NextResponse.json({ url: finalUrl });
   } catch (error) {
-    return NextResponse.json({ error: "Lỗi tạo link thanh toán" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
 
 
 
