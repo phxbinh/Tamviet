@@ -40,6 +40,7 @@ export async function POST(req: Request) {
 */
 
 // Chạy được
+/*
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import moment from 'moment';
@@ -97,6 +98,78 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+*/
+
+import { NextResponse } from 'next/server';
+import crypto from 'crypto';
+import moment from 'moment';
+
+export async function POST(req: Request) {
+  try {
+    const { orderId, totalPrice } = await req.json();
+
+    const secretKey = process.env.VNP_HASH_SECRET!.trim();
+    const vnpUrl = process.env.VNP_URL!;
+    const tmnCode = process.env.NEXT_PUBLIC_VNP_TMN_CODE!;
+    const returnUrl = process.env.VNP_RETURN_URL!;
+
+    const date = new Date();
+    const createDate = moment(date).format('YYYYMMDDHHmmss');
+
+    const ipAddr =
+      req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+
+    let vnp_Params: any = {
+      vnp_Version: '2.1.0',
+      vnp_Command: 'pay',
+      vnp_TmnCode: tmnCode,
+      vnp_Locale: 'vn',
+      vnp_CurrCode: 'VND',
+      vnp_TxnRef: orderId,
+      vnp_OrderInfo: 'Thanh toan cho ma don hang: ' + orderId,
+      vnp_OrderType: 'other',
+      vnp_Amount: Number(totalPrice) * 100, // fix nhẹ tránh lỗi float/string
+      vnp_ReturnUrl: returnUrl,
+      vnp_IpAddr: ipAddr,
+      vnp_CreateDate: createDate,
+    };
+
+    // 1. Sắp xếp các tham số theo alphabet
+    const sortedKeys = Object.keys(vnp_Params).sort();
+
+    // 2. Tạo chuỗi dữ liệu để ký (KHÔNG encode)
+    const signData = sortedKeys
+      .map((key) => `${key}=${vnp_Params[key]}`)
+      .join('&');
+
+    // 3. Tạo chuỗi query để nối vào URL (CÓ encode)
+    const queryData = sortedKeys
+      .map(
+        (key) =>
+          `${key}=${encodeURIComponent(vnp_Params[key]).replace(/%20/g, '+')}`
+      )
+      .join('&');
+
+    // 4. Thực hiện băm HMAC-SHA512
+    const hmac = crypto.createHmac('sha512', secretKey);
+    const signed = hmac.update(signData, 'utf-8').digest('hex');
+
+    // 5. Build URL cuối cùng
+    const finalUrl = `${vnpUrl}?${queryData}&vnp_SecureHash=${signed}`;
+
+    return NextResponse.json({ url: finalUrl });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
 
 
 // app/api/payment/create/route.ts  (hoặc đường dẫn bạn đang dùng)
