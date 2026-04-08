@@ -126,7 +126,7 @@ export async function POST(req: Request) {
       vnp_Locale: 'vn',
       vnp_CurrCode: 'VND',
       vnp_TxnRef: orderId,
-      vnp_OrderInfo: 'Thanh toan cho ma don hang: ' + orderId,
+      vnp_OrderInfo: 'Thanh_toan_cho_ma_don_hang_' + orderId,
       vnp_OrderType: 'other',
       vnp_Amount: Number(totalPrice) * 100, // fix nhẹ tránh lỗi float/string
       vnp_ReturnUrl: returnUrl,
