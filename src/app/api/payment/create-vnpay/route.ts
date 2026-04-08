@@ -103,9 +103,10 @@ export async function POST(req: Request) {
 
 // app/api/payment/create/route.ts  (hoặc đường dẫn bạn đang dùng)
 
+// src/app/api/payment/create-vnpay/route.ts
+
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import querystring from 'querystring';   // Built-in Node.js, không cần cài thêm
 import moment from 'moment';
 
 export async function POST(req: Request) {
@@ -113,7 +114,7 @@ export async function POST(req: Request) {
     const { orderId, totalPrice } = await req.json();
 
     const secretKey = process.env.VNP_HASH_SECRET!;
-    const vnpUrl = process.env.VNP_URL!;                    // Ví dụ: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    const vnpUrl = process.env.VNP_URL!;
     const tmnCode = process.env.NEXT_PUBLIC_VNP_TMN_CODE!;
     const returnUrl = process.env.VNP_RETURN_URL!;
 
@@ -134,37 +135,43 @@ export async function POST(req: Request) {
       vnp_ReturnUrl: returnUrl,
       vnp_IpAddr: ipAddr,
       vnp_CreateDate: createDate,
-      // vnp_ExpireDate: moment(date).add(15, 'minutes').format('YYYYMMDDHHmmss'), // tùy chọn
     };
 
-    // Sắp xếp tham số theo thứ tự alphabet
+    // Sắp xếp keys
     const sortedKeys = Object.keys(vnp_Params).sort();
 
-    // ==================== PHẦN QUAN TRỌNG: TẠO SIGNDATA ====================
-    // Cách đúng: KHÔNG encode khi ký (dùng querystring.stringify với encode: false)
-    const signData = querystring.stringify(vnp_Params, { encode: false });
+    // ==================== TẠO SIGNDATA (KHÔNG ENCODE) ====================
+    const signData = sortedKeys
+      .map((key) => `${key}=${vnp_Params[key]}`)
+      .join('&');
 
-    // Tạo SecureHash
+    // Tạo hash
     const hmac = crypto.createHmac('sha512', secretKey);
     const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
-    // Thêm hash vào object để build query
+    // Thêm SecureHash vào params
     vnp_Params['vnp_SecureHash'] = signed;
-    // vnp_Params['vnp_SecureHashType'] = 'SHA512';   // tùy merchant, thường không cần với v2.1.0
 
-    // Build query string cho URL (encode bình thường)
-    const queryData = querystring.stringify(vnp_Params, { encode: false });
+    // ==================== TẠO QUERY STRING CHO URL (CÓ ENCODE) ====================
+    const finalSortedKeys = [...sortedKeys, 'vnp_SecureHash'].sort();
+
+    const queryData = finalSortedKeys
+      .map((key) => {
+        const value = String(vnp_Params[key]);
+        return `${key}=${encodeURIComponent(value).replace(/%20/g, '+')}`;
+      })
+      .join('&');
 
     const finalUrl = `${vnpUrl}?${queryData}`;
 
-    console.log('=== VNPAY CREATE PAYMENT DEBUG ===');
+    console.log('=== VNPAY CREATE PAYMENT ===');
     console.log('SignData:', signData);
     console.log('SecureHash:', signed);
-    console.log('Payment URL:', finalUrl);
+    // console.log('Final URL:', finalUrl); // Uncomment nếu cần xem full URL
 
     return NextResponse.json({ url: finalUrl });
   } catch (error) {
-    console.error('Create Payment Error:', error);
+    console.error('Create VNPay Payment Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
