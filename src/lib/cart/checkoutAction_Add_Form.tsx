@@ -19,6 +19,8 @@ import { MOCK_PROVINCES, MOCK_DISTRICTS, MOCK_WARDS } from "./addressMock";
 
 export default function CheckoutForm() {
   const [isPending, setIsPending] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'vnpay'>('cod'); // Mặc định là COD
+
   const [form, setForm] = useState<CheckoutInput>({
     full_name: '', 
     phone: '', 
