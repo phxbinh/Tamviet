@@ -82,7 +82,7 @@ export default function CheckoutForm() {
       if (res.success) {
         // Trong file app/api/payment/vnpay/create/route.ts
         const amount = Math.round(parseFloat(res.totalPrice)) * 100;
-        alert('Amount: '+amount)
+        
         if (paymentMethod === 'vnpay') {
           // 2. Nếu tạo xong record trong DB, gọi tiếp API VNPay
           const vnpRes = await fetch('/api/payment/create-vnpay', {
@@ -92,7 +92,8 @@ export default function CheckoutForm() {
               totalPrice: amount     // total từ CartPage truyền xuống
             })
           });
-          alert('Mã đơn: '+res.orderCode)
+
+          alert('Mã đơn: '+res.orderCode+" - "+'Amount: '+amount)
           const { url } = await vnpRes.json();
           if (url) {
             window.location.href = url; // Nhảy sang trang thanh toán VNPay
