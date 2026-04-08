@@ -120,7 +120,7 @@ export async function checkoutAction(rawInput: CheckoutInput) {
       SELECT 
         (SELECT id FROM new_order) as id,
         (SELECT order_id FROM new_order) as order_code,
-        (SELECT total_price FROM orders WHERE id = (SELECT id FROM new_order)) as total_price;
+        (SELECT total_price FROM new_order) as total_price;
     `, [
       userId, 
       guestId, 
