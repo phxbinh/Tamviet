@@ -52,6 +52,7 @@ export default function CheckoutForm() {
     try {
       const res = await checkoutAction(form);
       if (res.success) {
+        alert('Mã đơn: '+res.orderCode)
         window.location.href = `/orders/${res.orderId}`;
       } else {
         alert(res.error);
