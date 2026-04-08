@@ -93,7 +93,7 @@ export default function CheckoutForm() {
             })
           });
 
-          /alert('Mã đơn: '+res.orderCode);//+" - "+'Amount: '+amount)
+          alert('Mã đơn: '+res.orderCode);//+" - "+'Amount: '+amount)
           const { url } = await vnpRes.json();
           if (url) {
             window.location.href = url; // Nhảy sang trang thanh toán VNPay
