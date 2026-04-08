@@ -86,7 +86,7 @@ export default function CheckoutForm() {
             method: 'POST',
             body: JSON.stringify({
               orderId: res.orderCode, // Mã ORD-... mà action trả về
-              totalPrice: res.totalPrice     // total từ CartPage truyền xuống
+              totalPrice: Number(res.totalPrice)     // total từ CartPage truyền xuống
             })
           });
           alert('Mã đơn: '+res.orderCode)
