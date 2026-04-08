@@ -1,60 +1,56 @@
-/*
-import { NextResponse } from 'next/server';
-import crypto from 'crypto';
-import qs from 'qs';
-import { db } from "@/lib/db"; // Import drizzle db của bạn
-import { orders } from "@/lib/schema"; // Import schema của bạn
+import { dbSql } from "@/lib/dbSql";
+import { orders } from "@/lib/payment/schema";
 import { eq } from "drizzle-orm";
+import qs from 'qs';
+import crypto from 'crypto';
 
 export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  let vnp_Params = Object.fromEntries(searchParams.entries());
+  const secureHash = vnp_Params['vnp_SecureHash'];
+
+  delete vnp_Params['vnp_SecureHash'];
+  delete vnp_Params['vnp_SecureHashType'];
+
+  // 1. Kiểm tra chữ ký bảo mật
+  const signData = qs.stringify(Object.keys(vnp_Params).sort().reduce((obj: any, key) => {
+    obj[key] = vnp_Params[key];
+    return obj;
+  }, {}), { encode: false });
+  
+  const signed = crypto.createHmac("sha512", process.env.VNP_HASH_SECRET!).update(Buffer.from(signData, 'utf-8')).digest("hex");
+
+  if (secureHash !== signed) {
+    return Response.json({ RspCode: '97', Message: 'Invalid signature' });
+  }
+
+  // 2. Lấy dữ liệu từ VNPay trả về
+  const orderIdText = vnp_Params['vnp_TxnRef']; // Mã ORD-...
+  const vnp_ResponseCode = vnp_Params['vnp_ResponseCode'];
+  const transactionNo = vnp_Params['vnp_TransactionNo'];
+
   try {
-    const { searchParams } = new URL(req.url);
-    let vnp_Params = Object.fromEntries(searchParams.entries());
-    const secureHash = vnp_Params['vnp_SecureHash'];
-
-    // Xóa hash để tính toán lại
-    delete vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHashType'];
-
-    // Sắp xếp lại alphabet
-    vnp_Params = Object.keys(vnp_Params)
-      .sort()
-      .reduce((obj: any, key) => {
-        obj[key] = vnp_Params[key];
-        return obj;
-      }, {});
-
-    const secretKey = process.env.VNP_HASH_SECRET!;
-    const signData = qs.stringify(vnp_Params, { encode: false });
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
-
-    // Kiểm tra chữ ký có khớp không (Chống hack)
-    if (secureHash === signed) {
-      const orderId = vnp_Params['vnp_TxnRef'];
-      const rspCode = vnp_Params['vnp_ResponseCode'];
-
-      // Kiểm tra trạng thái thanh toán từ VNPay (00 là thành công)
-      if (rspCode === '00') {
-        // Cập nhật trạng thái 'paid' vào Neon DB
-        // Drizzle sẽ tự động đợi DB khởi động nếu đang ngủ đông
-        await db.update(orders)
-          .set({ 
-            status: 'paid',
-            updated_at: new Date()
-          })
-          .where(eq(orders.id, orderId));
-
-        return NextResponse.json({ RspCode: '00', Message: 'Confirm Success' });
-      } else {
-        return NextResponse.json({ RspCode: '01', Message: 'Payment Failed' });
-      }
+    // 3. Cập nhật bảng orders dựa trên order_id
+    if (vnp_ResponseCode === '00') {
+      await db.update(orders)
+        .set({ 
+          status: 'paid', // Chuyển từ pending sang paid
+          payment_method: 'vnpay',
+          payment_gateway_id: transactionNo, // Lưu mã giao dịch để đối soát
+          updated_at: new Date()
+        })
+        .where(eq(orders.order_id, orderIdText)); // Query bằng cột order_id duy nhất
+      
+      return Response.json({ RspCode: '00', Message: 'Confirm Success' });
     } else {
-      return NextResponse.json({ RspCode: '97', Message: 'Invalid Checksum' });
+      // Trường hợp lỗi hoặc hủy thanh toán
+      await db.update(orders)
+        .set({ status: 'cancelled', updated_at: new Date() })
+        .where(eq(orders.order_id, orderIdText));
+        
+      return Response.json({ RspCode: '00', Message: 'Confirm Success (Payment Fail)' });
     }
   } catch (error) {
-    console.error("VNPAY_IPN_ERROR:", error);
-    return NextResponse.json({ RspCode: '99', Message: 'Unknow Error' });
+    return Response.json({ RspCode: '99', Message: 'Unknow Error' });
   }
 }
-*/
