@@ -202,8 +202,11 @@ export default function OrderDetailPage() {
         </Link>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-black tracking-tight uppercase flex items-center gap-3">
+            {/*<h1 className="text-3xl font-black tracking-tight uppercase flex items-center gap-3">
               <Package className="text-primary" /> Đơn hàng #{order.id.slice(0, 8).toUpperCase()}
+            </h1>*/}
+            <h1 className="text-xl font-black tracking-tight uppercase flex items-center gap-3">
+              <Package className="text-primary" /> Đơn hàng #{order.order_id.toUpperCase()}
             </h1>
             <div className="flex items-center gap-4 text-sm opacity-60 font-medium">
               <span className="flex items-center gap-1"><Calendar size={14} /> {new Date(order.created_at).toLocaleString('vi-VN')}</span>
