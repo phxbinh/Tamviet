@@ -118,6 +118,7 @@ export async function POST(req: Request) {
 
     const ipAddr =
       req.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+//vnp_IpAddr: '127.0.0.1',
 
     let vnp_Params: any = {
       vnp_Version: '2.1.0',
@@ -130,7 +131,7 @@ export async function POST(req: Request) {
       vnp_OrderType: 'other',
       vnp_Amount: Number(totalPrice) * 100, // fix nhẹ tránh lỗi float/string
       vnp_ReturnUrl: returnUrl,
-      vnp_IpAddr: ipAddr,
+      vnp_IpAddr: '127.0.0.1',
       vnp_CreateDate: createDate,
     };
 
