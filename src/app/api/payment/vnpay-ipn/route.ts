@@ -32,7 +32,7 @@ export async function GET(req: Request) {
   try {
     // 3. Cập nhật bảng orders dựa trên order_id
     if (vnp_ResponseCode === '00') {
-      await db.update(orders)
+      await dbSql.update(orders)
         .set({ 
           status: 'paid', // Chuyển từ pending sang paid
           payment_method: 'vnpay',
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
       return Response.json({ RspCode: '00', Message: 'Confirm Success' });
     } else {
       // Trường hợp lỗi hoặc hủy thanh toán
-      await db.update(orders)
+      await dbSql.update(orders)
         .set({ status: 'cancelled', updated_at: new Date() })
         .where(eq(orders.order_id, orderIdText));
         
