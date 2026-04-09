@@ -85,20 +85,20 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
       <div ref={cardRef} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
         
         {/* Header */}
-        <div className={`p-8 text-center ${isSuccess ? 'bg-emerald-50' : 'bg-rose-50'}`}>
+        <div className={`p-5 text-center ${isSuccess ? 'bg-emerald-50' : 'bg-rose-50'}`}>
           <div className="flex justify-center mb-4">
             {isSuccess ? (
               <div className="bg-emerald-500 p-3 rounded-full">
-                <CheckCircle2 className="w-12 h-12 text-white" />
+                <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
             ) : (
               <div className="bg-rose-500 p-3 rounded-full">
-                <XCircle className="w-12 h-12 text-white" />
+                <XCircle className="w-8 h-8 text-white" />
               </div>
             )}
           </div>
 
-          <h1 className="text-3xl font-extrabold">
+          <h1 className="text-xl font-extrabold">
             {isSuccess ? 'Thanh toán thành công!' : 'Thanh toán chưa hoàn tất'}
           </h1>
         </div>
@@ -151,8 +151,9 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
 
         </div>
 
-        <div className="bg-slate-50 p-4 text-center text-xs text-slate-400">
-          Thanh toán bảo mật bởi VNPay & Tâm Việt
+        <div className="bg-slate-50 p-4 border-t border-slate-100 flex items-center justify-center gap-2 text-slate-400 text-xs">
+          <ShieldCheck className="w-4 h-4" />
+          <span>Thanh toán bảo mật bởi VNPay & Tâm Việt</span>
         </div>
       </div>
 
