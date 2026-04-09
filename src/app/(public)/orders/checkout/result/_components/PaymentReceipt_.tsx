@@ -71,6 +71,8 @@ const handleDownloadImage = async () => {
 
   return (
     <div className="max-w-xl w-full">
+      <pre>{JSON.stringify(data.address, null, 2)}</pre>
+
       {/* Nút tải ảnh nằm ngoài Card chính */}
       <div className="flex justify-end mb-4">
         <button 
