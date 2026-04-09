@@ -1,9 +1,52 @@
 // app/(shop)/checkout/result/page.tsx
+// ùung cho gôc: Chạy được
 import crypto from 'crypto';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, Package, ArrowRight, ShieldCheck, ShoppingBag } from 'lucide-react';
 
+
+//import crypto from 'crypto';
+import PaymentReceipt from './_components/PaymentReceipt';
+
 export default function PaymentResultPage({ searchParams }: { searchParams: any }) {
+  const vnp_Params = { ...searchParams };
+  const secureHash = vnp_Params['vnp_SecureHash'];
+
+  delete vnp_Params['vnp_SecureHash'];
+  delete vnp_Params['vnp_SecureHashType'];
+
+  const sortedKeys = Object.keys(vnp_Params).sort();
+  const signData = sortedKeys
+    .map((key) => `${key}=${encodeURIComponent(vnp_Params[key]).replace(/%20/g, '+')}`)
+    .join('&');
+
+  const secretKey = process.env.VNP_HASH_SECRET!;
+  const signed = crypto.createHmac("sha512", secretKey).update(Buffer.from(signData, 'utf-8')).digest("hex");
+
+  const isSignatureValid = secureHash === signed;
+  const isSuccess = isSignatureValid && vnp_Params['vnp_ResponseCode'] === '00';
+  
+  const orderId = vnp_Params['vnp_TxnRef'];
+  const amount = Number(vnp_Params['vnp_Amount']) / 100;
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 antialiased">
+      <PaymentReceipt 
+        isSuccess={isSuccess} 
+        orderId={orderId} 
+        amount={amount} 
+      />
+    </div>
+  );
+}
+
+
+
+
+
+// Gôc chạy được
+//export default 
+function PaymentResultPage_({ searchParams }: { searchParams: any }) {
   const vnp_Params = { ...searchParams };
   const secureHash = vnp_Params['vnp_SecureHash'];
 
