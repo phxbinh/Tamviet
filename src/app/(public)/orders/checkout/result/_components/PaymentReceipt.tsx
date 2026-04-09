@@ -14,7 +14,7 @@ interface PaymentReceiptProps {
 export default function PaymentReceipt({ isSuccess, orderId, amount }: PaymentReceiptProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleDownloadImage = async () => {
+  const handleDownloadImage_ = async () => {
     if (cardRef.current === null) return;
     
     try {
@@ -33,6 +33,46 @@ export default function PaymentReceipt({ isSuccess, orderId, amount }: PaymentRe
       alert('Không thể xuất ảnh, vui lòng thử lại sau.');
     }
   };
+
+
+
+const handleDownloadImage = async () => {
+  if (cardRef.current === null) return;
+
+  try {
+    const dataUrl = await toPng(cardRef.current, { 
+      cacheBust: true,
+      pixelRatio: 3, // Tăng độ nét cho mobile
+    });
+
+    // Chuyển đổi DataURL (base64) sang File object để có thể chia sẻ
+    const blob = await (await fetch(dataUrl)).blob();
+    const file = new File([blob], `receipt-${orderId}.png`, { type: 'image/png' });
+
+    // Kiểm tra xem trình duyệt có hỗ trợ chia sẻ file không (Hầu hết mobile hiện đại đều hỗ trợ)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Biên lai thanh toán',
+        text: `Biên lai cho đơn hàng ${orderId}`,
+      });
+    } else {
+      // Nếu không hỗ trợ share (như trên Desktop), quay lại cách tải về truyền thống
+      const link = document.createElement('a');
+      link.download = `receipt-${orderId}.png`;
+      link.href = dataUrl;
+      link.click();
+    }
+  } catch (err) {
+    console.error('Lỗi:', err);
+  }
+};
+
+
+
+
+
+
 
   return (
     <div className="max-w-xl w-full">
