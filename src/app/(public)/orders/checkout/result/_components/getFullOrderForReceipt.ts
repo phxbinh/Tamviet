@@ -1,12 +1,12 @@
 // _components/getFullOrderForReceipt.ts
 "use server";
 
-import { dbSql } from "@/lib/dbSql";
+import { sql } from "@/lib/neon/sql";
 
 export async function getFullOrderForReceipt(orderId: string) {
   try {
     // 1. Lấy order
-    const order = await dbSql`
+    const order = await sql`
       SELECT *
       FROM orders
       WHERE order_id = ${orderId}
@@ -20,7 +20,7 @@ export async function getFullOrderForReceipt(orderId: string) {
     const orderUUID = order[0].id;
 
     // 2. Lấy address
-    const address = await dbSql`
+    const address = await sql`
       SELECT *
       FROM order_addresses
       WHERE order_id = ${orderUUID}
@@ -28,7 +28,7 @@ export async function getFullOrderForReceipt(orderId: string) {
     `;
 
     // 3. Lấy items (join variant nếu cần)
-    const items = await dbSql`
+    const items = await sql`
       SELECT 
         oi.*,
         pv.sku,
