@@ -32,6 +32,7 @@ export async function getFullOrderForReceipt(orderId: string) {
       SELECT 
         oi.*,
         pv.sku,
+        pv.title,
         pv.price as current_price
       FROM order_items oi
       LEFT JOIN product_variants pv ON pv.id = oi.variant_id
