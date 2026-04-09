@@ -92,6 +92,14 @@ export async function POST(req: Request) {
     // 5. Build URL cuối cùng
     const finalUrl = `${vnpUrl}?${queryData}&vnp_SecureHash=${signed}`;
 
+console.log({
+  orderId,
+  signData,
+  finalUrl
+});
+
+
+
     return NextResponse.json({ url: finalUrl });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
