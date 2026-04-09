@@ -38,7 +38,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
   const amount = Number(vnp_Params['vnp_Amount']) / 100;
 
   // Thêm cái này để lấy data của order
-  const data = await getFullOrderForReceipt_(orderId);
+  const data = await getFullOrderForReceipt(orderId);
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 antialiased">
