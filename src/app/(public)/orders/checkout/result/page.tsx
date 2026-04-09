@@ -15,7 +15,7 @@ import { getFullOrderForReceipt } from './_components/getFullOrderForReceipt';
 import PaymentReceipt from './_components/PaymentReceipt_';
 
 
-export default function PaymentResultPage({ searchParams }: { searchParams: any }) {
+export default async function PaymentResultPage({ searchParams }: { searchParams: any }) {
   const vnp_Params = { ...searchParams };
   const secureHash = vnp_Params['vnp_SecureHash'];
 
