@@ -71,7 +71,7 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
   return (
     <div className="max-w-xl w-full">
       {/* 👉 Debug nếu cần */}
-       <pre>{JSON.stringify(data, null, 2)}</pre> 
+       {/*<pre>{JSON.stringify(data, null, 2)}</pre>*/}
 
       <div className="flex justify-end mb-4">
         <button 
@@ -101,6 +101,9 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
           <h1 className="text-xl font-extrabold">
             {isSuccess ? 'Thanh toán thành công!' : 'Thanh toán chưa hoàn tất'}
           </h1>
+          <p className={`mt-2 font-medium ${isSuccess ? 'text-emerald-700' : 'text-rose-700'}`}>
+            {isSuccess ? 'Đơn hàng đã được xác nhận an toàn.' : 'Đã có lỗi hoặc giao dịch bị hủy.'}
+          </p>
         </div>
 
         {/* Body */}
@@ -157,17 +160,20 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Điều hướng - Nằm ngoài phần chụp ảnh hoặc giữ lại tùy bạn */}
       <div className="mt-8 space-y-4">
         {isSuccess ? (
-          <Link href="/orders" className="block text-center bg-black text-white py-3 rounded-xl">
-            Theo dõi đơn hàng
+          <Link href="/orders" className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-4 rounded-xl font-bold">
+            Theo dõi đơn hàng <ArrowRight className="w-5 h-5" />
           </Link>
         ) : (
-          <Link href="/checkout" className="block text-center bg-red-500 text-white py-3 rounded-xl">
-            Thử lại
+          <Link href="/checkout" className="w-full flex items-center justify-center gap-2 bg-rose-600 text-white py-4 rounded-xl font-bold">
+            Thử thanh toán lại
           </Link>
         )}
+        <Link href="/" className="w-full flex items-center justify-center gap-2 bg-white border-2 border-slate-200 text-slate-600 py-4 rounded-xl font-bold">
+          <ShoppingBag className="w-5 h-5" /> Quay lại cửa hàng
+        </Link>
       </div>
     </div>
   );
