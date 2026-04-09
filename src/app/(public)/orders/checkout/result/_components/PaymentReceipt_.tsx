@@ -71,7 +71,7 @@ const handleDownloadImage = async () => {
 
   return (
     <div className="max-w-xl w-full">
-      {/*<pre>{JSON.stringify(data.address, null, 2)}</pre>*/}
+      <pre display="hidden">{JSON.stringify(data.address, null, 2)}</pre>
 
       {/* Nút tải ảnh nằm ngoài Card chính */}
       <div className="flex justify-end mb-4">
@@ -161,12 +161,12 @@ const handleDownloadImage = async () => {
     {data?.address && (
       <div className="border-b pb-2">
         <p className="text-slate-500 mb-1">Giao đến</p>
-        <p className="font-medium">
+        <span className="font-medium">
           {data.address.full_name} - {data.address.phone}
-        </p>
-        <p className="text-xs text-slate-500">
+        </span>
+        <span className="text-xs text-slate-500">
           {data.address.address_line1}, {data.address.ward_name}, {data.address.district_name}, {data.address.province_name}
-        </p>
+        </span>
       </div>
     )}
 
