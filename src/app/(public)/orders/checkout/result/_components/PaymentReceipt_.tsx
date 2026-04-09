@@ -104,8 +104,9 @@ const handleDownloadImage = async () => {
           </p>
         </div>
 
-        {/* Chi tiết */} {/*
-        <div className="p-8">
+        {/* Chi tiết */}
+        <div className="p-6 text-sm">
+{/*
           <div className="space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
@@ -134,15 +135,8 @@ const handleDownloadImage = async () => {
               </span>
             </div>
           </div>
-        </div>
+*/}
 
-        <div className="bg-slate-50 p-4 border-t border-slate-100 flex items-center justify-center gap-2 text-slate-400 text-xs">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Thanh toán bảo mật bởi VNPay & Tâm Việt</span>
-        </div>
-      </div> */}
-
-<div className="p-6 text-sm">
   <div className="space-y-4">
 
     {/* Order ID */}
@@ -200,9 +194,26 @@ const handleDownloadImage = async () => {
     </div>
 
   </div>
-</div>
 
 
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <div className="bg-slate-50 p-4 border-t border-slate-100 flex items-center justify-center gap-2 text-slate-400 text-xs">
+          <ShieldCheck className="w-4 h-4" />
+          <span>Thanh toán bảo mật bởi VNPay & Tâm Việt</span>
+        </div>
+      </div>
 
       {/* Điều hướng - Nằm ngoài phần chụp ảnh hoặc giữ lại tùy bạn */}
       <div className="mt-8 space-y-4">
