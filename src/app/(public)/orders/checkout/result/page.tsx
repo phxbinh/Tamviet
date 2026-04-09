@@ -8,6 +8,13 @@ import { CheckCircle2, XCircle, Package, ArrowRight, ShieldCheck, ShoppingBag } 
 //import crypto from 'crypto';
 import PaymentReceipt from './_components/PaymentReceipt';
 
+
+
+// Lấy full data của order
+import { getFullOrderForReceipt } from './_components/getFullOrderForReceipt';
+import PaymentReceipt from './_components/PaymentReceipt_';
+
+
 export default function PaymentResultPage({ searchParams }: { searchParams: any }) {
   const vnp_Params = { ...searchParams };
   const secureHash = vnp_Params['vnp_SecureHash'];
@@ -29,20 +36,20 @@ export default function PaymentResultPage({ searchParams }: { searchParams: any 
   const orderId = vnp_Params['vnp_TxnRef'];
   const amount = Number(vnp_Params['vnp_Amount']) / 100;
 
+  // Thêm cái này để lấy data của order
+  const data = await getFullOrderForReceipt(orderId);
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 antialiased">
       <PaymentReceipt 
         isSuccess={isSuccess} 
         orderId={orderId} 
         amount={amount} 
+        data={data} // Truyền data vào
       />
     </div>
   );
 }
-
-
-
-
 
 // Gôc chạy được
 //export default 
