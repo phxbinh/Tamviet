@@ -12,6 +12,7 @@ import PaymentReceipt from './_components/PaymentReceipt';
 
 // Lấy full data của order
 import { getFullOrderForReceipt } from './_components/getFullOrderForReceipt';
+import { getFullOrderForReceipt_ } from './_components/getFullOrderForReceipt_';
 import PaymentReceipt_ from './_components/PaymentReceipt_';
 
 
