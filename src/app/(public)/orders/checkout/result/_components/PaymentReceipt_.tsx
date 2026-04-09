@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { toPng } from 'html-to-image';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, Package, ArrowRight, ShieldCheck, ShoppingBag, Download } from 'lucide-react';
