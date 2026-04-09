@@ -12,7 +12,7 @@ import PaymentReceipt from './_components/PaymentReceipt';
 
 // Lấy full data của order
 import { getFullOrderForReceipt } from './_components/getFullOrderForReceipt';
-import PaymentReceipt from './_components/PaymentReceipt_';
+import PaymentReceipt_ from './_components/PaymentReceipt_';
 
 
 export default async function PaymentResultPage({ searchParams }: { searchParams: any }) {
@@ -41,7 +41,7 @@ export default async function PaymentResultPage({ searchParams }: { searchParams
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 antialiased">
-      <PaymentReceipt 
+      <PaymentReceipt_ 
         isSuccess={isSuccess} 
         orderId={orderId} 
         amount={amount} 
