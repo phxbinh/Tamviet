@@ -71,7 +71,7 @@ export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: Pa
   return (
     <div className="max-w-xl w-full">
       {/* 👉 Debug nếu cần */}
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+       <pre>{JSON.stringify(data, null, 2)}</pre> 
 
       <div className="flex justify-end mb-4">
         <button 
