@@ -12,7 +12,7 @@ interface PaymentReceiptProps {
   data: any; // { order, address, items }
 }
 
-export default function PaymentReceipt({ isSuccess, orderId, amount, data }: PaymentReceiptProps) {
+export default function PaymentReceipt_({ isSuccess, orderId, amount, data }: PaymentReceiptProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadImage_ = async () => {
