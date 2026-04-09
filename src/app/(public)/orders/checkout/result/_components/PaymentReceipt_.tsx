@@ -71,7 +71,7 @@ const handleDownloadImage = async () => {
 
   return (
     <div className="max-w-xl w-full">
-      <pre>{JSON.stringify(data.address, null, 2)}</pre>
+      {/*<pre>{JSON.stringify(data.address, null, 2)}</pre>*/}
 
       {/* Nút tải ảnh nằm ngoài Card chính */}
       <div className="flex justify-end mb-4">
@@ -177,7 +177,7 @@ const handleDownloadImage = async () => {
         {data?.items?.map((item: any) => (
           <div key={item.id} className="flex justify-between text-xs">
             <span>
-              {item.sku || "Variant"} × {item.quantity}
+              {item.title || "Variant"} × {item.quantity}
             </span>
             <span className="font-medium">
               {(item.price_at_time * item.quantity).toLocaleString("vi-VN")}đ
