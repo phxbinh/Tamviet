@@ -88,7 +88,7 @@ export default async function Page({
   );
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-6xl mx-auto px-6 py-10">
       {/* TITLE */}
       <h1 className="text-4xl font-bold leading-tight">
         {post[0].title}
