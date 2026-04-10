@@ -1,65 +1,7 @@
-// src/app/blog/[slug]/page.tsx
-// app/blog/[slug]/page.tsx
-/*
-import { sql } from "@/lib/neon/sql";
-import { Renderer } from "@/components/editor/Renderer";
-import { parseContent } from "@/lib/parseContent";
-
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-
-  const post = await sql`
-    SELECT * FROM posts WHERE slug = ${slug}
-  `;
-
-  if (!post[0]) return <div>Not found</div>;
-
-  const content = parseContent(post[0].content_json);
-
-  return <Renderer content={content} />;
-}
-*/
-
-
-/*
-import { sql } from "@/lib/neon/sql";
-import { Renderer } from "@/components/editor/Renderer";
-import { parseContent } from "@/lib/parseContent";
-
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-
-  const post = await sql`
-    SELECT * FROM posts WHERE slug = ${slug}
-  `;
-
-  if (!post[0]) return <div className="p-6">Not found</div>;
-
-  const content = parseContent(post[0].content_json);
-
-  return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-
-      <h1 className="text-4xl font-bold mb-8 leading-tight">
-        {post[0].title}
-      </h1>
-
-      <Renderer content={content} />
-    </div>
-  );
-}
-*/
+// src/app/(markdown)/baiviet/[slug]/page.tsx
 
 import { sql } from "@/lib/neon/sql";
-import { Renderer } from "@/components/editor/Renderer";
+import { Renderer } from "@/components/editor/RendererTOC";
 import { parseContent } from "@/lib/parseContent";
 import { CalendarDays } from "lucide-react";
 
