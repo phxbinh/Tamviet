@@ -55,6 +55,7 @@ export function Renderer({ content }: { content: any }) {
   const sectionIds = sections.map((section) => section.heading ? slugify(section.heading.text) : "");
 
   // ================= SCROLL SPY =================
+/*
   useEffect(() => {
     const headings = document.querySelectorAll("h2[id]");
     const observer = new IntersectionObserver(
@@ -68,6 +69,33 @@ export function Renderer({ content }: { content: any }) {
     headings.forEach((h) => observer.observe(h));
     return () => observer.disconnect();
   }, []);
+*/
+// src/components/editor/Renderer.tsx
+
+useEffect(() => {
+  const headings = document.querySelectorAll("h2[id]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveId(entry.target.id);
+        }
+      });
+    },
+    { 
+      // rootMargin: "Top Right Bottom Left"
+      // -150px ở Top để nó chỉ tính là "Active" khi tiêu đề đã vượt qua Header và TOC
+      rootMargin: "-150px 0px -70% 0px", 
+      threshold: 0 
+    }
+  );
+
+  headings.forEach((h) => observer.observe(h));
+  return () => observer.disconnect();
+}, []);
+
+
+
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-10">
