@@ -139,14 +139,14 @@ export default function BlockEditor({ block, onChange, onDelete }: BlockEditorPr
   return (
     <div className="group relative border border-transparent hover:border-slate-200 hover:bg-slate-50/50 transition-all rounded-lg p-4 mb-2">
       {/* TOOLBAR MINI - Chỉ hiện khi hover */}
-      <div className="absolute -left-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute -left-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
         <button type="button" className="cursor-grab text-slate-300 hover:text-slate-500">
           <GripVertical size={18} />
         </button>
         <button 
           type="button" 
           onClick={onDelete}
-          className="text-slate-300 text-red-200 hover:text-red-500 transition-colors"
+          className="text-slate-300 text-red-500 transition-colors"
         >
           <Trash2 size={18} />
         </button>
