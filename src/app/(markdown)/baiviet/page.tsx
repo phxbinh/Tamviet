@@ -142,7 +142,7 @@ export default async function Page() {
           <div className="divide-y divide-border">
             {posts.slice(0, 5).map((p, idx) => (
               <div key={idx} className="py-4 first:pt-0 group cursor-pointer">
-                <Link prefetch={true} href={`/blog/${p.slug}`}>
+                <Link prefetch={true} href={`/baiviet/${p.slug}`}>
                   <span className="text-primary font-bold text-xs uppercase tracking-widest">#{idx + 1}</span>
                   <h5 className="font-serif font-bold text-base mt-1 group-hover:underline decoration-primary underline-offset-4">
                     {p.title}
