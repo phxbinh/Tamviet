@@ -3,7 +3,7 @@
 'use client';
 
 import { groupByHeading } from "@/lib/parseContent";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { TableOfContents } from "./TOC";
 
 export function Renderer({ content }: { content: any }) {
