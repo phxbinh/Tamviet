@@ -15,6 +15,8 @@ export function Renderer({ content }: { content: Document }) {
   );
 }
 */
+
+// src/components/editor/Renderer.tsx
 'use client'
 import { groupByHeading } from "@/lib/parseContent";
 import { useEffect, useState } from "react";
