@@ -23,7 +23,184 @@ export function Renderer({ content }: { content: Document }) {
 import { groupByHeading } from "@/lib/parseContent";
 import { useEffect, useState } from "react";
 
+/*
+'use client';
+
+import { groupByHeading } from "@/lib/parseContent";
+import { useEffect, useState } from "react";
+*/
+
+
+
+
 export function Renderer({ content }: { content: any }) {
+  const sections = groupByHeading(content.blocks);
+  const [activeId, setActiveId] = useState<string>("");
+
+  // ================= SLUG =================
+  const slugMap = new Map<string, number>();
+  function slugify(text: string) {
+    let slug = text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+
+    if (slugMap.has(slug)) {
+      const count = slugMap.get(slug)! + 1;
+      slugMap.set(slug, count);
+      slug = `${slug}-${count}`;
+    } else {
+      slugMap.set(slug, 0);
+    }
+    return slug;
+  }
+
+  const sectionIds = sections.map((section) => {
+    if (!section.heading) return "";
+    return slugify(section.heading.text);
+  });
+
+  // ================= SCROLL SPY =================
+  useEffect(() => {
+    const headings = document.querySelectorAll("h2[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+
+    headings.forEach((h) => observer.observe(h));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    /* THAY ĐỔI CHÍNH Ở ĐÂY:
+       - Mặc định (mobile): flex flex-col (TOC ở trên, Content ở dưới)
+       - Từ màn hình lớn (lg): Quay lại dùng grid và đảo thứ tự hiển thị nếu cần
+    */
+    <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-10">
+      
+      {/* ================= TOC ================= */}
+      <aside className="lg:sticky lg:top-20 h-fit order-1 lg:order-1 border-b pb-6 lg:border-b-0 lg:pb-0">
+        <div className="font-bold mb-4 text-lg lg:text-sm uppercase tracking-wider text-gray-900">
+          Mục lục
+        </div>
+
+        <ul className="space-y-2 lg:space-y-1">
+          {sections.map((section, i) => {
+            if (!section.heading) return null;
+            const id = sectionIds[i];
+
+            return (
+              <li
+                key={id}
+                style={{ marginLeft: (section.heading.level - 1) * 12 }}
+              >
+                <a
+                  href={`#${id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.getElementById(id);
+                    if (element) {
+                      const offset = 80; // Tránh bị đè bởi Header nếu có
+                      const bodyRect = document.body.getBoundingClientRect().top;
+                      const elementRect = element.getBoundingClientRect().top;
+                      const elementPosition = elementRect - bodyRect;
+                      const offsetPosition = elementPosition - offset;
+
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                      });
+                    }
+                  }}
+                  className={`block py-1 transition-all ${
+                    activeId === id
+                      ? "text-blue-600 font-semibold border-l-2 border-blue-600 pl-3 -ml-3"
+                      : "text-gray-500 hover:text-black pl-0"
+                  }`}
+                >
+                  {section.heading.text}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </aside>
+
+      {/* ================= CONTENT ================= */}
+      <article className="order-2 lg:order-2">
+        {sections.map((section, i) => {
+          const id = section.heading ? sectionIds[i] : "";
+
+          return (
+            <section key={i} className="mb-12">
+              {section.heading && (
+                <h2
+                  id={id}
+                  className={`
+                    font-bold mb-6 scroll-mt-24
+                    ${
+                      section.heading.level === 1
+                        ? "text-3xl lg:text-4xl"
+                        : section.heading.level === 2
+                        ? "text-2xl lg:text-3xl"
+                        : "text-xl lg:text-2xl"
+                    }
+                  `}
+                >
+                  {section.heading.text}
+                </h2>
+              )}
+
+              <div className="space-y-5">
+                {section.children.map((b: any, idx: number) => {
+                  if (b.type === "paragraph") {
+                    return <p key={idx} className="text-gray-700 leading-relaxed text-lg">{b.text}</p>;
+                  }
+                  if (b.type === "image") {
+                    return <img key={idx} src={b.src} alt={b.alt || ""} className="rounded-2xl w-full shadow-sm" />;
+                  }
+                  if (b.type === "code") {
+                    return (
+                      <pre key={idx} className="bg-slate-900 text-slate-100 p-5 rounded-xl overflow-x-auto text-sm font-mono leading-6">
+                        <code>{b.code}</code>
+                      </pre>
+                    );
+                  }
+                  if (b.type === "list") {
+                    return (
+                      <ul key={idx} className="list-disc pl-6 space-y-2 text-gray-700">
+                        {b.items.map((item: string, i: number) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </article>
+    </div>
+  );
+}
+
+
+
+
+
+export function Renderer__({ content }: { content: any }) {
   const sections = groupByHeading(content.blocks);
   const [activeId, setActiveId] = useState<string>("");
 
