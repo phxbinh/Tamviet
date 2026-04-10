@@ -103,12 +103,12 @@ export function TableOfContents({ sections, sectionIds, activeId, contentRef }: 
 
   return (
     <aside 
-      className={`sticky top-0 z-30 w-full transition-all duration-500 ease-in-out 
+      className={`sticky top-2 z-30 w-full transition-all duration-500 ease-in-out 
       ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-50 pointer-events-none'}`}
     >
       <div 
         ref={tocContainerRef}
-        className="w-full bg-white/90 backdrop-blur-xl border border-gray-200 lg:border-none rounded-2xl shadow-xl lg:shadow-none overflow-hidden"
+        className="w-full bg-white/90 backdrop-blur-xl border border-gray-200 lg:border-none rounded-xl shadow-xl lg:shadow-none overflow-hidden"
       >
         {/* Header điều khiển Mobile */}
         <button 
