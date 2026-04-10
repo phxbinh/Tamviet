@@ -102,11 +102,16 @@ export function TableOfContents({ sections, sectionIds, activeId, contentRef }: 
   if (sections.length === 0) return null;
 
   return (
+/*
     <aside 
       className={`sticky z-30 w-full transition-all duration-500 ease-in-out lg:translate-y-0 lg:opacity-100
       ${isVisible ? 'top-0 opacity-100' : '-top-20 opacity-0 pointer-events-none'} 
       lg:top-4 lg:block`}
-    >
+    >*/
+<aside
+className={`sticky top-4 z-30 w-full transition-all duration-500 ease-in-out 
+      ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0 pointer-events-none'}`}
+>
       <div 
         ref={tocContainerRef}
         className="w-full bg-white/90 backdrop-blur-xl border border-gray-200 lg:border-none rounded-2xl shadow-xl lg:shadow-none overflow-hidden"
