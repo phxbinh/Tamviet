@@ -28,8 +28,8 @@ export function TableOfContents({ sections, sectionIds, activeId, contentRef }: 
   const accumulativeScrollUp = useRef(0);
   const accumulativeScrollDown = useRef(0);
 
-  const SCROLL_UP_THRESHOLD = 40;   
-  const SCROLL_DOWN_THRESHOLD = 40; 
+  const SCROLL_UP_THRESHOLD = 80;   
+  const SCROLL_DOWN_THRESHOLD = 80; 
 
   useEffect(() => {
     // Tìm div cha có class overflow-y-auto trong MarkdownShell
