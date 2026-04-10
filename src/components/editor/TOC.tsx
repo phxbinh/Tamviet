@@ -107,16 +107,36 @@ export function TableOfContents({ sections, sectionIds, activeId, contentRef }: 
       className={`sticky z-30 w-full transition-all duration-500 ease-in-out lg:translate-y-0 lg:opacity-100
       ${isVisible ? 'top-0 opacity-100' : '-top-20 opacity-0 pointer-events-none'} 
       lg:top-4 lg:block`}
-    >*/
-<aside
-className={`sticky top-4 z-30 w-full transition-all duration-500 ease-in-out 
-      ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0 pointer-events-none'}`}
->
+    >
       <div 
         ref={tocContainerRef}
-        className="w-full bg-card/70 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl overflow-hidden"
-        //className="w-full bg-white/90 backdrop-blur-xl border border-gray-200 lg:border-none rounded-2xl shadow-xl lg:shadow-none overflow-hidden"
+        className="w-full bg-white/90 backdrop-blur-xl border border-gray-200 lg:border-none rounded-2xl shadow-xl lg:shadow-none overflow-hidden"
       >
+*/
+// src/components/editor/TOC.tsx
+
+<aside 
+  className={`sticky top-4 z-30 w-full transition-all duration-500 ease-in-out 
+    /* Desktop: Luôn hiện và không dịch chuyển */
+    lg:translate-y-0 lg:opacity-100 lg:pointer-events-auto
+    /* Mobile: Ẩn hiện bằng translate và opacity như Số 2 */
+    ${isVisible 
+      ? 'translate-y-0 opacity-100' 
+      : '-translate-y-12 opacity-0 pointer-events-none'
+    }
+  `}
+>
+  <div 
+    ref={tocContainerRef}
+    className={`
+      w-full backdrop-blur-xl border transition-all duration-300
+      /* Thừa hưởng style đẹp từ Số 2: bg-card (nếu dùng shadcn) hoặc bg-white/70 */
+      bg-white/70 border-gray-200/50 rounded-xl shadow-2xl overflow-hidden
+      /* Laptop: Bỏ shadow và border nếu muốn style tối giản như Số 1 cũ */
+      lg:shadow-none lg:border-none lg:bg-transparent
+    `}
+  >
+
         {/* Header điều khiển Mobile */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
