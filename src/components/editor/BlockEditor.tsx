@@ -137,18 +137,31 @@ export default function BlockEditor({ block, onChange, onDelete }: BlockEditorPr
   const baseInputStyle = "w-full bg-transparent outline-none resize-none placeholder:text-slate-400 text-slate-800";
 
   return (
-    <div className="group relative border border-transparent hover:border-slate-200 hover:bg-slate-50/50 transition-all rounded-lg p-4 mb-2">
-      {/* TOOLBAR MINI - Chỉ hiện khi hover */}
-      <div className="absolute -left-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 opacity-90 group-hover:opacity-100 transition-opacity">
-        <button type="button" className="cursor-grab text-slate-300 hover:text-slate-500">
-          <GripVertical size={18} />
-        </button>
+    // THAY ĐỔI 1: Luôn hiện viền nhẹ để phân biệt các block khi không hover
+    <div className="relative border border-slate-100 bg-white transition-all rounded-lg p-4 mb-2">
+      
+      {/* TOOLBAR MINI - HIỂN THỊ LUÔN */}
+      <div className="absolute right-2 top-2 flex items-center gap-1 z-10 transition-opacity">
+        {/* Nút kéo - có thể ẩn đi nếu bạn không có logic kéo thả */}
         <button 
           type="button" 
-          onClick={onDelete}
-          className="text-slate-300 text-red-500 transition-colors"
+          title="Nắm để kéo"
+          className="cursor-grab text-slate-300 hover:text-slate-500 p-1"
         >
-          <Trash2 size={18} />
+          <GripVertical size={16} />
+        </button>
+        
+        {/* Nút Xóa - Thêm class text-red-500 để làm nổi bật */}
+        <button 
+          type="button" 
+          onClick={(e) => {
+            e.preventDefault(); 
+            onDelete();
+          }}
+          title="Xóa block"
+          className="text-red-400 hover:text-red-600 p-1 transition-colors"
+        >
+          <Trash2 size={16} />
         </button>
       </div>
 
