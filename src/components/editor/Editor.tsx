@@ -43,7 +43,8 @@ function SaveButton() {
   );
 }
 
-export default function Editor() {
+//export default 
+function Editor_() {
   const [title, setTitle] = useState("");
   const [blocks, setBlocks] = useState<BlockWithId[]>([]);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -146,8 +147,7 @@ export default function Editor() {
 
 
 
-//export default 
-function Editor_() {
+export default function Editor() {
   const [title, setTitle] = useState("");
   const [blocks, setBlocks] = useState<BlockWithId[]>([]);
 
@@ -241,12 +241,15 @@ function Editor_() {
           + List
         </button>
 
+        {/*
         <button
           type="submit"
           className="bg-green-500 text-white px-3 py-1 rounded"
         >
           Save
-        </button>
+        </button>*/}
+       <SaveButton />
+
       </div>
 
       {/* BLOCKS */}
