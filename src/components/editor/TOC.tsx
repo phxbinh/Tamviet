@@ -104,7 +104,7 @@ export function TableOfContents({ sections, sectionIds, activeId, contentRef }: 
   return (
     <aside 
       className={`sticky top-4 z-30 w-full transition-all duration-500 ease-in-out 
-      ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-0 pointer-events-none'}`}
+      ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-12 opacity-50 pointer-events-none'}`}
     >
       <div 
         ref={tocContainerRef}
