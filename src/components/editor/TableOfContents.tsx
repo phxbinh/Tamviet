@@ -27,7 +27,7 @@ export function TableOfContents({ sections, sectionIds, activeId }: TOCProps) {
   };
 
   return (
-    <aside className="sticky top-0 lg:top-20 z-20 bg-white/95 backdrop-blur lg:bg-transparent -mx-6 px-6 py-3 lg:p-0 border-b lg:border-0 h-fit transition-all duration-300">
+    <aside className="sticky top-16 lg:top-20 z-20 bg-white/95 backdrop-blur lg:bg-transparent -mx-6 px-6 py-3 lg:p-0 border-b lg:border-0 h-fit transition-all duration-300">
       
       {/* Nút bấm Dropdown Mobile */}
       <button
