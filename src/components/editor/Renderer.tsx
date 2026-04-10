@@ -23,6 +23,144 @@ export function Renderer({ content }: { content: Document }) {
 import { groupByHeading } from "@/lib/parseContent";
 import { useEffect, useState } from "react";
 
+
+
+/*
+'use client';
+
+import { groupByHeading } from "@/lib/parseContent";
+import { useEffect, useState } from "react";
+*/
+import { ChevronDown } from "lucide-react"; // Cần cài lucide-react hoặc dùng icon khác
+
+export function Renderer({ content }: { content: any }) {
+  const sections = groupByHeading(content.blocks);
+  const [activeId, setActiveId] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false); // State cho dropdown trên mobile
+
+  // ================= SLUG & IDS =================
+  const slugMap = new Map<string, number>();
+  function slugify(text: string) {
+    let slug = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/g, "").trim().replace(/\s+/g, "-");
+    if (slugMap.has(slug)) {
+      const count = slugMap.get(slug)! + 1;
+      slugMap.set(slug, count);
+      slug = `${slug}-${count}`;
+    } else { slugMap.set(slug, 0); }
+    return slug;
+  }
+  const sectionIds = sections.map((section) => section.heading ? slugify(section.heading.text) : "");
+
+  // ================= SCROLL SPY =================
+  useEffect(() => {
+    const headings = document.querySelectorAll("h2[id]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+    headings.forEach((h) => observer.observe(h));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="max-w-6xl mx-auto px-6 py-10 flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-10">
+      
+      {/* ================= TOC ASIDE ================= */}
+      {/* Mobile: sticky top-0, z-index cao để đè nội dung 
+          Laptop: sticky top-20
+      */}
+      <aside className="sticky top-0 lg:top-20 z-30 lg:z-10 bg-white lg:bg-transparent -mx-6 px-6 py-4 lg:p-0 border-b lg:border-0 h-fit">
+        
+        {/* Nút bấm Dropdown (Chỉ hiện trên Mobile) */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center justify-between w-full lg:hidden bg-gray-50 p-3 rounded-lg border border-gray-200"
+        >
+          <span className="font-bold text-sm uppercase tracking-wider text-gray-700">Mục lục</span>
+          <ChevronDown className={`w-5 h-5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+
+        {/* Danh sách mục lục: 
+            Mobile: Ẩn/Hiện dựa trên state `isOpen`
+            Laptop: Luôn hiện (`lg:block`)
+        */}
+        <div className={`mt-4 lg:mt-0 ${isOpen ? "block" : "hidden"} lg:block`}>
+          <div className="hidden lg:block font-bold mb-4 text-sm uppercase tracking-wider text-gray-900">
+            Mục lục
+          </div>
+
+          <ul className="space-y-3 lg:space-y-2 max-h-[60vh] overflow-y-auto lg:max-h-none pr-2">
+            {sections.map((section, i) => {
+              if (!section.heading) return null;
+              const id = sectionIds[i];
+
+              return (
+                <li key={id} style={{ marginLeft: (section.heading.level - 1) * 12 }}>
+                  <a
+                    href={`#${id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsOpen(false); // Đóng dropdown sau khi chọn (mobile)
+                      const element = document.getElementById(id);
+                      if (element) {
+                        const offset = 100; // Offset lớn hơn vì có TOC sticky trên mobile
+                        window.scrollTo({
+                          top: element.getBoundingClientRect().top + window.scrollY - offset,
+                          behavior: "smooth"
+                        });
+                      }
+                    }}
+                    className={`block py-1 text-sm transition-all ${
+                      activeId === id
+                        ? "text-blue-600 font-semibold lg:border-l-2 lg:border-blue-600 lg:pl-3 lg:-ml-3"
+                        : "text-gray-500 hover:text-black"
+                    }`}
+                  >
+                    {section.heading.text}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </aside>
+
+      {/* ================= CONTENT ================= */}
+      <article className="mt-8 lg:mt-0">
+        {sections.map((section, i) => {
+          const id = section.heading ? sectionIds[i] : "";
+          return (
+            <section key={i} id={id ? `container-${id}` : ""} className="mb-12">
+              {section.heading && (
+                <h2 id={id} className="font-bold mb-6 scroll-mt-32 text-2xl lg:text-3xl lg:scroll-mt-24">
+                  {section.heading.text}
+                </h2>
+              )}
+              <div className="space-y-5 text-gray-700 leading-relaxed text-lg">
+                {/* ... (phần render content giữ nguyên như cũ) */}
+                {section.children.map((b: any, idx: number) => (
+                   <div key={idx}>
+                      {b.type === "paragraph" && <p>{b.text}</p>}
+                      {b.type === "image" && <img src={b.src} alt="" className="rounded-xl w-full" />}
+                      {/* Thêm các type khác ở đây... */}
+                   </div>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </article>
+    </div>
+  );
+}
+
+
+
+
 /*
 'use client';
 
@@ -33,7 +171,7 @@ import { useEffect, useState } from "react";
 
 
 
-export function Renderer({ content }: { content: any }) {
+export function Renderer__x({ content }: { content: any }) {
   const sections = groupByHeading(content.blocks);
   const [activeId, setActiveId] = useState<string>("");
 
