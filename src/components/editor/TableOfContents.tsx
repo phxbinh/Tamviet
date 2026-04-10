@@ -10,10 +10,12 @@ interface TOCProps {
   activeId: string;
 }
 
+
+// src/components/editor/TableOfContents.tsx
 export function TableOfContents({ sections, sectionIds, activeId }: TOCProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection_ = (id: string) => {
     setIsOpen(false);
     const element = document.getElementById(id);
     if (element) {
@@ -25,6 +27,33 @@ export function TableOfContents({ sections, sectionIds, activeId }: TOCProps) {
       });
     }
   };
+
+
+const scrollToSection = (id: string) => {
+    setIsOpen(false); // Đóng menu trước khi cuộn
+    
+    const element = document.getElementById(id);
+    if (element) {
+      // TÍNH TOÁN OFFSET:
+      // Header: 64px
+      // TOC Mobile Bar: ~56px
+      // Padding thêm: 20px
+      // Tổng cộng khoảng 140px cho mobile, và 80px cho desktop
+      const isMobile = window.innerWidth < 1024;
+      const offset = isMobile ? 140 : 80; 
+
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+  };
+
 
   return (
     <aside className="sticky top-16 lg:top-20 z-20 bg-white/95 backdrop-blur lg:bg-transparent -mx-6 px-6 py-3 lg:p-0 border-b lg:border-0 h-fit transition-all duration-300">
