@@ -118,7 +118,7 @@ export default async function Page() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {otherPosts.map((p) => (
               <article key={p.id} className="group border-b border-border pb-8 md:border-b-0 md:pb-0">
-                <Link href={`/blog/${p.slug}`} prefetch={true} className="flex flex-col gap-4">
+                <Link href={`/baiviet/${p.slug}`} prefetch={true} className="flex flex-col gap-4">
                   <h3 className="text-xl font-bold font-serif group-hover:text-primary transition-colors leading-snug">
                     {p.title}
                   </h3>
