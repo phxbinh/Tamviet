@@ -16,18 +16,19 @@ export function Renderer({ content }: { content: Document }) {
 }
 */
 
-// src/components/editor/Renderer.tsx
-'use client'
+
+  // src/components/editor/Renderer.tsx
+'use client';
+
 import { groupByHeading } from "@/lib/parseContent";
 import { useEffect, useState } from "react";
-
 
 export function Renderer({ content }: { content: any }) {
   const sections = groupByHeading(content.blocks);
   const [activeId, setActiveId] = useState<string>("");
 
+  // ================= SLUG =================
   const slugMap = new Map<string, number>();
-  const toc: { id: string; text: string; level: number }[] = [];
 
   function slugify(text: string) {
     let slug = text
@@ -49,28 +50,34 @@ export function Renderer({ content }: { content: any }) {
     return slug;
   }
 
+  // ================= GENERATE IDS (QUAN TRỌNG) =================
+  const sectionIds = sections.map((section) => {
+    if (!section.heading) return "";
+    return slugify(section.heading.text);
+  });
 
-useEffect(() => {
-  const headings = document.querySelectorAll("h2[id]");
+  // ================= SCROLL SPY =================
+  useEffect(() => {
+    const headings = document.querySelectorAll("h2[id]");
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id);
-        }
-      });
-    },
-    {
-      rootMargin: "-40% 0px -55% 0px",
-      threshold: 0,
-    }
-  );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-40% 0px -55% 0px",
+        threshold: 0,
+      }
+    );
 
-  headings.forEach((h) => observer.observe(h));
+    headings.forEach((h) => observer.observe(h));
 
-  return () => observer.disconnect();
-}, []);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-[250px_1fr] gap-10">
@@ -83,40 +90,29 @@ useEffect(() => {
           {sections.map((section, i) => {
             if (!section.heading) return null;
 
-            const id = slugify(section.heading.text);
-
-            // build toc luôn tại đây
-            toc.push({
-              id,
-              text: section.heading.text,
-              level: section.heading.level,
-            });
+            const id = sectionIds[i];
 
             return (
               <li
                 key={id}
                 style={{ marginLeft: (section.heading.level - 1) * 12 }}
               >
-                {/*<a
+                <a
                   href={`#${id}`}
-                  className="text-gray-600 hover:text-black"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(id)?.scrollIntoView({
+                      behavior: "smooth",
+                    });
+                  }}
+                  className={`block transition ${
+                    activeId === id
+                      ? "text-black font-semibold"
+                      : "text-gray-500 hover:text-black"
+                  }`}
                 >
                   {section.heading.text}
-                </a> */}
-
-<a
-  href={`#${id}`}
-  className={`block transition ${
-    activeId === id
-      ? "text-black font-semibold"
-      : "text-gray-500 hover:text-black"
-  }`}
->
-  {section.heading.text}
-</a>
-
-
-
+                </a>
               </li>
             );
           })}
@@ -126,18 +122,14 @@ useEffect(() => {
       {/* ================= CONTENT ================= */}
       <article>
         {sections.map((section, i) => {
-          let id = "";
-
-          if (section.heading) {
-            id = slugify(section.heading.text);
-          }
+          const id = section.heading ? sectionIds[i] : "";
 
           return (
             <section key={i} className="mb-10">
               {/* HEADING */}
               {section.heading && (
                 <h2
-                  id={id} // 🔥 gắn id
+                  id={id}
                   className={`
                     font-bold mb-4
                     ${
@@ -153,7 +145,7 @@ useEffect(() => {
                 </h2>
               )}
 
-              {/* CONTENT giữ nguyên */}
+              {/* CONTENT */}
               <div className="space-y-4">
                 {section.children.map((b: any, idx: number) => {
                   if (b.type === "paragraph") {
