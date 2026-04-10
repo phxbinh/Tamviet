@@ -28,6 +28,7 @@ export const sidebarLinks: SidebarLink[] = [
 
   { name: 'Blog', href: '/blog', showInSidebar: true },
   { name: 'Tài liệu', href: '/test', showInSidebar: true },
+  { name: 'Bài Viết', href: '/baiviet', showInSidebar: true },
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Giới thiệu', href: '/about', showInSidebar: true },
 
