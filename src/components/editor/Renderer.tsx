@@ -15,6 +15,7 @@ export function Renderer({ content }: { content: Document }) {
   );
 }
 */
+'use client'
 import { groupByHeading } from "@/lib/parseContent";
 import { useEffect, useState } from "react";
 
