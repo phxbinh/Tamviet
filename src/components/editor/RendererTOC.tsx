@@ -75,7 +75,16 @@ export function Renderer({ content }: { content: any }) {
                 {section.children.map((b: any, idx: number) => {
                    if (b.type === "paragraph") return <p key={idx} className="text-gray-700 leading-7">{b.text}</p>;
                    if (b.type === "image") return <img key={idx} src={b.src} alt="" className="rounded-xl w-full" />;
-                   if (b.type === "code") return <pre key={idx} className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm"><code>{b.code}</code></pre>;
+                  if (b.type === "code") return <pre key={idx} className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm"><code>{b.code}</code></pre>;
+                  if (b.type === "list") {
+                    return (
+                      <ul key={idx} className="list-disc pl-6 space-y-1">
+                        {b.items.map((item: string, i: number) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
                    return null;
                 })}
               </div>
