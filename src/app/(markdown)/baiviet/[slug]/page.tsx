@@ -1,4 +1,5 @@
 // src/app/(markdown)/baiviet/[slug]/page.tsx
+// Lỗi: phải deploy lại mới lấy được data mới
 
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/components/editor/RendererTOC";
