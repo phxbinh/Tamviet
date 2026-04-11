@@ -93,6 +93,8 @@ export const BlockSchema = z.discriminatedUnion("type", [
   ListBlock,
 ]);
 
+export type Block = z.infer<typeof BlockSchema>;
+
 export const DocumentSchema = z.object({
   type: z.literal("doc"),
   blocks: z.array(BlockSchema).min(1),
