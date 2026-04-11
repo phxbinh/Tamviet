@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import InlineEditor from "./InlineEditor";
-import type { Block, Document } from "@/lib/blocks";
+import InlineEditor from "./InlineEditor_";
+import type { Block, Document } from "./blocks";
 
 export default function BlockEditorContainer({
   initial,
