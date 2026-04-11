@@ -312,10 +312,20 @@ export function htmlToInline(html: string): InlineNode[] {
 export default function InlineEditor({
   value,
   onChange,
+  onEnter,
 }: {
   value: InlineNode[];
   onChange: (v: InlineNode[]) => void;
+  onEnter?: () => void;
 }) {
+/*
+export default function InlineEditor({
+  value,
+  onChange,
+}: {
+  value: InlineNode[];
+  onChange: (v: InlineNode[]) => void;
+}) {*/
   const ref = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
   const restoreRef = useRef<{ start: number; end: number } | null>(null);
