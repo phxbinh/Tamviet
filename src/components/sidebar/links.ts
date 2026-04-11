@@ -26,6 +26,16 @@ export const sidebarLinks: SidebarLink[] = [
     ],
   },
 
+  {
+    name: 'Tutorials',
+    showInSidebar: true,
+    children: [
+      { name: 'Danh sách', href: '/tutorials' },
+      { name: 'Viết bài', href: '/tutorials/new' },
+
+    ],
+  },
+
   { name: 'Blog', href: '/blog', showInSidebar: true },
   { name: 'Tài liệu', href: '/test', showInSidebar: true },
   { name: 'Bài Viết', href: '/baiviet', showInSidebar: true },
