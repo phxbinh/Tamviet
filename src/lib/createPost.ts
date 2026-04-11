@@ -98,6 +98,8 @@ export async function createPost(formData: FormData): Promise<void> {
     ========================= */
     revalidatePath("/blog");
     revalidatePath(`/blog/${slug}`);
+    revalidatePath("/baiviet");
+    revalidatePath(`/baiviet/${slug}`);
   } catch (err) {
     console.error("CREATE POST ERROR:", err);
 
