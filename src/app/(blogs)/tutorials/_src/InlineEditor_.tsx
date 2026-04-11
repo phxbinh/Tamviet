@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /* =========================
    TYPES
@@ -9,7 +9,11 @@ type TextNode = {
   type: "text";
   id: string;
   text: string;
-  _dom?: Node | null;
+
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  code?: boolean;
 };
 
 type LinkNode = {
@@ -20,126 +24,47 @@ type LinkNode = {
 
 type InlineNode = TextNode | LinkNode;
 
-type MapItem = {
-  node: TextNode;
-  start: number;
-  end: number;
+type FlatChar = {
+  char: string;
+  link?: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  code?: boolean;
 };
 
 /* =========================
-   BUILD OFFSET MAP
+   FLATTEN
 ========================= */
-function buildOffsetMap(nodes: InlineNode[]): MapItem[] {
-  const map: MapItem[] = [];
-  let offset = 0;
+function flatten(nodes: InlineNode[]): FlatChar[] {
+  const result: FlatChar[] = [];
 
   for (const n of nodes) {
     if (n.type === "text") {
-      const len = n.text.length;
-
-      map.push({
-        node: n,
-        start: offset,
-        end: offset + len,
-      });
-
-      offset += len;
-    }
-
-    if (n.type === "link") {
-      for (const c of n.children) {
-        const len = c.text.length;
-
-        map.push({
-          node: c,
-          start: offset,
-          end: offset + len,
+      for (const c of n.text) {
+        result.push({
+          char: c,
+          bold: n.bold,
+          italic: n.italic,
+          underline: n.underline,
+          code: n.code,
         });
-
-        offset += len;
-      }
-    }
-  }
-
-  return map;
-}
-
-/* =========================
-   DOM → OFFSET
-========================= */
-function getOffsetFromNode(
-  node: Node,
-  offset: number,
-  map: MapItem[]
-): number | null {
-  for (const item of map) {
-    if (item.node._dom === node) {
-      return item.start + offset;
-    }
-  }
-  return null;
-}
-
-/* =========================
-   GET SELECTION
-========================= */
-function getSelectionOffsets(
-  container: HTMLElement,
-  map: MapItem[]
-) {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) return null;
-
-  const range = selection.getRangeAt(0);
-
-  const start = getOffsetFromNode(
-    range.startContainer,
-    range.startOffset,
-    map
-  );
-
-  const end = getOffsetFromNode(
-    range.endContainer,
-    range.endOffset,
-    map
-  );
-
-  if (start == null || end == null) return null;
-
-  return {
-    start: Math.min(start, end),
-    end: Math.max(start, end),
-  };
-}
-
-/* =========================
-   NORMALIZE
-========================= */
-function normalize(nodes: InlineNode[]): InlineNode[] {
-  const result: InlineNode[] = [];
-
-  for (const n of nodes) {
-    if (n.type === "text") {
-      if (!n.text) continue;
-
-      const prev = result[result.length - 1];
-
-      if (prev && prev.type === "text") {
-        prev.text += n.text;
-      } else {
-        result.push(n);
       }
     }
 
     if (n.type === "link") {
-      const children = n.children.filter((c) => c.text);
-
-      if (!children.length) continue;
-
-      result.push({
-        ...n,
-        children,
-      });
+      for (const child of n.children) {
+        for (const c of child.text) {
+          result.push({
+            char: c,
+            link: n.href,
+            bold: child.bold,
+            italic: child.italic,
+            underline: child.underline,
+            code: child.code,
+          });
+        }
+      }
     }
   }
 
@@ -147,172 +72,164 @@ function normalize(nodes: InlineNode[]): InlineNode[] {
 }
 
 /* =========================
-   APPLY LINK
+   REBUILD
 ========================= */
-function applyLink(
+function rebuild(flat: FlatChar[]): InlineNode[] {
+  const result: InlineNode[] = [];
+
+  let buffer = "";
+  let style: any = {};
+  let link: string | null = null;
+
+  function flush() {
+    if (!buffer) return;
+
+    const textNode: TextNode = {
+      type: "text",
+      id: crypto.randomUUID(),
+      text: buffer,
+      ...style,
+    };
+
+    if (link) {
+      result.push({
+        type: "link",
+        href: link,
+        children: [textNode],
+      });
+    } else {
+      result.push(textNode);
+    }
+
+    buffer = "";
+  }
+
+  for (const c of flat) {
+    const same =
+      c.link === link &&
+      c.bold === style.bold &&
+      c.italic === style.italic &&
+      c.underline === style.underline &&
+      c.code === style.code;
+
+    if (!same) {
+      flush();
+      link = c.link || null;
+      style = {
+        bold: c.bold,
+        italic: c.italic,
+        underline: c.underline,
+        code: c.code,
+      };
+    }
+
+    buffer += c.char;
+  }
+
+  flush();
+
+  return result;
+}
+
+/* =========================
+   APPLY
+========================= */
+function applyLink(nodes: InlineNode[], start: number, end: number, href: string) {
+  const flat = flatten(nodes);
+  for (let i = start; i < end; i++) flat[i].link = href;
+  return rebuild(flat);
+}
+
+function removeLink(nodes: InlineNode[], start: number, end: number) {
+  const flat = flatten(nodes);
+  for (let i = start; i < end; i++) delete flat[i].link;
+  return rebuild(flat);
+}
+
+function applyFormat(
   nodes: InlineNode[],
   start: number,
   end: number,
-  href: string
-): InlineNode[] {
-  let offset = 0;
-  const result: InlineNode[] = [];
-
-  for (const n of nodes) {
-    if (n.type === "text") {
-      const len = n.text.length;
-      const nodeStart = offset;
-      const nodeEnd = offset + len;
-
-      if (end <= nodeStart || start >= nodeEnd) {
-        result.push(n);
-      } else {
-        const before = n.text.slice(0, start - nodeStart);
-        const selected = n.text.slice(
-          Math.max(0, start - nodeStart),
-          Math.min(len, end - nodeStart)
-        );
-        const after = n.text.slice(end - nodeStart);
-
-        if (before) {
-          result.push({
-            ...n,
-            id: crypto.randomUUID(),
-            text: before,
-          });
-        }
-
-        if (selected) {
-          result.push({
-            type: "link",
-            href,
-            children: [
-              {
-                type: "text",
-                id: crypto.randomUUID(),
-                text: selected,
-              },
-            ],
-          });
-        }
-
-        if (after) {
-          result.push({
-            ...n,
-            id: crypto.randomUUID(),
-            text: after,
-          });
-        }
-      }
-
-      offset += len;
-    }
-
-    if (n.type === "link") {
-      result.push(n);
-
-      const len = n.children.reduce((s, c) => s + c.text.length, 0);
-      offset += len;
-    }
-  }
-
-  return normalize(result);
-}
-
-/* =========================
-   REMOVE LINK
-========================= */
-function removeLink(nodes: InlineNode[]): InlineNode[] {
-  const result: InlineNode[] = [];
-
-  for (const n of nodes) {
-    if (n.type === "link") {
-      result.push(...n.children);
-    } else {
-      result.push(n);
-    }
-  }
-
-  return normalize(result);
-}
-
-/* =========================
-   FIND LINK
-========================= */
-function findLinkAtOffset(nodes: InlineNode[], pos: number) {
-  let offset = 0;
-
-  for (const n of nodes) {
-    if (n.type === "text") {
-      offset += n.text.length;
-    }
-
-    if (n.type === "link") {
-      const len = n.children.reduce((s, c) => s + c.text.length, 0);
-
-      if (pos >= offset && pos <= offset + len) {
-        return n;
-      }
-
-      offset += len;
-    }
-  }
-
-  return null;
-}
-
-/* =========================
-   UPDATE LINK
-========================= */
-function updateLink(
-  nodes: InlineNode[],
-  target: LinkNode,
-  href: string
-): InlineNode[] {
-  return nodes.map((n) => {
-    if (n === target) {
-      return { ...n, href };
-    }
-    return n;
-  });
-}
-
-/* =========================
-   FIND NODE BY OFFSET
-========================= */
-function findNodeByOffset(map: MapItem[], pos: number) {
-  for (const item of map) {
-    if (pos >= item.start && pos < item.end) {
-      return {
-        node: item.node._dom,
-        offset: pos - item.start,
-      };
-    }
-  }
-  return null;
-}
-
-/* =========================
-   RESTORE SELECTION
-========================= */
-function restoreSelection(
-  container: HTMLElement,
-  map: MapItem[],
-  start: number,
-  end: number
+  key: "bold" | "italic" | "underline" | "code"
 ) {
+  const flat = flatten(nodes);
+  for (let i = start; i < end; i++) {
+    flat[i][key] = !flat[i][key];
+  }
+  return rebuild(flat);
+}
+
+/* =========================
+   SELECTION
+========================= */
+function getSelectionOffsets(container: HTMLElement) {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+
+  const range = sel.getRangeAt(0);
+
+  let start = 0;
+  let end = 0;
+  let offset = 0;
+
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    const len = node.textContent?.length || 0;
+
+    if (node === range.startContainer) {
+      start = offset + range.startOffset;
+    }
+
+    if (node === range.endContainer) {
+      end = offset + range.endOffset;
+    }
+
+    offset += len;
+  }
+
+  return {
+    start: Math.min(start, end),
+    end: Math.max(start, end),
+  };
+}
+
+function restoreSelection(container: HTMLElement, start: number, end: number) {
   const sel = window.getSelection();
   if (!sel) return;
 
-  const startPos = findNodeByOffset(map, start);
-  const endPos = findNodeByOffset(map, end);
-
-  if (!startPos || !endPos) return;
-
   const range = document.createRange();
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
 
-  range.setStart(startPos.node!, startPos.offset);
-  range.setEnd(endPos.node!, endPos.offset);
+  let offset = 0;
+  let startNode: Node | null = null;
+  let endNode: Node | null = null;
+  let startOffset = 0;
+  let endOffset = 0;
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    const len = node.textContent?.length || 0;
+
+    if (!startNode && start <= offset + len) {
+      startNode = node;
+      startOffset = start - offset;
+    }
+
+    if (!endNode && end <= offset + len) {
+      endNode = node;
+      endOffset = end - offset;
+      break;
+    }
+
+    offset += len;
+  }
+
+  if (!startNode || !endNode) return;
+
+  range.setStart(startNode, startOffset);
+  range.setEnd(endNode, endOffset);
 
   sel.removeAllRanges();
   sel.addRange(range);
@@ -323,31 +240,26 @@ function restoreSelection(
 ========================= */
 function renderInline(nodes: InlineNode[]) {
   return nodes.map((n) => {
+    const renderText = (t: TextNode) => {
+      let el = <>{t.text}</>;
+
+      if (t.code) el = <code className="bg-gray-200 px-1">{el}</code>;
+      if (t.bold) el = <strong>{el}</strong>;
+      if (t.italic) el = <em>{el}</em>;
+      if (t.underline) el = <u>{el}</u>;
+
+      return el;
+    };
+
     if (n.type === "text") {
-      return (
-        <span
-          key={n.id}
-          ref={(el) => {
-            if (el) n._dom = el.firstChild;
-          }}
-        >
-          {n.text}
-        </span>
-      );
+      return <span key={n.id}>{renderText(n)}</span>;
     }
 
     if (n.type === "link") {
       return (
         <a key={n.href} href={n.href} className="text-blue-600 underline">
           {n.children.map((c) => (
-            <span
-              key={c.id}
-              ref={(el) => {
-                if (el) c._dom = el.firstChild;
-              }}
-            >
-              {c.text}
-            </span>
+            <span key={c.id}>{renderText(c)}</span>
           ))}
         </a>
       );
@@ -355,6 +267,43 @@ function renderInline(nodes: InlineNode[]) {
 
     return null;
   });
+}
+
+/* =========================
+   HTML → JSON
+========================= */
+export function htmlToInline(html: string): InlineNode[] {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+
+  function walk(node: any): FlatChar[] {
+    if (node.nodeType === 3) {
+      return node.textContent.split("").map((c: string) => ({ char: c }));
+    }
+
+    if (node.nodeType !== 1) return [];
+
+    const tag = node.tagName.toLowerCase();
+
+    let style: any = {};
+    let link: string | undefined;
+
+    if (tag === "strong") style.bold = true;
+    if (tag === "em") style.italic = true;
+    if (tag === "u") style.underline = true;
+    if (tag === "code") style.code = true;
+    if (tag === "a") link = node.getAttribute("href");
+
+    return Array.from(node.childNodes).flatMap((child: any) =>
+      walk(child).map((c: FlatChar) => ({
+        ...c,
+        ...style,
+        link: link || c.link,
+      }))
+    );
+  }
+
+  return rebuild(walk(div));
 }
 
 /* =========================
@@ -371,47 +320,98 @@ export default function InlineEditor({
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
   const restoreRef = useRef<{ start: number; end: number } | null>(null);
 
-  const map = buildOffsetMap(value);
+  const [history, setHistory] = useState<InlineNode[][]>([]);
+  const [future, setFuture] = useState<InlineNode[][]>([]);
+
+  function pushHistory(newValue: InlineNode[]) {
+    setHistory((h) => [...h, value]);
+    setFuture([]);
+    onChange(newValue);
+  }
+
+  function undo() {
+    if (!history.length) return;
+    const prev = history[history.length - 1];
+    setHistory((h) => h.slice(0, -1));
+    setFuture((f) => [value, ...f]);
+    onChange(prev);
+  }
+
+  function redo() {
+    if (!future.length) return;
+    const next = future[0];
+    setFuture((f) => f.slice(1));
+    setHistory((h) => [...h, value]);
+    onChange(next);
+  }
 
   function handleInsertLink() {
     if (!selectionRef.current) return;
-
-    const url = prompt("Nhập link");
+    const url = prompt("Link");
     if (!url) return;
 
     const { start, end } = selectionRef.current;
 
-    const newValue = applyLink(value, start, end, url);
-
-    onChange(newValue);
+    pushHistory(applyLink(value, start, end, url));
     restoreRef.current = { start, end };
   }
 
   function handleUnlink() {
-    const newValue = removeLink(value);
-    onChange(newValue);
+    if (!selectionRef.current) return;
+    const { start, end } = selectionRef.current;
+
+    pushHistory(removeLink(value, start, end));
+    restoreRef.current = { start, end };
   }
 
-  function handleEditLink() {
+  function handleFormat(key: any) {
     if (!selectionRef.current) return;
+    const { start, end } = selectionRef.current;
 
-    const link = findLinkAtOffset(value, selectionRef.current.start);
-    if (!link) return;
+    pushHistory(applyFormat(value, start, end, key));
+    restoreRef.current = { start, end };
+  }
 
-    const url = prompt("Edit link", link.href);
-    if (!url) return;
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === "b") {
+        e.preventDefault();
+        handleFormat("bold");
+      }
+      if (e.key === "i") {
+        e.preventDefault();
+        handleFormat("italic");
+      }
+      if (e.key === "u") {
+        e.preventDefault();
+        handleFormat("underline");
+      }
+      if (e.key === "k") {
+        e.preventDefault();
+        handleInsertLink();
+      }
+      if (e.key === "z") {
+        e.preventDefault();
+        undo();
+      }
+      if (e.key === "y") {
+        e.preventDefault();
+        redo();
+      }
+    }
+  }
 
-    onChange(updateLink(value, link, url));
+  function handlePaste(e: React.ClipboardEvent) {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text);
   }
 
   useEffect(() => {
     if (!ref.current || !restoreRef.current) return;
 
-    const newMap = buildOffsetMap(value);
-
     restoreSelection(
       ref.current,
-      newMap,
       restoreRef.current.start,
       restoreRef.current.end
     );
@@ -422,22 +422,29 @@ export default function InlineEditor({
   return (
     <div>
       <div className="flex gap-2 mb-2">
-        <button onClick={handleInsertLink}>🔗 Link</button>
-        <button onClick={handleUnlink}>❌ Unlink</button>
-        <button onClick={handleEditLink}>✏️ Edit</button>
+        <button onClick={() => handleFormat("bold")}>B</button>
+        <button onClick={() => handleFormat("italic")}>I</button>
+        <button onClick={() => handleFormat("underline")}>U</button>
+        <button onClick={() => handleFormat("code")}>{"</>"}</button>
+
+        <button onClick={handleInsertLink}>🔗</button>
+        <button onClick={handleUnlink}>❌</button>
+
+        <button onClick={undo}>↩</button>
+        <button onClick={redo}>↪</button>
       </div>
 
       <div
         ref={ref}
         contentEditable
         suppressContentEditableWarning
-        className="outline-none border p-2 rounded"
+        className="border p-2 rounded outline-none"
         onMouseUp={() => {
           if (!ref.current) return;
-
-          const sel = getSelectionOffsets(ref.current, map);
-          selectionRef.current = sel;
+          selectionRef.current = getSelectionOffsets(ref.current);
         }}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
       >
         {renderInline(value)}
       </div>
