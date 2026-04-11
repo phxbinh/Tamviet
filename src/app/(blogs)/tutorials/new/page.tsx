@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import BlockEditorContainer from "../_src/BlockEditorContainer";
+import BlockEditorContainer from "../_src/BlockEditorContainer_";
 import { createPost } from "../_src/createPost";
 
 export default function NewPostPage() {
