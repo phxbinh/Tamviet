@@ -1,9 +1,14 @@
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/components/editor/RendererTOC";
 
-export default async function BlogPost({ params }) {
+export default async function BlogPost({ params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
   const post = await sql`
-    SELECT * FROM posts WHERE slug = ${params.slug}
+    SELECT * FROM posts WHERE slug = ${slug}
   `;
 
   const data = post[0];
