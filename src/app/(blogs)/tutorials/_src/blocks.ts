@@ -100,5 +100,7 @@ export const DocumentSchema = z.object({
   blocks: z.array(BlockSchema).min(1),
 });
 
+export type Document = z.infer<typeof DocumentSchema>;
+
 
 
