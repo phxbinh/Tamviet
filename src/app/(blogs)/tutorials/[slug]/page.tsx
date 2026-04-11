@@ -1,6 +1,7 @@
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/components/editor/RendererTOC";
 
+/*
 export default async function BlogPost({ params,
 }: {
   params: Promise<{ slug: string }>;
@@ -21,3 +22,17 @@ export default async function BlogPost({ params,
     </div>
   );
 }
+*/
+
+export default async function BlogPost() {
+
+  return (
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-4">Test tutorials </h1>
+    </div>
+  );
+}
+
+
+
+
