@@ -1,5 +1,5 @@
 import { sql } from "@/lib/neon/sql";
-import RendererTOC from "@/components/editor/RendererTOC";
+import { Renderer } from "@/components/editor/RendererTOC";
 
 export default async function BlogPost({ params }) {
   const post = await sql`
@@ -12,7 +12,7 @@ export default async function BlogPost({ params }) {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-4">{data.title}</h1>
 
-      <RendererTOC content={data.content_json} />
+      <Renderer content={data.content_json} />
     </div>
   );
 }
