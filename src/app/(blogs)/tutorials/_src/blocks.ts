@@ -1,14 +1,11 @@
 // lib/blocks.ts
-// lib/blocks.ts
 import { z } from "zod";
 
-/**
- * =========================
- * BASE TEXT (reuse)
- * =========================
- */
+/* TEXT */
 export const TextSchema = z.object({
   type: z.literal("text"),
+  id: z.string(),
+
   text: z.string(),
 
   bold: z.boolean().optional(),
@@ -17,94 +14,56 @@ export const TextSchema = z.object({
   code: z.boolean().optional(),
 });
 
-export type TextNode = z.infer<typeof TextSchema>;
+/* LINK */
+const LinkSchema = z.object({
+  type: z.literal("link"),
+  href: z.string().refine(
+    (val) => val.startsWith("/") || /^https?:\/\//.test(val),
+    "Invalid URL"
+  ),
 
-/**
- * =========================
- * INLINE
- * =========================
- */
-export const InlineSchema: z.ZodType<any> = z.lazy(() =>
-  z.discriminatedUnion("type", [
-    TextSchema,
-
-    z.object({
-      type: z.literal("link"),
-      href: z.string().url(),
-      children: z.array(InlineSchema), // recursive (mạnh hơn)
-    }),
-  ])
-);
-
-export type InlineNode = z.infer<typeof InlineSchema>;
-
-/**
- * =========================
- * COMMON BLOCK BASE
- * =========================
- */
-const BaseBlock = z.object({
-  id: z.string(), // 🔥 bắt buộc (key + TOC + tracking)
+  children: z.array(TextSchema).min(1),
 });
 
-/**
- * =========================
- * BLOCKS
- * =========================
- */
+/* INLINE */
+export const InlineSchema = z.discriminatedUnion("type", [
+  TextSchema,
+  LinkSchema,
+]);
 
-/**
- * Heading
- */
+/* BASE */
+const BaseBlock = z.object({
+  id: z.string(),
+});
+
+/* BLOCKS */
 const HeadingBlock = BaseBlock.extend({
   type: z.literal("heading"),
   level: z.number().min(1).max(6),
-
   content: z.array(InlineSchema).min(1),
-
-  // 🔥 phục vụ TOC + SEO
   slug: z.string().optional(),
 });
 
-/**
- * Paragraph
- */
 const ParagraphBlock = BaseBlock.extend({
   type: z.literal("paragraph"),
   content: z.array(InlineSchema).min(1),
 });
 
-/**
- * Image
- */
 const ImageBlock = BaseBlock.extend({
   type: z.literal("image"),
-
-  src: z.union([
-    z.string().url(),
-    z.string().startsWith("/"),
-  ]),
-
+  src: z.union([z.string().url(), z.string().startsWith("/")]),
   alt: z.string().min(5),
-
   caption: z.array(InlineSchema).optional(),
   title: z.string().optional(),
-
   width: z.number().optional(),
   height: z.number().optional(),
-
   blurDataURL: z.string().optional(),
 });
 
-/**
- * Code Block
- */
 const CodeBlock = BaseBlock.extend({
   type: z.literal("code"),
-
   code: z.string(),
   language: z.string().optional(),
-
   meta: z
     .object({
       filename: z.string().optional(),
@@ -113,36 +72,19 @@ const CodeBlock = BaseBlock.extend({
     .optional(),
 });
 
-/**
- * List Item (extensible)
- */
 const ListItemSchema = z.object({
   id: z.string(),
-
   content: z.array(InlineSchema).min(1),
-
-  // future-ready
   checked: z.boolean().optional(),
-
-  children: z.lazy(() => z.array(ListItemSchema)).optional(), // nested list
+  children: z.lazy(() => z.array(ListItemSchema)).default([]),
 });
 
-/**
- * List Block
- */
 const ListBlock = BaseBlock.extend({
   type: z.literal("list"),
-
   ordered: z.boolean().optional(),
-
   items: z.array(ListItemSchema).min(1),
 });
 
-/**
- * =========================
- * BLOCK UNION
- * =========================
- */
 export const BlockSchema = z.discriminatedUnion("type", [
   HeadingBlock,
   ParagraphBlock,
@@ -151,21 +93,10 @@ export const BlockSchema = z.discriminatedUnion("type", [
   ListBlock,
 ]);
 
-export type Block = z.infer<typeof BlockSchema>;
-
-/**
- * =========================
- * DOCUMENT ROOT
- * =========================
- */
 export const DocumentSchema = z.object({
   type: z.literal("doc"),
-  blocks: z.array(BlockSchema),
+  blocks: z.array(BlockSchema).min(1),
 });
-
-export type Document = z.infer<typeof DocumentSchema>;
-
-
 
 // CẤU TRÚC DATA
 /*
