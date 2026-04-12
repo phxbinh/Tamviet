@@ -14,7 +14,7 @@ export default async function Page() {
   return (
     <div>
       {posts.map((post) => (
-        <Link key={post.id} href={`/baiviet/${post.slug}`}>
+        <Link key={post.id} href={`/baivietapp/review/${post.slug}`}>
           {post.title}
         </Link>
       ))}
