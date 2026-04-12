@@ -1,10 +1,16 @@
 // src/app/(markdown)/baiviet/[slug]/page.tsx
-// Lỗi: phải deploy lại mới lấy được data mới .
-
+/*
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/lib/postLib/Renderer";
 import { parseContent } from "@/lib/postLib/parseContent";
 import { CalendarDays } from "lucide-react";
+*/
+// src/app/(markdown)/baiviet/[slug]/page.tsx
+import { sql } from "@/lib/neon/sql";
+import { Renderer } from "@/lib/postLib/Renderer";
+import { parseContent } from "@/lib/postLib/parseContent";
+import { CalendarDays } from "lucide-react";
+import { notFound } from "next/navigation"; // Dùng hàm chuẩn của Next.js
 
 export default async function Page({
   params,
@@ -13,15 +19,18 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  const post = await sql`
-    SELECT * FROM posts WHERE slug = ${slug}
+  // 1. Lấy data từ DB
+  const posts = await sql`
+    SELECT title, content_json, created_at FROM posts WHERE slug = ${slug} LIMIT 1
   `;
 
-  if (!post[0]) return <div className="p-6">Not found</div>;
+  const post = posts[0];
+  if (!post) return notFound(); // Trả về trang 404 chuẩn của Next.js
 
-  const content = parseContent(post[0].content_json);
+  // 2. Parse và chuẩn hóa dữ liệu (Migration nằm trong hàm này)
+  const content = parseContent(post.content_json);
 
-  const formattedDate = new Date(post[0].created_at).toLocaleDateString(
+  const formattedDate = new Date(post.created_at).toLocaleDateString(
     "vi-VN",
     {
       year: "numeric",
@@ -31,25 +40,31 @@ export default async function Page({
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-1 py-10">
-      {/* TITLE */}
-      <h1 className="text-4xl font-bold leading-tight">
-        {post[0].title}
-      </h1>
+    <div className="max-w-6xl mx-auto px-4 py-10">
+      {/* HEADER */}
+      <header className="mb-10">
+        <h1 className="text-4xl font-extrabold leading-tight text-slate-900">
+          {post.title}
+        </h1>
 
-      {/* META */}
-      <div className="flex items-center gap-2 text-gray-500 mt-3 mb-8 text-sm">
-        <CalendarDays className="w-4 h-4" />
-        <span>{formattedDate}</span>
-      </div>
+        <div className="flex items-center gap-2 text-slate-500 mt-4 text-sm font-medium">
+          <CalendarDays className="w-4 h-4" />
+          <time dateTime={post.created_at.toISOString()}>{formattedDate}</time>
+        </div>
+      </header>
 
-      {/* CONTENT */}
-      <pre className="bg-black text-green-400 p-4 rounded">
-        {JSON.stringify(content, null, 2)}</pre>
+      {/* RENDERER */}
       <Renderer content={content} />
+      
+      {/* Chỉ hiện debug trong môi trường dev nếu cần */}
+      {process.env.NODE_ENV === 'development' && (
+        <details className="mt-20 opacity-30">
+          <summary className="cursor-pointer text-xs">Debug Content JSON</summary>
+          <pre className="text-[10px] bg-slate-100 p-4 rounded overflow-auto mt-2">
+            {JSON.stringify(content, null, 2)}
+          </pre>
+        </details>
+      )}
     </div>
   );
 }
-
-
-
