@@ -1,8 +1,50 @@
 'use client';
 
 import { useEffect, useState, useRef, useMemo } from "react";
-import { groupByHeading, parseContent } from "./parseContent"; 
+import { groupByHeading } from "./parseContent"; 
 import { TableOfContents } from "./TOC";
+import { DocumentSchema } from "./blocks"
+
+function parseContent(raw: any) {
+  try {
+    const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+    // Logic Migration: Chuyển dữ liệu cũ sang mới trước khi parse
+    if (data && Array.isArray(data.blocks)) {
+      data.blocks = data.blocks.map((block: any) => {
+        // Nếu là paragraph cũ (có .text nhưng thiếu .content)
+        if (block.type === "paragraph" && block.text && !block.content) {
+          return {
+            ...block,
+            content: [{ type: "text", text: block.text }],
+          };
+        }
+        // Nếu là list cũ (items là mảng string chứ không phải mảng của mảng inline)
+        if (block.type === "list" && Array.isArray(block.items)) {
+          if (typeof block.items[0] === "string") {
+            return {
+              ...block,
+              items: block.items.map((txt: string) => [{ type: "text", text: txt }]),
+            };
+          }
+        }
+        return block;
+      });
+    }
+
+    return DocumentSchema.parse(data);
+  } catch (err) {
+    console.error("Invalid document structure:", err);
+    return { type: "doc", blocks: [] };
+  }
+}
+
+
+
+
+
+
+
 
 /* =========================
    INLINE RENDERER
