@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Block } from "./blocks";
-import BlockEditor from "./BlockEditor";
+import BlockEditor from "./BlockEditor_link";
 import { createPost } from "./createPost";
 import { Heading1, Type, Plus, Image as ImageIcon, Code, List as ListIcon, Save } from "lucide-react";
 
