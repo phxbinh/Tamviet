@@ -196,12 +196,10 @@ export async function createPost(formData: FormData): Promise<void> {
     `;
 
     /* =========================
-       REVALIDATE
+       REVALIDATE - Xoá cache -> update
     ========================= */
-    revalidatePath("/blog");
-    revalidatePath(`/blog/${slug}`);
-    revalidatePath("/baiviet");
-    revalidatePath(`/baiviet/${slug}`);
+    revalidatePath("/baivietapp");
+    revalidatePath(`/baivietapp/${slug}`);
   } catch (err) {
     console.error("CREATE POST ERROR:", err);
     throw new Error("Create post failed");
