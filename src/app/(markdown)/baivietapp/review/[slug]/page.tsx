@@ -46,20 +46,20 @@ export default async function Page({
   if (!post[0]) return <div className="p-6">Not found</div>;
 
   const content = parseContent(post[0].content_json);
-  const fixedContent = {
+  const safeContent = {
   ...content,
   blocks: content.blocks.map((block: any) => {
     if (block.type !== "paragraph") return block;
 
-    // 🔥 FIX CHUYỂN text → content[]
     return {
-      type: "paragraph",
-      content: [
-        {
+      ...block,
+      content: (block.content || [])
+        .filter((n: any) => n?.text !== undefined && n?.text !== null)
+        .map((n: any) => ({
           type: "text",
-          text: block.text || "",
-        },
-      ],
+          text: n.text ?? "",
+          href: n.href,
+        })),
     };
   }),
 };
@@ -87,7 +87,7 @@ export default async function Page({
       </div>
 
       {/* CONTENT */}
-      <Renderer content={fixedContent} />
+      <Renderer content={safeContent} />
     </div>
   );
 }
