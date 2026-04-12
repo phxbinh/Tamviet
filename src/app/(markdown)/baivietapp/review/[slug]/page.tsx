@@ -2,7 +2,7 @@ import { sql } from "@/lib/neon/sql";
 import { Renderer } from "../../_src/Renderer";
 import { Document } from "../../_src/blocks";
 import { notFound } from "next/navigation";
-
+import { parseContent } from "@/lib/parseContent";
 import {CalendarDays} from "lucide-react";
 
 
