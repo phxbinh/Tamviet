@@ -11,9 +11,20 @@ type BlockWithId = Block & { id: string };
 /* =========================
    INLINE HELPERS
 ========================= */
-function toInline(text: string) {
-  return [{ type: "text", text }];
+type Inline = Extract<
+  Block,
+  { type: "paragraph" }
+>["content"][number];
+
+function toInline(text: string): Inline[] {
+  return [
+    {
+      type: "text",
+      text,
+    } as const,
+  ];
 }
+
 
 /* =========================
    SAVE BUTTON
