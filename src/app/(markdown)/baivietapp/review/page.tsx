@@ -9,14 +9,8 @@ type PostItem = {
 };
 
 export default async function Page() {
-  const { rows } = await sql`
-    SELECT id, title, slug, created_at
-    FROM posts
-    ORDER BY created_at DESC
-  `;
-
-  const posts = rows as PostItem[];
-
+  const posts = await sql`SELECT * FROM posts ORDER BY created_at DESC`;
+  
   return (
     <div>
       {posts.map((post) => (
