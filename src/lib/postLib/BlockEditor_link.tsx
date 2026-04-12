@@ -3,19 +3,17 @@
 import { useState } from "react";
 import { Block } from "./blocks";
 import TextareaAutosize from "react-textarea-autosize";
-import { Trash2, GripVertical, Plus, Link } from "lucide-react";
+import { Trash2, Link } from "lucide-react";
 
 /* =========================
-   INLINE HELPERS
+   HELPERS
 ========================= */
 function renderInlineText(inlines: any[]) {
   if (!Array.isArray(inlines)) return "";
 
-  return inlines.map((n) => n.text).join("");
-}
-
-function toText(text: string) {
-  return [{ type: "text" as const, text }];
+  return inlines
+    .map((n) => (n.type === "text" || n.type === "link" ? n.text : ""))
+    .join("");
 }
 
 /* =========================
@@ -33,36 +31,20 @@ export default function BlockEditor({
   const [linkMode, setLinkMode] = useState(false);
   const [url, setUrl] = useState("");
 
-  const insertInline = (text: string) => {
-    if (linkMode && url.trim()) {
-      return [
-        {
-          type: "link" as const,
-          text,
-          href: url,
-        },
-      ];
-    }
-    return toText(text);
-  };
-
   return (
-    <div className="border p-3 rounded-lg relative">
+    <div className="border p-3 rounded relative">
 
       {/* TOOLBAR */}
       <div className="absolute right-2 top-2 flex gap-2">
         <button
           type="button"
-          onClick={() => {
-            setLinkMode((v) => !v);
-            setUrl(""); // 🔥 reset cực quan trọng
-          }}
+          onClick={() => setLinkMode((v) => !v)}
           className={linkMode ? "text-blue-600" : "text-gray-400"}
         >
           <Link size={16} />
         </button>
 
-        <button onClick={onDelete}>
+        <button type="button" onClick={onDelete}>
           <Trash2 size={16} />
         </button>
       </div>
@@ -77,30 +59,34 @@ export default function BlockEditor({
         />
       )}
 
-      {/* HEADING */}
-      {block.type === "heading" && (
-        <TextareaAutosize
-          value={block.text}
-          onChange={(e) =>
-            onChange({ ...block, text: e.target.value })
-          }
-        />
-      )}
-
-      {/* PARAGRAPH */}
+      {/* =========================
+          PARAGRAPH (FIXED CORE)
+      ========================= */}
       {block.type === "paragraph" && (
         <TextareaAutosize
           value={renderInlineText(block.content)}
-          onChange={(e) =>
+          onChange={(e) => {
+            const text = e.target.value;
+
             onChange({
               ...block,
-              content: insertInline(e.target.value),
-            })
-          }
+              content: block.content.map((node, idx, arr) => {
+                if (idx === arr.length - 1 && node.type === "text") {
+                  return {
+                    ...node,
+                    text,
+                  };
+                }
+                return node;
+              }),
+            });
+          }}
         />
       )}
 
-      {/* LIST */}
+      {/* =========================
+          LIST (FIXED CORE)
+      ========================= */}
       {block.type === "list" && (
         <div>
           {block.items.map((item, i) => (
@@ -108,28 +94,25 @@ export default function BlockEditor({
               key={i}
               value={renderInlineText(item)}
               onChange={(e) => {
-                const newItems = [...block.items];
-                newItems[i] = insertInline(e.target.value);
+                const text = e.target.value;
 
                 onChange({
                   ...block,
-                  items: newItems,
+                  items: block.items.map((it, idx) =>
+                    idx === i
+                      ? it.map((node, nIdx, arr) => {
+                          if (nIdx === arr.length - 1 && node.type === "text") {
+                            return { ...node, text };
+                          }
+                          return node;
+                        })
+                      : it
+                  ),
                 });
               }}
+              className="border p-1 w-full mb-1"
             />
           ))}
-
-          <button
-            type="button"
-            onClick={() =>
-              onChange({
-                ...block,
-                items: [...block.items, toText("")],
-              })
-            }
-          >
-            <Plus size={14} /> Add
-          </button>
         </div>
       )}
     </div>
