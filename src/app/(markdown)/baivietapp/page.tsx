@@ -60,7 +60,7 @@ export default async function Page() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {otherPosts.map((p) => (
               <article key={p.id} className="group border-b border-border pb-8 md:border-b-0 md:pb-0">
-                <Link href={`/baiviet/${p.slug}`} prefetch={true} className="flex flex-col gap-4">
+                <Link href={`/baivietapp/${p.slug}`} prefetch={true} className="flex flex-col gap-4">
                   <h3 className="text-xl font-bold font-serif group-hover:text-primary transition-colors leading-snug">
                     {p.title}
                   </h3>
@@ -84,7 +84,7 @@ export default async function Page() {
           <div className="divide-y divide-border">
             {posts.slice(0, 5).map((p, idx) => (
               <div key={idx} className="py-4 first:pt-0 group cursor-pointer">
-                <Link prefetch={true} href={`/baiviet/${p.slug}`}>
+                <Link prefetch={true} href={`/baivietapp/${p.slug}`}>
                   <span className="text-primary font-bold text-xs uppercase tracking-widest">#{idx + 1}</span>
                   <h5 className="font-serif font-bold text-base mt-1 group-hover:underline decoration-primary underline-offset-4">
                     {p.title}
