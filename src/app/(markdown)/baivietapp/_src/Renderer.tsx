@@ -56,25 +56,22 @@ export function Renderer({ content }: { content: Document }) {
 
 
 function renderTextNodes(content: TextNode[]) {
-  return content.map((node, i) => {
-    let el = <>{node.text}</>;
+  return content
+    .filter(node => node.text && node.text.trim().length > 0) // 🔥 FIX Ở ĐÂY
+    .map((node, i) => {
+      let el = <>{node.text}</>;
 
-    if (node.bold) {
-      el = <strong>{el}</strong>;
-    }
+      if (node.bold) el = <strong>{el}</strong>;
+      if (node.italic) el = <em>{el}</em>;
 
-    if (node.italic) {
-      el = <em>{el}</em>;
-    }
+      if (node.href) {
+        el = (
+          <a href={node.href} target="_blank">
+            {el}
+          </a>
+        );
+      }
 
-    if (node.href) {
-      el = (
-        <a href={node.href} target="_blank" rel="noopener noreferrer">
-          {el}
-        </a>
-      );
-    }
-
-    return <span key={i}>{el}</span>;
-  });
+      return <span key={i}>{el}</span>;
+    });
 }
