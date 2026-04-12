@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import type { Block, Document } from "@/lib/blocks";
+import type { Block, Document } from "./blocks";
 
 /**
  * Text node
