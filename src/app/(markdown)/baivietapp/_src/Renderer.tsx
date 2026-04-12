@@ -1,6 +1,6 @@
 'use client';
 
-import type { Document, Block } from "@/baivietapp/_src/blocks";
+import type { Document, Block } from "./blocks";
 
 /**
  * Render TextSchema
