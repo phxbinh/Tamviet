@@ -1,5 +1,5 @@
 // /baivietapp/new/page.tsx
-import Editor from "@/lib/postLib/Editor_link";
+import Editor from "@/lib/postLib/Editor";
 
 export default function NewPostPage() {
   return (
