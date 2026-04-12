@@ -44,7 +44,8 @@ export default async function Page({
       </div>
 
       {/* CONTENT */}
-      <pre> {JSON.stringify(content)}</pre>
+      <preclassName="bg-black text-green-400 p-4 rounded">
+        {JSON.stringify(content, null, 2)}</pre>
       <Renderer content={content} />
     </div>
   );
