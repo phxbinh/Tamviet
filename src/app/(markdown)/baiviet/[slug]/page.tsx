@@ -44,7 +44,7 @@ export default async function Page({
       </div>
 
       {/* CONTENT */}
-      <pre> JSON.stringify(content)</pre>
+      <pre> {JSON.stringify(content)}</pre>
       <Renderer content={content} />
     </div>
   );
