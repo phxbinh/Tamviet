@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { DocumentSchema } from "@/baivietapp/_src/blocks";
+import { DocumentSchema } from "./blocks";
 import { sql } from "@/lib/neon/sql";
 import { revalidatePath } from "next/cache";
 
