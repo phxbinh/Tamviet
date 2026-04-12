@@ -11,7 +11,7 @@ export default async function Page() {
     `
   );
 
-  const posts = result.rows;
+  const posts = result;
 
   return (
     <div>
