@@ -1,16 +1,20 @@
 'use client';
 
-import React from "react";
-import type { Block, Document } from "./blocks";
+import type { Document, Block } from "@/lib/blocks";
 
 /**
- * Text node
+ * Render inline text (TextSchema)
  */
-function renderTextNode(node: any, index: number) {
-  let el = <>{node.text}</>;
+function renderText(node: any, i: number) {
+  let el: React.ReactNode = node.text;
 
-  if (node.bold) el = <strong>{el}</strong>;
-  if (node.italic) el = <em>{el}</em>;
+  if (node.bold) {
+    el = <strong>{el}</strong>;
+  }
+
+  if (node.italic) {
+    el = <em>{el}</em>;
+  }
 
   if (node.href) {
     el = (
@@ -20,32 +24,32 @@ function renderTextNode(node: any, index: number) {
     );
   }
 
-  return <React.Fragment key={index}>{el}</React.Fragment>;
+  return <span key={i}>{el}</span>;
 }
 
 /**
- * Block
+ * Render block
  */
-function renderBlock(block: Block, index: number) {
+function renderBlock(block: Block, i: number) {
   switch (block.type) {
     case "heading": {
       const Tag = `h${block.level}` as keyof JSX.IntrinsicElements;
-      return <Tag key={index}>{block.text}</Tag>;
+      return <Tag key={i}>{block.text}</Tag>;
     }
 
     case "paragraph":
       return (
-        <p key={index}>
-          {block.content.map(renderTextNode)}
+        <p key={i}>
+          {block.content.map(renderText)}
         </p>
       );
 
     case "list":
       return (
-        <ul key={index}>
-          {block.items.map((item, i) => (
-            <li key={i}>
-              {item.map(renderTextNode)}
+        <ul key={i}>
+          {block.items.map((item, idx) => (
+            <li key={idx}>
+              {item.map(renderText)}
             </li>
           ))}
         </ul>
@@ -53,12 +57,16 @@ function renderBlock(block: Block, index: number) {
 
     case "image":
       return (
-        <img key={index} src={block.src} alt={block.alt || ""} />
+        <img
+          key={i}
+          src={block.src}
+          alt={block.alt || ""}
+        />
       );
 
     case "code":
       return (
-        <pre key={index}>
+        <pre key={i}>
           <code>{block.code}</code>
         </pre>
       );
@@ -69,9 +77,11 @@ function renderBlock(block: Block, index: number) {
 }
 
 /**
- * Main
+ * MAIN Renderer
  */
-export function Renderer({ content }: { content: Document }) {
+export default function Renderer({ content }: { content: Document }) {
+  if (!content || content.type !== "doc") return null;
+
   return (
     <div>
       {content.blocks.map(renderBlock)}
