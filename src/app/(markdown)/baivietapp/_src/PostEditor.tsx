@@ -2,6 +2,53 @@
 
 import type { Document, Block } from "./blocks";
 
+export function normalizeTextNode(node: any) {
+  return {
+    type: "text",
+    text: typeof node.text === "string" ? node.text : "",
+    href: typeof node.href === "string" ? node.href : undefined,
+    bold: !!node.bold,
+    italic: !!node.italic,
+  };
+}
+export function normalizeParagraph(block: any) {
+  return {
+    ...block,
+    content: (block.content || [])
+      .map(normalizeTextNode)
+      .filter((n: any) => n.text.trim().length > 0), // 🔥 chặn rỗng
+  };
+}
+
+
+export function normalizeDocument(doc: Document): Document {
+  return {
+    ...doc,
+    blocks: doc.blocks.map((block: any) => {
+      switch (block.type) {
+        case "paragraph":
+          return normalizeParagraph(block);
+
+        case "heading":
+          return {
+            ...block,
+            text: block.text ?? "",
+          };
+
+        case "list":
+          return {
+            ...block,
+            items: (block.items || []).map((item: any) =>
+              item.map(normalizeTextNode)
+            ),
+          };
+
+        default:
+          return block;
+      }
+    }),
+  };
+}
 export default function PostEditor({
   value,
   onChange,
@@ -9,61 +56,68 @@ export default function PostEditor({
   value: Document;
   onChange: (doc: Document) => void;
 }) {
+  function update(blocks: Block[]) {
+    onChange(normalizeDocument({ ...value, blocks }));
+  }
+
   function updateBlock(index: number, block: Block) {
     const blocks = [...value.blocks];
     blocks[index] = block;
-    onChange({ ...value, blocks });
+    update(blocks);
   }
 
   function addBlock(type: Block["type"]) {
     let newBlock: Block;
 
-    if (type === "paragraph") {
-      newBlock = {
-        type: "paragraph",
-        content: [{ type: "text", text: "" }],
-      };
+    switch (type) {
+      case "paragraph":
+        newBlock = {
+          type: "paragraph",
+          content: [{ type: "text", text: "" }],
+        };
+        break;
+
+      case "heading":
+        newBlock = {
+          type: "heading",
+          level: 2,
+          text: "",
+        };
+        break;
+
+      case "list":
+        newBlock = {
+          type: "list",
+          items: [[{ type: "text", text: "" }]],
+        };
+        break;
+
+      case "image":
+        newBlock = {
+          type: "image",
+          src: "",
+          alt: "",
+        };
+        break;
+
+      case "code":
+        newBlock = {
+          type: "code",
+          code: "",
+          language: "ts",
+        };
+        break;
+
+      default:
+        return;
     }
 
-    if (type === "heading") {
-      newBlock = {
-        type: "heading",
-        level: 2,
-        text: "",
-      };
-    }
-
-    if (type === "list") {
-      newBlock = {
-        type: "list",
-        items: [[{ type: "text", text: "" }]],
-      };
-    }
-
-    if (type === "image") {
-      newBlock = {
-        type: "image",
-        src: "",
-        alt: "",
-      };
-    }
-
-    if (type === "code") {
-      newBlock = {
-        type: "code",
-        code: "",
-        language: "ts",
-      };
-    }
-
-    onChange({
-      ...value,
-      blocks: [...value.blocks, newBlock!],
-    });
+    update([...value.blocks, newBlock]);
   }
 
   return (
     <div>
+      {/* toolbar */}
       <div className="flex gap-2 mb-4">
         <button type="button" onClick={() => addBlock("paragraph")}>+ P</button>
         <button type="button" onClick={() => addBlock("heading")}>+ H</button>
@@ -72,6 +126,7 @@ export default function PostEditor({
         <button type="button" onClick={() => addBlock("code")}>+ Code</button>
       </div>
 
+      {/* blocks */}
       {value.blocks.map((block, i) => {
         switch (block.type) {
           case "paragraph":
@@ -88,9 +143,12 @@ export default function PostEditor({
               <input
                 key={i}
                 className="w-full text-xl font-bold mb-2"
-                value={block.text}
+                value={block.text ?? ""}
                 onChange={(e) =>
-                  updateBlock(i, { ...block, text: e.target.value })
+                  updateBlock(i, {
+                    ...block,
+                    text: e.target.value ?? "",
+                  })
                 }
               />
             );
@@ -106,19 +164,26 @@ export default function PostEditor({
 
           case "image":
             return (
-              <div key={i}>
+              <div key={i} className="mb-2">
                 <input
                   placeholder="Image URL"
-                  value={block.src}
+                  value={block.src ?? ""}
                   onChange={(e) =>
-                    updateBlock(i, { ...block, src: e.target.value })
+                    updateBlock(i, {
+                      ...block,
+                      src: e.target.value ?? "",
+                    })
                   }
                 />
+
                 <input
                   placeholder="Alt"
-                  value={block.alt || ""}
+                  value={block.alt ?? ""}
                   onChange={(e) =>
-                    updateBlock(i, { ...block, alt: e.target.value })
+                    updateBlock(i, {
+                      ...block,
+                      alt: e.target.value ?? "",
+                    })
                   }
                 />
               </div>
@@ -128,9 +193,12 @@ export default function PostEditor({
             return (
               <textarea
                 key={i}
-                value={block.code}
+                value={block.code ?? ""}
                 onChange={(e) =>
-                  updateBlock(i, { ...block, code: e.target.value })
+                  updateBlock(i, {
+                    ...block,
+                    code: e.target.value ?? "",
+                  })
                 }
               />
             );
@@ -143,20 +211,40 @@ export default function PostEditor({
   );
 }
 
+/* =========================
+   PARAGRAPH EDITOR
+========================= */
 
-function ParagraphEditor({ block, onChange }: any) {
+function ParagraphEditor({
+  block,
+  onChange,
+}: any) {
   function updateNode(i: number, field: string, value: any) {
     const content = block.content.map((node: any, idx: number) =>
-      idx === i ? { ...node, [field]: value } : node
+      idx === i
+        ? {
+            ...node,
+            [field]: value ?? "", // 🔥 CHẶN undefined
+          }
+        : node
     );
 
-    onChange({ ...block, content });
+    onChange({
+      ...block,
+      content,
+    });
   }
 
   function addNode() {
     onChange({
       ...block,
-      content: [...block.content, { type: "text", text: "" }],
+      content: [
+        ...block.content,
+        {
+          type: "text",
+          text: "",
+        },
+      ],
     });
   }
 
@@ -165,33 +253,50 @@ function ParagraphEditor({ block, onChange }: any) {
       {block.content.map((node: any, i: number) => (
         <div key={i} className="flex gap-2 mb-1">
           <input
-            value={node.text}
-            onChange={(e) => updateNode(i, "text", e.target.value)}
+            value={node.text ?? ""}   // 🔥 FIX
+            onChange={(e) =>
+              updateNode(i, "text", e.target.value ?? "")
+            }
           />
 
           <input
             placeholder="https://..."
-            value={node.href || ""}
+            value={node.href ?? ""}
             onChange={(e) =>
               updateNode(i, "href", e.target.value || undefined)
             }
           />
 
-          <button type="button" onClick={() => updateNode(i, "bold", !node.bold)}>
+          <button
+            type="button"
+            onClick={() =>
+              updateNode(i, "bold", !node.bold)
+            }
+          >
             B
           </button>
 
-          <button type="button" onClick={() => updateNode(i, "italic", !node.italic)}>
+          <button
+            type="button"
+            onClick={() =>
+              updateNode(i, "italic", !node.italic)
+            }
+          >
             I
           </button>
         </div>
       ))}
 
-      <button type="button" onClick={addNode}>+ text</button>
+      <button type="button" onClick={addNode}>
+        + text
+      </button>
     </div>
   );
 }
 
+/* =========================
+   LIST EDITOR
+========================= */
 
 function ListEditor({ block, onChange }: any) {
   function updateItem(i: number, field: string, value: any) {
@@ -200,32 +305,40 @@ function ListEditor({ block, onChange }: any) {
     items[i] = [
       {
         ...items[i][0],
-        [field]: value,
+        [field]: value ?? "", // 🔥 FIX
       },
     ];
 
-    onChange({ ...block, items });
+    onChange({
+      ...block,
+      items,
+    });
   }
 
   function addItem() {
     onChange({
       ...block,
-      items: [...block.items, [{ type: "text", text: "" }]],
+      items: [
+        ...block.items,
+        [{ type: "text", text: "" }],
+      ],
     });
   }
 
   return (
-    <div>
+    <div className="mb-3">
       {block.items.map((item: any, i: number) => (
         <div key={i} className="flex gap-2 mb-1">
           <input
-            value={item[0]?.text || ""}
-            onChange={(e) => updateItem(i, "text", e.target.value)}
+            value={item[0]?.text ?? ""}
+            onChange={(e) =>
+              updateItem(i, "text", e.target.value ?? "")
+            }
           />
 
           <input
             placeholder="https://..."
-            value={item[0]?.href || ""}
+            value={item[0]?.href ?? ""}
             onChange={(e) =>
               updateItem(i, "href", e.target.value || undefined)
             }
@@ -233,12 +346,9 @@ function ListEditor({ block, onChange }: any) {
         </div>
       ))}
 
-      <button type="button" onClick={addItem}>+ item</button>
+      <button type="button" onClick={addItem}>
+        + item
+      </button>
     </div>
   );
 }
-
-
-
-
-
