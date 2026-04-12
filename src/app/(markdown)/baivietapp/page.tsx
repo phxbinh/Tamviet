@@ -30,7 +30,7 @@ export default async function Page() {
         <section className="lg:col-span-3 space-y-12">
           {/* Featured Post */}
           <article className="group cursor-pointer">
-            <Link href={`/baiviet/${featuredPost.slug}`} prefetch={true} className="space-y-4">
+            <Link href={`/baivietapp/${featuredPost.slug}`} prefetch={true} className="space-y-4">
               <div className="overflow-hidden bg-card border border-border rounded-sm aspect-video mb-4 group-hover:shadow-xl transition-all duration-500">
                 {/* Thay bằng thẻ <img> nếu bạn có p.image_url */}
                 <div className="w-full h-full bg-zinc-900 flex items-center justify-center text-zinc-700 font-serif text-4xl animate-breathe-slow">
