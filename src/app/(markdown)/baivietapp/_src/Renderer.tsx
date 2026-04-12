@@ -1,7 +1,7 @@
 'use client';
 
-import { Document, Block } from './blocks';
-import { TextSchema } from "@/lib/blocks";
+import { Document, Block, TextSchema } from './blocks';
+
 
 export function Renderer({ content }: { content: Document }) {
   return (
