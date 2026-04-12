@@ -1,6 +1,6 @@
 import { DocumentSchema } from "./blocks";
 
-/*
+
 export function parseContent(raw: any) {
   try {
     const data =
@@ -16,8 +16,8 @@ export function parseContent(raw: any) {
     };
   }
 }
-*/
 
+/*
 function parseContent(raw: any) {
   try {
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -51,7 +51,7 @@ function parseContent(raw: any) {
     return { type: "doc", blocks: [] };
   }
 }
-
+*/
 
 
 export function groupByHeading(blocks: any[]) {
