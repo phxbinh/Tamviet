@@ -46,6 +46,23 @@ export default async function Page({
   if (!post[0]) return <div className="p-6">Not found</div>;
 
   const content = parseContent(post[0].content_json);
+  const fixedContent = {
+  ...content,
+  blocks: content.blocks.map((block: any) => {
+    if (block.type !== "paragraph") return block;
+
+    // 🔥 FIX CHUYỂN text → content[]
+    return {
+      type: "paragraph",
+      content: [
+        {
+          type: "text",
+          text: block.text || "",
+        },
+      ],
+    };
+  }),
+};
 
   const formattedDate = new Date(post[0].created_at).toLocaleDateString(
     "vi-VN",
@@ -70,7 +87,7 @@ export default async function Page({
       </div>
 
       {/* CONTENT */}
-      <Renderer content={content} />
+      <Renderer content={fixedContent} />
     </div>
   );
 }
