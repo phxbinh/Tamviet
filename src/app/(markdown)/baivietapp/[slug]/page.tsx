@@ -6,6 +6,7 @@ import { parseContent } from "@/lib/postLib/parseContent";
 import { CalendarDays } from "lucide-react";
 */
 // src/app/(markdown)/baiviet/[slug]/page.tsx
+/*
 import { sql } from "@/lib/neon/sql";
 import { Renderer } from "@/lib/postLib/Renderer";
 import { parseContent } from "@/lib/postLib/parseContent";
@@ -41,7 +42,7 @@ export default async function Page({
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      {/* HEADER */}
+      
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold leading-tight text-slate-900">
           {post.title}
@@ -53,10 +54,9 @@ export default async function Page({
         </div>
       </header>
 
-      {/* RENDERER */}
+     
       <Renderer content={content} />
       
-      {/* Chỉ hiện debug trong môi trường dev nếu cần */}
       {process.env.NODE_ENV === 'development' && (
         <details className="mt-20 opacity-30">
           <summary className="cursor-pointer text-xs">Debug Content JSON</summary>
@@ -68,3 +68,24 @@ export default async function Page({
     </div>
   );
 }
+*/
+
+// src/app/baiviet/[slug]/page.tsx
+import { getPostBySlug } from "@/lib/postLib/fetchPost";
+import { Renderer } from "@/lib/postLib/Renderer";
+import { notFound } from "next/navigation";
+
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const data = await getPostBySlug(slug);
+
+  if (!data) return notFound();
+
+  return (
+    <div className="max-w-4xl mx-auto py-10 px-4">
+      <h1 className="text-4xl font-black mb-8">{data.post.title}</h1>
+      <Renderer content={data.content} />
+    </div>
+  );
+}
+
