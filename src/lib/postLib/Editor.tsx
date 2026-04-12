@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Block } from "./blocks";
-import BlockEditor from "./BlockEditor";
+//import BlockEditor from "./BlockEditor";
+import BlockEditor from "./BlockEditor_link";
 import { createPost } from "./createPost";
 
 type BlockWithId = Block & { id: string };
