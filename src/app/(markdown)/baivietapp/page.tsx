@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useActionState } from "react"; // 👈 QUAN TRỌNG
 import PostEditor from "./_src/PostEditor";
-import { createPostAction } from "./_src/createPostAction";
+import { createPostAction } from "./_src/creatrPostAction";
 import type { Document } from "./_src/blocks";
 
 export default function Page() {
