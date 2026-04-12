@@ -40,6 +40,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Tài liệu', href: '/test', showInSidebar: true },
   { name: 'Bài Viết', href: '/baiviet', showInSidebar: true },
   { name: 'Bài Viết app', href: '/baivietapp', showInSidebar: true },
+  { name: 'Review app', href: '/baivietapp/review', showInSidebar: true },
   { name: 'Road map', href: '/roadmap', showInSidebar: true },
   { name: 'Giới thiệu', href: '/about', showInSidebar: true },
 
