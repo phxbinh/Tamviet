@@ -9,42 +9,31 @@ import { createPost } from "./createPost";
 type BlockWithId = Block & { id: string };
 
 /* =========================
-   INLINE TYPE (FIXED)
+   INLINE
 ========================= */
 type Inline =
   | { type: "text"; text: string }
   | { type: "link"; text: string; href: string };
 
-function toInline(text: string): Inline[] {
-  return [
-    {
-      type: "text" as const,
-      text,
-    },
-  ];
+function toText(text: string): Inline[] {
+  return [{ type: "text", text }];
 }
 
 /* =========================
-   SAVE BUTTON
+   SAVE
 ========================= */
 function SaveButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      className={`${
-        pending ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-      } text-white px-4 py-1.5 rounded-md transition-colors flex items-center gap-2`}
-    >
+    <button type="submit" disabled={pending}>
       {pending ? "Saving..." : "Save Post"}
     </button>
   );
 }
 
 /* =========================
-   MAIN EDITOR
+   EDITOR
 ========================= */
 export default function Editor() {
   const [title, setTitle] = useState("");
@@ -61,7 +50,7 @@ export default function Editor() {
       newBlock = {
         id,
         type,
-        content: toInline(""),
+        content: toText(""),
       };
     } else if (type === "image") {
       newBlock = { id, type, src: "" };
@@ -71,21 +60,21 @@ export default function Editor() {
       newBlock = {
         id,
         type: "list",
-        items: [toInline("")],
+        items: [toText("")],
       };
     }
 
-    setBlocks((prev) => [...prev, newBlock]);
+    setBlocks((p) => [...p, newBlock]);
   };
 
   const updateBlock = (id: string, newBlock: Block) => {
-    setBlocks((prev) =>
-      prev.map((b) => (b.id === id ? { ...newBlock, id } : b))
+    setBlocks((p) =>
+      p.map((b) => (b.id === id ? { ...newBlock, id } : b))
     );
   };
 
   const removeBlock = (id: string) => {
-    setBlocks((prev) => prev.filter((b) => b.id !== id));
+    setBlocks((p) => p.filter((b) => b.id !== id));
   };
 
   const cleanBlocks = blocks.map(({ id, ...rest }) => rest);
@@ -97,8 +86,7 @@ export default function Editor() {
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Nhập tiêu đề..."
-        className="border p-2 w-full"
+        placeholder="Title"
       />
 
       <input
@@ -111,26 +99,23 @@ export default function Editor() {
       />
 
       <div className="flex gap-2">
-        <button type="button" onClick={() => addBlock("heading")}>+ Heading</button>
-        <button type="button" onClick={() => addBlock("paragraph")}>+ Text</button>
-        <button type="button" onClick={() => addBlock("image")}>+ Image</button>
-        <button type="button" onClick={() => addBlock("code")}>+ Code</button>
-        <button type="button" onClick={() => addBlock("list")}>+ List</button>
+        <button type="button" onClick={() => addBlock("heading")}>H</button>
+        <button type="button" onClick={() => addBlock("paragraph")}>P</button>
+        <button type="button" onClick={() => addBlock("list")}>L</button>
         <SaveButton />
       </div>
 
-      {blocks.map((block) => (
+      {blocks.map((b) => (
         <BlockEditor
-          key={block.id}
-          block={block}
-          onChange={(newBlock) => updateBlock(block.id, newBlock)}
-          onDelete={() => removeBlock(block.id)}
+          key={b.id}
+          block={b}
+          onChange={(nb) => updateBlock(b.id, nb)}
+          onDelete={() => removeBlock(b.id)}
         />
       ))}
 
-      <pre className="bg-black text-green-400 p-4 rounded">
-        {JSON.stringify({ type: "doc", blocks }, null, 2)}
-      </pre>
+      {/* DEBUG */}
+      <pre>{JSON.stringify({ type: "doc", blocks }, null, 2)}</pre>
     </form>
   );
 }
