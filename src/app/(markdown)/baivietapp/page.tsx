@@ -45,13 +45,15 @@ export default function Page() {
       </button>
 
       {/* 👇 show result */}
-      {state?.success && (
-        <p className="text-green-600 mt-2">Lưu thành công</p>
-      )}
-
-      {state?.error && (
+      {state && !state.success && (
         <p className="text-red-600 mt-2">
-          {JSON.stringify(state.error)}
+          {state.error}
+        </p>
+      )}
+      
+      {state && state.success && (
+        <p className="text-green-600 mt-2">
+          Saved
         </p>
       )}
     </form>
