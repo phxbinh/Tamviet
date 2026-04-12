@@ -1,6 +1,6 @@
 import { sql } from "@/lib/neon/sql";
-import { Renderer } from "@/components/editor/Renderer";
-import { Document } from "@/lib/blocks";
+import { Renderer } from "../../_src/Renderer";
+import { Document } from "../../_src/blocks";
 import { notFound } from "next/navigation";
 
 type PostRow = {
@@ -9,15 +9,17 @@ type PostRow = {
   content_json: Document;
 };
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const rows = await sql<PostRow[]>`
-    SELECT id, title, content_json
-    FROM posts
-    WHERE slug = ${params.slug}
-    LIMIT 1
-  `;
 
-  const post = rows[0];
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const post = await sql`
+    SELECT * FROM posts WHERE slug = ${slug}
+  `;
 
   if (!post) return notFound();
 
