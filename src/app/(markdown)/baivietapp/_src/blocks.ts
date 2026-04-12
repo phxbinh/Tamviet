@@ -1,13 +1,12 @@
 // baivietapp/_src/blocks.ts
+// lib/blocks.ts
 import { z } from "zod";
 
 export const TextSchema = z.object({
   type: z.literal("text"),
   text: z.string(),
-
   bold: z.boolean().optional(),
   italic: z.boolean().optional(),
-
   href: z.string().url().optional(),
 });
 
@@ -23,10 +22,7 @@ export const BlockSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("image"),
-    src: z.string().refine(
-      (val) => val.startsWith("/") || val.startsWith("http"),
-      "Invalid image src"
-    ),
+    src: z.string(),
     alt: z.string().optional(),
   }),
   z.object({
@@ -44,3 +40,9 @@ export const DocumentSchema = z.object({
   type: z.literal("doc"),
   blocks: z.array(BlockSchema),
 });
+
+/**
+ * 🔥 QUAN TRỌNG: export type
+ */
+export type Block = z.infer<typeof BlockSchema>;
+export type Document = z.infer<typeof DocumentSchema>;
