@@ -1,11 +1,12 @@
 'use client';
 
-import { groupByHeading } from "./parseContent";
 import { useEffect, useState, useRef } from "react";
+// Đảm bảo bạn đã có file parseContent.ts chứa hàm groupByHeading
+import { groupByHeading } from "./parseContent"; 
 import { TableOfContents } from "./TOC";
 
 /* =========================
-   INLINE RENDERER
+   INLINE RENDERER (Hỗ trợ Link & Text)
 ========================= */
 function renderInline(nodes: any[]) {
   if (!Array.isArray(nodes)) return null;
@@ -20,8 +21,9 @@ function renderInline(nodes: any[]) {
         <a
           key={i}
           href={n.href}
-          className="text-blue-600 underline"
+          className="text-blue-600 hover:text-blue-800 underline transition-colors"
           target="_blank"
+          rel="noopener noreferrer" // Bảo mật khi dùng target="_blank"
         >
           {n.text}
         </a>
@@ -32,21 +34,26 @@ function renderInline(nodes: any[]) {
   });
 }
 
+/* =========================
+   MAIN RENDERER COMPONENT
+========================= */
 export function Renderer({ content }: { content: any }) {
-  const sections = groupByHeading(content.blocks);
+  const sections = groupByHeading(content?.blocks || []);
   const [activeId, setActiveId] = useState<string>("");
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Dùng để tạo slug không trùng lặp cho Table of Contents
   const slugMap = new Map<string, number>();
 
   function slugify(text: string) {
+    if (!text) return "";
     let slug = text
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^\w\s]/g, "")
+      .replace(/[\u0300-\u036f]/g, "") // Khử dấu tiếng Việt
+      .replace(/[^\w\s-]/g, "") // Xóa ký tự đặc biệt
       .trim()
-      .replace(/\s+/g, "-");
+      .replace(/\s+/g, "-"); // Thay khoảng trắng bằng dấu gạch ngang
 
     if (slugMap.has(slug)) {
       const count = slugMap.get(slug)! + 1;
@@ -58,21 +65,16 @@ export function Renderer({ content }: { content: any }) {
     return slug;
   }
 
+  // Khởi tạo danh sách IDs cho Scroll Spy
   const sectionIds = sections.map((section) =>
     section.heading ? slugify(section.heading.text) : ""
   );
 
   /* =========================
-     SCROLL SPY
+     SCROLL SPY LOGIC
   ========================= */
   useEffect(() => {
-    const scrollContainer =
-      contentRef.current?.closest(".overflow-y-auto");
-
-    if (!scrollContainer) return;
-
-    const headings = contentRef.current?.querySelectorAll("h2[id]");
-
+    // Tìm container cuộn (thường là window hoặc một div bọc ngoài)
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -82,104 +84,115 @@ export function Renderer({ content }: { content: any }) {
         });
       },
       {
-        root: scrollContainer,
-        rootMargin: "-100px 0px -70% 0px",
+        rootMargin: "-10% 0px -70% 0px", // Kích hoạt khi heading nằm ở 1/3 trên màn hình
         threshold: 0,
       }
     );
 
+    const headings = contentRef.current?.querySelectorAll("h2[id], h3[id]");
     headings?.forEach((h) => observer.observe(h));
 
     return () => observer.disconnect();
   }, [sections]);
 
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-[250px_1fr] gap-10">
-      <TableOfContents
-        sections={sections}
-        sectionIds={sectionIds}
-        activeId={activeId}
-        contentRef={contentRef}
-      />
+    <div className="flex flex-col lg:grid lg:grid-cols-[280px_1fr] gap-12 max-w-7xl mx-auto px-4">
+      
+      {/* CỘT TRÁI: TABLE OF CONTENTS */}
+      <aside className="hidden lg:block sticky top-24 h-fit">
+        <TableOfContents
+          sections={sections}
+          sectionIds={sectionIds}
+          activeId={activeId}
+          contentRef={contentRef}
+        />
+      </aside>
 
-      <article ref={contentRef} className="min-w-0 pb-20">
+      {/* CỘT PHẢI: NỘI DUNG BÀI VIẾT */}
+      <article ref={contentRef} className="min-w-0 prose prose-slate max-w-none">
         {sections.map((section, i) => {
           const id = section.heading ? sectionIds[i] : "";
 
           return (
-            <section key={i} className="mb-12">
-              {/* =========================
-                  HEADING
-              ========================= */}
+            <section key={i} className="mb-10">
+              {/* RENDER HEADING */}
               {section.heading && (
                 <h2
                   id={id}
-                  className={`font-bold mb-4 scroll-mt-20 ${
-                    section.heading.level === 1
-                      ? "text-3xl"
-                      : "text-2xl"
+                  className={`font-extrabold text-slate-900 scroll-mt-28 mb-6 ${
+                    section.heading.level === 1 ? "text-4xl" : "text-3xl"
                   }`}
                 >
                   {section.heading.text}
                 </h2>
               )}
 
-              <div className="space-y-4">
-
-                {/* =========================
-                    BLOCK RENDER FIXED
-                ========================= */}
+              <div className="space-y-6 text-slate-700">
                 {section.children.map((b: any, idx: number) => {
-
-                  /* ---------- PARAGRAPH (INLINE FIX) ---------- */
+                  
+                  // 1. Paragraph
                   if (b.type === "paragraph") {
                     return (
-                      <p
-                        key={idx}
-                        className="text-gray-700 leading-7"
-                      >
+                      <p key={idx} className="text-lg leading-8 italic-last-child">
                         {renderInline(b.content)}
                       </p>
                     );
                   }
 
-                  /* ---------- IMAGE ---------- */
-                  if (b.type === "image") {
-                    return (
-                      <img
-                        key={idx}
-                        src={b.src}
-                        alt={b.alt || ""}
-                        className="rounded-xl w-full"
-                      />
-                    );
-                  }
-
-                  /* ---------- CODE ---------- */
-                  if (b.type === "code") {
-                    return (
-                      <pre
-                        key={idx}
-                        className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"
-                      >
-                        <code>{b.code}</code>
-                      </pre>
-                    );
-                  }
-
-                  /* ---------- LIST (INLINE FIX) ---------- */
+                  // 2. List
                   if (b.type === "list") {
                     return (
-                      <ul
-                        key={idx}
-                        className="list-disc pl-6 space-y-1"
-                      >
+                      <ul key={idx} className="list-disc pl-6 space-y-3">
                         {b.items.map((item: any, i: number) => (
-                          <li key={i}>
+                          <li key={i} className="leading-7">
                             {renderInline(item)}
                           </li>
                         ))}
                       </ul>
+                    );
+                  }
+
+                  // 3. Image
+                  if (b.type === "image") {
+                    return (
+                      <figure key={idx} className="my-8">
+                        <img
+                          src={b.src}
+                          alt={b.alt || "Nội dung hình ảnh"}
+                          className="rounded-2xl w-full shadow-md border border-slate-100"
+                        />
+                        {b.alt && <figcaption className="text-center text-sm text-slate-400 mt-3">{b.alt}</figcaption>}
+                      </figure>
+                    );
+                  }
+
+                  // 4. Image Group (Dành cho nhiều ảnh cạnh nhau)
+                  if (b.type === "imageGroup") {
+                    return (
+                      <div key={idx} className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+                        {b.images.map((img: any, imgIdx: number) => (
+                          <img 
+                            key={imgIdx} 
+                            src={img.src} 
+                            alt={img.alt || ""} 
+                            className="rounded-xl w-full h-64 object-cover"
+                          />
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  // 5. Code Block
+                  if (b.type === "code") {
+                    return (
+                      <div key={idx} className="relative group my-6">
+                        <div className="absolute top-0 right-0 px-3 py-1 text-[10px] text-slate-500 font-mono uppercase bg-slate-800 rounded-bl-lg">
+                          {b.language || "code"}
+                        </div>
+                        <pre className="bg-slate-900 text-slate-200 p-5 rounded-xl overflow-x-auto text-sm leading-6 font-mono shadow-xl border border-slate-800">
+                          <code>{b.code}</code>
+                        </pre>
+                      </div>
                     );
                   }
 
