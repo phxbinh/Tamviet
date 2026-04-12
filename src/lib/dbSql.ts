@@ -7,3 +7,5 @@ import * as schema from './payment/schema';
 
 // Khởi tạo đối tượng db và gán schema để có gợi ý code (Intellisense)
 export const dbSql = drizzle(sql, { schema });
+
+// Đang dùng cho kết nối với Vnpay API
