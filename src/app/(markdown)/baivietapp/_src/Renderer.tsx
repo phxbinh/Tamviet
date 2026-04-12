@@ -1,7 +1,7 @@
 'use client';
 
 import { Document, Block } from './blocks';
-import { TextNode } from "@/lib/blocks";
+import { TextSchema } from "@/lib/blocks";
 
 export function Renderer({ content }: { content: Document }) {
   return (
@@ -55,7 +55,7 @@ export function Renderer({ content }: { content: Document }) {
 }
 
 
-function renderTextNodes(content: TextNode[]) {
+function renderTextNodes(content: TextSchema[]) {
   return content.map((node, i) => {
     let el = <>{node.text}</>;
 
