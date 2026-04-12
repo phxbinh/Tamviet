@@ -1,61 +1,161 @@
 'use client';
 
 import { useState } from "react";
-import { useActionState } from "react"; // 👈 QUAN TRỌNG
-import PostEditor from "./_src/PostEditor";
-import { createPostAction } from "./_src/creatrPostAction";
-import type { Document } from "./_src/blocks";
+//import type { Document, Paragraph, Text } from "./types";
+export type Text = {
+  type: "text";
+  text: string;
+  href?: string;
+  bold?: boolean;
+  italic?: boolean;
+};
 
+export type Paragraph = {
+  type: "paragraph";
+  content: Text[];
+};
+
+export type Document = {
+  type: "doc";
+  blocks: Paragraph[];
+};
+/* =========================
+   TEXT RENDER
+========================= */
+function renderText(nodes: Text[]) {
+  return nodes.map((n, i) => {
+    let el = <span key={i}>{n.text}</span>;
+
+    if (n.bold) el = <strong>{el}</strong>;
+    if (n.italic) el = <em>{el}</em>;
+
+    if (n.href) {
+      el = (
+        <a key={i} href={n.href} target="_blank">
+          {el}
+        </a>
+      );
+    }
+
+    return el;
+  });
+}
+
+/* =========================
+   PARAGRAPH EDITOR
+========================= */
+function ParagraphEditor({
+  block,
+  onChange,
+}: {
+  block: Paragraph;
+  onChange: (b: Paragraph) => void;
+}) {
+  function update(i: number, patch: Partial<Text>) {
+    const content = block.content.map((n, idx) =>
+      idx === i ? { ...n, ...patch } : n
+    );
+
+    onChange({ ...block, content });
+  }
+
+  function add() {
+    onChange({
+      ...block,
+      content: [
+        ...block.content,
+        {
+          type: "text",
+          text: "",
+        },
+      ],
+    });
+  }
+
+  return (
+    <div style={{ marginBottom: 20 }}>
+      {block.content.map((n, i) => (
+        <div key={i} style={{ display: "flex", gap: 8 }}>
+          <input
+            value={n.text}
+            onChange={(e) => update(i, { text: e.target.value })}
+          />
+
+          <input
+            placeholder="href"
+            value={n.href || ""}
+            onChange={(e) =>
+              update(i, {
+                href: e.target.value || undefined,
+              })
+            }
+          />
+
+          <button onClick={() => update(i, { bold: !n.bold })}>B</button>
+          <button onClick={() => update(i, { italic: !n.italic })}>I</button>
+        </div>
+      ))}
+
+      <button onClick={add}>+ text</button>
+    </div>
+  );
+}
+
+/* =========================
+   PAGE
+========================= */
 export default function Page() {
   const [doc, setDoc] = useState<Document>({
     type: "doc",
-    blocks: [],
+    blocks: [
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: "Hello",
+            bold: false,
+            italic: false,
+          },
+        ],
+      },
+    ],
   });
 
-  /**
-   * 👇 bind server action
-   */
-  const [state, formAction, isPending] = useActionState(
-    createPostAction,
-    null
-  );
+  const paragraph = doc.blocks[0];
+
+  /* =========================
+     SAVE (ZOD PLACEHOLDER)
+  ========================= */
+  function save() {
+    console.log("SAVE:", doc);
+    alert("Saved (mock)");
+  }
 
   return (
-    <form action={formAction} className="p-6 max-w-2xl mx-auto">
-      <input
-        name="title"
-        placeholder="Title"
-        className="w-full border p-2 mb-4"
+    <div style={{ padding: 20 }}>
+      <h2>Editor</h2>
+
+      <ParagraphEditor
+        block={paragraph}
+        onChange={(b) =>
+          setDoc({
+            ...doc,
+            blocks: [b],
+          })
+        }
       />
 
-      <PostEditor value={doc} onChange={setDoc} />
+      <button onClick={save}>Save</button>
 
-      {/* 👇 QUAN TRỌNG */}
-      <input
-        type="hidden"
-        name="content"
-        value={JSON.stringify(doc)}
-      />
+      <hr />
 
-      <button
-        disabled={isPending}
-        className="mt-4 bg-black text-white px-4 py-2"
-      >
-        {isPending ? "Saving..." : "Save"}
-      </button>
+      <h3>Preview</h3>
+      <p>{renderText(paragraph.content)}</p>
 
-      {/* 👇 show result */}
-      {state && !state.success && (
-        <p className="text-red-600 mt-2">
-          {state.error}
-        </p>
-      )}
-      
-      {state && state.success && (
-        <p className="text-green-600 mt-2">
-          Saved
-        </p>
-      )}
-    </form>
+      <hr />
+
+      <pre>{JSON.stringify(doc, null, 2)}</pre>
+    </div>
   );
 }
