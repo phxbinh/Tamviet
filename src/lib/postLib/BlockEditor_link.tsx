@@ -50,16 +50,21 @@ export default function BlockEditor({
   const [linkMode, setLinkMode] = useState(false);
   const [url, setUrl] = useState("");
 
-  const insertLink = (text: string) => {
-    if (!url.trim()) return;
+  /* =========================
+     CREATE INLINE (TEXT / LINK)
+  ========================= */
+  const insertInline = (text: string) => {
+    if (linkMode && url.trim()) {
+      return [
+        {
+          type: "link" as const,
+          text,
+          href: url,
+        },
+      ];
+    }
 
-    return [
-      {
-        type: "link" as const,
-        text,
-        href: url,
-      },
-    ];
+    return toInline(text);
   };
 
   return (
@@ -70,8 +75,8 @@ export default function BlockEditor({
         <button
           type="button"
           onClick={() => setLinkMode(!linkMode)}
-          className="text-blue-500 p-1"
-          title="Add link"
+          className={`p-1 ${linkMode ? "text-blue-600" : "text-slate-400"}`}
+          title="Toggle link mode"
         >
           <Link size={16} />
         </button>
@@ -92,14 +97,14 @@ export default function BlockEditor({
         </button>
       </div>
 
-      {/* LINK INPUT PANEL */}
+      {/* LINK INPUT */}
       {linkMode && (
-        <div className="flex gap-2 mb-3">
+        <div className="mb-3">
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Paste URL..."
-            className="border p-1 flex-1 rounded"
+            placeholder="Paste URL (https://...)"
+            className="w-full border rounded p-2 text-sm"
           />
         </div>
       )}
@@ -120,38 +125,26 @@ export default function BlockEditor({
         )}
 
         {/* =========================
-            PARAGRAPH (LINK FIXED)
+            PARAGRAPH (FIXED LINK)
         ========================= */}
         {block.type === "paragraph" && (
           <TextareaAutosize
             value={renderInlineText(block.content)}
+            placeholder="Nhập nội dung..."
             className={baseInputStyle}
             onChange={(e) => {
               const text = e.target.value;
 
-              if (linkMode && url) {
-                onChange({
-                  ...block,
-                  content: [
-                    {
-                      type: "link",
-                      text,
-                      href: url,
-                    },
-                  ],
-                });
-              } else {
-                onChange({
-                  ...block,
-                  content: toInline(text),
-                });
-              }
+              onChange({
+                ...block,
+                content: insertInline(text),
+              });
             }}
           />
         )}
 
         {/* =========================
-            LIST (LINK FIXED)
+            LIST (FIXED LINK)
         ========================= */}
         {block.type === "list" && (
           <div className="space-y-2 ml-4">
@@ -167,17 +160,7 @@ export default function BlockEditor({
                     onChange({
                       ...block,
                       items: block.items.map((it, idx) =>
-                        idx === i
-                          ? linkMode && url
-                            ? [
-                                {
-                                  type: "link",
-                                  text,
-                                  href: url,
-                                },
-                              ]
-                            : toInline(text)
-                          : it
+                        idx === i ? insertInline(text) : it
                       ),
                     });
                   }}
