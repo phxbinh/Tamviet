@@ -122,7 +122,8 @@ export async function createPostAction(
     /**
      * 6. Revalidate
      */
-    revalidatePath("/blogs");
+    revalidatePath("/baivietapp/review");
+    revalidatePath("/baivietapp/review/[slug]");
 
     return {
       success: true,
