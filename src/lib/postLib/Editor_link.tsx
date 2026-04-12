@@ -9,18 +9,7 @@ import { createPost } from "./createPost";
 type BlockWithId = Block & { id: string };
 
 /* =========================
-   INLINE
-========================= */
-type Inline =
-  | { type: "text"; text: string }
-  | { type: "link"; text: string; href: string };
-
-function toText(text: string): Inline[] {
-  return [{ type: "text", text }];
-}
-
-/* =========================
-   SAVE
+   SAVE BUTTON
 ========================= */
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -33,11 +22,17 @@ function SaveButton() {
 }
 
 /* =========================
-   EDITOR
+   MAIN EDITOR
 ========================= */
 export default function Editor() {
   const [title, setTitle] = useState("");
   const [blocks, setBlocks] = useState<BlockWithId[]>([]);
+
+  /* INIT INLINE */
+  const initInline = [{ type: "text", text: "" }];
+
+  /* INIT LIST */
+  const initList = [[{ type: "text", text: "" }]];
 
   const addBlock = (type: Block["type"]) => {
     const id = crypto.randomUUID();
@@ -45,12 +40,12 @@ export default function Editor() {
     let newBlock: BlockWithId;
 
     if (type === "heading") {
-      newBlock = { id, type, level: 1, text: "" };
+      newBlock = { id, type, text: "", level: 1 };
     } else if (type === "paragraph") {
       newBlock = {
         id,
         type,
-        content: toText(""),
+        content: initInline,
       };
     } else if (type === "image") {
       newBlock = { id, type, src: "" };
@@ -60,7 +55,7 @@ export default function Editor() {
       newBlock = {
         id,
         type: "list",
-        items: [toText("")],
+        items: initList,
       };
     }
 
@@ -86,7 +81,6 @@ export default function Editor() {
         name="title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Title"
       />
 
       <input
