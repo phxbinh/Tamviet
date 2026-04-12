@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Block } from "@/lib/blocks";
+import { Block } from "./blocks";
 import BlockEditor from "./BlockEditor";
-import { createPost } from "@/lib/createPost";
+import { createPost } from "./createPost";
 
 type BlockWithId = Block & { id: string };
 
