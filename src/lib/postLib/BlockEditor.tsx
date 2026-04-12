@@ -26,7 +26,12 @@ function renderInlineText(inlines: any[]) {
 }
 
 function toInline(text: string) {
-  return [{ type: "text", text }];
+  return [
+    {
+      type: "text" as const,
+      text,
+    },
+  ];
 }
 
 /* =========================
