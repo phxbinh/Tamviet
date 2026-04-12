@@ -46,3 +46,8 @@ export const DocumentSchema = z.object({
  */
 export type Block = z.infer<typeof BlockSchema>;
 export type Document = z.infer<typeof DocumentSchema>;
+export type TextNode = z.infer<typeof TextSchema> // 👉 TYPE (compile-time)
+
+
+
+
