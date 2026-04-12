@@ -1,23 +1,32 @@
 "use server";
 
 import { z } from "zod";
-import { DocumentSchema } from "./blocks";
+import { DocumentSchema } from "@/baivietapp/_src/blocks";
 import { sql } from "@/lib/neon/sql";
 import { revalidatePath } from "next/cache";
 
 /**
  * =========================
- * Input schema (form)
+ * STATE TYPE (cho UI)
+ * =========================
+ */
+export type CreatePostState =
+  | { success: true; id: string; slug: string }
+  | { success: false; error: string };
+
+/**
+ * =========================
+ * FORM VALIDATION
  * =========================
  */
 const FormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
+  title: z.string().min(1),
+  content: z.string().min(1),
 });
 
 /**
  * =========================
- * Helper: slugify
+ * HELPERS
  * =========================
  */
 function slugify(str: string) {
@@ -28,21 +37,16 @@ function slugify(str: string) {
     .replace(/[^\w\-]+/g, "");
 }
 
-/**
- * =========================
- * Ensure unique slug
- * =========================
- */
 async function generateUniqueSlug(base: string) {
   let slug = base;
   let i = 1;
 
   while (true) {
-    const existing = await sql`
+    const exists = await sql`
       SELECT 1 FROM posts WHERE slug = ${slug} LIMIT 1
     `;
 
-    if (existing.length === 0) return slug;
+    if (exists.length === 0) return slug;
 
     slug = `${base}-${i++}`;
   }
@@ -50,35 +54,35 @@ async function generateUniqueSlug(base: string) {
 
 /**
  * =========================
- * MAIN ACTION
+ * MAIN ACTION (CHUẨN)
  * =========================
  */
-export async function createPostAction(formData: FormData) {
+export async function createPostAction(
+  prevState: CreatePostState | null,
+  formData: FormData
+): Promise<CreatePostState> {
   try {
     /**
-     * 1. Parse raw form
+     * 1. Validate form
      */
-    const raw = {
+    const parsed = FormSchema.safeParse({
       title: formData.get("title"),
       content: formData.get("content"),
-    };
-
-    const parsed = FormSchema.safeParse(raw);
+    });
 
     if (!parsed.success) {
       return {
         success: false,
-        error: parsed.error.flatten(),
+        error: "INVALID_FORM",
       };
     }
 
     const { title, content } = parsed.data;
 
     /**
-     * 2. Parse JSON content
+     * 2. Parse JSON
      */
     let json: unknown;
-
     try {
       json = JSON.parse(content);
     } catch {
@@ -89,7 +93,7 @@ export async function createPostAction(formData: FormData) {
     }
 
     /**
-     * 3. Validate Document schema
+     * 3. Validate document schema
      */
     const doc = DocumentSchema.safeParse(json);
 
@@ -126,7 +130,7 @@ export async function createPostAction(formData: FormData) {
       slug,
     };
   } catch (err) {
-    console.error("createPostAction error:", err);
+    console.error(err);
 
     return {
       success: false,
