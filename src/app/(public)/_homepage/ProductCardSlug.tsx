@@ -52,13 +52,15 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
         <div className="relative aspect-[3/4] overflow-hidden bg-[#fafafa]">
           {thumbnail_url ? (
 
-<Image
-  src={thumbnail_url}
-  alt={name}
-  fill
-  sizes="(max-width: 768px) 50vw, 25vw"
-  priority={false}
-/>
+<div className="relative w-full aspect-[3/4]">
+  <Image
+    src={thumbnail_url}
+    alt={name}
+    fill
+    className="object-cover"
+    sizes="(max-width: 768px) 50vw, 25vw"
+  />
+</div>
 /*
             <img
               src={thumbnail_url}
