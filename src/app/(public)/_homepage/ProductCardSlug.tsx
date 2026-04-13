@@ -2,7 +2,7 @@
 
 import { PrefetchLink } from "@/components/ui/PrefetchLink";
 import { ShoppingBag, ArrowRight, ShoppingCart } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useToastStore } from "@/store/useToastStore";
 import Image from "next/image";
 
@@ -18,6 +18,11 @@ interface ProductCardPropsSlug {
 export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: ProductCardPropsSlug) {
   const href = `/testSearchParam/products/${slug}`;
   const { showToast } = useToastStore();
+
+  const priceFormatted = useMemo(() => {
+    if (!price_min) return null;
+    return new Intl.NumberFormat("vi-VN").format(price_min);
+  }, [price_min]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -109,7 +114,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
 
             {price_min ? (
               <span className="text-sm font-semibold text-foreground/80 md:text-foreground">
-                {new Intl.NumberFormat('vi-VN').format(price_min)}
+                {/*new Intl.NumberFormat('vi-VN').format(price_min)*/ priceFormatted}
                 <span className="ml-1 text-[10px] text-muted-foreground uppercase">
                   vnd
                 </span>
