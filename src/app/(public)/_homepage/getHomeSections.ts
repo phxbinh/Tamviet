@@ -1,6 +1,10 @@
 // _homepage/getHomeSections.ts
 import "server-only";
 //import { sql } from "@/lib/neon/sql";
+
+// Gọi sqlApp as sql để sử dụng cho bảng products
+// Và các bảng liên quan -> Hướng đến bật RLS 
+// Không cho bypass RLS
 import { sqlApp as sql } from "@/lib/neon/sql";
 // Thêm dòng này ở đầu file hoặc trong hàm
 export const revalidate = 60; // Đơn vị: giây (1 giờ)
