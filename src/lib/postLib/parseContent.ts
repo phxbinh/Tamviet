@@ -54,7 +54,7 @@ function parseContent(raw: any) {
 }
 
 
-
+/*
 export function groupByHeading(blocks: any[]) {
   const sections: any[] = [];
   let current: any = { heading: null, children: [] };
@@ -76,3 +76,38 @@ export function groupByHeading(blocks: any[]) {
 
   return sections;
 }
+*/
+
+
+export function groupByHeading(blocks: any[]) {
+  const sections: any[] = [];
+  let current: any = null;
+
+  for (const b of blocks) {
+    if (b?.type === "heading") {
+      if (current) sections.push(current);
+
+      current = {
+        heading: b,
+        children: [],
+      };
+      continue;
+    }
+
+    if (!current) {
+      current = { heading: null, children: [] };
+    }
+
+    current.children.push(b);
+  }
+
+  if (current) sections.push(current);
+
+  return sections;
+}
+
+
+
+
+
+
