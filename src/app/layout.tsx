@@ -117,7 +117,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi" suppressHydrationWarning>
       {/* Thêm font variable vào đây */}
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}>
         <ThemeProvider 
           attribute="class" 
           defaultTheme="system" 
@@ -135,7 +135,46 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
+/*
+Sử dụng cho font tự chọn
+2. Nếu bạn dùng Font nội bộ (Local Font)
+Nếu bạn có tệp font riêng (ví dụ: .woff2 trong thư mục public/fonts), hãy dùng next/font/local:
+```typescript
+app/font.ts
+import localFont from 'next/font/local';
 
+const myCustomFont = localFont({
+  src: './fonts/my-font.woff2',
+  display: 'swap',
+  variable: '--font-custom',
+});
+
+cấu hình trong next.config.mjs
+Trong file next.config.js bạn đã gửi,
+để bổ trợ cho việc tải font nhanh hơn
+và giảm thiểu lỗi "Render-blocking",
+bạn nên thêm cấu hình Headers để
+trình duyệt Cache font lâu hơn:
+
+  async headers() {
+    return [
+      // ... các cấu hình cũ của bạn
+      {
+        // Cấu hình Cache vĩnh viễn cho Fonts (vì chúng hiếm khi thay đổi)
+        source: "/fonts/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+
+
+
+*/
 
 
 
