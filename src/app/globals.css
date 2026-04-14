@@ -53,10 +53,9 @@
 
 /* Dùng cho font */
 @theme {
-  /* Tailwind sẽ tự hiểu font-sans sử dụng biến --font-inter */
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-display: var(--font-montserrat), serif;
 }
-
 
 /* 3. ĐỊNH DẠNG BASE (HTML, BODY, TYPOGRAPHY) */
 
