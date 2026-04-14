@@ -143,19 +143,7 @@ export function ProductInfo({
           )}
         </button>
         
-        {/* Shipping info: Tối giản, dùng font nhỏ nhất */}
-{/*
-        <div className="grid grid-cols-2 gap-2 text-[12px] font-bold uppercase tracking-tight">
-          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
-            <Truck className="w-3.5 h-3.5 text-primary" /> Express Shipping
-          </div>
-          <div className="flex items-center gap-2 p-2 border border-border bg-background text-foreground/50 shadow-sm transition-colors hover:border-primary/30">
-            <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Verified Quality
-          </div>
-        </div>
-*/}
-        {/* Shipping & Support info: Grid 2 cột 2 hàng sát viền */}
-         {/* Shipping & Support info: Chuẩn globals.css (HSL Variables) */}
+        {/* Shipping & Support info: Chuẩn globals.css (HSL Variables) */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-2 p-3 rounded-md bg-foreground/[0.03] border border-border mt-5 mb-5 animate-in fade-in transition-colors duration-300">
           {/* Vận chuyển */}
           <div className="flex items-center gap-2 group">
@@ -201,14 +189,6 @@ export function ProductInfo({
             </div>
           </a>
         </div>
-
-
-
-
-
-
-
-
       </div>
     </div>
   );
