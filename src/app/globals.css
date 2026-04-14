@@ -51,6 +51,13 @@
   --animate-breathe-danger: breathe 0.6s infinite ease-in-out;
 }
 
+/* Dùng cho font */
+@theme {
+  /* Tailwind sẽ tự hiểu font-sans sử dụng biến --font-inter */
+  --font-sans: var(--font-inter);
+}
+
+
 /* 3. ĐỊNH DẠNG BASE (HTML, BODY, TYPOGRAPHY) */
 
 @layer base {
