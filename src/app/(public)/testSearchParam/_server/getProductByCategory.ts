@@ -1,7 +1,7 @@
 // src/app/(public)testSearchParams/_serber/getProductByCategory.ts
 
 import "server-only";
-import { sql } from "@/lib/neon/sql";
+import { sqlApp as sql } from "@/lib/neon/sql";
 
 export async function getProductsByCategory(options: {
   slug?: string;
