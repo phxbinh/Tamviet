@@ -116,24 +116,6 @@ export function ProductGallery({
         )}
       </div>
 
-      {/* THUMBNAILS: Giữ lại bo góc nhẹ để phân biệt với ảnh chính */}
-{/*
-      <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
-        {displayImages.map((img, i) => (
-          <button
-            key={img.id || i}
-            onClick={() => scrollToImage(i)}
-            className={`relative flex-none w-16 aspect-[3/4] rounded-lg overflow-hidden transition-all duration-300 ${
-              activeImgIndex === i 
-                ? "ring-1 ring-black ring-offset-2" 
-                : "opacity-40 grayscale hover:grayscale-0 hover:opacity-100"
-            }`}
-          >
-            <img src={getPublicImageUrl(img.url)} className="w-full h-full object-cover" />
-          </button>
-        ))}
-      </div>
-*/}
       {/* THUMBNAILS: Sát viền, tối giản */}
       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar px-4 lg:px-0">
         {displayImages.map((img, i) => (
