@@ -10,6 +10,25 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { InstallPrompt } from "@/components/InstallPrompt"; // Đường dẫn đến file bạn vừa tạo
 import type { Metadata, Viewport } from "next";
 
+
+// Sử dụng cho font
+// app/fonts.ts hoặc ngay trong app/layout.tsx
+import { Inter, Montserrat } from 'next/font/google';
+
+export const inter = Inter({
+  subsets: ['latin', 'vietnamese'],
+  display: 'swap', // QUAN TRỌNG: Giúp giảm render-blocking bằng cách hiện font hệ thống trước
+  variable: '--font-inter', // Dùng để kết hợp với Tailwind
+});
+
+export const montserrat = Montserrat({
+  subsets: ['latin', 'vietnamese'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--font-montserrat',
+});
+
+
 // 1. Cấu hình Viewport để tối ưu hiển thị trên Mobile (Chống zoom khi focus input)
 export const viewport: Viewport = {
   themeColor: "#000000",
@@ -72,10 +91,11 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Inter({ subsets: ["latin"] });
+//const inter = Inter({ subsets: ["latin"] });
 
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
+/*
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" suppressHydrationWarning>
@@ -83,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <CartProvider>
             <AppShell>{children}</AppShell>
-            {/* <InstallPrompt /> */}
+            <InstallPrompt />
           </CartProvider>
         </ThemeProvider>
 
@@ -92,6 +112,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+*/
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      {/* Thêm font variable vào đây */}
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="system" 
+          enableSystem
+          disableTransitionOnChange // Thêm cái này để tránh nháy CSS khi đổi theme
+        >
+          <CartProvider>
+            <AppShell>{children}</AppShell>
+          </CartProvider>
+        </ThemeProvider>
+
+        <ServiceWorkerRegister />
+      </body>
+    </html>
+  );
+}
+
+
+
+
+
+
 
 
 
