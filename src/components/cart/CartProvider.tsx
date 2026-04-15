@@ -31,6 +31,7 @@ type CartContextType = {
   loading: boolean;
   setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
   fetchCart: () => Promise<void>;
+  addItemOptimistic?: (newItem: CartItem) => void; 
 };
 
 /* =========================
@@ -68,6 +69,48 @@ export function CartProvider({ children }: { children: ReactNode }) {
     fetchCart();
   }, []);
 
+    // Hàm xử lý cập nhật UI tức thì
+  const addItemOptimistic = (newItem: CartItem) => {
+    setCart((prev) => {
+      // Nếu chưa có giỏ hàng, tạo mới với item này
+      if (!prev) {
+        return {
+          cartId: "optimistic-id",
+          items: [newItem],
+          totalQuantity: newItem.quantity,
+        };
+      }
+
+      // Kiểm tra xem variant này đã có trong giỏ chưa
+      const existingItemIndex = prev.items.findIndex(
+        (item) => item.variant_id === newItem.variant_id
+      );
+
+      let newItems = [...prev.items];
+
+      if (existingItemIndex > -1) {
+        // Nếu có rồi thì tăng số lượng tại chỗ
+        const existingItem = newItems[existingItemIndex];
+        newItems[existingItemIndex] = {
+          ...existingItem,
+          quantity: existingItem.quantity + newItem.quantity,
+        };
+      } else {
+        // Nếu chưa có thì thêm mới vào mảng
+        newItems.push(newItem);
+      }
+
+      // Tính toán lại tổng số lượng hiển thị trên Badge Navbar
+      const newTotalQuantity = newItems.reduce((sum, item) => sum + item.quantity, 0);
+
+      return {
+        ...prev,
+        items: newItems,
+        totalQuantity: newTotalQuantity,
+      };
+    });
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -75,6 +118,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         loading,
         setCart,
         fetchCart,
+        addItemOptimistic,
       }}
     >
       {children}
