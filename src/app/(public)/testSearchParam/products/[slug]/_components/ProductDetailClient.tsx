@@ -5,6 +5,8 @@ import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
 import { useCart } from "@/components/cart/CartProvider";
 import { addToCartAction } from "@/lib/cart/cartActions";
+// Import component
+import { useToastStore } from "@/store/useToastStore";
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const { product, attributes, variants, images } = data;
@@ -16,7 +18,9 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   // Cập nhật ui cho cart (quantity)
   //const { addItemOptimistic, fetchCart } = useCart(); 
 
-
+  // Khai báo để sử dụng tròn hàm
+  const { showToast } = useToastStore();
+  
   const selectedVariant = useMemo(() => {
     if (Object.keys(selected).length < attributes.length) return null;
     
@@ -59,6 +63,8 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
     
     addItemOptimistic(optimisticItem);
     setIsAdding(true); // Hiệu ứng loading trên nút vẫn giữ để tạo cảm giác chắc chắn
+    // Gọi ở handlerClick trong CTA
+    showToast(`Đã thêm sản phẩm thành công!`, "success");
 
     // 2. Gọi Server Action chạy ngầm
     const result = await addToCartAction(selectedVariant.id, 1);
