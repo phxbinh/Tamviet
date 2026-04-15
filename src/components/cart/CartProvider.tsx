@@ -31,7 +31,7 @@ type CartContextType = {
   loading: boolean;
   setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
   fetchCart: () => Promise<void>;
-  addItemOptimistic?: (newItem: CartItem) => void; 
+  addItemOptimistic: (newItem: CartItem) => void; 
 };
 
 /* =========================
