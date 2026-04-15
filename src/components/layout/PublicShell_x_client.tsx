@@ -35,7 +35,38 @@ export default async function Layout({ children }: { children: React.ReactNode }
 */
 
 
-export default function PublicShell({ children, user }: { children: React.ReactNode; user: any }) {
+interface PublicShellProps {
+  children: React.ReactNode;
+  user: any;
+  // Sử dụng dấu '?' để đánh dấu prop này là tùy chọn (optional)
+  supportPolicies?: React.ReactNode; 
+}
+
+/*
+export default function PublicShell({ 
+  children, 
+  user, 
+  supportPolicies 
+}: PublicShellProps) {
+  return (
+    <div className="shell-container">
+      
+      {supportPolicies && <>{supportPolicies}</>}
+      
+      <main>{children}</main>
+      
+      <footer>User: {user?.name || 'Guest'}</footer>
+    </div>
+  );
+}
+*/
+
+
+export default function PublicShell({ 
+  children, 
+  user, 
+  supportPolicies 
+}: PublicShellProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeType, setActiveType] = useState("Tất cả");
   // Lấy số lượng sản phẩm trong giỏ hàng
@@ -159,8 +190,10 @@ export default function PublicShell({ children, user }: { children: React.ReactN
             {children}
           </div>
         </main>
-
+{/*
         <SupportPolicies />
+*/}
+        {supportPolicies && <>{supportPolicies}</>}
 
         <footer className="p-4 border-t border-border text-center text-[10px] uppercase tracking-widest text-foreground/40">
             © 2026 Tâm Việt Platform
