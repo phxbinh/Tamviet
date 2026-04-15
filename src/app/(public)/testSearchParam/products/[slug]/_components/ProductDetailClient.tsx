@@ -11,9 +11,10 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
-  const { fetchCart } = useCart();
+  const { addItemOptimistic, fetchCart } = useCart();
+
   // Cập nhật ui cho cart (quantity)
-  const { addItemOptimistic, fetchCart } = useCart(); 
+  //const { addItemOptimistic, fetchCart } = useCart(); 
 
 
   const selectedVariant = useMemo(() => {
