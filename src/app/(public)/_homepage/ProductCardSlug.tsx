@@ -58,6 +58,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
     alt={name}
     fill
     priority
+    placeholder="blur"
     className="object-contain p-2"
     sizes="(max-width: 768px) 50vw, 25vw"
   />
