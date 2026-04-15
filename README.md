@@ -181,4 +181,18 @@ my-nextjs-app/
   "exclude": ["node_modules"]
 }
 ```
+
+```ts
+// Xem ở ProductCardSlug.tsx ở (public)/_homepage)
+// Sử dụng toast
+// Import component
+import { useToastStore } from "@/store/useToastStore";
+
+// Khai báo để sử dụng trong hàm
+const { showToast } = useToastStore();
+
+// Gọi ở handlerClick trong CTA
+showToast(`Đã thêm sản phẩm thành công!`, "success");
+
+```
   
