@@ -4,6 +4,46 @@ import { ProductFull } from "../types";
 import { ProductGallery } from "./ProductGallery";
 import { ProductInfo } from "./ProductInfo";
 import { useCart } from "@/components/cart/CartProvider";
+import { addToCartAction } from "@/lib/cart/cartActions";
+
+export default function ProductDetailClient({ data }: { data: ProductFull }) {
+  const { product, selectedVariant } = data;
+  const { addItemOptimistic, fetchCart } = useCart(); 
+
+  async function handleAddToCart() {
+    if (!selectedVariant) return;
+
+    // 1. Cập nhật UI ngay lập tức (Mất ~0ms)
+    const optimisticItem = {
+      variant_id: selectedVariant.id,
+      name: product.name,
+      price: selectedVariant.price,
+      quantity: 1,
+      image_item: selectedVariant.variant_image || data.images[0]?.image_url
+    };
+    
+    addItemOptimistic(optimisticItem);
+    setIsAdding(true); // Hiệu ứng loading trên nút vẫn giữ để tạo cảm giác chắc chắn
+
+    // 2. Gọi Server Action chạy ngầm
+    const result = await addToCartAction(selectedVariant.id, 1);
+
+    if (!result.success) {
+      // 3. Nếu lỗi thì fetch lại bản chuẩn từ DB để sửa sai cho UI
+      await fetchCart();
+      alert("Không thể thêm vào giỏ hàng, vui lòng thử lại!");
+    }
+
+    setTimeout(() => setIsAdding(false), 500);
+  }
+  
+  // ... render ...
+}
+
+
+
+
+
 
 
 export default function ProductDetailClient({ data }: { data: ProductFull }) {
@@ -12,6 +52,9 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const { fetchCart } = useCart();
+  // Cập nhật ui cho cart (quantity)
+  const { addItemOptimistic, fetchCart } = useCart(); 
+
 
   const selectedVariant = useMemo(() => {
     if (Object.keys(selected).length < attributes.length) return null;
@@ -24,7 +67,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
   
   async function handleAddToCart() {
     if (!selectedVariant) return;
-  
+/*
     try {
       setIsAdding(true);
   
@@ -43,6 +86,29 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
     } finally {
       setTimeout(() => setIsAdding(false), 800);
     }
+*/
+    // 1. Cập nhật UI ngay lập tức (Mất ~0ms)
+    const optimisticItem = {
+      variant_id: selectedVariant.id,
+      name: product.name,
+      price: selectedVariant.price,
+      quantity: 1,
+      image_item: selectedVariant.variant_image || data.images[0]?.image_url
+    };
+    
+    addItemOptimistic(optimisticItem);
+    setIsAdding(true); // Hiệu ứng loading trên nút vẫn giữ để tạo cảm giác chắc chắn
+
+    // 2. Gọi Server Action chạy ngầm
+    const result = await addToCartAction(selectedVariant.id, 1);
+
+    if (!result.success) {
+      // 3. Nếu lỗi thì fetch lại bản chuẩn từ DB để sửa sai cho UI
+      await fetchCart();
+      alert("Không thể thêm vào giỏ hàng, vui lòng thử lại!");
+    }
+
+    setTimeout(() => setIsAdding(false), 500);
   }
   
   
