@@ -12,8 +12,10 @@ export default function PublicLayout({
 */
 
 
+
 import { getCurrentUser } from '@/lib/authActions/getUser';
 import PublicShell from "@/components/layout/PublicShell_x_client";
+import SupportPolicies from "@/components/chinhsachbaomat/ChinhSachBaoMat_";
 
 export default async function PublicLayout({
   children,
@@ -21,7 +23,7 @@ export default async function PublicLayout({
   children: React.ReactNode;
 }) {
   const user = await getCurrentUser();
-  return <PublicShell user={user}>{children}</PublicShell>;
+  return <PublicShell user={user} supportPolicies={<SupportPolicies/>}>{children}</PublicShell>;
 }
 
 
