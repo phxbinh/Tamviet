@@ -68,6 +68,8 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
           )}
 
           {/* ADD TO CART */}
+{/* Tạm đóng do sản phẩm có nhiều variants nên cần đi tới detail */}
+{/*
           <div className="
             absolute bottom-3 right-3 z-20
             opacity-100 translate-y-0
@@ -90,7 +92,7 @@ export function ProductCardSlug({ id, slug, name, thumbnail_url, price_min }: Pr
               <ShoppingCart className="w-4 h-4 stroke-[1.5]" />
             </button>
           </div>
-
+*/}
           {/* BORDER HOVER */}
           <div className="
             absolute inset-0 border border-border/50 pointer-events-none
