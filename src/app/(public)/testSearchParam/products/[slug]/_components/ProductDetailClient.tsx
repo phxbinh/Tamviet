@@ -53,8 +53,8 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
       variant_id: selectedVariant.id,
       name: product.name,
       price: selectedVariant.price,
-      quantity: 1,
-      image_item: selectedVariant.variant_image || data.images[0]?.image_url
+      quantity: 1
+      //image_item: selectedVariant.variant_image || data.images[0]?.image_url
     };
     
     addItemOptimistic(optimisticItem);
