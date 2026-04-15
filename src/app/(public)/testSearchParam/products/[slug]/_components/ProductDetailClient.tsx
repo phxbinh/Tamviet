@@ -62,7 +62,7 @@ export default function ProductDetailClient({ data }: { data: ProductFull }) {
 
     // 2. Gọi Server Action chạy ngầm
     const result = await addToCartAction(selectedVariant.id, 1);
-
+    await fetchCart();
     if (!result.success) {
       // 3. Nếu lỗi thì fetch lại bản chuẩn từ DB để sửa sai cho UI
       await fetchCart();
