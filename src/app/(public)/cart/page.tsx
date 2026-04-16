@@ -25,7 +25,7 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import Image from "next/image";
 import { QuantityController } from "./QuantityController";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
-
+import { updateCartItem } from "@/lib/cart/sqlCart";
 
 
 export default function CartPage() {
@@ -317,10 +317,12 @@ function CartPage_() {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
       try {
+        await updateCartItem({ variantId, quantity });
+        /*
         await fetch("/api/cart", {
           method: "PATCH",
           body: JSON.stringify({ variantId, quantity }),
-        });
+        });*/
         fetchCart(); // Đồng bộ lại với DB sau khi xong
       } catch (err) {
         console.error(err);
