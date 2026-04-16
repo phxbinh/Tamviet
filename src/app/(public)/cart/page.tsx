@@ -100,6 +100,7 @@ async function updateQty(variantId: string, quantity: number) {
       formData.append("variantId", variantId);
       formData.append("quantity", quantity.toString());
       await updateCartAction(formData);
+      fetchCart();
     }, 500);
   }
 
