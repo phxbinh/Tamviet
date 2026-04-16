@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
@@ -10,6 +10,7 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import Image from "next/image";
 import { QuantityController } from "./QuantityController";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+//import { useRef } from 'react';
 
 export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
@@ -27,6 +28,7 @@ export default function CartPage() {
     0
   );
 
+/*
   async function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
     setCart((prev) => {
@@ -49,6 +51,44 @@ export default function CartPage() {
     }
     fetchCart();
   }
+*/
+
+
+const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+async function updateQty(variantId: string, quantity: number) {
+  if (quantity < 1) return;
+
+  // 1. Cập nhật UI ngay lập tức (Optimistic Update)
+  setCart((prev) => {
+    if (!prev) return prev;
+    return {
+      ...prev,
+      items: prev.items.map((i) =>
+        i.variant_id === variantId ? { ...i, quantity } : i
+      ),
+    };
+  });
+
+  // 2. Debounce API: Xóa hẹn giờ cũ, đặt hẹn giờ mới
+  if (timerRef.current) clearTimeout(timerRef.current);
+
+  timerRef.current = setTimeout(async () => {
+    try {
+      await fetch("/api/cart", {
+        method: "PATCH",
+        body: JSON.stringify({ variantId, quantity }),
+      });
+      fetchCart(); // Đồng bộ lại dữ liệu chuẩn từ server
+    } catch (err) {
+      console.error(err);
+    }
+  }, 500); // Chỉ gửi API nếu người dùng ngừng thao tác 0.5 giây
+}
+
+
+
+
 
   async function removeItem(variantId: string) {
     setCart((prev) => {
