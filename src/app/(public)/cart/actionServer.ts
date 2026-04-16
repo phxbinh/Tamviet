@@ -7,7 +7,7 @@ export async function updateCartAction(formData: FormData) {
   const quantity = parseInt(formData.get("quantity") as string);
   if (!variantId || isNaN(quantity)) return;
 
-  await updateCartItem(variantId, quantity);
+  await updateCartItem({variantId, quantity});
   revalidatePath("/cart"); 
 }
 
