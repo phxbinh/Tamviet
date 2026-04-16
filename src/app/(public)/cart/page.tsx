@@ -124,6 +124,16 @@ async function updateQty(variantId: string, quantity: number) {
     fetchCart();
   }
 
+/*
+  // Hàm xóa sản phẩm dùng Server Action + FormData
+  async function removeItem(variantId: string) {
+    const formData = new FormData();
+    formData.append("variantId", variantId);
+    await removeCartItemAction(formData);
+    fetchCart();
+  }
+*/
+
   return (
     <div className="max-w-7xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
       <header className="flex items-center gap-2 border-b border-border pb-4">
