@@ -93,19 +93,15 @@ async function updateQty(variantId: string, quantity: number) {
         ),
       };
     });
-      // 2. Debounce Server Action để tránh spam Database
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(async () => {
-        const formData = new FormData();
-        formData.append("variantId", variantId);
-        formData.append("quantity", quantity.toString());
-        await updateCartAction(formData);
-      }, 500);
-    
+    // 2. Debounce Server Action để tránh spam Database
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      const formData = new FormData();
+      formData.append("variantId", variantId);
+      formData.append("quantity", quantity.toString());
+      await updateCartAction(formData);
+    }, 500);
   }
-
-
-
 
   async function removeItem(variantId: string) {
     setCart((prev) => {
