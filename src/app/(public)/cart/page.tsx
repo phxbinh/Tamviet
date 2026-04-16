@@ -289,7 +289,7 @@ export default function CartPage() {
   );
 
   // Hàm cập nhật số lượng dùng Server Action + FormData
-  function updateQty(variantId: string, quantity: number) {
+  async function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
 
     // 1. Cập nhật UI ngay lập tức (Optimistic)
