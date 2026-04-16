@@ -16,7 +16,7 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 "use client";
 
-import { useState, useRef, useOptimistic, useTransition } from 'react'; // Thêm Hook mới
+import { useOptimistic, useTransition, useRef } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
@@ -25,10 +25,11 @@ import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import Image from "next/image";
 import { QuantityController } from "./QuantityController";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
-import { updateCartItem } from "@/lib/cart/sqlCart";
+import { updateCartAction, removeCartItemAction } from "./actionServer";
 
 
-export default function CartPage() {
+//export default 
+function CartPage_() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
@@ -245,46 +246,29 @@ async function updateQty(variantId: string, quantity: number) {
   );
 }
 
-/*
-"use client";
 
-import { useState, useRef, useOptimistic, useTransition } from 'react'; // Thêm Hook mới
-import { useCart } from "@/components/cart/CartProvider";
-import { ShoppingBag } from "lucide-react";
-import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
-import { formatCurrency } from "@/utils/formatNumber";
-import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import Image from "next/image";
-import { QuantityController } from "./QuantityController";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
-*/
-
-// Bị lỗi đồng bộ dữ liệu và chưa thể cập nhật thay đổi được
-//export default 
-function CartPage_() {
-  const { cart, fetchCart, loading } = useCart();
+export default function CartPage() {
+  const { cart, loading } = useCart();
   const [isPending, startTransition] = useTransition();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 1. Khởi tạo useOptimistic dựa trên dữ liệu thật từ cart
-  const [optimisticCart, updateOptimisticCart] = useOptimistic(
+  // Khởi tạo trạng thái Optimistic (Dữ liệu giả lập hiển thị tức thì)
+  const [optimisticCart, setOptimisticState] = useOptimistic(
     cart,
-    (state, { type, variantId, quantity }: { type: 'update' | 'delete', variantId: string, quantity?: number }) => {
+    (state, { action, variantId, quantity }: { action: string; variantId: string; quantity?: number }) => {
       if (!state) return state;
-
-      if (type === 'update') {
+      if (action === "update") {
         return {
           ...state,
-          items: state.items.map((item) =>
-            item.variant_id === variantId ? { ...item, quantity: quantity! } : item
+          items: state.items.map((i) =>
+            i.variant_id === variantId ? { ...i, quantity: quantity! } : i
           ),
         };
       }
-
-      if (type === 'delete') {
+      if (action === "delete") {
         return {
           ...state,
-          items: state.items.filter((item) => item.variant_id !== variantId),
+          items: state.items.filter((i) => i.variant_id !== variantId),
         };
       }
       return state;
@@ -299,56 +283,43 @@ function CartPage_() {
     );
   }
 
-  // Tính tổng dựa trên giỏ hàng "lạc quan"
   const total = optimisticCart.items.reduce<number>(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  async function updateQty(variantId: string, quantity: number) {
+  // Hàm cập nhật số lượng dùng Server Action + FormData
+  function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
 
-    // Cập nhật UI ngay lập tức bằng useOptimistic
-    startTransition(() => {
-      updateOptimisticCart({ type: 'update', variantId, quantity });
-    });
+    // 1. Cập nhật UI ngay lập tức (Optimistic)
+    startTransition(async () => {
+      setOptimisticState({ action: "update", variantId, quantity });
 
-    // Debounce xử lý API ngầm
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(async () => {
-      try {
-        // không gọi được ờ 'use server'
-        //await updateCartItem({ variantId, quantity });
-        await fetch("/api/cart", {
-          method: "PATCH",
-          body: JSON.stringify({ variantId, quantity }),
-        });
-        fetchCart(); // Đồng bộ lại với DB sau khi xong
-      } catch (err) {
-        console.error(err);
-      }
-    }, 500);
+      // 2. Debounce Server Action để tránh spam Database
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(async () => {
+        const formData = new FormData();
+        formData.append("variantId", variantId);
+        formData.append("quantity", quantity.toString());
+        await updateCartAction(formData);
+      }, 500);
+    });
   }
 
+  // Hàm xóa sản phẩm dùng Server Action + FormData
   async function removeItem(variantId: string) {
-    // Cập nhật UI ngay lập tức (xóa item khỏi màn hình)
-    startTransition(() => {
-      updateOptimisticCart({ type: 'delete', variantId });
-    });
+    startTransition(async () => {
+      setOptimisticState({ action: "delete", variantId });
 
-    try {
-      await fetch("/api/cart", {
-        method: "DELETE",
-        body: JSON.stringify({ variantId }),
-      });
-      fetchCart();
-    } catch (err) {
-      console.error(err);
-    }
+      const formData = new FormData();
+      formData.append("variantId", variantId);
+      await removeCartItemAction(formData);
+    });
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className={`max-w-7xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-all duration-300 ${isPending ? "opacity-60 grayscale-[20%]" : ""}`}>
       <header className="flex items-center gap-2 border-b border-border pb-4">
         <ShoppingBag className="text-primary" />
         <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
@@ -368,8 +339,8 @@ function CartPage_() {
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
                     <th className="p-4 font-semibold text-sm">Sản phẩm</th>
-                    <th className="p-4 font-semibold text-sm text-center">Giá</th>
-                    <th className="p-4 font-semibold text-sm text-center">Số lượng</th>
+                    <th className="p-4 font-semibold text-sm">Giá</th>
+                    <th className="p-4 font-semibold text-sm">Số lượng</th>
                     <th className="p-4 font-semibold text-sm text-right">Tổng</th>
                     <th className="p-4"></th>
                   </tr>
@@ -379,7 +350,7 @@ function CartPage_() {
                     <tr key={item.variant_id} className="hover:bg-muted/10 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 relative bg-muted rounded-md border border-border overflow-hidden">
+                          <div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
                             {item.image_item ? (
                               <Image
                                 src={getPublicImageUrl(item.image_item)}
@@ -389,14 +360,16 @@ function CartPage_() {
                                 className="object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No</div>
+                              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                                No image
+                              </div>
                             )}
                           </div>
                           <span className="font-medium line-clamp-1">{item.name}</span>
                         </div>
                       </td>
-                      <td className="p-4 text-sm opacity-80 text-center">{formatCurrency(item.price)}</td>
-                      <td className="p-4 flex justify-center"> 
+                      <td className="p-4 text-sm opacity-80">{formatCurrency(item.price)}</td>
+                      <td className="p-4"> 
                           <QuantityController 
                             initialQuantity={item.quantity}
                             onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
@@ -407,7 +380,7 @@ function CartPage_() {
                       </td>
                       <td className="p-4 text-right">
                         <ConfirmDeleteModal 
-                          itemId={item.variant_id} 
+                          itemId={item.variant_id}
                           action={() => removeItem(item.variant_id)}
                           title="Gỡ sản phẩm?"
                           description={`Bỏ ${item.name} khỏi giỏ hàng?`}
@@ -423,27 +396,36 @@ function CartPage_() {
             <div className="md:hidden space-y-4">
               {optimisticCart.items.map((item) => (
                 <div key={item.variant_id} className="p-4 bg-card border border-border rounded-2xl flex gap-4">
-                  <div className="w-16 h-16 relative bg-muted rounded-md border border-border overflow-hidden">
-                    {item.image_item && (
-                      <Image src={getPublicImageUrl(item.image_item)} alt={item.name} fill sizes="64px" className="object-cover" />
+                  <div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
+                    {item.image_item ? (
+                      <Image
+                        src={getPublicImageUrl(item.image_item)}
+                        alt={item.name}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
                     )}
                   </div>
               
                   <div className="flex-1 space-y-3">
                     <div className="flex justify-between items-start">
-                      <h3 className="font-bold line-clamp-2 text-sm">{item.name}</h3>
+                      <h3 className="font-bold line-clamp-2">{item.name}</h3>
                       <ConfirmDeleteModal 
-                        itemId={item.variant_id} 
+                        itemId={item.variant_id}
                         action={() => removeItem(item.variant_id)}
+                        title="Gỡ sản phẩm?"
+                        description={`Bỏ ${item.name} khỏi giỏ hàng?`}
                       />
                     </div>
-              
                     <div className="flex justify-between items-center">
-                      <QuantityController 
-                        initialQuantity={item.quantity}
-                        onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
-                      />
-                      <span className="font-bold text-primary text-sm">
+                       <QuantityController 
+                          initialQuantity={item.quantity}
+                          onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
+                        />
+                      <span className="font-bold text-primary">
                         {formatCurrency(item.price * item.quantity)}
                       </span>
                     </div>
@@ -453,7 +435,7 @@ function CartPage_() {
             </div>
           </div>
 
-          {/* FORM THANH TOÁN */}
+          {/* THANH TOÁN */}
           <div className="lg:col-span-4">
             <div className="sticky top-6 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
               <div className="flex justify-between items-center border-b border-border pb-4">
