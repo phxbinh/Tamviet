@@ -16,7 +16,7 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 "use client";
 
-import { useOptimistic, useTransition, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useCart } from "@/components/cart/CartProvider";
 import { ShoppingBag } from "lucide-react";
 import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form"; 
@@ -28,8 +28,7 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { updateCartAction, removeCartItemAction } from "./actionServer";
 
 
-//export default 
-function CartPage_() {
+export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
@@ -47,6 +46,7 @@ function CartPage_() {
 
 const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+/*
 async function updateQty(variantId: string, quantity: number) {
   if (quantity < 1) return;
 
@@ -76,6 +76,27 @@ async function updateQty(variantId: string, quantity: number) {
     }
   }, 500); // Chỉ gửi API nếu người dùng ngừng thao tác 0.5 giây
 }
+*/
+
+
+ // Hàm cập nhật số lượng dùng Server Action + FormData
+  async function updateQty(variantId: string, quantity: number) {
+    if (quantity < 1) return;
+
+    // 1. Cập nhật UI ngay lập tức (Optimistic)
+    
+      // 2. Debounce Server Action để tránh spam Database
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(async () => {
+        const formData = new FormData();
+        formData.append("variantId", variantId);
+        formData.append("quantity", quantity.toString());
+        await updateCartAction(formData);
+      }, 500);
+    
+  }
+
+
 
 
   async function removeItem(variantId: string) {
@@ -245,217 +266,6 @@ async function updateQty(variantId: string, quantity: number) {
     </div>
   );
 }
-
-
-export default function CartPage() {
-  const { cart, loading } = useCart();
-  const [isPending, startTransition] = useTransition();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Khởi tạo trạng thái Optimistic (Dữ liệu giả lập hiển thị tức thì)
-  const [optimisticCart, setOptimisticState] = useOptimistic(
-    cart,
-    (state, { action, variantId, quantity }: { action: string; variantId: string; quantity?: number }) => {
-      if (!state) return state;
-      if (action === "update") {
-        return {
-          ...state,
-          items: state.items.map((i) =>
-            i.variant_id === variantId ? { ...i, quantity: quantity! } : i
-          ),
-        };
-      }
-      if (action === "delete") {
-        return {
-          ...state,
-          items: state.items.filter((i) => i.variant_id !== variantId),
-        };
-      }
-      return state;
-    }
-  );
-
-  if (loading || !optimisticCart) {
-    return (
-      <div className="p-6 text-foreground animate-breathe-slow flex items-center justify-center min-h-screen">
-        Đang tải giỏ hàng...
-      </div>
-    );
-  }
-
-  const total = optimisticCart.items.reduce<number>(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  // Hàm cập nhật số lượng dùng Server Action + FormData
-  async function updateQty(variantId: string, quantity: number) {
-    if (quantity < 1) return;
-
-    // 1. Cập nhật UI ngay lập tức (Optimistic)
-    startTransition(async () => {
-      setOptimisticState({ action: "update", variantId, quantity });
-
-      // 2. Debounce Server Action để tránh spam Database
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(async () => {
-        const formData = new FormData();
-        formData.append("variantId", variantId);
-        formData.append("quantity", quantity.toString());
-        await updateCartAction(formData);
-      }, 500);
-    });
-  }
-
-  // Hàm xóa sản phẩm dùng Server Action + FormData
-  async function removeItem(variantId: string) {
-    startTransition(async () => {
-      setOptimisticState({ action: "delete", variantId });
-
-      const formData = new FormData();
-      formData.append("variantId", variantId);
-      await removeCartItemAction(formData);
-    });
-  }
-
-  return (
-    <div className={`max-w-7xl mx-auto p-1 md:p-6 space-y-8 min-h-screen bg-background text-foreground transition-all duration-300 ${isPending ? "opacity-60 grayscale-[20%]" : ""}`}>
-      <header className="flex items-center gap-2 border-b border-border pb-4">
-        <ShoppingBag className="text-primary" />
-        <h1 className="text-3xl font-bold tracking-tight">Giỏ hàng của bạn</h1>
-      </header>
-
-      {optimisticCart.items.length === 0 ? (
-        <div className="text-center py-20 bg-card rounded-3xl border border-border animate-in fade-in">
-          <p className="text-muted-foreground italic">Giỏ hàng đang trống</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          <div className="lg:col-span-8 overflow-hidden">
-            {/* Desktop Table View */}
-            <div className="hidden md:block overflow-x-auto border border-border rounded-2xl bg-card">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-border bg-muted/30">
-                    <th className="p-4 font-semibold text-sm">Sản phẩm</th>
-                    <th className="p-4 font-semibold text-sm">Giá</th>
-                    <th className="p-4 font-semibold text-sm">Số lượng</th>
-                    <th className="p-4 font-semibold text-sm text-right">Tổng</th>
-                    <th className="p-4"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/50">
-                  {optimisticCart.items.map((item) => (
-                    <tr key={item.variant_id} className="hover:bg-muted/10 transition-colors">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
-                            {item.image_item ? (
-                              <Image
-                                src={getPublicImageUrl(item.image_item)}
-                                alt={item.name}
-                                fill
-                                sizes="48px"
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                                No image
-                              </div>
-                            )}
-                          </div>
-                          <span className="font-medium line-clamp-1">{item.name}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 text-sm opacity-80">{formatCurrency(item.price)}</td>
-                      <td className="p-4"> 
-                          <QuantityController 
-                            initialQuantity={item.quantity}
-                            onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
-                          />
-                      </td>
-                      <td className="p-4 text-right font-bold text-primary">
-                        {formatCurrency(item.price * item.quantity)}
-                      </td>
-                      <td className="p-4 text-right">
-                        <ConfirmDeleteModal 
-                          itemId={item.variant_id}
-                          action={() => removeItem(item.variant_id)}
-                          title="Gỡ sản phẩm?"
-                          description={`Bỏ ${item.name} khỏi giỏ hàng?`}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Card View */}
-            <div className="md:hidden space-y-4">
-              {optimisticCart.items.map((item) => (
-                <div key={item.variant_id} className="p-4 bg-card border border-border rounded-2xl flex gap-4">
-                  <div className="w-12 h-12 relative bg-muted rounded-md flex-shrink-0 border border-border overflow-hidden">
-                    {item.image_item ? (
-                      <Image
-                        src={getPublicImageUrl(item.image_item)}
-                        alt={item.name}
-                        fill
-                        sizes="48px"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
-                    )}
-                  </div>
-              
-                  <div className="flex-1 space-y-3">
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-bold line-clamp-2">{item.name}</h3>
-                      <ConfirmDeleteModal 
-                        itemId={item.variant_id}
-                        action={() => removeItem(item.variant_id)}
-                        title="Gỡ sản phẩm?"
-                        description={`Bỏ ${item.name} khỏi giỏ hàng?`}
-                      />
-                    </div>
-                    <div className="flex justify-between items-center">
-                       <QuantityController 
-                          initialQuantity={item.quantity}
-                          onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
-                        />
-                      <span className="font-bold text-primary">
-                        {formatCurrency(item.price * item.quantity)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* THANH TOÁN */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-6 p-6 bg-card border border-border rounded-3xl space-y-6 shadow-sm">
-              <div className="flex justify-between items-center border-b border-border pb-4">
-                <span className="text-lg opacity-70">Tổng cộng</span>
-                <span className="text-3xl font-black text-primary">
-                  {formatCurrency(total)}
-                </span>
-              </div>
-              <CheckoutForm /> 
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-
-
 
 
 
