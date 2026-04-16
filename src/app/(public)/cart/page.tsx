@@ -28,8 +28,7 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 
 
-//export default 
-function CartPage_() {
+export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
   if (loading || !cart) {
@@ -260,7 +259,9 @@ import { QuantityController } from "./QuantityController";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 */
 
-export default function CartPage() {
+// Bị lỗi đồng bộ dữ liệu và chưa thể cập nhật thay đổi được
+//export default 
+function CartPage_() {
   const { cart, fetchCart, loading } = useCart();
   const [isPending, startTransition] = useTransition();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
