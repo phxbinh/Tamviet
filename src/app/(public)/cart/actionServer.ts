@@ -1,6 +1,6 @@
 "use server"
 import { revalidatePath } from "next/cache";
-import { updateCartItem, deleteCartItem } from "@/lib/cart/sqlCart";
+import { updateCartItem, removeCartItem } from "@/lib/cart/sqlCart";
 
 export async function updateCartAction(formData: FormData) {
   const variantId = formData.get("variantId") as string;
@@ -15,6 +15,6 @@ export async function removeCartItemAction(formData: FormData) {
   const variantId = formData.get("variantId") as string;
   if (!variantId) return;
 
-  await deleteCartItem(variantId);
+  await removeCartItem(variantId);
   revalidatePath("/cart");
 }
