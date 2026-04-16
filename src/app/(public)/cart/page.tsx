@@ -404,7 +404,7 @@ export default function CartPage() {
                       </td>
                       <td className="p-4 text-right">
                         <ConfirmDeleteModal 
-                          todoId={item.variant_id} 
+                          itemId={item.variant_id} 
                           action={() => removeItem(item.variant_id)}
                           title="Gỡ sản phẩm?"
                           description={`Bỏ ${item.name} khỏi giỏ hàng?`}
