@@ -317,12 +317,12 @@ function CartPage_() {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
       try {
-        await updateCartItem({ variantId, quantity });
-        /*
+        // không gọi được ờ 'use server'
+        //await updateCartItem({ variantId, quantity });
         await fetch("/api/cart", {
           method: "PATCH",
           body: JSON.stringify({ variantId, quantity }),
-        });*/
+        });
         fetchCart(); // Đồng bộ lại với DB sau khi xong
       } catch (err) {
         console.error(err);
