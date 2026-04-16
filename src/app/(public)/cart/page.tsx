@@ -12,6 +12,56 @@ import { QuantityController } from "./QuantityController";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 //import { useRef } from 'react';
 
+
+/*
+const { addItemOptimistic, fetchCart } = useCart();
+
+  // Cập nhật ui cho cart (quantity)
+  //const { addItemOptimistic, fetchCart } = useCart(); 
+
+  // Khai báo để sử dụng tròn hàm
+  const { showToast } = useToastStore();
+  
+  const selectedVariant = useMemo(() => {
+    if (Object.keys(selected).length < attributes.length) return null;
+    
+    // Thêm "|| null" ở cuối để biến undefined thành null
+    return variants.find((v) =>
+      Object.entries(selected).every(([key, value]) => v.attributes[key] === value)
+    ) || null; 
+  }, [selected, variants, attributes.length]);
+  
+  async function handleAddToCart() {
+    if (!selectedVariant) return;
+    // 1. Cập nhật UI ngay lập tức (Mất ~0ms)
+    const optimisticItem = {
+      variant_id: selectedVariant.id,
+      name: product.name,
+      price: selectedVariant.price,
+      quantity: 1
+      //image_item: selectedVariant.variant_image || data.images[0]?.image_url
+    };
+    
+    addItemOptimistic(optimisticItem);
+    setIsAdding(true); // Hiệu ứng loading trên nút vẫn giữ để tạo cảm giác chắc chắn
+    // Gọi ở handlerClick trong CTA
+    showToast(`Đã thêm sản phẩm thành công!`, "success");
+
+    // 2. Gọi Server Action chạy ngầm
+    const result = await addToCartAction(selectedVariant.id, 1);
+    await fetchCart();
+    if (!result.success) {
+      // 3. Nếu lỗi thì fetch lại bản chuẩn từ DB để sửa sai cho UI
+      await fetchCart();
+      alert("Không thể thêm vào giỏ hàng, vui lòng thử lại!");
+    }
+
+    setTimeout(() => setIsAdding(false), 500);
+  }
+*/
+
+
+
 export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
 
