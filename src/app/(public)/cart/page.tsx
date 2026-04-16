@@ -84,7 +84,15 @@ async function updateQty(variantId: string, quantity: number) {
     if (quantity < 1) return;
 
     // 1. Cập nhật UI ngay lập tức (Optimistic)
-    
+    setCart((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        items: prev.items.map((i) =>
+          i.variant_id === variantId ? { ...i, quantity } : i
+        ),
+      };
+    });
       // 2. Debounce Server Action để tránh spam Database
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(async () => {
