@@ -7,7 +7,7 @@ import { Trash2, AlertTriangle, X, Loader2 } from 'lucide-react';
 
 interface PropsModel {
   action: (formData: FormData) => void | Promise<void>;
-  itemId: string || number;
+  itemId: string | number;
   title?: string;
   description?: string;
 }
