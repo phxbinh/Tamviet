@@ -8,6 +8,8 @@ import CheckoutForm from "@/lib/cart/checkoutAction_Add_Form";
 import { formatCurrency } from "@/utils/formatNumber";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
 import Image from "next/image";
+import { QuantityController } from "./QuantityController";
+import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 
 export default function CartPage() {
   const { cart, setCart, fetchCart, loading } = useCart();
@@ -121,7 +123,7 @@ export default function CartPage() {
                         </div>
                       </td>
                       <td className="p-4 text-sm opacity-80">{formatCurrency(item.price)}</td>
-                      <td className="p-4">
+                      <td className="p-4"> {/*
                         <div className="flex items-center border border-border rounded-lg w-fit bg-background">
                           <button
                             onClick={() => updateQty(item.variant_id, item.quantity - 1)}
@@ -137,18 +139,30 @@ export default function CartPage() {
                           >
                             <Plus size={14} />
                           </button>
-                        </div>
+                        </div> */}
+
+                          <QuantityController 
+                            initialQuantity={item.quantity}
+                            onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
+                          />
+
                       </td>
                       <td className="p-4 text-right font-bold text-primary">
                         {formatCurrency(item.price * item.quantity)}
                       </td>
-                      <td className="p-4 text-right">
+                      <td className="p-4 text-right"> {/*
                         <button
                           onClick={() => removeItem(item.variant_id)}
                           className="p-2 text-red-500/50 hover:text-red-500 transition-colors"
                         >
                           <Trash2 size={18} />
-                        </button>
+                        </button>*/}
+                        <ConfirmDeleteModal 
+                          itemId={item.variant_id} // Bạn có thể sửa interface PropsModel để nhận string/number
+                          action={() => removeItem(item.variant_id)}
+                          title="Gỡ sản phẩm?"
+                          description={`Bỏ ${item.name} khỏi giỏ hàng?`}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -184,15 +198,27 @@ export default function CartPage() {
                   <div className="flex-1 space-y-3">
                     <div className="flex justify-between items-start">
                       <h3 className="font-bold line-clamp-2">{item.name}</h3>
+{/*
                       <button
                         onClick={() => removeItem(item.variant_id)}
                         className="text-red-500/50"
                       >
                         <Trash2 size={18} />
                       </button>
+*/}
+
+                        <ConfirmDeleteModal 
+                          itemId={item.variant_id} // Bạn có thể sửa interface PropsModel để nhận string/number
+                          action={() => removeItem(item.variant_id)}
+                          title="Gỡ sản phẩm?"
+                          description={`Bỏ ${item.name} khỏi giỏ hàng?`}
+                        />
+
+
+
                     </div>
               
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center"> {/*
                       <div className="flex items-center border border-border rounded-lg bg-background">
                         <button
                           onClick={() =>
@@ -214,7 +240,11 @@ export default function CartPage() {
                         >
                           <Plus size={12} />
                         </button>
-                      </div>
+                      </div> */}
+                       <QuantityController 
+                          initialQuantity={item.quantity}
+                          onUpdate={(newQty) => updateQty(item.variant_id, newQty)}
+                        />
               
                       <span className="font-bold text-primary">
                         {formatCurrency(item.price * item.quantity)}
