@@ -430,7 +430,7 @@ export default function CartPage() {
                     <div className="flex justify-between items-start">
                       <h3 className="font-bold line-clamp-2 text-sm">{item.name}</h3>
                       <ConfirmDeleteModal 
-                        todoId={item.variant_id} 
+                        itemId={item.variant_id} 
                         action={() => removeItem(item.variant_id)}
                       />
                     </div>
