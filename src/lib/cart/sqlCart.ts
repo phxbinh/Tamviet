@@ -340,7 +340,7 @@ export type CartItemRow_ = {
 };
 export async function getCartAllItems_(): Promise<{
   cartId: string;
-  items: CartItemRow[];
+  items: CartItemRow_[];
   totalQuantity: number;
 }> {
   const identity = await getCartIdentity();
