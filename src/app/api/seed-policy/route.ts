@@ -153,6 +153,10 @@ export async function POST(req: Request) {
   if (relevantDocs.length === 0) {
     // Nếu không có dữ liệu trong DB, ép AI trả lời theo kịch bản "Không thấy"
     systemInstruction = "Bạn là trợ lý nhân sự. Hiện tại trong cơ sở dữ liệu chính sách KHÔNG có thông tin này. Hãy trả lời rằng: 'Rất tiếc, tôi không tìm thấy quy định nào liên quan đến vấn đề này trong tài liệu chính sách của công ty.' và tuyệt đối không tự bịa ra câu trả lời.";
+    
+    // Nếu mảng rỗng, trả về một stream văn bản cố định luôn, không cần hỏi AI nữa
+    //return new Response("Rất tiếc, ma trận dữ liệu hiện đang trống hoặc không tìm thấy chính sách nào phù hợp với câu hỏi của bạn.");
+
   } else {
     // Nếu có dữ liệu, cung cấp ngữ cảnh cho AI
     context = relevantDocs.map(d => d.content).join("\n\n");
