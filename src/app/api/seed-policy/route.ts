@@ -29,6 +29,7 @@ export async function POST(req: Request) {
 
 // ✅Dùng với gemini
 // app/api/chat/route.ts
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/dbchatbot"; // Import file db bạn đã làm
@@ -64,6 +65,60 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
+*/
+
+
+import { streamText, embed } from 'ai';
+import { google } from '@ai-sdk/google';
+import { db } from "@/dbchatbot";
+import { companyPolicies } from "@/dbchatbot/schema";
+import { sql } from "drizzle-orm";
+
+export const maxDuration = 60;
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  
+  // 1. Lấy tin nhắn mới nhất của người dùng
+  const lastMessage = messages[messages.length - 1].content;
+
+  // 2. Chuyển câu hỏi thành Vector 768 chiều (Gemini)
+  const { embedding } = await embed({
+    model: google.embedding('text-embedding-004'),
+    value: lastMessage,
+  });
+
+  // 3. Tìm 3 đoạn văn bản có "khoảng cách trọng số" gần nhất trong Neon
+  const relevantDocs = await db
+    .select({ content: companyPolicies.content })
+    .from(companyPolicies)
+    .where(sql`1 - (${companyPolicies.embedding} <=> ${JSON.stringify(embedding)}) > 0.4`) // Ngưỡng chính xác 40%
+    .orderBy(sql`${companyPolicies.embedding} <=> ${JSON.stringify(embedding)}`)
+    .limit(3);
+
+  // 4. Tạo ngữ cảnh (Context) từ dữ liệu tìm được
+  const context = relevantDocs.length > 0 
+    ? relevantDocs.map(d => d.content).join("\n\n")
+    : "Không tìm thấy thông tin chính thức trong cơ sở dữ liệu.";
+
+  // 5. Gửi cho Gemini kèm theo chỉ thị "Chỉ được dùng dữ liệu này"
+  const result = await streamText({
+    model: google('models/gemini-1.5-flash'),
+    system: `Bạn là trợ lý nhân sự của công ty. 
+    DỰA TRÊN THÔNG TIN CHÍNH SÁCH DƯỚI ĐÂY ĐỂ TRẢ LỜI:
+    ---
+    ${context}
+    ---
+    LƯU Ý: 
+    - Nếu câu hỏi không có trong thông tin trên, hãy nói: "Tôi xin lỗi, thông tin này không có trong quy định hiện tại của công ty."
+    - Trả lời ngắn gọn, chuyên nghiệp và dùng tiếng Việt.`,
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+
+
 
 
 
