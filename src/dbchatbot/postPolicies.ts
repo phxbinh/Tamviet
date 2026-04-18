@@ -17,7 +17,7 @@ export async function addPolicyAction(formData: FormData) {
   try {
     // 1. Tạo Vector 768 chiều từ Gemini
     const { embedding } = await embed({
-      model: google.embedding('text-embedding-004'), 
+      model: google.embedding('text-embedding-04'), 
       value: content.replace(/\n/g, ' '), 
     });
 
