@@ -68,6 +68,7 @@ export async function POST(req: Request) {
 */
 
 
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/dbchatbot";
@@ -117,6 +118,62 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
+*/
+
+
+
+import { streamText, embed } from 'ai';
+import { google } from '@ai-sdk/google';
+import { db } from "@/dbchatbot";
+import { companyPolicies } from "@/dbchatbot/schema";
+import { sql } from "drizzle-orm";
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const lastMessage = messages[messages.length - 1].content;
+
+  // 1. Chuyển câu hỏi thành Vector
+  const { embedding } = await embed({
+    model: google.embedding('text-embedding-004'),
+    value: lastMessage,
+  });
+
+  // 2. Tìm trong Neon
+  const relevantDocs = await db
+    .select({ content: companyPolicies.content })
+    .from(companyPolicies)
+    .where(sql`1 - (${companyPolicies.embedding} <=> ${JSON.stringify(embedding)}) > 0.4`) // Ngưỡng 0.4
+    .orderBy(sql`${companyPolicies.embedding} <=> ${JSON.stringify(embedding)}`)
+    .limit(3);
+
+  // --- BƯỚC QUAN TRỌNG: KIỂM TRA DỮ LIỆU ---
+  let context = "";
+  let systemInstruction = "";
+
+  if (relevantDocs.length === 0) {
+    // Nếu không có dữ liệu trong DB, ép AI trả lời theo kịch bản "Không thấy"
+    systemInstruction = "Bạn là trợ lý nhân sự. Hiện tại trong cơ sở dữ liệu chính sách KHÔNG có thông tin này. Hãy trả lời rằng: 'Rất tiếc, tôi không tìm thấy quy định nào liên quan đến vấn đề này trong tài liệu chính sách của công ty.' và tuyệt đối không tự bịa ra câu trả lời.";
+  } else {
+    // Nếu có dữ liệu, cung cấp ngữ cảnh cho AI
+    context = relevantDocs.map(d => d.content).join("\n\n");
+    systemInstruction = `Bạn là trợ lý nhân sự. Hãy dựa vào thông tin chính sách sau đây để trả lời câu hỏi:
+    ---
+    ${context}
+    ---
+    Lưu ý: Chỉ trả lời dựa trên thông tin được cung cấp. Nếu thông tin không đủ để trả lời chắc chắn, hãy nói bạn không tìm thấy thông tin chính xác.`;
+  }
+
+  // 3. Gửi cho Gemini
+  const result = await streamText({
+    model: google('models/gemini-1.5-flash'),
+    system: systemInstruction,
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+
+
 
 
 
