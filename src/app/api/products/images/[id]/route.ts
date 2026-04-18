@@ -1,4 +1,6 @@
 // src/app/api/products/images/route.ts
+import "server-only";
+
 import { sql } from "@/lib/neon/sql"
 import { supabaseServer } from '@/lib/supabase/server';
 
