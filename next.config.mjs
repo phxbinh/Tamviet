@@ -46,6 +46,15 @@ const nextConfig = {
       },
     ],
   },
+  
+  async rewrites() {
+    return [
+      {
+        source: "/product-images/:path*",
+        destination: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
