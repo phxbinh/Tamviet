@@ -9,7 +9,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function PolicyChatPage() {
   // useChat sẽ mặc định gọi đến /api/chat
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat(api: 'api/seed-policy');
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({api: 'api/seed-policy'});
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Tự động cuộn xuống khi có tin nhắn mới
