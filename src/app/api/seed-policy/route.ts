@@ -165,7 +165,7 @@ export async function POST(req: Request) {
 
   // 3. Gửi cho Gemini
   const result = await streamText({
-    model: google('models/gemini-1.5-flash'),
+    model: google('models/gemini-2.5-flash'),
     system: systemInstruction,
     messages,
   });
