@@ -134,7 +134,7 @@ export async function POST(req: Request) {
 
   // 1. Chuyển câu hỏi thành Vector
   const { embedding } = await embed({
-    model: google.embedding('models/text-embedding-004'),
+    model: google.embedding('text-embedding-04'),
     value: lastMessage,
   });
 
