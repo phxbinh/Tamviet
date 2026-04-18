@@ -61,6 +61,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: BadgeCheck, label: 'Healthy order cart', href: '/admin/order-cart' },
     { icon: Settings2, label: 'Cài đặt', href: '/admin/setting' },
     { icon: Box, label: 'Post', href: '/admin/posts/new' },
+    { icon: Box, label: 'ChatbotPolicies', href: '/admin/chatbotPolicies' },
   ];
 
   return (
