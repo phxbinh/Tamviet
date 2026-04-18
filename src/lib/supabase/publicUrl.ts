@@ -2,8 +2,14 @@
 
 const BUCKET = "products-images";
 
-export function getPublicImageUrl(path: string) {
+export function getPublicImageUrl_(path: string) {
   if (!path) return "";
 
   return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+}
+
+export function getPublicImageUrl(path: string) {
+  if (!path) return "";
+
+  return `${BUCKET}/${path}`;
 }
