@@ -2,7 +2,7 @@ import "server-only";
 import { sqlApp as sql } from "@/lib/neon/sql";
 import { ProductFull } from "./types";
 
-export async function getProductDetail_slug_(slug: string): Promise<ProductFull | null> {
+export async function getProductDetail_slug(slug: string): Promise<ProductFull | null> {
   try {
     const rows = await sql`
       WITH target_product AS (
