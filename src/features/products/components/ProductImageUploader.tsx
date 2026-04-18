@@ -410,6 +410,16 @@ export default function ProductImageUploader({
         .from("products-images")
         .upload(path, file);
 
+/*
+await supabase.storage
+  .from("products-images")
+  .upload(path, file, {
+    contentType: file.type, // QUAN TRỌNG
+    cacheControl: "31536000",
+  });
+*/
+
+
       if (error) {
         console.error(error);
         alert(error.message);
