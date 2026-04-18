@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from "@/dbchatbot";
-import { companyPolicies } from "@/dbchatbot/schema";
+import { db } from "./index";
+import { companyPolicies } from "./schema";
 import { embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { revalidatePath } from 'next/cache';
