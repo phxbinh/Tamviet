@@ -133,10 +133,16 @@ export async function POST(req: Request) {
   const lastMessage = messages[messages.length - 1].content;
 
   // 1. Chuyển câu hỏi thành Vector
+/*
   const { embedding } = await embed({
     model: google.embedding('text-embedding-004'),
     value: lastMessage,
   });
+*/
+const { embedding } = await embed({
+  model: google.embedding('embedding-001'),
+  value: lastMessage,
+});
 
   // 2. Tìm trong Neon
   const relevantDocs = await db
