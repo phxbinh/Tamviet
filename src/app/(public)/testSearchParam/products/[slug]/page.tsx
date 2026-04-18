@@ -12,11 +12,12 @@ import { sql } from "@/lib/neon/sql";
 import RelatedProductsSection from "../_relateproducts/RelatedProductsSection_";
 import { getRelatedProducts, getCategoryPath } from "../_relateproducts/getSqlRelateProduct";
 import { getPublicImageUrl } from '@/lib/supabase/publicUrl';
-import { cache } from "react";
+import { getProductCached } from "./getProductCached";
+/*import { cache } from "react";
 
 export const getProductCached = cache(async (slug: string) => {
   return await getProductDetail_slug(slug);
-});
+});*/
 // Thêm dòng này để cho phép Cache trang trên toàn cầu (Edge Network)
 // -> Ẩnh hưởng tới Add to cart và hiển thị cart
 // TẠM TẮT CACHE
