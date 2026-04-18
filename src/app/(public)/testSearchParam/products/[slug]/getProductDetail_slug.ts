@@ -6,6 +6,160 @@ export async function getProductDetail_slug(slug: string): Promise<ProductFull |
   try {
     const rows = await sql`
       WITH target_product AS (
+        SELECT 
+          p.id,
+          p.name,
+          p.slug,
+          p.description,
+          p.short_description,
+          p.thumbnail_url,
+          pc.category_id
+        FROM products p
+        LEFT JOIN product_categories pc ON p.id = pc.product_id
+        WHERE p.slug = ${slug} 
+          AND p.status = 'active'
+        ORDER BY p.created_at DESC
+        LIMIT 1
+      ),
+
+      -- ✅ Lấy variants 1 lần duy nhất
+      variants_data AS (
+        SELECT 
+          v.id,
+          v.sku,
+          v.price::float AS price,
+          v.stock,
+
+          -- ảnh variant
+          (
+            SELECT image_url
+            FROM product_images pi
+            WHERE pi.variant_id = v.id 
+              AND pi.is_active = true
+            ORDER BY pi.display_order ASC
+            LIMIT 1
+          ) AS variant_image,
+
+          -- attributes nhẹ hơn
+          jsonb_agg(
+            DISTINCT jsonb_build_object(
+              'name', a.name,
+              'value', av.value
+            )
+          ) FILTER (WHERE a.id IS NOT NULL) AS attributes
+
+        FROM product_variants v
+        JOIN target_product tp ON v.product_id = tp.id
+
+        LEFT JOIN variant_attribute_values vav ON v.id = vav.variant_id
+        LEFT JOIN attribute_values av ON vav.attribute_value_id = av.id
+        LEFT JOIN attributes a ON av.attribute_id = a.id
+
+        WHERE v.is_active = true
+        GROUP BY v.id
+      ),
+
+      -- ✅ reuse variant_ids (không scan lại bảng)
+      variant_ids AS (
+        SELECT id FROM variants_data
+      ),
+
+      -- ✅ attributes dùng lại variant_ids
+      unique_attributes AS (
+        SELECT 
+          a.id,
+          a.name,
+          jsonb_agg(
+            DISTINCT jsonb_build_object(
+              'id', av.id,
+              'value', av.value
+            )
+          ) AS values
+        FROM attributes a
+        JOIN attribute_values av ON a.id = av.attribute_id
+        JOIN variant_attribute_values vav ON av.id = vav.attribute_value_id
+        JOIN variant_ids vi ON vav.variant_id = vi.id
+        GROUP BY a.id, a.name
+      ),
+
+      -- ✅ images KHÔNG dùng OR nữa
+      images_data AS (
+        SELECT 
+          jsonb_agg(
+            jsonb_build_object(
+              'id', pi.id,
+              'url', pi.image_url,
+              'is_thumbnail', pi.is_thumbnail,
+              'variant_id', pi.variant_id,
+              'display_order', pi.display_order
+            )
+            ORDER BY pi.is_thumbnail DESC, pi.display_order ASC
+          ) AS images
+        FROM product_images pi
+        LEFT JOIN variant_ids vi ON pi.variant_id = vi.id
+        JOIN target_product tp ON TRUE
+        WHERE 
+          pi.is_active = true
+          AND (
+            pi.product_id = tp.id
+            OR vi.id IS NOT NULL
+          )
+      )
+
+      SELECT 
+        jsonb_build_object(
+          'product', (
+            SELECT jsonb_build_object(
+              'id', tp.id,
+              'name', tp.name,
+              'slug', tp.slug,
+              'description', tp.description,
+              'short_description', tp.short_description,
+              'thumbnail_url', tp.thumbnail_url,
+              'category_id', tp.category_id,
+
+              -- ✅ không scan lại bảng variants
+              'price_min', (
+                SELECT MIN(price) FROM variants_data
+              )
+
+            )
+            FROM target_product tp
+          ),
+
+          'variants', COALESCE(
+            (SELECT jsonb_agg(v) FROM variants_data v),
+            '[]'::jsonb
+          ),
+
+          'attributes', COALESCE(
+            (SELECT jsonb_agg(ua) FROM unique_attributes ua),
+            '[]'::jsonb
+          ),
+
+          'images', COALESCE(
+            (SELECT images FROM images_data),
+            '[]'::jsonb
+          )
+
+        ) AS data
+      FROM target_product;
+    `;
+
+    if (!rows || rows.length === 0) return null;
+    return rows[0].data as ProductFull;
+
+  } catch (err) {
+    console.error("SQL Error in getProductDetail_slug:", err);
+    throw new Error("Database fetch failed");
+  }
+}
+
+//export 
+async function getProductDetail_slug_(slug: string): Promise<ProductFull | null> {
+  try {
+    const rows = await sql`
+      WITH target_product AS (
         -- 1. Lấy sản phẩm gốc + Category ID (Đã fix lỗi alias p.id)
         SELECT 
           p.id, 
