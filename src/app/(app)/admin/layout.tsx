@@ -4,6 +4,7 @@
 
 import { getCurrentUser } from '@/lib/authActions/getUser';
 import AdminShell from '@/components/admin/AdminShell';
+import { Toaster } from "sonner";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -12,6 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AdminShell user={user}>
       {children}
+       <Toaster />
     </AdminShell>
   );
 }
