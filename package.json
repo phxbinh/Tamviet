@@ -42,7 +42,7 @@
     "ai": "^4.0.0",
     "@ai-sdk/google": "^1.0.0",
     "@ai-sdk/react": "^1.0.0",
-    "openai": "^4.0.0",
+    "@google/generative-ai": "^0.21.0",
   
     "react-markdown": "^9.0.0",
     "remark-gfm": "^4.0.0",
