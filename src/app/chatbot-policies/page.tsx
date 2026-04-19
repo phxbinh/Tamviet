@@ -1,37 +1,38 @@
-‘use client’;
+'use client';
 
-import { useChat } from ‘@ai-sdk/react’;
-import { useEffect, useRef } from ‘react’;
-import ReactMarkdown from ‘react-markdown’;
-import remarkGfm from ‘remark-gfm’;
-import { Prism as SyntaxHighlighter } from ‘react-syntax-highlighter’;
-import { vscDarkPlus } from ‘react-syntax-highlighter/dist/esm/styles/prism’;
+import { useChat } from '@ai-sdk/react';
+import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function PolicyChatPage() {
-const {
-messages,
-input,
-handleInputChange,
-handleSubmit,
-isLoading
-} = useChat({ api: ‘/api/seed-policy’ });
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+  } = useChat({ api: '/api/seed-policy' });
 
-const messagesEndRef = useRef(null);
-const inputRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-// Scroll mượt khi có message mới
-useEffect(() => {
-messagesEndRef.current?.scrollIntoView({ behavior: ‘smooth’ });
-}, [messages.length]);
+  // Scroll mượt khi có message mới
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
 
-// Auto focus input
-useEffect(() => {
-inputRef.current?.focus();
-}, []);
+  // Auto focus input
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
-const copyToClipboard = (text: string) => {
-navigator.clipboard.writeText(text);
-};
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+}
 
 const lastMessage = messages[messages.length - 1];
 
