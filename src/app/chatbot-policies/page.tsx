@@ -37,6 +37,7 @@ export default function PolicyChatPage() {
 const lastMessage = messages[messages.length - 1];
 
 return (
+<>
   {/* Header */}
   <header className="py-6 flex justify-between items-center border-b border-border/50">
     <div className="flex items-center gap-2">
@@ -190,4 +191,5 @@ return (
     </p>
   </div>
 </div>
+</>
 );}
