@@ -2,8 +2,7 @@ import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/dbchatbot";
 import { companyPolicies } from "@/dbchatbot/schema";
-import { cosineDistance } from 'drizzle-orm';   // ← Import helper này
-import { sql } from "drizzle-orm";
+import { cosineDistance, sql, desc, gt } from "drizzle-orm";   // ← import thêm gt, desc
 
 export async function POST(req: Request) {
   try {
@@ -14,50 +13,53 @@ export async function POST(req: Request) {
       return new Response("Câu hỏi quá ngắn!", { status: 400 });
     }
 
-    // ==================== 1. Tạo Embedding (Fix quan trọng) ====================
+    // ==================== 1. Tạo Embedding ====================
     const { embedding } = await embed({
-      model: google.embedding('gemini-embedding-001'),   // ← Tên model đúng
+      model: google.embedding('gemini-embedding-001'),
       value: lastMessage.trim(),
-      // Nếu muốn tiết kiệm bộ nhớ và giữ tương thích với 768 (không khuyến khích lắm):
-      // providerOptions: { google: { outputDimensionality: 768 } }
+      // Khuyến nghị thêm để kiểm soát dimensions (tránh mismatch 3072 vs 1536/768)
+      // providerOptions: { google: { outputDimensionality: 1536 } } // hoặc 768
     });
 
-    // ==================== 2. Tìm kiếm vector (Dùng helper sạch hơn) ====================
-    const similarityThreshold = 0.4; // Bạn có thể điều chỉnh (0.3 ~ 0.5)
+    // ==================== 2. Vector Search (Phiên bản sửa lỗi) ====================
+    const distance = cosineDistance(companyPolicies.embedding, embedding); // dùng biến cho sạch
 
     const relevantDocs = await db
       .select({
         content: companyPolicies.content,
-        similarity: sql<number>`1 - ${cosineDistance(companyPolicies.embedding, embedding)}`
+        // Tính similarity đúng cách
+        similarity: sql<number>`1 - ${distance}`,
       })
       .from(companyPolicies)
-      .where(sql`1 - ${cosineDistance(companyPolicies.embedding, embedding)} > ${similarityThreshold}`)
-      .orderBy(sql`${cosineDistance(companyPolicies.embedding, embedding)}`)  // nhỏ nhất = giống nhất
-      .limit(4);  // tăng lên 4 nếu cần
+      .where(gt(distance, 0.65))           // threshold trên distance (cosine distance), không phải trên similarity
+      .orderBy(desc(sql<number>`1 - ${distance}`))   // hoặc orderBy(asc(distance)) cũng được
+      .limit(5);
 
-    // ==================== 3. Xây dựng context & system prompt ====================
+    // ==================== 3. Xây dựng system prompt ====================
     let systemInstruction = "";
 
     if (relevantDocs.length === 0) {
       systemInstruction = 
         "Bạn là trợ lý nhân sự. Hiện tại trong cơ sở dữ liệu chính sách KHÔNG có thông tin liên quan đến câu hỏi này. " +
-        "Hãy trả lời lịch sự: 'Rất tiếc, tôi không tìm thấy quy định nào liên quan đến vấn đề này trong tài liệu chính sách của công ty.' " +
-        "Tuyệt đối không tự bịa thông tin.";
+        "Hãy trả lời lịch sự rằng bạn không tìm thấy quy định liên quan và không tự bịa thông tin.";
     } else {
-      const context = relevantDocs.map(d => d.content).join("\n\n---\n\n");
-      systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp. 
-Hãy dựa CHỈ vào thông tin chính sách dưới đây để trả lời câu hỏi một cách chính xác và ngắn gọn:
+      const context = relevantDocs
+        .map((d, i) => `Tài liệu ${i+1}:\n${d.content}`)
+        .join("\n\n---\n\n");
+
+      systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp của công ty. 
+Hãy dựa CHỈ vào các chính sách dưới đây để trả lời chính xác, ngắn gọn và chuyên nghiệp:
 
 ---
 ${context}
 ---
 
-Nếu thông tin không đủ hoặc không liên quan trực tiếp, hãy nói rõ rằng bạn không tìm thấy thông tin chính xác. Không được tự thêm thông tin ngoài tài liệu.`;
+Nếu thông tin không đủ hoặc không liên quan trực tiếp → hãy nói rõ "Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có". Không được tự thêm thông tin ngoài tài liệu.`;
     }
 
-    // ==================== 4. Gọi Gemini stream ====================
+    // ==================== 4. Stream Gemini ====================
     const result = await streamText({
-      model: google('gemini-2.5-flash'),        // hoặc gemini-3-flash nếu muốn mới hơn
+      model: google('gemini-2.5-flash'),   // hoặc gemini-2.5-pro nếu cần mạnh hơn
       system: systemInstruction,
       messages,
     });
@@ -65,7 +67,7 @@ Nếu thông tin không đủ hoặc không liên quan trực tiếp, hãy nói 
     return result.toDataStreamResponse();
 
   } catch (error: any) {
-    console.error("Lỗi RAG API:", error.message);
+    console.error("Lỗi RAG API:", error.message || error);
     return new Response(
       "Có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại sau.", 
       { status: 500 }
