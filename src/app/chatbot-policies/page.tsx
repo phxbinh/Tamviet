@@ -190,6 +190,5 @@ return (
       Dữ liệu được truy vấn từ hệ thống nội bộ
     </p>
   </div>
-</div>
 </>
 );}
