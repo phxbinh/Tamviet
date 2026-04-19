@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         similarity: sql<number>`1 - (${distance})`,   // dùng ngoặc để Drizzle parse rõ hơn
       })
       .from(companyPolicies)
-      //.where(gt(distance, 0.65))                      // ← Dùng gt trên distance (không dùng 1 - distance)
+      .where(gt(distance, 0.35))                      // ← Dùng gt trên distance (không dùng 1 - distance)
       .orderBy(desc(sql<number>`1 - (${distance})`))  // hoặc .orderBy(asc(distance))
       .limit(5);
 
