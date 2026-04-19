@@ -13,40 +13,48 @@ export async function POST(req: Request) {
       return new Response("Câu hỏi quá ngắn!", { status: 400 });
     }
 
-    // 1. Tạo Embedding (3072 dimensions - default của gemini-embedding-001)
+    // ==================== 1. Tạo Embedding (3072 dims) ====================
     const { embedding } = await embed({
       model: google.embedding('gemini-embedding-001'),
       value: lastMessage.trim(),
-      // Nếu muốn giảm kích thước (khuyến nghị 1536 để cân bằng):
-      // providerOptions: { google: { outputDimensionality: 1536 } }
     });
 
-    // 2. Vector Search - Viết theo cách an toàn nhất
-    const distanceExpr = cosineDistance(companyPolicies.embedding, embedding);
+    // ==================== 2. Vector Search - Cách viết AN TOÀN NHẤT ====================
+    const distance = cosineDistance(companyPolicies.embedding, embedding);
 
     const relevantDocs = await db
       .select({
         content: companyPolicies.content,
-        similarity: sql<number>`1 - ${distanceExpr}`,   // vẫn giữ để hiển thị similarity
+        similarity: sql<number>`1 - (${distance})`,   // dùng ngoặc để Drizzle parse rõ hơn
       })
       .from(companyPolicies)
-      .where(gt(distanceExpr, 0.65))                    // threshold trên distance (0.6 ~ 0.75 tùy data)
-      .orderBy(desc(sql<number>`1 - ${distanceExpr}`))  // hoặc .orderBy(asc(distanceExpr))
+      .where(gt(distance, 0.65))                      // ← Dùng gt trên distance (không dùng 1 - distance)
+      .orderBy(desc(sql<number>`1 - (${distance})`))  // hoặc .orderBy(asc(distance))
       .limit(5);
 
-    // 3. Xây dựng prompt
-    let systemInstruction = relevantDocs.length === 0 
-      ? "Bạn là trợ lý nhân sự. Không tìm thấy thông tin liên quan trong chính sách công ty. Hãy trả lời lịch sự rằng bạn không có thông tin này và không tự bịa."
-      : `Bạn là trợ lý nhân sự chuyên nghiệp. 
-Dựa CHỈ vào các chính sách sau đây để trả lời chính xác và ngắn gọn:
+    // ==================== 3. System Instruction ====================
+    let systemInstruction = "";
+
+    if (relevantDocs.length === 0) {
+      systemInstruction = 
+        "Bạn là trợ lý nhân sự. Hiện tại không tìm thấy thông tin chính sách liên quan đến câu hỏi. " +
+        "Hãy trả lời lịch sự rằng bạn không có thông tin này và không tự bịa thông tin.";
+    } else {
+      const context = relevantDocs
+        .map((doc, idx) => `Tài liệu ${idx + 1}:\n${doc.content}`)
+        .join("\n\n---\n\n");
+
+      systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp.
+Hãy trả lời dựa CHỈ vào các chính sách sau đây. Trả lời ngắn gọn, chính xác và chuyên nghiệp:
 
 ---
-${relevantDocs.map((d, i) => `Tài liệu ${i+1}: ${d.content}`).join("\n\n---\n\n")}
+${context}
 ---
 
-Nếu không đủ thông tin → nói rõ "Tôi không tìm thấy quy định chính xác về vấn đề này".`;
+Nếu không đủ thông tin hoặc không liên quan trực tiếp, hãy nói rõ: "Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có". Không tự thêm thông tin ngoài tài liệu.`;
+    }
 
-    // 4. Stream
+    // ==================== 4. Stream response ====================
     const result = await streamText({
       model: google('gemini-2.5-flash'),
       system: systemInstruction,
@@ -57,6 +65,6 @@ Nếu không đủ thông tin → nói rõ "Tôi không tìm thấy quy định 
 
   } catch (error: any) {
     console.error("Lỗi RAG API:", error.message || error);
-    return new Response("Có lỗi xảy ra khi xử lý. Vui lòng thử lại sau.", { status: 500 });
+    return new Response("Có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại sau.", { status: 500 });
   }
 }
