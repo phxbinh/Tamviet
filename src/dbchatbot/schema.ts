@@ -23,6 +23,6 @@ export const companyPolicies = pgTable("company_policies", {
   id: uuid("id").primaryKey().defaultRandom(),
   content: text("content").notNull(),
   // Sửa dimensions thành 768 ở đây
-  embedding: vector("embedding", { dimensions: 768 }), 
+  embedding: vector("embedding", { dimensions: 3072 }), 
   metadata: text("metadata"),
 });
