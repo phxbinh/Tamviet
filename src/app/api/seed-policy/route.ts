@@ -2,7 +2,7 @@ import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/dbchatbot";
 import { companyPolicies } from "@/dbchatbot/schema";
-import { cosineDistance, sql, gt, desc } from "drizzle-orm";
+import { cosineDistance, sql, gt, desc, asc } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
