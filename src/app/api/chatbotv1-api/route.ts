@@ -128,7 +128,7 @@ export async function POST(req: Request) {
         priority: companyPolicies.priority,
 
         // ✅ FIX: wrap rõ ràng tránh lỗi SQL precedence
-        similarity: sql<number>`1 - (${distance})`,
+        //similarity: sql<number>`1 - (${distance})`,
       })
       .from(companyPolicies)
       .where(
