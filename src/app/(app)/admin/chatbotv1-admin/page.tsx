@@ -29,7 +29,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-transparent">
+    <div className="p-2 max-w-4xl mx-auto min-h-screen bg-transparent">
       <div className="flex items-center gap-4 mb-10">
         <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
         <div>
@@ -41,7 +41,7 @@ export default function AdminPage() {
       <form 
         ref={formRef}
         action={clientAction} 
-        className="space-y-8 bg-card/40 backdrop-blur-2xl p-8 rounded-[40px] border border-white/5 shadow-2xl"
+        className="space-y-8 bg-card/40 backdrop-blur-2xl p-4 rounded-[40px] border border-white/5 shadow-2xl"
       >
         {/* Tiêu đề */}
         <div className="space-y-2">
