@@ -60,7 +60,7 @@ const relevantDocs = await db
   .where(
     and(
       eq(companyPolicies.isActive, true),
-      sql`${distance} < 0.65`   // ← Thử ngưỡng này trước (0.6 ~ 0.7). Có thể điều chỉnh sau
+      //sql`${distance} < 0.65`   // ← Thử ngưỡng này trước (0.6 ~ 0.7). Có thể điều chỉnh sau
     )
   )
   .orderBy(
