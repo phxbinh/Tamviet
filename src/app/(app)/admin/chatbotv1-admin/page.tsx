@@ -6,7 +6,8 @@ import { useRef, useState } from "react";
 import { addPolicyAction } from "@/chatbotv1/addPolicy";
 import { toast } from "sonner";
 
-export default function AdminPage() {
+//export default 
+function AdminPage_() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -115,6 +116,7 @@ export default function AdminPage() {
         </div>
 
         {/* Document ID / Nhóm tài liệu */}
+        {/* Chưa dùng tới cái này */}
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Document ID (tùy chọn - để nhóm nhiều chunk)</label>
           <input 
@@ -149,8 +151,7 @@ import { addPolicyAction } from "@/chatbotv1/addPolicy";
 import { toast } from "sonner";
 */
 
-//export default 
-function AdminPage_() {
+export default function AdminPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
 
