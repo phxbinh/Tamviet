@@ -7,134 +7,65 @@ import { google } from '@ai-sdk/google';
 import { revalidatePath } from 'next/cache';
 import { sql } from 'drizzle-orm';
 
-//export 
-async function addPolicyAction_(formData: FormData) {
-  // Lấy dữ liệu từ Form
-  const content = formData.get('content') as string;
-  const title = formData.get('title') as string;
-  const category = formData.get('category') as string;
-  const subCategory = formData.get('subCategory') as string;
-  const priority = parseInt(formData.get('priority') as string || "0");
-  const documentId = formData.get('documentId') as string; // UUID nhóm tài liệu
+export async function addPolicyAction(formData: FormData) {
+  const content = (formData.get('content') as string)?.trim() || '';
+  const title = (formData.get('title') as string)?.trim() || '';
+  const category = (formData.get('category') as string)?.trim() || 'Chung';
+  const subCategory = (formData.get('subCategory') as string)?.trim() || null;
+  const priority = parseInt((formData.get('priority') as string) || '0', 10);
+  const documentId = formData.get('documentId') as string | null;
 
-  // Kiểm tra đầu vào
-  if (!content || content.trim().length < 10) {
-    return { error: "Nội dung quá ngắn!" };
+  if (!content || content.length < 10) {
+    return { error: "Nội dung quá ngắn! (ít nhất 10 ký tự)" };
   }
 
   try {
-    // 1. Generate embedding (Gemini-embedding-001 hoặc text-embedding-3-large)
+    // Generate embedding
     const { embedding } = await embed({
       model: google.embedding('gemini-embedding-001'),
-      value: content.replace(/\n/g, ' ').trim(),
+      value: content.replace(/\n/g, ' '),
     });
 
-    // 2. Insert vào Database với đầy đủ Metadata
+    // Tính tokenCount đơn giản (ước lượng)
+    const tokenCount = Math.ceil(content.length / 4); // rough estimate
+
     const result = await db.insert(companyPolicies).values({
       title: title || "Tài liệu không tiêu đề",
-      content: content,
+      content,
       documentId: documentId || undefined,
-      
-      // Phân loại rõ ràng giúp lọc nhanh
-      category: category || "Chung",
-      subCategory: subCategory || null,
-      priority: priority,
+
+      chunkIndex: 0,           // nếu không chunk thì = 0
+      tokenCount,
+
+      category,
+      subCategory,
+      priority,
       isActive: true,
 
-      // Vector Embedding
-      embedding: embedding,
+      embedding,
 
-      // Tự động tạo tsvector cho Full-text search (SQL Raw)
-      // Chú ý: Drizzle hỗ trợ sql template để gán giá trị cho cột tsvector
-      contentTsv: sql`to_tsvector('vietnamese', ${content})`,
+      // Không cần insert contentTsv nữa nếu dùng generated column
+      // Nếu vẫn muốn insert thủ công thì giữ dòng cũ:
+      // contentTsv: sql`to_tsvector('vietnamese', ${content})`,
 
-      // Các thông tin bổ sung lưu vào JSONB
       metadata: {
         source: "Admin Panel",
         author: "System",
-        wordCount: content.split(/\s+/).length
+        wordCount: content.split(/\s+/).length,
       },
     }).returning({ id: companyPolicies.id });
 
-    console.log("✅ Insert thành công với Metadata, ID:", result[0]?.id);
+    console.log("✅ Insert thành công, ID:", result[0]?.id);
 
     revalidatePath('/admin');
     return { success: "Đã lưu chính sách và đồng bộ vector thành công!" };
 
   } catch (error: any) {
     console.error("❌ Lỗi insert RAG:", error);
-    
     return { 
       error: error.message?.includes('embedding') 
-        ? "Lỗi API AI: Không thể tạo vector." 
-        : `Lỗi Database: ${error.message}` 
+        ? "Lỗi tạo embedding từ Google AI." 
+        : `Lỗi database: ${error.message}` 
     };
   }
 }
-
-
-
-
-export async function addPolicyAction(formData: FormData) {
-  // Trích xuất dữ liệu từ formData
-  const content = formData.get('content') as string;
-  const title = formData.get('title') as string;
-  const category = formData.get('category') as string;
-  const priority = parseInt(formData.get('priority') as string || "0");
-  const documentId = formData.get('documentId') as string;
-
-  // Validation cơ bản
-  if (!content || content.trim().length < 10) {
-    return { error: "Nội dung quá ngắn!" };
-  }
-
-  try {
-    // 1. Tạo Embedding
-    const { embedding } = await embed({
-      model: google.embedding('gemini-embedding-001'),
-      value: content.trim(),
-    });
-
-    // 2. Thực hiện Insert
-    const result = await db.insert(companyPolicies).values({
-      // Các trường định danh và nội dung
-      title: title || "Chính sách không tiêu đề",
-      content: content.trim(),
-      documentId: documentId || null, // UUID cần null nếu không có giá trị
-
-      // FIX LỖI: Cung cấp các giá trị bắt buộc mà TypeScript yêu cầu
-      chunkIndex: 0, // Bạn có thể logic hóa số này nếu cắt nhỏ file
-      tokenCount: content.split(/\s+/).length, // Ước tính sơ bộ
-
-      // Vector Embedding (Ép kiểu as any nếu Drizzle chưa nhận diện vector type)
-      embedding: embedding as any,
-
-      // Metadata & Phân loại
-      category: category || "General",
-      subCategory: null,
-      isActive: true,
-      priority: priority,
-
-      // Full-text Search: Đồng bộ hóa tsvector ngay khi insert
-      contentTsv: sql`to_tsvector('vietnamese', ${content})`,
-
-      // JSONB metadata
-      metadata: {
-        source: "Admin Dashboard",
-        timestamp: new Date().toISOString()
-      },
-    }).returning({ id: companyPolicies.id });
-
-    revalidatePath('/admin');
-    return { success: "Đã nạp dữ liệu thành công!", id: result[0].id };
-
-  } catch (error: any) {
-    console.error("Lỗi nạp chính sách:", error);
-    return { error: `Lỗi hệ thống: ${error.message}` };
-  }
-}
-
-
-
-
-
