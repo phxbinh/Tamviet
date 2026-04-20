@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import { useRef, useState } from "react";
@@ -5,6 +7,150 @@ import { addPolicyAction } from "@/chatbotv1/addPolicy";
 import { toast } from "sonner";
 
 export default function AdminPage() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isPending, setIsPending] = useState(false);
+
+  async function clientAction(formData: FormData) {
+    setIsPending(true);
+    try {
+      const result = await addPolicyAction(formData);
+      
+      if (result.success) {
+        toast.success(result.success);
+        formRef.current?.reset();
+      } else {
+        toast.error(result.error || "Có lỗi khi lưu dữ liệu");
+      }
+    } catch (err: any) {
+      toast.error("Lỗi không mong muốn: " + err.message);
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  return (
+    <div className="p-8 max-w-4xl mx-auto min-h-screen bg-transparent">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="w-1.5 h-10 bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
+        <div>
+          <h1 className="text-4xl font-black tracking-tighter uppercase">Knowledge Base Admin</h1>
+          <p className="text-sm opacity-60">Nạp và quản lý dữ liệu cho Stoic Bot (RAG)</p>
+        </div>
+      </div>
+
+      <form 
+        ref={formRef}
+        action={clientAction} 
+        className="space-y-8 bg-card/40 backdrop-blur-2xl p-8 rounded-[40px] border border-white/5 shadow-2xl"
+      >
+        {/* Tiêu đề */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Tiêu đề tài liệu / Đoạn trích</label>
+          <input 
+            name="title" 
+            required
+            className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none"
+            placeholder="Ví dụ: Chính sách nghỉ phép năm 2026 - Điều 3.1"
+          />
+        </div>
+
+        {/* Nội dung */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Nội dung (có thể paste cả tài liệu dài)</label>
+          <textarea 
+            name="content" 
+            rows={12} 
+            required
+            className="w-full px-6 py-5 bg-black/20 border border-white/10 rounded-3xl focus:border-primary/50 outline-none resize-y leading-relaxed"
+            placeholder="Dán nội dung chính sách, quy trình... ở đây. Hệ thống sẽ tự động tạo embedding."
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Danh mục chính */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Danh mục chính (Category)</label>
+            <select name="category" className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none">
+              <option value="HR">Nhân sự (HR)</option>
+              <option value="Finance">Tài chính</option>
+              <option value="IT">Công nghệ Thông tin</option>
+              <option value="Operations">Vận hành</option>
+              <option value="General">Quy định chung</option>
+              <option value="Legal">Pháp lý</option>
+            </select>
+          </div>
+
+          {/* Sub Category */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Danh mục phụ (Sub Category)</label>
+            <input 
+              name="subCategory" 
+              className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none"
+              placeholder="Ví dụ: Nghỉ phép, Thưởng KPI, Onboarding..."
+            />
+          </div>
+
+          {/* Độ ưu tiên */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Độ ưu tiên (0-10)</label>
+            <input 
+              type="number" 
+              name="priority" 
+              min="0" 
+              max="10"
+              defaultValue="5"
+              className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none"
+            />
+          </div>
+
+          {/* Ngày hiệu lực */}
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Ngày hiệu lực</label>
+            <input 
+              type="date" 
+              name="effectiveDate"
+              className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Document ID / Nhóm tài liệu */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase tracking-widest ml-1 opacity-60">Document ID (tùy chọn - để nhóm nhiều chunk)</label>
+          <input 
+            name="documentId" 
+            className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary/50 outline-none font-mono text-sm"
+            placeholder="UUID hoặc mã tài liệu gốc (nếu có)"
+          />
+        </div>
+
+        {/* Nút submit */}
+        <button 
+          type="submit" 
+          disabled={isPending}
+          className={`w-full py-6 text-lg font-black uppercase tracking-widest rounded-3xl transition-all shadow-xl flex items-center justify-center gap-3
+            ${isPending 
+              ? 'bg-gray-600 cursor-not-allowed' 
+              : 'bg-white text-black hover:bg-primary hover:text-white active:scale-[0.985]'
+            }`}
+        >
+          {isPending ? "Đang vector hóa và lưu vào cơ sở dữ liệu..." : "NẠP DỮ LIỆU VÀO VECTOR DB"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* Chạy được
+'use client';
+
+import { useRef, useState } from "react";
+import { addPolicyAction } from "@/chatbotv1/addPolicy";
+import { toast } from "sonner";
+*/
+
+//export default 
+function AdminPage_() {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
 
