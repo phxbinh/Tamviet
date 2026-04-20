@@ -1,7 +1,7 @@
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
-import { db } from "@/dbchatbot";
-import { companyPolicies } from "@/dbchatbot/schema";
+import { db } from "@/chatbotv1";
+import { companyPolicies } from "@/chatbotv1/schema";
 import { cosineDistance, sql, and, eq, desc, asc } from "drizzle-orm";
 
 export async function POST(req: Request) {
