@@ -20,6 +20,7 @@ export async function POST(req: Request) {
     });
 
     // ==================== 2. Vector Search Tối ưu Metadata ====================
+/*
     const distance = cosineDistance(companyPolicies.embedding, embedding);
 
     const relevantDocs = await db
@@ -42,6 +43,35 @@ export async function POST(req: Request) {
         desc(companyPolicies.priority) // Nếu độ tương đồng bằng nhau, ưu tiên cấp độ quan trọng
       )
       .limit(5);
+*/
+
+// ==================== 2. Vector Search Tối ưu ====================
+const distance = cosineDistance(companyPolicies.embedding, embedding);
+
+const relevantDocs = await db
+  .select({
+    title: companyPolicies.title,
+    content: companyPolicies.content,
+    category: companyPolicies.category,
+    priority: companyPolicies.priority,
+    distance: distance,
+  })
+  .from(companyPolicies)
+  .where(
+    and(
+      eq(companyPolicies.isActive, true),
+      sql`${distance} < 0.65`   // ← Thử ngưỡng này trước (0.6 ~ 0.7). Có thể điều chỉnh sau
+    )
+  )
+  .orderBy(
+    asc(distance),                    // nhỏ nhất trước = giống nhất
+    desc(companyPolicies.priority)
+  )
+  .limit(6);   // tăng nhẹ lên 6 nếu cần
+
+
+
+
 
     // ==================== 3. Xây dựng System Instruction Thông minh ====================
     let systemInstruction = "";
