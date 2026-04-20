@@ -4,7 +4,7 @@ import { sql } from "drizzle-orm";
 // Custom type cho tsvector (nếu Drizzle chưa hỗ trợ native)
 const tsvector = (name: string) => text(name).$type<string>(); // hoặc customType nếu cần
 
-export const companyPolicies = pgTable("company_policies", {
+export const companyPolicies = pgTable("company_policies_v", {
   id: uuid("id").primaryKey().defaultRandom(),
 
   documentId: uuid("document_id"), // nhóm document
