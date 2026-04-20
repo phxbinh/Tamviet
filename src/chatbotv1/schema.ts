@@ -127,12 +127,10 @@ export const companyPolicies = pgTable(
     updatedAt: timestamp("updated_at").defaultNow(),
   },
   (table) => ({
-/*
     embeddingIdx: index("embedding_idx").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-*/
     categoryActiveIdx: index("category_active_idx").on(
       table.category,
       table.isActive
