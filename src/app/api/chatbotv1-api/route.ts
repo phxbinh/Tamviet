@@ -94,7 +94,7 @@ ${context}
 
 
 
-
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
@@ -162,55 +162,32 @@ Nội dung:
 ${doc.content}
 `)
         .join("\n\n---\n\n");
-/*
+
       systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp.
-
-Nhiệm vụ: Trả lời CHỈ dựa trên dữ liệu được cung cấp.
-
-QUY TẮC:
-- Trả lời ngắn gọn, rõ ràng
-- Có thể dùng bullet nếu cần
-- Trích dẫn tài liệu nếu có
-- KHÔNG suy đoán
-
-NGỮ CẢNH:
----
-${context}
----
-
-Nếu không đủ thông tin, hãy nói:
-"Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có."`;
-*/
-
-systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp.
-
-Nhiệm vụ: Trả lời CHỈ dựa trên dữ liệu được cung cấp.
-
-QUY TẮC BẮT BUỘC:
-1. Phải trích dẫn ÍT NHẤT 1 tài liệu
-2. Khi trích dẫn, PHẢI ghi rõ:
-   - Tiêu đề
-   - Danh mục
-3. Format trích dẫn như sau:
-
-(Theo: [Tiêu đề] - Danh mục: [Danh mục])
-
-4. KHÔNG được bỏ qua tiêu đề hoặc danh mục
-5. KHÔNG suy đoán ngoài dữ liệu
-
-NGỮ CẢNH:
----
-${context}
----
-
-6. Nếu không đủ thông tin, hãy nói:
-"Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có."
-
-`;
-
-
-
-
+      
+      Nhiệm vụ: Trả lời CHỈ dựa trên dữ liệu được cung cấp.
+      
+      QUY TẮC BẮT BUỘC:
+      1. Phải trích dẫn ÍT NHẤT 1 tài liệu
+      2. Khi trích dẫn, PHẢI ghi rõ:
+         - Tiêu đề
+         - Danh mục
+      3. Format trích dẫn như sau:
+      
+      (Theo: [Tiêu đề] - Danh mục: [Danh mục])
+      
+      4. KHÔNG được bỏ qua tiêu đề hoặc danh mục
+      5. KHÔNG suy đoán ngoài dữ liệu
+      
+      NGỮ CẢNH:
+      ---
+      ${context}
+      ---
+      
+      6. Nếu không đủ thông tin, hãy nói:
+      "Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có."
+      
+      `;
     }
 
     // ==================== 4. STREAM ====================
@@ -233,6 +210,156 @@ ${context}
     );
   }
 }
+*/
+
+
+import { streamText, embed } from 'ai';
+import { google } from '@ai-sdk/google';
+import { db } from "@/chatbotv1";
+import { companyPolicies } from "@/chatbotv1/schema";
+import { cosineDistance, sql, and, eq, asc, desc } from "drizzle-orm";
+
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json();
+    const lastMessage = messages[messages.length - 1]?.content as string;
+
+    if (!lastMessage || lastMessage.trim().length < 5) {
+      return new Response("Câu hỏi của bạn quá ngắn.", { status: 400 });
+    }
+
+    // ==================== 1. EMBEDDING ====================
+    const { embedding } = await embed({
+      model: google.embedding('gemini-embedding-001'),
+      value: lastMessage.trim(),
+    });
+
+    const distance = cosineDistance(companyPolicies.embedding, embedding);
+
+    // ==================== 2. LẤY TOP CHUNKS ====================
+    const chunks = await db
+      .select({
+        documentId: companyPolicies.documentId,
+        title: companyPolicies.title,
+        content: companyPolicies.content,
+        category: companyPolicies.category,
+        chunkIndex: companyPolicies.chunkIndex,
+        priority: companyPolicies.priority,
+        distance: distance,
+      })
+      .from(companyPolicies)
+      .where(
+        and(
+          eq(companyPolicies.isActive, true),
+          sql`${distance} < 0.5` // 👉 bật threshold
+        )
+      )
+      .orderBy(
+        asc(distance),
+        desc(companyPolicies.priority)
+      )
+      .limit(10); // 👉 lấy nhiều hơn 5 vì là chunk
+
+    // ==================== 3. GROUP CHUNK THEO DOCUMENT ====================
+
+    const grouped = new Map<string, any[]>();
+
+    for (const chunk of chunks) {
+      const key = chunk.documentId ?? "unknown";
+
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+
+      grouped.get(key)!.push(chunk);
+    }
+
+    // ==================== 4. BUILD CONTEXT ====================
+
+    const contextDocs = Array.from(grouped.values())
+      .slice(0, 3) // 👉 tối đa 3 document
+      .map((docChunks, idx) => {
+        // sort lại theo thứ tự chunk
+        const sorted = docChunks.sort(
+          (a, b) => (a.chunkIndex ?? 0) - (b.chunkIndex ?? 0)
+        );
+
+        const first = sorted[0];
+
+        return `
+[Tài liệu ${idx + 1}]
+Tiêu đề: ${first.title ?? 'Không rõ'}
+Danh mục: ${first.category ?? 'N/A'}
+
+Nội dung:
+${sorted.map(c => c.content).join("\n")}
+`;
+      })
+      .join("\n\n---\n\n");
+
+    // ==================== 5. SYSTEM ====================
+
+    let systemInstruction = "";
+
+    if (!contextDocs || contextDocs.trim().length === 0) {
+      systemInstruction = `
+Bạn là trợ lý nhân sự.
+
+KHÔNG tìm thấy dữ liệu liên quan.
+
+Trả lời:
+"Tôi không tìm thấy thông tin trong tài liệu hiện có."
+`;
+    } else {
+      systemInstruction = `
+Bạn là trợ lý nhân sự chuyên nghiệp.
+
+CHỈ được trả lời dựa trên context.
+
+BẮT BUỘC:
+- Phải trích dẫn ít nhất 1 tài liệu
+- Format:
+
+(Theo: [Tiêu đề] - Danh mục: [Danh mục])
+
+- Không suy đoán
+
+Context:
+---
+${contextDocs}
+---
+
+Nếu không đủ thông tin:
+"Tôi không tìm thấy quy định chính xác."
+`;
+    }
+
+    // ==================== 6. STREAM ====================
+
+    const result = await streamText({
+      model: google('gemini-2.5-flash'),
+      system: systemInstruction,
+      messages,
+      temperature: 0.1,
+    });
+
+    return result.toDataStreamResponse();
+
+  } catch (error: any) {
+    console.error("❌ Lỗi RAG API:", error);
+
+    return new Response(
+      "Có lỗi xảy ra.",
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
+
 
 
 
