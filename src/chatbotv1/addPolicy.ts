@@ -7,7 +7,8 @@ import { google } from '@ai-sdk/google';
 import { revalidatePath } from 'next/cache';
 import { sql } from 'drizzle-orm';
 
-export async function addPolicyAction(formData: FormData) {
+//export 
+async function addPolicyAction_(formData: FormData) {
   // Lấy dữ liệu từ Form
   const content = formData.get('content') as string;
   const title = formData.get('title') as string;
@@ -70,3 +71,70 @@ export async function addPolicyAction(formData: FormData) {
     };
   }
 }
+
+
+
+
+export async function addPolicyAction(formData: FormData) {
+  // Trích xuất dữ liệu từ formData
+  const content = formData.get('content') as string;
+  const title = formData.get('title') as string;
+  const category = formData.get('category') as string;
+  const priority = parseInt(formData.get('priority') as string || "0");
+  const documentId = formData.get('documentId') as string;
+
+  // Validation cơ bản
+  if (!content || content.trim().length < 10) {
+    return { error: "Nội dung quá ngắn!" };
+  }
+
+  try {
+    // 1. Tạo Embedding
+    const { embedding } = await embed({
+      model: google.embedding('gemini-embedding-001'),
+      value: content.trim(),
+    });
+
+    // 2. Thực hiện Insert
+    const result = await db.insert(companyPolicies).values({
+      // Các trường định danh và nội dung
+      title: title || "Chính sách không tiêu đề",
+      content: content.trim(),
+      documentId: documentId || null, // UUID cần null nếu không có giá trị
+
+      // FIX LỖI: Cung cấp các giá trị bắt buộc mà TypeScript yêu cầu
+      chunkIndex: 0, // Bạn có thể logic hóa số này nếu cắt nhỏ file
+      tokenCount: content.split(/\s+/).length, // Ước tính sơ bộ
+
+      // Vector Embedding (Ép kiểu as any nếu Drizzle chưa nhận diện vector type)
+      embedding: embedding as any,
+
+      // Metadata & Phân loại
+      category: category || "General",
+      subCategory: null,
+      isActive: true,
+      priority: priority,
+
+      // Full-text Search: Đồng bộ hóa tsvector ngay khi insert
+      contentTsv: sql`to_tsvector('vietnamese', ${content})`,
+
+      // JSONB metadata
+      metadata: {
+        source: "Admin Dashboard",
+        timestamp: new Date().toISOString()
+      },
+    }).returning({ id: companyPolicies.id });
+
+    revalidatePath('/admin');
+    return { success: "Đã nạp dữ liệu thành công!", id: result[0].id };
+
+  } catch (error: any) {
+    console.error("Lỗi nạp chính sách:", error);
+    return { error: `Lỗi hệ thống: ${error.message}` };
+  }
+}
+
+
+
+
+
