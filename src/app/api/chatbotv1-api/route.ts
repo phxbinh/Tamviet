@@ -1,3 +1,4 @@
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
@@ -20,7 +21,6 @@ export async function POST(req: Request) {
     });
 
     // ==================== 2. Vector Search Tối ưu Metadata ====================
-/*
     const distance = cosineDistance(companyPolicies.embedding, embedding);
 
     const relevantDocs = await db
@@ -43,35 +43,6 @@ export async function POST(req: Request) {
         desc(companyPolicies.priority) // Nếu độ tương đồng bằng nhau, ưu tiên cấp độ quan trọng
       )
       .limit(5);
-*/
-
-// ==================== 2. Vector Search Tối ưu ====================
-const distance = cosineDistance(companyPolicies.embedding, embedding);
-
-const relevantDocs = await db
-  .select({
-    title: companyPolicies.title,
-    content: companyPolicies.content,
-    category: companyPolicies.category,
-    priority: companyPolicies.priority,
-    distance: distance,
-  })
-  .from(companyPolicies)
-  .where(
-    and(
-      eq(companyPolicies.isActive, true),
-      //sql`${distance} < 0.65`   // ← Thử ngưỡng này trước (0.6 ~ 0.7). Có thể điều chỉnh sau
-    )
-  )
-  .orderBy(
-    asc(distance),                    // nhỏ nhất trước = giống nhất
-    desc(companyPolicies.priority)
-  )
-  .limit(6);   // tăng nhẹ lên 6 nếu cần
-
-
-
-
 
     // ==================== 3. Xây dựng System Instruction Thông minh ====================
     let systemInstruction = "";
@@ -119,3 +90,134 @@ ${context}
     return new Response("Hệ thống đang gặp sự cố khi truy xuất dữ liệu. Vui lòng thử lại sau.", { status: 500 });
   }
 }
+*/
+
+
+
+
+import { streamText, embed } from 'ai';
+import { google } from '@ai-sdk/google';
+import { db } from "@/chatbotv1";
+import { companyPolicies } from "@/chatbotv1/schema";
+import { cosineDistance, sql, and, eq } from "drizzle-orm";
+
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json();
+    const lastMessage = messages[messages.length - 1]?.content as string;
+
+    if (!lastMessage || lastMessage.trim().length < 5) {
+      return new Response(
+        "Câu hỏi của bạn quá ngắn để tôi có thể tìm kiếm chính xác.",
+        { status: 400 }
+      );
+    }
+
+    // ==================== 1. EMBEDDING ====================
+    const { embedding } = await embed({
+      model: google.embedding('gemini-embedding-001'),
+      value: lastMessage.trim(),
+    });
+
+    // ==================== 2. HYBRID SEARCH ====================
+
+    // vector distance
+    const distance = cosineDistance(companyPolicies.embedding, embedding);
+
+    // full-text search (match với DB: simple + unaccent)
+    const textQuery = sql`
+      plainto_tsquery('simple', immutable_unaccent(${lastMessage}))
+    `;
+
+    const relevantDocs = await db
+      .select({
+        title: companyPolicies.title,
+        content: companyPolicies.content,
+        category: companyPolicies.category,
+        priority: companyPolicies.priority,
+
+        distance,
+
+        textRank: sql<number>`
+          ts_rank(${companyPolicies.contentTsv}, ${textQuery})
+        `,
+      })
+      .from(companyPolicies)
+      .where(
+        and(
+          eq(companyPolicies.isActive, true),
+
+          // 🔥 threshold chống rác
+          sql`${distance} < 0.4`
+        )
+      )
+      .orderBy(sql`
+        (
+          (1 - ${distance}) * 0.5 +
+          ts_rank(${companyPolicies.contentTsv}, ${textQuery}) * 0.4 +
+          ${companyPolicies.priority} * 0.1
+        ) DESC
+      `)
+      .limit(5);
+
+    // ==================== 3. BUILD CONTEXT ====================
+    let systemInstruction = "";
+
+    if (relevantDocs.length === 0) {
+      systemInstruction =
+        "Bạn là trợ lý nhân sự. Không tìm thấy thông tin phù hợp trong hệ thống. " +
+        "Hãy xin lỗi lịch sự và hướng dẫn người dùng liên hệ phòng HC-NS. " +
+        "KHÔNG được tự bịa thông tin.";
+    } else {
+      const context = relevantDocs
+        .map((doc, idx) => `
+[Tài liệu ${idx + 1}]
+Tiêu đề: ${doc.title ?? 'Không rõ'}
+Danh mục: ${doc.category ?? 'N/A'}
+
+Nội dung:
+${doc.content}
+`)
+        .join("\n\n---\n\n");
+
+      systemInstruction = `Bạn là Trợ lý Nhân sự AI.
+
+Nhiệm vụ: Trả lời dựa trên tài liệu nội bộ.
+
+QUY TẮC:
+1. Tóm tắt 1 câu đầu tiên
+2. Trả lời rõ ràng, có cấu trúc
+3. Trích dẫn tài liệu (ví dụ: "Theo ${relevantDocs[0].title}")
+4. Không suy đoán ngoài dữ liệu
+
+NGỮ CẢNH:
+---
+${context}
+---`;
+    }
+
+    // ==================== 4. STREAM RESPONSE ====================
+    const result = await streamText({
+      model: google('gemini-2.0-flash'),
+      system: systemInstruction,
+      messages,
+      temperature: 0.1,
+    });
+
+    return result.toDataStreamResponse();
+
+  } catch (error: any) {
+    console.error("❌ Lỗi RAG API:", error);
+
+    return new Response(
+      "Hệ thống đang gặp sự cố khi truy xuất dữ liệu.",
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
+
+
