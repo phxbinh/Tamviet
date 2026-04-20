@@ -1,3 +1,4 @@
+/* Đang chạy được
 'use server';
 
 import { db } from "./index";
@@ -72,3 +73,108 @@ export async function addPolicyAction(formData: FormData) {
     };
   }
 }
+*/
+
+// Bản test cho document_id và chunk_index
+'use server';
+
+import { db } from "./index";
+import { companyPolicies } from "./schema";
+import { embed } from 'ai';
+import { google } from '@ai-sdk/google';
+import { revalidatePath } from 'next/cache';
+
+function chunkText(text: string, size = 800, overlap = 150) {
+  const chunks: string[] = [];
+  let i = 0;
+
+  while (i < text.length) {
+    chunks.push(text.slice(i, i + size));
+    i += size - overlap;
+  }
+
+  return chunks;
+}
+
+export async function addPolicyAction(formData: FormData) {
+  const content = (formData.get('content') as string)?.trim() || '';
+  const title = (formData.get('title') as string)?.trim() || '';
+  const category = (formData.get('category') as string)?.trim() || 'Chung';
+  const subCategory = (formData.get('subCategory') as string)?.trim() || null;
+  const priority = parseInt((formData.get('priority') as string) || '0', 10);
+
+  if (!content || content.length < 20) {
+    return { error: "Nội dung quá ngắn!" };
+  }
+
+  try {
+    // ✅ 1. Tạo document_id cho policy này
+    const documentId = crypto.randomUUID();
+
+    // ✅ 2. Chunk
+    const chunks = chunkText(content);
+
+    // ❗ tránh tài liệu quá dài
+    if (chunks.length > 50) {
+      return { error: "Tài liệu quá dài, hãy chia nhỏ." };
+    }
+
+    // ✅ 3. Embed song song (NHANH)
+    const embeddings = await Promise.all(
+      chunks.map(chunk =>
+        embed({
+          model: google.embedding('gemini-embedding-001'),
+          value: chunk.replace(/\n/g, ' '),
+        })
+      )
+    );
+
+    // ✅ 4. Build rows
+    const rows = chunks.map((chunk, i) => ({
+      title: title || "Tài liệu không tiêu đề",
+      content: chunk,
+
+      documentId,
+      chunkIndex: i,
+
+      tokenCount: Math.ceil(chunk.length / 4),
+
+      category,
+      subCategory,
+      priority,
+      isActive: true,
+
+      embedding: embeddings[i].embedding,
+
+      metadata: {
+        source: "Admin",
+        wordCount: chunk.split(/\s+/).length,
+      },
+    }));
+
+    // ✅ 5. Insert batch
+    await db.insert(companyPolicies).values(rows);
+
+    revalidatePath('/admin');
+
+    return { success: `Đã lưu ${rows.length} chunks` };
+
+  } catch (error: any) {
+    console.error("❌ Insert error:", error);
+
+    return {
+      error: error.message?.includes('embedding')
+        ? "Lỗi embedding"
+        : error.message
+    };
+  }
+}
+
+
+
+
+
+
+
+
+
