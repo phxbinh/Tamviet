@@ -15,7 +15,7 @@ export default function PolicyChatPage() {
     handleInputChange,
     handleSubmit,
     isLoading
-  } = useChat({api: '/api/seed-policy'});
+  } = useChat({api: '/api/chatbotv1-api'});
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
