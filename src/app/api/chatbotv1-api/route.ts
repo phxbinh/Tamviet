@@ -94,7 +94,7 @@ ${context}
 
 
 
-
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
@@ -210,9 +210,9 @@ ${doc.content}
     );
   }
 }
+*/
 
 
-/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
