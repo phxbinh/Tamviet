@@ -99,7 +99,7 @@ import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
 import { companyPolicies } from "@/chatbotv1/schema";
-import { cosineDistance, sql, and, eq } from "drizzle-orm";
+import { cosineDistance, sql, and, eq, asc } from "drizzle-orm";
 
 export async function POST(req: Request) {
   try {
@@ -107,10 +107,7 @@ export async function POST(req: Request) {
     const lastMessage = messages[messages.length - 1]?.content as string;
 
     if (!lastMessage || lastMessage.trim().length < 5) {
-      return new Response(
-        "Câu hỏi của bạn quá ngắn để tôi có thể tìm kiếm chính xác.",
-        { status: 400 }
-      );
+      return new Response("Câu hỏi của bạn quá ngắn để tôi có thể tìm kiếm chính xác.", { status: 400 });
     }
 
     // ==================== 1. EMBEDDING ====================
@@ -119,55 +116,41 @@ export async function POST(req: Request) {
       value: lastMessage.trim(),
     });
 
-    // ==================== 2. HYBRID SEARCH ====================
+    // ==================== 2. VECTOR SEARCH (SAFE) ====================
 
-    // vector distance
-    const distance = sql<number>`
-  (${companyPolicies.embedding} <=> ${embedding})
-`;
+    const distance = cosineDistance(companyPolicies.embedding, embedding);
 
-const textQuery = sql`
-  plainto_tsquery('simple', immutable_unaccent(${lastMessage}))
-`;
+    const relevantDocs = await db
+      .select({
+        title: companyPolicies.title,
+        content: companyPolicies.content,
+        category: companyPolicies.category,
+        priority: companyPolicies.priority,
 
-const relevantDocs = await db
-  .select({
-    title: companyPolicies.title,
-    content: companyPolicies.content,
-    category: companyPolicies.category,
-    priority: companyPolicies.priority,
+        // ✅ FIX: wrap rõ ràng tránh lỗi SQL precedence
+        similarity: sql<number>`1 - (${distance})`,
+      })
+      .from(companyPolicies)
+      .where(
+        and(
+          eq(companyPolicies.isActive, true),
 
-    distance,
+          // ✅ optional threshold (khuyến nghị bật)
+          // sql`${distance} < 0.4`
+        )
+      )
+      // ✅ FIX: dùng asc(distance) là an toàn nhất
+      .orderBy(asc(distance))
+      .limit(5);
 
-    textRank: sql<number>`
-      ts_rank(${companyPolicies.contentTsv}, ${textQuery})
-    `,
-  })
-  .from(companyPolicies)
-  .where(
-    and(
-      eq(companyPolicies.isActive, true),
-      sql`${distance} < 0.4`
-    )
-  )
-  .orderBy(sql`
-    (
-      (1 - ${distance}) * 0.5 +
-      ts_rank(${companyPolicies.contentTsv}, ${textQuery}) * 0.4 +
-      ${companyPolicies.priority} * 0.1
-    ) DESC
-  `)
-  .limit(5);
+    // ==================== 3. SYSTEM INSTRUCTION ====================
 
-
-    // ==================== 3. BUILD CONTEXT ====================
     let systemInstruction = "";
 
     if (relevantDocs.length === 0) {
       systemInstruction =
-        "Bạn là trợ lý nhân sự. Không tìm thấy thông tin phù hợp trong hệ thống. " +
-        "Hãy xin lỗi lịch sự và hướng dẫn người dùng liên hệ phòng HC-NS. " +
-        "KHÔNG được tự bịa thông tin.";
+        "Bạn là trợ lý nhân sự. Hiện tại không tìm thấy thông tin chính sách liên quan. " +
+        "Hãy trả lời lịch sự rằng bạn không có thông tin này và KHÔNG được tự bịa.";
     } else {
       const context = relevantDocs
         .map((doc, idx) => `
@@ -180,25 +163,29 @@ ${doc.content}
 `)
         .join("\n\n---\n\n");
 
-      systemInstruction = `Bạn là Trợ lý Nhân sự AI.
+      systemInstruction = `Bạn là trợ lý nhân sự chuyên nghiệp.
 
-Nhiệm vụ: Trả lời dựa trên tài liệu nội bộ.
+Nhiệm vụ: Trả lời CHỈ dựa trên dữ liệu được cung cấp.
 
 QUY TẮC:
-1. Tóm tắt 1 câu đầu tiên
-2. Trả lời rõ ràng, có cấu trúc
-3. Trích dẫn tài liệu (ví dụ: "Theo ${relevantDocs[0].title}")
-4. Không suy đoán ngoài dữ liệu
+- Trả lời ngắn gọn, rõ ràng
+- Có thể dùng bullet nếu cần
+- Trích dẫn tài liệu nếu có
+- KHÔNG suy đoán
 
 NGỮ CẢNH:
 ---
 ${context}
----`;
+---
+
+Nếu không đủ thông tin, hãy nói:
+"Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có."`;
     }
 
-    // ==================== 4. STREAM RESPONSE ====================
+    // ==================== 4. STREAM ====================
+
     const result = await streamText({
-      model: google('gemini-2.0-flash'),
+      model: google('gemini-2.5-flash'),
       system: systemInstruction,
       messages,
       temperature: 0.1,
@@ -210,12 +197,11 @@ ${context}
     console.error("❌ Lỗi RAG API:", error);
 
     return new Response(
-      "Hệ thống đang gặp sự cố khi truy xuất dữ liệu.",
+      "Có lỗi xảy ra khi xử lý câu hỏi. Vui lòng thử lại sau.",
       { status: 500 }
     );
   }
 }
-
 
 
 
