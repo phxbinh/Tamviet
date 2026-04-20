@@ -5,7 +5,6 @@ import { companyPolicies } from "./schema";
 import { embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { revalidatePath } from 'next/cache';
-import { sql } from 'drizzle-orm';
 
 export async function addPolicyAction(formData: FormData) {
   const content = (formData.get('content') as string)?.trim() || '';
@@ -20,21 +19,26 @@ export async function addPolicyAction(formData: FormData) {
   }
 
   try {
-    // Generate embedding
+    // 🔥 1. Generate embedding
     const { embedding } = await embed({
       model: google.embedding('gemini-embedding-001'),
       value: content.replace(/\n/g, ' '),
     });
 
-    // Tính tokenCount đơn giản (ước lượng)
-    const tokenCount = Math.ceil(content.length / 4); // rough estimate
+    // 🔥 2. Convert → pgvector format
+    const embeddingString = `[${embedding.join(",")}]`;
 
+    // 🔥 3. token estimate
+    const tokenCount = Math.ceil(content.length / 4);
+
+    // 🔥 4. Insert
     const result = await db.insert(companyPolicies).values({
       title: title || "Tài liệu không tiêu đề",
       content,
-      documentId: documentId || undefined,
 
-      chunkIndex: 0,           // nếu không chunk thì = 0
+      documentId: documentId ?? null,
+
+      chunkIndex: 0,
       tokenCount,
 
       category,
@@ -42,11 +46,8 @@ export async function addPolicyAction(formData: FormData) {
       priority,
       isActive: true,
 
-      embedding,
-
-      // Không cần insert contentTsv nữa nếu dùng generated column
-      // Nếu vẫn muốn insert thủ công thì giữ dòng cũ:
-      // contentTsv: sql`to_tsvector('vietnamese', ${content})`,
+      // ✅ QUAN TRỌNG: cast sang vector
+      embedding: embeddingString,
 
       metadata: {
         source: "Admin Panel",
@@ -58,10 +59,12 @@ export async function addPolicyAction(formData: FormData) {
     console.log("✅ Insert thành công, ID:", result[0]?.id);
 
     revalidatePath('/admin');
+
     return { success: "Đã lưu chính sách và đồng bộ vector thành công!" };
 
   } catch (error: any) {
     console.error("❌ Lỗi insert RAG:", error);
+
     return { 
       error: error.message?.includes('embedding') 
         ? "Lỗi tạo embedding từ Google AI." 
