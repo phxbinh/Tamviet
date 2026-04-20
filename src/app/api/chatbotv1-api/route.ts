@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       .where(
         and(
           eq(companyPolicies.isActive, true), // CHỈ lấy chính sách còn hiệu lực
-          sql`${distance} < 0.6`             // Ngưỡng tin cậy: bỏ qua kết quả quá lệch
+          //sql`${distance} < 0.6`             // Ngưỡng tin cậy: bỏ qua kết quả quá lệch
         )
       )
       .orderBy(
