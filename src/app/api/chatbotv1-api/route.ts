@@ -122,43 +122,43 @@ export async function POST(req: Request) {
     // ==================== 2. HYBRID SEARCH ====================
 
     // vector distance
-    const distance = cosineDistance(companyPolicies.embedding, embedding);
+    const distance = sql<number>`
+  (${companyPolicies.embedding} <=> ${embedding})
+`;
 
-    // full-text search (match với DB: simple + unaccent)
-    const textQuery = sql`
-      plainto_tsquery('simple', immutable_unaccent(${lastMessage}))
-    `;
+const textQuery = sql`
+  plainto_tsquery('simple', immutable_unaccent(${lastMessage}))
+`;
 
-    const relevantDocs = await db
-      .select({
-        title: companyPolicies.title,
-        content: companyPolicies.content,
-        category: companyPolicies.category,
-        priority: companyPolicies.priority,
+const relevantDocs = await db
+  .select({
+    title: companyPolicies.title,
+    content: companyPolicies.content,
+    category: companyPolicies.category,
+    priority: companyPolicies.priority,
 
-        distance,
+    distance,
 
-        textRank: sql<number>`
-          ts_rank(${companyPolicies.contentTsv}, ${textQuery})
-        `,
-      })
-      .from(companyPolicies)
-      .where(
-        and(
-          eq(companyPolicies.isActive, true),
+    textRank: sql<number>`
+      ts_rank(${companyPolicies.contentTsv}, ${textQuery})
+    `,
+  })
+  .from(companyPolicies)
+  .where(
+    and(
+      eq(companyPolicies.isActive, true),
+      sql`${distance} < 0.4`
+    )
+  )
+  .orderBy(sql`
+    (
+      (1 - ${distance}) * 0.5 +
+      ts_rank(${companyPolicies.contentTsv}, ${textQuery}) * 0.4 +
+      ${companyPolicies.priority} * 0.1
+    ) DESC
+  `)
+  .limit(5);
 
-          // 🔥 threshold chống rác
-          sql`${distance} < 0.4`
-        )
-      )
-      .orderBy(sql`
-        (
-          (1 - ${distance}) * 0.5 +
-          ts_rank(${companyPolicies.contentTsv}, ${textQuery}) * 0.4 +
-          ${companyPolicies.priority} * 0.1
-        ) DESC
-      `)
-      .limit(5);
 
     // ==================== 3. BUILD CONTEXT ====================
     let systemInstruction = "";
