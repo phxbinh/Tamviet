@@ -425,6 +425,14 @@ export async function POST(req: Request) {
       return result.toDataStreamResponse();
     }
 
+// Kiểm tra chunk và distance
+console.log(
+  chunks.map(c => ({
+    title: c.title,
+    distance: c.distance
+  }))
+);
+
     // ==================== 3. GROUP THEO DOCUMENT ====================
     const grouped = new Map<string, any[]>();
 
