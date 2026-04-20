@@ -251,7 +251,7 @@ export async function POST(req: Request) {
       .where(
         and(
           eq(companyPolicies.isActive, true),
-          sql`${distance} < 0.5` // 👉 bật threshold
+          //sql`${distance} < 0.5` // 👉 bật threshold
         )
       )
       .orderBy(
