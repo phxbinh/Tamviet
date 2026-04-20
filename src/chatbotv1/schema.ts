@@ -9,10 +9,10 @@ import {
   boolean,
   customType,
 } from "drizzle-orm/pg-core";
-import { sql, type SQL } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { vector } from "drizzle-orm/pg-core";
 
-// Custom type cho tsvector (Drizzle chưa hỗ trợ native tốt)
+// ✅ custom type cho tsvector (Drizzle chưa support native tốt)
 const tsvector = customType<{ data: string }>({
   dataType() {
     return "tsvector";
@@ -40,16 +40,14 @@ export const companyPolicies = pgTable(
     isActive: boolean("is_active").default(true),
     priority: integer("priority").default(0),
 
-    // GENERATED COLUMN - Đồng bộ chính xác với Neon
+    // ✅ GENERATED COLUMN (không required khi insert)
     contentTsv: tsvector("content_tsv")
-      .generatedAlwaysAs((): SQL => 
-        sql`to_tsvector('simple'::regconfig, immutable_unaccent(${sql.identifier("content")}))`
-      )
-      .stored(),   // Rất quan trọng để GIN index hoạt động hiệu quả
+      .default(sql`to_tsvector('vietnamese', content)`),
 
     metadata: jsonb("metadata").default({}),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
+
     updatedAt: timestamp("updated_at")
       .defaultNow()
       .$onUpdate(() => new Date()),
