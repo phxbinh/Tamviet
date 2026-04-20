@@ -26,7 +26,7 @@ export async function addPolicyAction(formData: FormData) {
     });
 
     // 🔥 2. Convert → pgvector format
-    const embeddingString = `[${embedding.join(",")}]`;
+    //const embeddingString = `[${embedding.join(",")}]`;
 
     // 🔥 3. token estimate
     const tokenCount = Math.ceil(content.length / 4);
@@ -47,7 +47,7 @@ export async function addPolicyAction(formData: FormData) {
       isActive: true,
 
       // ✅ QUAN TRỌNG: cast sang vector
-      embedding: embeddingString,
+      embedding: embedding,
 
       metadata: {
         source: "Admin Panel",
