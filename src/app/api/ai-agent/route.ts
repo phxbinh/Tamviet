@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     // ROUTE: CHÀO HỎI (Không tốn tiền Embedding, không tốn tiền tra DB)
     if (intent === 'GREETING') {
       const result = await streamText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-1.5-flash'),
         system: "Bạn là trợ lý ảo thân thiện của công ty. Hãy chào hỏi ngắn gọn.",
         messages,
       });
