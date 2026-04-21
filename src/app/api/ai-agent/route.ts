@@ -1,0 +1,247 @@
+import { streamText, embed, generateText } from 'ai';
+import { google } from '@ai-sdk/google';
+import { db } from "@/chatbotv1";
+import { companyPolicies } from "@/chatbotv1/schema";
+import { cosineDistance, sql, and, eq, asc, desc } from "drizzle-orm";
+
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json();
+    const lastMessage = messages[messages.length - 1]?.content as string;
+
+    if (!lastMessage || lastMessage.trim().length < 5) {
+      return new Response("Câu hỏi của bạn quá ngắn.", { status: 400 });
+    }
+
+    // ==================== BƯỚC 1: ROUTER AGENT (PHÂN LOẠI) ====================
+    // Dùng Gemini Flash để tiết kiệm tiền và lấy kết quả cực nhanh
+    const { text: intent } = await generateText({
+      model: google('gemini-2.5-flash'),
+      system: `Bạn là bộ não điều phối. Hãy phân loại tin nhắn sau vào 1 trong 3 nhóm:
+      - POLICY: Hỏi về quy định, chính sách, hướng dẫn thi công, bảo vệ môi trường.
+      - GREETING: Chào hỏi, khen ngợi, hoặc nói chuyện phiếm.
+      - CONTACT: Hỏi về thông tin liên hệ, số điện thoại, địa chỉ văn phòng.
+      
+      CHỈ TRẢ VỀ DUY NHẤT 1 TỪ: POLICY, GREETING, hoặc CONTACT.`,
+      prompt: lastMessage,
+    });
+
+    console.log("🚦 Route xác định:", intent);
+
+    // ==================== BƯỚC 2: XỬ LÝ THEO ROUTE ====================
+
+    // ROUTE: CHÀO HỎI (Không tốn tiền Embedding, không tốn tiền tra DB)
+    if (intent === 'GREETING') {
+      const result = await streamText({
+        model: google('gemini-2.5-flash'),
+        system: "Bạn là trợ lý ảo thân thiện của công ty. Hãy chào hỏi ngắn gọn.",
+        messages,
+      });
+      return result.toDataStreamResponse();
+    }
+
+    // ROUTE: LIÊN HỆ (Trả về thông tin cố định)
+    if (intent === 'CONTACT') {
+      const result = await streamText({
+        model: google('gemini-2.5-flash'),
+        system: "Trả lời: Hotline nhân sự là 1900.xxxx, làm việc từ 8h-17h.",
+        messages,
+      });
+      return result.toDataStreamResponse();
+    }
+
+   if (intent === 'POLICY') {
+
+    // ==================== 1. EMBEDDING ====================
+    const { embedding } = await embed({
+      model: google.embedding('gemini-embedding-001'),
+      value: lastMessage.trim(),
+    });
+
+    const distance = cosineDistance(companyPolicies.embedding, embedding);
+
+    // ==================== 2. LẤY CHUNKS (CÓ FILTER) ====================
+    const chunks = await db
+      .select({
+        documentId: companyPolicies.documentId,
+        title: companyPolicies.title,
+        content: companyPolicies.content,
+        category: companyPolicies.category,
+        chunkIndex: companyPolicies.chunkIndex,
+        priority: companyPolicies.priority,
+        distance: distance,
+      })
+      .from(companyPolicies)
+      .where(
+        and(
+          eq(companyPolicies.isActive, true),
+          sql`${distance} < 0.40` // 🔥 FIX QUAN TRỌNG
+        )
+      )
+      .orderBy(
+        asc(distance),
+        desc(companyPolicies.priority)
+      )
+      .limit(20); // 🔥 lấy rộng hơn để còn lọc
+
+    // Nếu không có chunk đủ tốt
+    if (!chunks || chunks.length === 0) {
+      const result = await streamText({
+        model: google('gemini-2.5-flash'),
+        system: `
+          Bạn là trợ lý nhân sự.
+          
+          KHÔNG tìm thấy dữ liệu liên quan.
+          
+          Trả lời:
+          "Tôi không tìm thấy thông tin trong tài liệu hiện có."
+          `,
+        messages,
+        temperature: 0,
+      });
+
+      return result.toDataStreamResponse();
+    }
+
+// Kiểm tra chunk và distance
+console.log(
+  chunks.map(c => ({
+    title: c.title,
+    distance: c.distance
+  }))
+);
+
+    // ==================== 3. GROUP THEO DOCUMENT ====================
+    const grouped = new Map<string, any[]>();
+
+    for (const chunk of chunks) {
+      const key = chunk.documentId ?? "unknown";
+
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+
+      grouped.get(key)!.push(chunk);
+    }
+
+    // ==================== 4. RANK DOCUMENT ====================
+    const rankedDocs = Array.from(grouped.values())
+      .map((docChunks) => {
+        const bestScore = Math.min(...docChunks.map(c => c.distance));
+
+        return {
+          chunks: docChunks,
+          score: bestScore
+        };
+      })
+      .sort((a, b) => a.score - b.score)
+      .slice(0, 3); // 🔥 top 3 document thật sự liên quan
+
+    // ==================== 5. BUILD CONTEXT (CÓ KIỂM SOÁT) ====================
+    const contextDocs = rankedDocs
+      .map((doc, idx) => {
+        const sorted = doc.chunks.sort(
+          (a, b) => (a.chunkIndex ?? 0) - (b.chunkIndex ?? 0)
+        );
+
+        const first = sorted[0];
+
+        return `
+[Tài liệu ${idx + 1}]
+Tiêu đề: ${first.title ?? 'Không rõ'}
+Danh mục: ${first.category ?? 'N/A'}
+
+Nội dung:
+${sorted.slice(0, 3).map(c => c.content).join("\n")}
+`;
+      })
+      .join("\n\n---\n\n");
+
+    // ==================== 6. SYSTEM (ÉP CHẶT) ====================
+    const systemInstruction = `
+Bạn là trợ lý nhân sự chuyên nghiệp, làm việc với các tài liệu mang tính quy định nội bộ và pháp lý.
+
+NHIỆM VỤ:
+- Chỉ trả lời dựa trên thông tin có trong CONTEXT được cung cấp.
+- Mục tiêu là đảm bảo độ chính xác, tính nhất quán và khả năng truy xuất nguồn.
+- Phải trả lời TRỰC TIẾP vào câu hỏi
+- Không được trả lời chung chung
+- Chỉ chọn thông tin LIÊN QUAN NHẤT từ context
+- Không suy đoán ngoài dữ liệu
+
+=====================
+QUY TẮC BẮT BUỘC
+=====================
+
+1. NGUỒN THÔNG TIN
+- Chỉ sử dụng thông tin từ CONTEXT
+- Tuyệt đối KHÔNG suy đoán, KHÔNG bổ sung kiến thức bên ngoài
+- KHÔNG được diễn giải vượt quá nội dung gốc
+
+2. TRÍCH DẪN (BẮT BUỘC)
+- Phải trích dẫn ÍT NHẤT 1 tài liệu
+- Mỗi thông tin quan trọng phải gắn với ít nhất 1 nguồn
+- Mỗi trích dẫn PHẢI có đầy đủ:
+  + Tiêu đề
+  + Danh mục
+
+3. FORMAT TRÍCH DẪN (KHÔNG ĐƯỢC SAI)
+(Theo: [Tiêu đề] - Danh mục: [Danh mục])
+
+- Không được thiếu bất kỳ thành phần nào
+- Không thay đổi format
+- Không viết lại theo cách khác
+
+4. XỬ LÝ NHIỀU NGUỒN
+- Nếu có nhiều tài liệu liên quan:
+  + Có thể trích dẫn nhiều nguồn
+  + Không được gộp sai hoặc làm sai lệch nội dung từng tài liệu
+
+5. XỬ LÝ THIẾU THÔNG TIN (BẮT BUỘC)
+Nếu CONTEXT không có đủ thông tin để trả lời chính xác, phải trả lời NGUYÊN VĂN:
+
+"Tôi không tìm thấy quy định chính xác về vấn đề này trong tài liệu hiện có."
+
+- Không được trả lời một phần
+- Không được suy đoán để “lấp chỗ trống”
+
+6. ĐỘ CHÍNH XÁC & TRÁCH NHIỆM
+- Ưu tiên trích dẫn nguyên ý hơn là diễn giải
+- Không đơn giản hóa làm mất ý nghĩa pháp lý
+- Không tạo ra quy định không tồn tại trong tài liệu
+
+7. KIỂM TRA TRƯỚC KHI TRẢ LỜI
+Trước khi trả lời, phải đảm bảo:
+- Có ít nhất 1 trích dẫn hợp lệ
+- Mỗi trích dẫn có đủ Tiêu đề + Danh mục
+- Không có nội dung nào nằm ngoài CONTEXT
+
+CONTEXT:
+---
+${contextDocs}
+---
+`;
+
+    // ==================== 7. GENERATE ====================
+    const result = await streamText({
+      model: google('gemini-2.5-flash'),
+      system: systemInstruction,
+      messages,
+      temperature: 0, // 🔥 giảm randomness tối đa
+    });
+
+    return result.toDataStreamResponse();
+} // 🔹End if của POLICIES
+
+    // Default fallback
+    return new Response("Không xác định được yêu cầu.", { status: 500 });
+
+  } catch (error: any) {
+    console.error("❌ Lỗi RAG API:", error);
+
+    return new Response(
+      "Có lỗi xảy ra.",
+      { status: 500 }
+    );
+  }
+}
