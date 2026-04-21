@@ -96,6 +96,32 @@ function chunkText(text: string, size = 800, overlap = 150) {
   return chunks;
 }
 
+function chunkWithOverlap(text: string, maxLength = 500, overlap = 100) {
+  const sentences = text.split(/(?<=[.?!])\s+/);
+  const chunks: string[] = [];
+
+  let current = "";
+
+  for (const sentence of sentences) {
+    if ((current + sentence).length > maxLength) {
+      chunks.push(current.trim());
+
+      // overlap
+      current = current.slice(-overlap) + " " + sentence;
+    } else {
+      current += " " + sentence;
+    }
+  }
+
+  if (current) chunks.push(current.trim());
+
+  return chunks;
+}
+
+
+
+
+
 export async function addPolicyAction(formData: FormData) {
   const content = (formData.get('content') as string)?.trim() || '';
   const title = (formData.get('title') as string)?.trim() || '';
@@ -112,7 +138,8 @@ export async function addPolicyAction(formData: FormData) {
     const documentId = crypto.randomUUID();
 
     // ✅ 2. Chunk
-    const chunks = chunkText(content);
+    //const chunks = chunkText(content);
+    const chunks = chunkWithOverlap(content);
 
     // ❗ tránh tài liệu quá dài
     if (chunks.length > 50) {
