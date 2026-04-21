@@ -875,6 +875,13 @@ ${contextDocs}
 ---
 `;
 
+
+
+console.log("CHUNKS:", chunks.length);
+console.log("RANKED:", rankedDocs.length);
+console.log("CONTEXT:", contextDocs);
+
+
     // ==================== 7. GENERATE ====================
     const result = await streamText({
       model: google('gemini-2.5-flash'),
