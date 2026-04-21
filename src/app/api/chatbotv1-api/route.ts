@@ -652,13 +652,15 @@ const exactMatch = sql<number>`
 `;
 
 // ==================== 8. FINAL SCORE ====================
+// ⛳️cho comment part 1 (đã thay bằng đoạn dưới)
 const finalScore = sql<number>`
-  (${similarity} * 0.55) +
-  (${keywordScore} * 0.25) +
-  (${titleScore} * 0.15) +
+  (${similarity} * 0.35) +
+  (${keywordScore} * 0.3) +
+  (${titleScore} * 0.2) +
   (${categoryScore} * 0.05) +
   (${exactMatch} * 0.1)
 `;
+
 
 // ==================== 9. QUERY ====================
 const chunks = await db
@@ -811,17 +813,17 @@ ${contextDocs}
 `;
 
 
-
-console.log("CHUNKS:", chunks.length);
-console.log("RANKED:", rankedDocs.length);
-console.log("CONTEXT:", contextDocs);
-// Kiểm tra chunk và distance
 console.log(
   chunks.map(c => ({
     title: c.title,
-    distance: c.distance
+    sim: c.similarity,
+    keyword: c.keywordScore,
+    titleScore: c.titleScore,
+    final: c.finalScore
   }))
 );
+// ⛳️cho comment part 2 (Đã thay bằng đoạn ở trên)
+
 
 
     // ==================== 7. GENERATE ====================
@@ -846,6 +848,31 @@ console.log(
 
 */
 
+
+
+/* Comment part 1
+const finalScore = sql<number>`
+  (${similarity} * 0.55) +
+  (${keywordScore} * 0.25) +
+  (${titleScore} * 0.15) +
+  (${categoryScore} * 0.05) +
+  (${exactMatch} * 0.1)
+`;
+*/
+
+
+/* Comment part 2
+console.log("CHUNKS:", chunks.length);
+console.log("RANKED:", rankedDocs.length);
+console.log("CONTEXT:", contextDocs);
+// Kiểm tra chunk và distance
+console.log(
+  chunks.map(c => ({
+    title: c.title,
+    distance: c.distance
+  }))
+);
+*/
 
 
 
