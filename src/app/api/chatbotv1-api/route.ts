@@ -677,7 +677,13 @@ const chunks = await db
     finalScore: finalScore,
   })
   .from(companyPolicies)
-  .where(eq(companyPolicies.isActive, true))
+  //.where(eq(companyPolicies.isActive, true))
+     .where(
+        and(
+          eq(companyPolicies.isActive, true),
+          sql`${finalScore} > 0.25` // 🔥 FIX QUAN TRỌNG
+        )
+      )
   .orderBy(desc(finalScore)) // 🔥 QUAN TRỌNG
   .limit(20);
 
