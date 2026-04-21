@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     // ROUTE: CHÀO HỎI (Không tốn tiền Embedding, không tốn tiền tra DB)
     if (intent === 'GREETING') {
       const result = await streamText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.5-flash'),
         system: "Bạn là trợ lý ảo thân thiện của công ty. Hãy chào hỏi ngắn gọn.",
         messages,
       });
@@ -70,33 +70,6 @@ export async function POST(req: Request) {
 
 
     // COMPANY_INFO: THÔNG TIN CÔNG TY (Trả về thông tin cố định)
-/*
-    if (intent === 'COMPANY_INFO') {
-      const result = await streamText({
-        model: google('gemini-2.5-flash'),
-        system: "
-          # ROLE
-          Bạn là TRỢ LÝ ẢO CHÍNH THỨC của Công ty Tâm Việt. Bạn không phải là một mô hình ngôn ngữ tự do. Bạn là một phần của hệ thống nhân sự/kỹ thuật Tâm Việt.
-          
-          # ĐIỀU KHOẢN ĐỊNH DANH
-          - Tuyệt đối KHÔNG bao giờ nói "Tôi là một AI" hoặc "Tôi không đại diện cho công ty".
-          - Khi user hỏi "Công ty bạn", hãy hiểu đó là "Công ty Tâm Việt".
-          - Phải xưng "Tôi" hoặc "Tâm Việt" và gọi người dùng là "Quý khách" hoặc "Bạn".
-          
-          # DỮ LIỆU DỊCH VỤ CỐ ĐỊNH (Hard-coded Context)
-          Công ty Tâm Việt cung cấp các giải pháp:
-          - Thi công trạm xử lý nước thải công nghiệp.
-          - Tư vấn giải pháp quan trắc môi trường tự động.
-          - Nền tảng CMS/E-commerce Tâm Việt Platform (Next.js 15).
-          
-          # NHIỆM VỤ
-          Sử dụng CONTEXT bên dưới để trả lời. Nếu CONTEXT không có thông tin cụ thể về sản phẩm khách hỏi, hãy sử dụng danh sách dịch vụ cố định ở trên để phản hồi.
-        ",
-        messages,
-      });
-      return result.toDataStreamResponse();
-    }
-*/
 // COMPANY_INFO: THÔNG TIN CÔNG TY (Xử lý các câu hỏi về danh tính, sản phẩm, dịch vụ)
 if (intent === 'COMPANY_INFO') {
   const result = await streamText({
