@@ -360,7 +360,7 @@ Nếu không đủ thông tin:
 
 
 
-/* Hoàn toàn chạy được -> KẾT QUẢ CHUẨN HƠN MẤY CÁI Ở TRÊN
+/* ✅Hoàn toàn chạy được -> KẾT QUẢ CHUẨN HƠN MẤY CÁI Ở TRÊN */
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
@@ -565,12 +565,12 @@ ${contextDocs}
     );
   }
 }
-*/
 
 
 
 
 
+/*
 import { streamText, embed } from 'ai';
 import { google } from '@ai-sdk/google';
 import { db } from "@/chatbotv1";
@@ -585,41 +585,6 @@ export async function POST(req: Request) {
     if (!lastMessage || lastMessage.trim().length < 5) {
       return new Response("Câu hỏi của bạn quá ngắn.", { status: 400 });
     }
-/*
-    // ==================== 1. EMBEDDING ====================
-    const { embedding } = await embed({
-      model: google.embedding('gemini-embedding-001'),
-      value: lastMessage.trim(),
-    });
-
-    const distance = cosineDistance(companyPolicies.embedding, embedding);
-
-    // ==================== 2. LẤY CHUNKS (CÓ FILTER) ====================
-    const chunks = await db
-      .select({
-        documentId: companyPolicies.documentId,
-        title: companyPolicies.title,
-        content: companyPolicies.content,
-        category: companyPolicies.category,
-        chunkIndex: companyPolicies.chunkIndex,
-        priority: companyPolicies.priority,
-        distance: distance,
-      })
-      .from(companyPolicies)
-      .where(
-        and(
-          eq(companyPolicies.isActive, true),
-          sql`${distance} < 0.40` // 🔥 FIX QUAN TRỌNG
-        )
-      )
-      .orderBy(
-        asc(distance),
-        desc(companyPolicies.priority)
-      )
-      .limit(20); // 🔥 lấy rộng hơn để còn lọc
-*/
-
-
 
 // ==================== 1. PREP QUERY ====================
 const queryText = lastMessage.trim().toLowerCase();
@@ -715,9 +680,6 @@ const chunks = await db
   .limit(20);
 
 
-
-
-
     // Nếu không có chunk đủ tốt
     if (!chunks || chunks.length === 0) {
       const result = await streamText({
@@ -751,19 +713,6 @@ const chunks = await db
     }
 
     // ==================== 4. RANK DOCUMENT ====================
-/*
-    const rankedDocs = Array.from(grouped.values())
-      .map((docChunks) => {
-        const bestScore = Math.min(...docChunks.map(c => c.distance));
-
-        return {
-          chunks: docChunks,
-          score: bestScore
-        };
-      })
-      .sort((a, b) => a.score - b.score)
-      .slice(0, 3); // 🔥 top 3 document thật sự liên quan
-*/
 const rankedDocs = Array.from(grouped.values())
   .map((docChunks) => {
     const bestScore = Math.max(...docChunks.map(c => c.finalScore));
@@ -775,12 +724,6 @@ const rankedDocs = Array.from(grouped.values())
   })
   .sort((a, b) => b.score - a.score)
   .slice(0, 3);
-
-
-
-
-
-
 
     // ==================== 5. BUILD CONTEXT (CÓ KIỂM SOÁT) ====================
     const contextDocs = rankedDocs
@@ -901,7 +844,7 @@ console.log(
   }
 }
 
-
+*/
 
 
 
