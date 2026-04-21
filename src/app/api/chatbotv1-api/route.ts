@@ -737,14 +737,6 @@ const chunks = await db
       return result.toDataStreamResponse();
     }
 
-// Kiểm tra chunk và distance
-console.log(
-  chunks.map(c => ({
-    title: c.title,
-    distance: c.distance
-  }))
-);
-
     // ==================== 3. GROUP THEO DOCUMENT ====================
     const grouped = new Map<string, any[]>();
 
@@ -880,6 +872,13 @@ ${contextDocs}
 console.log("CHUNKS:", chunks.length);
 console.log("RANKED:", rankedDocs.length);
 console.log("CONTEXT:", contextDocs);
+// Kiểm tra chunk và distance
+console.log(
+  chunks.map(c => ({
+    title: c.title,
+    distance: c.distance
+  }))
+);
 
 
     // ==================== 7. GENERATE ====================
