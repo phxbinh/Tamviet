@@ -636,7 +636,8 @@ const { embedding } = await embed({
 
 // ==================== 3. VECTOR ====================
 const distance = cosineDistance(companyPolicies.embedding, embedding);
-const similarity = sql<number>`1 - ${distance}`;
+//const similarity = sql<number>`1 - ${distance}`;
+const similarity = sql<number>`1.0 - (${distance})`;
 
 // ==================== 4. KEYWORD SCORE ====================
 const keywordScore = sql<number>`
