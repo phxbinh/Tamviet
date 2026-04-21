@@ -759,6 +759,7 @@ console.log(
     }
 
     // ==================== 4. RANK DOCUMENT ====================
+/*
     const rankedDocs = Array.from(grouped.values())
       .map((docChunks) => {
         const bestScore = Math.min(...docChunks.map(c => c.distance));
@@ -770,6 +771,24 @@ console.log(
       })
       .sort((a, b) => a.score - b.score)
       .slice(0, 3); // 🔥 top 3 document thật sự liên quan
+*/
+const rankedDocs = Array.from(grouped.values())
+  .map((docChunks) => {
+    const bestScore = Math.max(...docChunks.map(c => c.finalScore));
+
+    return {
+      chunks: docChunks,
+      score: bestScore
+    };
+  })
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3);
+
+
+
+
+
+
 
     // ==================== 5. BUILD CONTEXT (CÓ KIỂM SOÁT) ====================
     const contextDocs = rankedDocs
