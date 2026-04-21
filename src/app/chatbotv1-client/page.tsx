@@ -9,6 +9,9 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function PolicyChatPage() {
   // useChat sẽ mặc định gọi đến /api/chat
+  // Cho một chatbot full luồng nhiệm vụ
+  // ✅Chạy được 
+/*
   const {
     messages,
     input,
@@ -16,6 +19,16 @@ export default function PolicyChatPage() {
     handleSubmit,
     isLoading
   } = useChat({api: '/api/chatbotv1-api'});
+*/
+
+  // Dùng cho 2 AI agents -> ☢️Đang test
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading
+  } = useChat({api: '/api/ai-agent'});
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
