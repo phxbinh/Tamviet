@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     // ==================== BƯỚC 1: ROUTER AGENT (TỐI ƯU SYSTEM PROMPT) ====================
     const { text: intent } = await generateText({
-      model: google('gemini-1.5-flash'), // Flash 1.5 ổn định và rẻ hơn bản 2.5 experimental
+      model: google('gemini-2.5-flash'), // Flash 1.5 ổn định và rẻ hơn bản 2.5 experimental
       system: `Classify user intent into ONE word: 
                - POLICY: internal rules, tech guides, environment. 
                - GREETING: hi, hello, small talk. 
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     if (intent === 'GREETING') {
       const result = await streamText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.5-flash'),
         system: "Bạn là trợ lý ảo thân thiện của Tâm Việt. Chào ngắn gọn, tinh tế.",
         messages: recentMessages,
       });
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     if (intent === 'CONTACT') {
       const result = await streamText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.5-flash'),
         system: "Hotline Tâm Việt: 1900.xxxx (8h-17h). Địa chỉ: [Địa chỉ của bạn]. Trả lời lịch sự.",
         messages: [messages[messages.length - 1]], // Chỉ cần câu hỏi cuối
       });
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     if (intent === 'COMPANY_INFO') {
       const result = await streamText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.5-flash'),
         system: `Bạn là trợ lý chuyên nghiệp của Tâm Việt (Môi trường & Công nghệ số). 
                  Xưng "Tâm Việt" hoặc "Tôi", gọi khách là "Quý khách". 
                  Dịch vụ: Xử lý nước thải (QCVN), Nền tảng Tâm Việt Platform (Next.js 15, UX Luxury). 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
 
       if (!chunks || chunks.length === 0) {
         const result = await streamText({
-          model: google('gemini-1.5-flash'),
+          model: google('gemini-2.5-flash'),
           system: "Bạn là trợ lý nhân sự. Trả lời: 'Tôi chưa tìm thấy quy định này trong tài liệu hiện có.'",
           messages: [messages[messages.length - 1]],
         });
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       CONTEXT: \n${contextDocs}`;
 
       const result = await streamText({
-        model: google('gemini-1.5-flash'),
+        model: google('gemini-2.5-flash'),
         system: systemInstruction,
         messages: recentMessages, // Dùng lịch sử đã cắt
         temperature: 0,
