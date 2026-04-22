@@ -1,9 +1,9 @@
 // services/rebuildProductEmbeddings.ts
 
 import { db } from "@/db";
-import { productDocuments } from "@/db/schema/productDocuments";
-import { getProductsForEmbedding } from "@/db/queries/getProductsForEmbedding";
-import { buildProductDocument } from "@/lib/buildProductDocument";
+import { productDocuments } from "./schema";
+import { getProductsForEmbedding } from "./getProductsForEmbedding";
+import { buildProductDocument } from "./buildProductDoc";
 import { embed } from "ai";
 import { google } from "@ai-sdk/google";
 
