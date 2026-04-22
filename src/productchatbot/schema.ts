@@ -1,34 +1,45 @@
-import { pgTable, uuid, text, timestamp, jsonb, index } from "drizzle-orm/pg-core";
+// productchatbot/schema.ts
+
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  jsonb,
+  index,
+} from "drizzle-orm/pg-core";
 import { vector } from "drizzle-orm/pg-vector";
 
-export const productDocuments = pgTable("product_documents", {
-  id: uuid("id").defaultRandom().primaryKey(),
+export const productDocuments = pgTable(
+  "product_documents",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
 
-  productId: uuid("product_id").notNull(),
+    productId: uuid("product_id").notNull(),
 
-  title: text("title").notNull(),
-  slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull(),
 
-  // content dùng để embed + RAG context
-  content: text("content").notNull(),
+    content: text("content").notNull(),
 
-  // metadata để filter nhanh (không cần parse content)
-  metadata: jsonb("metadata").$type<{
-    minPrice: number;
-    maxPrice: number;
-    totalStock: number;
-    categories?: string;
-    attributes?: string[]; // ["Color: Red", "Size: M"]
-  }>(),
+    metadata: jsonb("metadata").$type<{
+      minPrice: number;
+      maxPrice: number;
+      totalStock: number;
+      category?: string;
+      attributes: string[];
+    }>(),
 
-  embedding: vector("embedding", { dimensions: 3072 }).notNull(),
+    embedding: vector("embedding", { dimensions: 768 }).notNull(),
 
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const productDocumentsIndex = index("product_documents_embedding_idx")
-  .on(productDocuments.embedding)
-  .using("ivfflat");
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    embeddingIdx: index("product_documents_embedding_idx")
+      .on(table.embedding)
+      .using("ivfflat"),
+  })
+);
 
 /* Cấu trúc data của sản phẩm
 {
