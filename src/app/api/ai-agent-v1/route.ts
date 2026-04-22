@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
     if (intent === 'GREETING') {
       const result = await streamText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-1.5-flash'),
         system: "Bạn là trợ lý ảo thân thiện của Tâm Việt. Chào ngắn gọn, tinh tế.",
         messages: recentMessages,
       });
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     if (intent === 'CONTACT') {
       const result = await streamText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-1.5-flash'),
         system: "Hotline Tâm Việt: 1900.xxxx (8h-17h). Địa chỉ: [Địa chỉ của bạn]. Trả lời lịch sự.",
         messages: [messages[messages.length - 1]], // Chỉ cần câu hỏi cuối
       });
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     if (intent === 'COMPANY_INFO') {
       const result = await streamText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-1.5-flash'),
         system: `Bạn là trợ lý chuyên nghiệp của Tâm Việt (Môi trường & Công nghệ số). 
                  Xưng "Tâm Việt" hoặc "Tôi", gọi khách là "Quý khách". 
                  Dịch vụ: Xử lý nước thải (QCVN), Nền tảng Tâm Việt Platform (Next.js 15, UX Luxury). 
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     if (intent === 'POLICY') {
       // 1. EMBEDDING
       const { embedding } = await embed({
-        model: google.embedding('text-embedding-004'), // Model embedding mới nhất, rẻ hơn
+        model: google.embedding('gemini-embedding-001'), // Model embedding mới nhất, rẻ hơn
         value: lastMessage.trim(),
       });
 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
 
       if (!chunks || chunks.length === 0) {
         const result = await streamText({
-          model: google('gemini-2.5-flash'),
+          model: google('gemini-1.5-flash'),
           system: "Bạn là trợ lý nhân sự. Trả lời: 'Tôi chưa tìm thấy quy định này trong tài liệu hiện có.'",
           messages: [messages[messages.length - 1]],
         });
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       CONTEXT: \n${contextDocs}`;
 
       const result = await streamText({
-        model: google('gemini-2.5-flash'),
+        model: google('gemini-1.5-flash'),
         system: systemInstruction,
         messages: recentMessages, // Dùng lịch sử đã cắt
         temperature: 0,
