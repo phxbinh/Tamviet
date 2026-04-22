@@ -25,3 +25,37 @@ export const productDocuments = pgTable("product_documents", {
 
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export const productDocumentsIndex = index("product_documents_embedding_idx")
+  .on(productDocuments.embedding)
+  .using("ivfflat");
+
+/* Cấu trúc data của sản phẩm
+{
+  "productId": "p1",
+  "title": "Áo thun nam basic",
+  "slug": "ao-thun-nam-basic-abc123",
+
+  "content": "Tên sản phẩm: Áo thun nam basic...\nBiến thể:\n- Color: Red, Size: M, giá: 120000, tồn: 10\n...",
+
+  "metadata": {
+    "minPrice": 115000,
+    "maxPrice": 130000,
+    "totalStock": 23,
+    "categories": "Áo nam",
+    "attributes": [
+      "Color: Red",
+      "Color: Blue",
+      "Size: M",
+      "Size: L"
+    ]
+  },
+
+  "embedding": [0.0123, -0.98, ...]
+}
+*/
+
+
+
+
+
