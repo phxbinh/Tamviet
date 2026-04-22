@@ -1,6 +1,6 @@
 // services/rebuildProductEmbeddings.ts
 
-import { db } from "@/db";
+import { db } from "./index";
 import { productDocuments } from "./schema";
 import { getProductsForEmbedding } from "./getProductsForEmbedding";
 import { buildProductDocument } from "./buildProductDoc";
