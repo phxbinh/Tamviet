@@ -1,32 +1,48 @@
-export const function buildProductDoc(product) {
+// productchatbot/buildProductDoc.ts
+
+type Variant = {
+  price: number;
+  stock: number;
+  attributes: { name: string; value: string }[];
+};
+
+type ProductRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category_id?: string;
+  variants: Variant[];
+};
+
+export function buildProductDocument(product: ProductRow) {
   const variants = product.variants || [];
 
   let totalStock = 0;
-  let prices: number[] = [];
+  const prices: number[] = [];
   const attributeSet = new Set<string>();
 
-  const variantText = variants.map(v => {
-    totalStock += v.stock || 0;
-    prices.push(v.price);
+  const variantText = variants
+    .map((v) => {
+      totalStock += v.stock || 0;
+      prices.push(v.price);
 
-    const attrs = (v.attributes || []).map(a => {
-      const str = `${a.name}: ${a.value}`;
-      attributeSet.add(str);
-      return str;
-    });
+      const attrs = (v.attributes || []).map((a) => {
+        const str = `${a.name}: ${a.value}`;
+        attributeSet.add(str);
+        return str;
+      });
 
-    return `- ${attrs.join(", ")}, giá: ${v.price}, tồn: ${v.stock}`;
-  }).join("\n");
+      return `- ${attrs.join(", ")}, giá: ${v.price}, tồn: ${v.stock}`;
+    })
+    .join("\n");
 
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
 
   const content = `
 Tên sản phẩm: ${product.name}
-Danh mục: ${product.category || ""}
-
-Mô tả:
-${product.description || ""}
+Mô tả: ${product.description || ""}
 
 Biến thể:
 ${variantText}
@@ -38,6 +54,7 @@ Tổng tồn kho: ${totalStock}
     .trim();
 
   return {
+    productId: product.id,
     title: product.name,
     slug: product.slug,
     content,
@@ -45,8 +62,8 @@ Tổng tồn kho: ${totalStock}
       minPrice,
       maxPrice,
       totalStock,
-      categories: product.category,
+      category: product.category_id,
       attributes: Array.from(attributeSet),
-    }
+    },
   };
 }
