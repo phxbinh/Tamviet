@@ -25,7 +25,7 @@ export async function rebuildProductEmbeddings() {
       const doc = buildProductDocument(p);
 
       const embeddingRes = await embed({
-        model: google.embedding("text-embedding-004"),
+        model: google.embedding("gemini-embedding-001"),
         value: doc.content,
       });
 
