@@ -22,6 +22,9 @@ export default function PolicyChatPage() {
 */
 
   // Dùng cho 2 AI agents -> ☢️Đang test
+  // Nó đang ngốn token rất nhiều do cộng dồn mesages trong toàn bộ phiên chát
+  // bao gồm cả hỏi và trả lời
+/*
   const {
     messages,
     input,
@@ -29,6 +32,16 @@ export default function PolicyChatPage() {
     handleSubmit,
     isLoading
   } = useChat({api: '/api/ai-agent'});
+*/
+
+const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading
+  } = useChat({api: '/api/ai-agent-v1'});
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
