@@ -72,7 +72,7 @@ export async function POST(req: Request) {
           system: "Bạn là trợ lý bán hàng. Nếu không có sản phẩm, hãy xin lỗi và gợi ý lại.",
           messages: [
             {
-            //  role: "user",
+              role: "user",
               content: lastMessage,
             },
           ],
