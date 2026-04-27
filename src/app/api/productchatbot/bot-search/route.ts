@@ -135,7 +135,7 @@ Yêu cầu:
 
 async function searchProducts(query: string) {
   const { embedding } = await embed({
-    model: google.embedding("text-embedding-004"), // ⚠️ đồng bộ với DB
+    model: google.embedding("gemini-embedding-001"), // ⚠️ đồng bộ với DB
     value: query,
   });
 
