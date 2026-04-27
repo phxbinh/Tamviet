@@ -111,7 +111,7 @@ export async function rebuildProductEmbeddings() {
       const doc = buildProductDocument(p);
 
       const embeddingRes = await embed({
-        model: google.embedding("text-embedding-004"), // 👉 dùng 768 cho ổn định
+        model: google.embedding("gemini-embedding-001"), // 👉 dùng 768 cho ổn định
         value: doc.content,
       });
 
