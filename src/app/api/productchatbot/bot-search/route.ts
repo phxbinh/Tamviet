@@ -15,7 +15,7 @@ import { db } from "@/productchatbot";
 import { productDocuments } from "@/productchatbot/schema";
 //import { embed } from "ai";
 import { google } from "@ai-sdk/google";
-import { sql, desc } from "drizzle-orm";
+import { sql, asc, desc } from "drizzle-orm";
 import { cosineDistance } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -153,7 +153,7 @@ async function searchProducts(query: string) {
     .from(productDocuments)
     // ❌ bỏ filter cứng để debug
     // .where(sql`${distance} < 0.5`)
-    .orderBy(distance) // ✅ gần nhất lên đầu
+    .orderBy(asc(distance)) // ✅ gần nhất lên đầu
     .limit(6);
 
 /*
