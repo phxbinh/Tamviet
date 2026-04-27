@@ -7,6 +7,23 @@ import { buildProductDocument } from "./buildProductDoc";
 import { embed } from "ai";
 import { google } from "@ai-sdk/google";
 
+
+
+type Variant = {
+  price: number;
+  stock: number;
+  attributes: { name: string; value: string }[];
+};
+
+type ProductRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category_id?: string;
+  variants: Variant[];
+};
+
 export async function rebuildProductEmbeddings() {
   // 1. lấy data
   const products = await getProductsForEmbedding();
@@ -22,7 +39,7 @@ export async function rebuildProductEmbeddings() {
     const insertData = [];
 
     for (const p of batch) {
-      const doc = buildProductDocument(p);
+      const doc = buildProductDocument(p ad ProductRow);
 
       const embeddingRes = await embed({
         model: google.embedding("gemini-embedding-001"),
