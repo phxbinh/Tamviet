@@ -58,12 +58,23 @@ async function searchProducts(query: string) {
     value: query,
   });
 
+/*
   const similarity = sql<number>`
     1 - (${cosineDistance(
       productDocuments.embedding,
       ${embeddingRes.embedding}
     )})
   `;
+*/
+
+const similarity = sql<number>`
+  1 - (${cosineDistance(
+    productDocuments.embedding,
+    embeddingRes.embedding
+  )})
+`;
+
+
 
   const results = await db
     .select({
