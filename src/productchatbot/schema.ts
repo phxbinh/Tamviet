@@ -8,7 +8,7 @@ import {
   jsonb,
   index,
 } from "drizzle-orm/pg-core";
-import { vector } from "drizzle-orm/pg-vector";
+import { vector } from "drizzle-orm/pg-core";
 
 export const productDocuments = pgTable(
   "product_documents",
