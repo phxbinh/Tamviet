@@ -155,6 +155,12 @@ async function searchProducts(query: string) {
     .orderBy(distance) // ✅ gần nhất lên đầu
     .limit(6);
 
+
+console.log(`Query: "${query}" | Found: ${rows.length} products`);
+rows.forEach((r, i) => {
+  console.log(`  ${i+1}. ${r.title} | distance: ${r.distance.toFixed(4)}`);
+});
+
   return rows.map((r) => ({
     title: r.title,
     slug: r.slug,
