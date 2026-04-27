@@ -64,9 +64,10 @@ export async function POST(req: Request) {
     // ================= PRODUCT SEARCH =================
     if (intent === "PRODUCT") {
       const products = await searchProducts(lastMessage);
-
+  
       // ❌ không tìm thấy
       if (!products.length) {
+        console.log("🆘 Không tìm thấy sản phẩm:");
         const result = await streamText({
           model: google("gemini-2.5-flash"),
           system: "Bạn là trợ lý bán hàng. Nếu không có sản phẩm, hãy xin lỗi và gợi ý lại.",
