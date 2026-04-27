@@ -8,7 +8,7 @@ import { sql, desc } from "drizzle-orm";
 import { cosineDistance } from "drizzle-orm";
 
 
-export async function POST(query: string) {
+export async function POST() {
 
 }
 
