@@ -1,7 +1,7 @@
 // app/api/productchatbot/add-embed/route.ts
 
 import { NextResponse } from "next/server";
-import { rebuildProductEmbeddings } from "@/productchatbot/rebuildProductEmbeddings";
+import { rebuildProductEmbeddings } from "@/productchatbot/rebuildProductsEmbeddings";
 
 export async function POST() {
   try {
