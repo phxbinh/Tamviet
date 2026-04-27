@@ -154,7 +154,7 @@ async function searchProducts(query: string) {
     // ❌ bỏ filter cứng để debug
     // .where(sql`${distance} < 0.5`)
     .orderBy(asc(distance)) // ✅ gần nhất lên đầu
-    .limit(6);
+    .limit(3);
 
 /*
 console.log(`Query: "${query}" | Found: ${rows.length} products`);
