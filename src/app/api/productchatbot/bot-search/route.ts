@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 async function searchProducts(query: string) {
   // ✅ QUAN TRỌNG: đồng bộ với DB (768)
   const embeddingRes = await embed({
-    model: google.embedding("text-embedding-004"),
+    model: google.embedding("gemini-embedding-001"),
     value: query,
   });
 
