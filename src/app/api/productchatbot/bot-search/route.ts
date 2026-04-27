@@ -9,6 +9,7 @@ import { cosineDistance } from "drizzle-orm";
 */
 
 // app/api/productchatbot/bot-search/route.ts
+// Check
 
 import { db } from "@/productchatbot";
 import { productDocuments } from "@/productchatbot/schema";
