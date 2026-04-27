@@ -1,9 +1,20 @@
 // productchatbot/buildProductDoc.ts
 
+type Attribute = {
+  name: string;
+  value: string;
+};
+
 type Variant = {
   price: number;
   stock: number;
-  attributes: { name: string; value: string }[];
+  attributes: Attribute[];
+};
+
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
 };
 
 type ProductRow = {
@@ -11,26 +22,35 @@ type ProductRow = {
   name: string;
   slug: string;
   description: string;
-  category_id?: string;
+
+  categories?: Category[];
+  product_type?: string;
+
   variants: Variant[];
 };
 
 export function buildProductDocument(product: ProductRow) {
   const variants = product.variants || [];
+  const categories = product.categories || [];
 
   let totalStock = 0;
   const prices: number[] = [];
-  const attributeSet = new Set<string>();
+
+  // 👉 group attributes theo name
+  const attributeMap = new Map<string, Set<string>>();
 
   const variantText = variants
     .map((v) => {
       totalStock += v.stock || 0;
-      prices.push(v.price);
+      prices.push(Number(v.price) || 0);
 
       const attrs = (v.attributes || []).map((a) => {
-        const str = `${a.name}: ${a.value}`;
-        attributeSet.add(str);
-        return str;
+        if (!attributeMap.has(a.name)) {
+          attributeMap.set(a.name, new Set());
+        }
+        attributeMap.get(a.name)!.add(a.value);
+
+        return `${a.name}: ${a.value}`;
       });
 
       return `- ${attrs.join(", ")}, giá: ${v.price}, tồn: ${v.stock}`;
@@ -40,9 +60,25 @@ export function buildProductDocument(product: ProductRow) {
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
 
+  // 👉 category text
+  const categoryText = categories.map((c) => c.name).join(", ");
+
+  // 👉 attribute summary (quan trọng cho AI hiểu)
+  const attributeSummary = Array.from(attributeMap.entries())
+    .map(([name, values]) => `${name}: ${Array.from(values).join(", ")}`)
+    .join("\n");
+
   const content = `
 Tên sản phẩm: ${product.name}
-Mô tả: ${product.description || ""}
+
+Danh mục: ${categoryText}
+Loại sản phẩm: ${product.product_type || ""}
+
+Mô tả:
+${product.description || ""}
+
+Thuộc tính:
+${attributeSummary}
 
 Biến thể:
 ${variantText}
@@ -58,12 +94,17 @@ Tổng tồn kho: ${totalStock}
     title: product.name,
     slug: product.slug,
     content,
+
     metadata: {
       minPrice,
       maxPrice,
       totalStock,
-      category: product.category_id,
-      attributes: Array.from(attributeSet),
+
+      categories: categories.map((c) => c.name),
+      attributes: Array.from(attributeMap.entries()).flatMap(
+        ([name, values]) =>
+          Array.from(values).map((v) => `${name}: ${v}`)
+      ),
     },
   };
 }
