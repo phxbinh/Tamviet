@@ -112,6 +112,12 @@ Yêu cầu:
         system: systemPrompt,
         messages: recentMessages,
         temperature: 0.4,
+onFinish: (event) => {
+    console.log("=== TOKEN USAGE ===");
+    console.log("Prompt tokens:", event.usage.promptTokens);
+    console.log("Completion tokens:", event.usage.completionTokens);
+    console.log("Total tokens:", event.usage.totalTokens);
+  },
       });
 
       return result.toDataStreamResponse();
