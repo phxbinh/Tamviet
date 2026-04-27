@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     // ================= PRODUCT SEARCH =================
     if (intent === "PRODUCT") {
       const products = await searchProducts(lastMessage);
-  
+      console.log(products)
       // ❌ không tìm thấy
       if (!products.length) {
         console.log("🆘 Không tìm thấy sản phẩm:");
