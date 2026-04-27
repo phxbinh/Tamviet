@@ -132,10 +132,40 @@ Yêu cầu:
 
 
 
+async function searchProducts(query: string) {
+  const { embedding } = await embed({
+    model: google.embedding("text-embedding-004"), // ⚠️ đồng bộ với DB
+    value: query,
+  });
+
+  const distance = cosineDistance(productDocuments.embedding, embedding);
+
+  const rows = await db
+    .select({
+      title: productDocuments.title,
+      slug: productDocuments.slug,
+      content: productDocuments.content,
+      metadata: productDocuments.metadata,
+      distance,
+    })
+    .from(productDocuments)
+    // ❌ bỏ filter cứng để debug
+    // .where(sql`${distance} < 0.5`)
+    .orderBy(distance) // ✅ gần nhất lên đầu
+    .limit(6);
+
+  return rows.map((r) => ({
+    title: r.title,
+    slug: r.slug,
+    url: `/testSearchParam/products/${r.slug}`,
+    preview: r.content.slice(0, 200) + "...",
+    metadata: r.metadata,
+    distance: r.distance, // 👉 debug
+  }));
+}
 
 
-
-  async function searchProducts(query: string) {
+  async function searchProducts_(query: string) {
   const { embedding } = await embed({
     model: google.embedding("gemini-embedding-001"), // 768
     value: query,
@@ -159,7 +189,7 @@ Yêu cầu:
   return rows.map((r) => ({
     title: r.title,
     slug: r.slug,
-    url: `/products/${r.slug}`,
+    url: `/testSearchParam/products/${r.slug}`,
     preview: r.content.slice(0, 200) + "...",
     metadata: r.metadata,
   }));
