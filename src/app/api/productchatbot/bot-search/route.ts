@@ -137,7 +137,7 @@ Yêu cầu:
 
   async function searchProducts(query: string) {
   const { embedding } = await embed({
-    model: google.embedding("text-embedding-004"), // 768
+    model: google.embedding("gemini-embedding-001"), // 768
     value: query,
   });
 
