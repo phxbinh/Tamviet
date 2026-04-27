@@ -52,7 +52,7 @@ const {
     handleSubmit,
     isLoading
   } = useChat({api: '/api/productchatbot/bot-search'});
-
+  //src/app/api/productchatbot/bot-search/route.ts
 
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
