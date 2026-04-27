@@ -153,7 +153,7 @@ const {
               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest opacity-50">AI đang tra cứu ma trận...</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest opacity-50">Đang tìm kiếm...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
