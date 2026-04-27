@@ -39,7 +39,7 @@ export async function rebuildProductEmbeddings() {
     const insertData = [];
 
     for (const p of batch) {
-      const doc = buildProductDocument(p ad ProductRow);
+      const doc = buildProductDocument(p as ProductRow);
 
       const embeddingRes = await embed({
         model: google.embedding("gemini-embedding-001"),
