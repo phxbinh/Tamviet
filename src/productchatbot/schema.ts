@@ -33,12 +33,7 @@ export const productDocuments = pgTable(
     embedding: vector("embedding", { dimensions: 3072 }).notNull(),
 
     createdAt: timestamp("created_at").defaultNow(),
-  },
-  (table) => ({
-    embeddingIdx: index("product_documents_embedding_idx")
-      .on(table.embedding)
-      .using("ivfflat"),
-  })
+  }
 );
 
 /* Cấu trúc data của sản phẩm
