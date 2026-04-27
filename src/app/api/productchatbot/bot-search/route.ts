@@ -83,7 +83,7 @@ async function searchProducts(query: string) {
     .map((r) => ({
       title: r.title,
       slug: r.slug,
-      url: `/products/${r.slug}`,
+      url: `/testSearchParam/products/${r.slug}`,
 
       score: Number(r.score ?? 0),
 
