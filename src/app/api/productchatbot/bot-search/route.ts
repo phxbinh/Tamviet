@@ -72,7 +72,7 @@ export async function POST(req: Request) {
           system: "Bạn là trợ lý bán hàng. Nếu không có sản phẩm, hãy xin lỗi và gợi ý lại.",
           messages: [
             {
-              role: "user",
+            //  role: "user",
               content: lastMessage,
             },
           ],
@@ -155,11 +155,12 @@ async function searchProducts(query: string) {
     .orderBy(distance) // ✅ gần nhất lên đầu
     .limit(6);
 
-
+/*
 console.log(`Query: "${query}" | Found: ${rows.length} products`);
 rows.forEach((r, i) => {
   console.log(`  ${i+1}. ${r.title} | distance: ${r.distance.toFixed(4)}`);
 });
+*/
 
   return rows.map((r) => ({
     title: r.title,
