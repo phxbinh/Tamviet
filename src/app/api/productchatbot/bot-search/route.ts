@@ -7,7 +7,13 @@ import { google } from "@ai-sdk/google";
 import { sql, desc } from "drizzle-orm";
 import { cosineDistance } from "drizzle-orm";
 
-export async function searchProducts(query: string) {
+
+export async function POST(query: string) {
+
+}
+
+//export 
+async function searchProducts(query: string) {
   const embeddingRes = await embed({
     model: google.embedding("gemini-embedding-001"),
     value: query,
