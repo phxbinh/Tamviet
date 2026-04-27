@@ -107,18 +107,33 @@ Yêu cầu:
 - Nếu nhiều sản phẩm → chọn 1-2 cái tốt nhất
 `;
 
+/*
       const result = await streamText({
         model: google("gemini-2.5-flash"),
         system: systemPrompt,
         messages: recentMessages,
         temperature: 0.4,
-onFinish: (event) => {
-    console.log("=== TOKEN USAGE ===");
-    console.log("Prompt tokens:", event.usage.promptTokens);
-    console.log("Completion tokens:", event.usage.completionTokens);
-    console.log("Total tokens:", event.usage.totalTokens);
-  },
       });
+*/
+const result = await streamText({
+  model: google("gemini-2.5-flash"),
+  system: systemPrompt,
+  messages: recentMessages,
+  temperature: 0.4,
+
+  onFinish: (result) => {                    // ← tham số thường là "result" hoặc "event"
+    console.log("=== TOKEN USAGE ===");
+    console.log("Prompt tokens:", result.usage?.promptTokens ?? 0);
+    console.log("Completion tokens:", result.usage?.completionTokens ?? 0);
+    console.log("Total tokens:", result.usage?.totalTokens ?? 0);
+
+    // Bonus: log thêm thông tin hữu ích
+    console.log("Finish reason:", result.finishReason);
+    // console.log("Full response text:", result.text); // nếu cần
+  },
+});
+
+
 
       return result.toDataStreamResponse();
     }
