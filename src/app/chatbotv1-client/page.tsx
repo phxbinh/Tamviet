@@ -34,6 +34,7 @@ export default function PolicyChatPage() {
   } = useChat({api: '/api/ai-agent'});
 */
 
+/* Chạy được -> formate chưa đẹp
 const {
     messages,
     input,
@@ -41,6 +42,17 @@ const {
     handleSubmit,
     isLoading
   } = useChat({api: '/api/ai-agent-v1'});
+*/
+
+// Test cho tìm kiếm sản phẩm
+const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading
+  } = useChat({api: '/api/productchatbot/bot-search'});
+
 
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
