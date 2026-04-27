@@ -4,8 +4,7 @@
 export const revalidate = 300; 
 
 import Link from "next/link";
-import { ProductCardSlug } from "./_tachComponents/ProductCardSlug";
-//import { ProductCardSlug } from "./_tachComponents/ProductCardSlug_image";
+import { ProductCardSlug } from "./_tachComponents/ProductCardSlug_image";
 
 import { Pagination } from "./_tachComponents/Pagination";
 import { SearchUI } from "./_tachComponents/SearchUI";
