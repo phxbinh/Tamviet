@@ -18,14 +18,6 @@ import { sql, desc } from "drizzle-orm";
 import { cosineDistance } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-import { db } from "@/productchatbot";
-import { productDocuments } from "@/productchatbot/schema";
-import { embed } from "ai";
-import { google } from "@ai-sdk/google";
-import { sql, desc } from "drizzle-orm";
-import { cosineDistance } from "drizzle-orm";
-import { NextResponse } from "next/server";
-
 export async function POST(req: Request) {
   try {
     // ✅ chống crash nếu body rỗng
