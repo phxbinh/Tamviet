@@ -21,7 +21,7 @@ export default function RebuildEmbeddingsPage() {
       setError(null);
       setResult(null);
 
-      const res = await fetch("/api/productchatbot/add-ambed", {
+      const res = await fetch("/api/productchatbot/add-embed", {
         method: "POST",
       });
 
