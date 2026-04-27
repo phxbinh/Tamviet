@@ -63,6 +63,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Box, label: 'Post', href: '/admin/posts/new' },
     { icon: Box, label: 'ChatbotPolicies', href: '/admin/chatbotPolicies' },
     { icon: Box, label: 'chatbov1', href: '/admin/chatbotv1-admin' },
+    { icon: Box, label: 'productchatbot', href: '/admin/chatbotproduct' },
   ];
 
   return (
