@@ -1,7 +1,7 @@
 // app/api/productchatbot/bot-sell/route.ts
 import { db } from "@/productchatbot";
 import { productDocuments } from "@/productchatbot/schema";
-// CHÚ Ý: Import schema bảng products gốc của bạn ở đây
+// CHÚ Ý: Import schema bảng products gốc ở DB PostgreSQL
 import { products } from "@/productchatbot/productsSchema"; 
 import { streamText, embed, generateText, tool } from "ai";
 import { google } from "@ai-sdk/google";
@@ -56,6 +56,7 @@ export async function POST(req: Request) {
     // ================= 4. GENERATE RESPONSE + SQL TOOL =================
     const result = await streamText({
       model: google("gemini-2.5-flash"),
+      maxSteps: 3,
       system: `Bạn là trợ lý bán hàng chuyên nghiệp.
       Dựa vào danh sách sản phẩm sau:
       ${context}
@@ -65,69 +66,35 @@ export async function POST(req: Request) {
       - Trả lời tự nhiên, nhấn mạnh vào lợi ích sản phẩm.
       - Tuyệt đối không tự bịa link ảnh, tool sẽ tự xử lý ảnh.`,
       messages: recentMessages,
-/*
       tools: {
         showProductCards: tool({
-          description: 'Truy vấn SQL để lấy ảnh thumbnail và giá chính xác từ database',
+          description: 'Truy vấn thông tin ảnh và giá từ bảng products',
           parameters: z.object({
-            slugs: z.array(z.string()).describe('Mảng các slug sản phẩm cần hiển thị'),
+            slugs: z.array(z.string()).describe('Mảng các slug sản phẩm'),
           }),
           execute: async ({ slugs }) => {
-            // --- TRUY VẤN SQL TRỰC TIẾP VÀO BẢNG PRODUCTS ---
-            const fullProducts = await db
+            // Truy vấn trực tiếp vào bảng products chính
+            const data = await db
               .select({
-                title: productsTable.title,
-                slug: productsTable.slug,
-                thumbnail: productsTable.thumbnail, // Đây là cột chứa link ảnh bạn cần
-                price: productsTable.price,
+                title: products.name,           // Map 'name' từ SQL thành 'title' cho UI
+                slug: products.slug,
+                image: products.thumbnail_url,  // Lấy đúng cột thumbnail_url
+                description: products.short_description
               })
-              .from(productsTable)
-              .where(inArray(productsTable.slug, slugs));
-
-            // Format lại dữ liệu cho Frontend dễ dùng
-            return fullProducts.map(p => ({
-              title: p.title,
-              slug: p.slug,
-              image: p.thumbnail || "/placeholder-product.jpg",
-              price: p.price ? `${new Intl.NumberFormat('vi-VN').format(p.price)}đ` : "Liên hệ",
-              url: `/testSearchParam/products/${p.slug}`
+              .from(products)
+              .where(inArray(products.slug, slugs));
+      
+            return data.map(p => ({
+              ...p,
+              image: p.image || "/placeholder-product.jpg",
+              url: `/testSearchParam/products/${p.slug}`,
+              // Vì bảng products của bạn chưa có cột price trực tiếp (có thể ở bảng biến thể),
+              // tạm thời để "Liên hệ" hoặc bạn có thể join thêm bảng price nếu có.
+              price: "Liên hệ" 
             }));
           },
         }),
       },
-*/
-
-tools: {
-  showProductCards: tool({
-    description: 'Truy vấn thông tin ảnh và giá từ bảng products',
-    parameters: z.object({
-      slugs: z.array(z.string()).describe('Mảng các slug sản phẩm'),
-    }),
-    execute: async ({ slugs }) => {
-      // Truy vấn trực tiếp vào bảng products chính
-      const data = await db
-        .select({
-          title: products.name,           // Map 'name' từ SQL thành 'title' cho UI
-          slug: products.slug,
-          image: products.thumbnail_url,  // Lấy đúng cột thumbnail_url
-          description: products.short_description
-        })
-        .from(products)
-        .where(inArray(products.slug, slugs));
-
-      return data.map(p => ({
-        ...p,
-        image: p.image || "/placeholder-product.jpg",
-        url: `/testSearchParam/products/${p.slug}`,
-        // Vì bảng products của bạn chưa có cột price trực tiếp (có thể ở bảng biến thể),
-        // tạm thời để "Liên hệ" hoặc bạn có thể join thêm bảng price nếu có.
-        price: "Liên hệ" 
-      }));
-    },
-  }),
-},
-
-
     });
 
     return result.toDataStreamResponse();
@@ -140,7 +107,7 @@ tools: {
 
 
 /*
-prompt
+prompt -> Yêu cầu cho AI agent
 const result = await streamText({
   model: google("gemini-1.5-flash"),
   system: `Bạn là trợ lý bán hàng chuyên nghiệp. 
@@ -158,59 +125,6 @@ const result = await streamText({
   },
 });
 */
-
-
-/*
-// Trong file app/api/productchatbot/bot-sell/route.ts
-
-// ... các import khác
-import { products } from "@/schema/products"; // Import schema vừa tạo
-import { inArray } from "drizzle-orm";
-
-// ... phần code Router và Vector Search giữ nguyên
-
-// Trong định nghĩa tools của streamText:
-tools: {
-  showProductCards: tool({
-    description: 'Truy vấn thông tin ảnh và giá từ bảng products',
-    parameters: z.object({
-      slugs: z.array(z.string()).describe('Mảng các slug sản phẩm'),
-    }),
-    execute: async ({ slugs }) => {
-      // Truy vấn trực tiếp vào bảng products chính
-      const data = await db
-        .select({
-          title: products.name,           // Map 'name' từ SQL thành 'title' cho UI
-          slug: products.slug,
-          image: products.thumbnail_url,  // Lấy đúng cột thumbnail_url
-          description: products.short_description
-        })
-        .from(products)
-        .where(inArray(products.slug, slugs));
-
-      return data.map(p => ({
-        ...p,
-        image: p.image || "/placeholder-product.jpg",
-        url: `/testSearchParam/products/${p.slug}`,
-        // Vì bảng products của bạn chưa có cột price trực tiếp (có thể ở bảng biến thể),
-        // tạm thời để "Liên hệ" hoặc bạn có thể join thêm bảng price nếu có.
-        price: "Liên hệ" 
-      }));
-    },
-  }),
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**
@@ -231,7 +145,7 @@ async function searchProductSlugs(query: string) {
     })
     .from(productDocuments)
     .orderBy(asc(distance))
-    .limit(3);
+    .limit(6);
 
   return rows;
 }
