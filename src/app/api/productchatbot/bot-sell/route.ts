@@ -8,7 +8,7 @@ import { google } from "@ai-sdk/google";
 import { asc, cosineDistance, inArray, eq } from "drizzle-orm";
 import { z } from "zod";
 
-export const maxDuration = 30;
+//export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     // ================= 2. GREETING & OTHER =================
     if (intent !== "PRODUCT") {
       const result = await streamText({
-        model: google("gemini-1.5-flash"),
+        model: google("gemini-2.5-flash"),
         system: "Bạn là chatbot bán hàng thân thiện của Tâm Việt. Trả lời ngắn gọn và gợi ý khách tìm sản phẩm.",
         messages: recentMessages,
       });
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 
     // ================= 4. GENERATE RESPONSE + SQL TOOL =================
     const result = await streamText({
-      model: google("gemini-1.5-flash"),
+      model: google("gemini-2.5-flash"),
       system: `Bạn là trợ lý bán hàng chuyên nghiệp.
       Dựa vào danh sách sản phẩm sau:
       ${context}
