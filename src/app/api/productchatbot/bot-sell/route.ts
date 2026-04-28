@@ -8,7 +8,7 @@ import { google } from "@ai-sdk/google";
 import { asc, cosineDistance, inArray, eq } from "drizzle-orm";
 import { z } from "zod";
 
-//export const maxDuration = 30;
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
@@ -138,6 +138,26 @@ tools: {
   }
 }
 
+
+/*
+prompt
+const result = await streamText({
+  model: google("gemini-1.5-flash"),
+  system: `Bạn là trợ lý bán hàng chuyên nghiệp. 
+  Dựa vào danh sách: \n${productContext}\n
+  
+  QUY TẮC CỐ ĐỊNH:
+  - Khi người dùng hỏi về sản phẩm cụ thể, bạn PHẢI gọi tool 'showProductCards' với các slug tương ứng.
+  - KHÔNG ĐƯỢC chỉ trả lời bằng văn bản nếu sản phẩm đó có trong danh sách.
+  - Sau khi gọi tool, hãy viết một câu ngắn gọn để giới thiệu các thẻ sản phẩm bên dưới.`,
+  messages: recentMessages,
+  tools: {
+    showProductCards: tool({
+      // ... giữ nguyên phần định nghĩa tool ...
+    }),
+  },
+});
+*/
 
 
 /*
