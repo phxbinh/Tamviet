@@ -300,7 +300,7 @@ async function getRelatedProducts(slugs: string[]) {
 
   const base = await db
     .select({
-      productType: products.product_type
+      product_type: products.product_type
     })
     .from(products)
     .where(inArray(products.slug, slugs));
@@ -308,7 +308,7 @@ async function getRelatedProducts(slugs: string[]) {
   const productTypes = [
     ...new Set(
       base
-        .map(p => p.productType)
+        .map(p => p.product_type)
         .filter((v): v is string => v !== null && v !== "default")
     )
   ];
