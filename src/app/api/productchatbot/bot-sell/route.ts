@@ -57,7 +57,7 @@ export async function POST(req: Request) {
     // ================= 4. GENERATE RESPONSE + SQL TOOL =================
     const result = await streamText({
       model: google("gemini-2.5-flash"),
-      maxSteps: 3,
+      maxSteps: 1,
       system: `Bạn là trợ lý bán hàng chuyên nghiệp.
       Dựa vào danh sách sản phẩm sau:
       ${context}
