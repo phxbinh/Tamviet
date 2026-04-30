@@ -198,12 +198,12 @@ async function getRelatedProducts(slugs: string[]) {
   // 1. lấy category
   const base = await db
     .select({
-      categoryId: products.product_type
+      product_type: products.product_type
     })
     .from(products)
     .where(inArray(products.slug, slugs));
 
-  const categoryIds = base.map(p => p.categoryId);
+  const productTypes = base.map(p => p.product_type);
 
   // 2. lấy related
   const related = await db
@@ -213,7 +213,7 @@ async function getRelatedProducts(slugs: string[]) {
       thumbnail_url: products.thumbnail_url
     })
     .from(products)
-    .where(inArray(products.product_type, categoryIds))
+    .where(inArray(products.product_type, productTypes))
     .limit(6);
 
   return related;
