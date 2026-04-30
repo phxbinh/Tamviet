@@ -9,7 +9,7 @@ export const products = pgTable("products", {
   short_description: text("short_description"),
   status: text("status").notNull().default("draft"),
   thumbnail_url: text("thumbnail_url"), // Đây là cột chứa ảnh bạn cần
-  category_id: text("product_type"), // Chứa loại sản phẩm
+  product_type: text("product_type"), // Chứa loại sản phẩm
   created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => {
