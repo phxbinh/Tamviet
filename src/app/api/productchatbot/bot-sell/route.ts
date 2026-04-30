@@ -6,6 +6,7 @@ import { products } from "@/productchatbot/productsSchema";
 import { streamText, embed, generateText, tool } from "ai";
 import { google } from "@ai-sdk/google";
 import { asc, cosineDistance, inArray, eq } from "drizzle-orm";
+import { and, not, ne } from "drizzle-orm";
 import { z } from "zod";
 
 export const maxDuration = 30;
@@ -193,6 +194,7 @@ showRelatedProducts: tool({
 })
 */
 
+/*
 async function getRelatedProducts(slugs: string[]) {
 
   // 1. lấy category
@@ -214,6 +216,47 @@ async function getRelatedProducts(slugs: string[]) {
     })
     .from(products)
     .where(inArray(products.product_type, productTypes))
+    .limit(6);
+
+  return related;
+}
+*/
+
+//import { and, inArray, not, ne } from "drizzle-orm";
+
+async function getRelatedProducts(slugs: string[]) {
+
+  const base = await db
+    .select({
+      productType: products.product_type
+    })
+    .from(products)
+    .where(inArray(products.slug, slugs));
+
+  const productTypes = [
+    ...new Set(
+      base
+        .map(p => p.productType)
+        .filter((v): v is string => v !== null && v !== "default")
+    )
+  ];
+
+  if (!productTypes.length) return [];
+
+  const related = await db
+    .select({
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url
+    })
+    .from(products)
+    .where(
+      and(
+        inArray(products.product_type, productTypes),
+        not(inArray(products.slug, slugs)),
+        ne(products.product_type, "default")
+      )
+    )
     .limit(6);
 
   return related;
