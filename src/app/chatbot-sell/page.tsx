@@ -128,7 +128,7 @@ export default function ChatSellPage() {
                   <div key={toolCallId} className="w-full mt-4 flex justify-start pl-2">
                     {state === 'result' ? (
                       <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-                        {toolInvocation.result.map((product: any) => (
+                        {toolInvocation.result.products.map((product: any) => (
                           <div 
                             key={product.slug} 
                             className="min-w-[220px] max-w-[220px] group bg-card border border-border/60 rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl hover:border-blue-500/40 transition-all duration-500"
