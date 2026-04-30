@@ -85,7 +85,9 @@ export async function POST(req: Request) {
               })
               .from(products)
               .where(inArray(products.slug, slugs));
-      
+
+            const related = await getRelatedProducts(slugs);
+
             return { 
               products: data.map(p => ({
                 ...p,
