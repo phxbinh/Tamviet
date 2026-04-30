@@ -86,6 +86,76 @@ export async function POST(req: Request) {
               .from(products)
               .where(inArray(products.slug, slugs));
       
+            return { 
+              products: data.map(p => ({
+                ...p,
+                image: p.image || "/placeholder-product.jpg",
+                url: `/testSearchParam/products/${p.slug}`,
+                // Vì bảng products của bạn chưa có cột price trực tiếp (có thể ở bảng biến thể),
+                // tạm thời để "Liên hệ" hoặc bạn có thể join thêm bảng price nếu có.
+                price: "Liên hệ" 
+              })),
+                related: related.map(p => ({
+                title: p.name,
+                slug: p.slug,
+                image: p.thumbnail_url || "/placeholder.jpg",
+                price: "Liên hệ",
+                url: `/testSearchParam/products/${p.slug}`
+              }))
+            };
+          },
+        }),
+        showRelatedProducts: tool({
+          description: 'Hiển thị sản phẩm liên quan',
+          parameters: z.object({
+            slugs: z.array(z.string())
+          }),
+        
+          execute: async ({ slugs }) => {
+        
+            const related = await getRelatedProducts(slugs);
+        
+            return related.map(p => ({
+              title: p.name,
+              slug: p.slug,
+              image: p.thumbnail_url || "/placeholder.jpg",
+              price: "Liên hệ",
+              url: `/testSearchParam/products/${p.slug}`
+            }));
+          }
+        }),
+      },
+    });
+
+    return result.toDataStreamResponse();
+
+  } catch (error) {
+    console.error("❌ ERROR:", error);
+    return new Response("Error occurred", { status: 500 });
+  }
+}
+
+
+
+/* Chạy được với showProductCards
+      tools: {
+        showProductCards: tool({
+          description: 'Truy vấn thông tin ảnh và giá từ bảng products',
+          parameters: z.object({
+            slugs: z.array(z.string()).describe('Mảng các slug sản phẩm'),
+          }),
+          execute: async ({ slugs }) => {
+            // Truy vấn trực tiếp vào bảng products chính
+            const data = await db
+              .select({
+                title: products.name,           // Map 'name' từ SQL thành 'title' cho UI
+                slug: products.slug,
+                image: products.thumbnail_url,  // Lấy đúng cột thumbnail_url
+                description: products.short_description
+              })
+              .from(products)
+              .where(inArray(products.slug, slugs));
+      
             return data.map(p => ({
               ...p,
               image: p.image || "/placeholder-product.jpg",
@@ -125,7 +195,7 @@ export async function POST(req: Request) {
     return new Response("Error occurred", { status: 500 });
   }
 }
-
+*/
 
 /*
 prompt -> Yêu cầu cho AI agent
