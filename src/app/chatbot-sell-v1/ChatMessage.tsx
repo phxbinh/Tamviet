@@ -47,7 +47,7 @@ export function ChatMessage({ message }: { message: any }) {
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
           {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
             <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.map((p: any) => <ProductCard key={p.slug} product={p} />)}
+              {tool.result.products.map((p: any) => <ProductCard key={p.slug} product={p} />)}
             </div>
           ) : tool.state !== 'result' && (
             <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
@@ -60,9 +60,9 @@ export function ChatMessage({ message }: { message: any }) {
       {/* Render Tools (Related Product) */}
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showRelatedProducts' && tool.state === 'result' ? (
+          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
             <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.map((p: any) => <ProductCard key={p.slug} product={p} />)}
+              {tool.result.related.map((p: any) => <ProductCard key={p.slug} product={p} />)}
             </div>
           ) : tool.state !== 'result' && (
             <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
