@@ -63,6 +63,7 @@ export async function POST(req: Request) {
       
       YÊU CẦU:
       - Nếu sản phẩm phù hợp, BẮT BUỘC dùng tool 'showProductCards' để hiển thị.
+      - Sau khi tìm được sản phẩm, BẮT BUỘC dùng tool 'showRelatedProducts' để hiện thị sản phẩm liên quan.
       - Trả lời tự nhiên, nhấn mạnh vào lợi ích sản phẩm.
       - Tuyệt đối không tự bịa link ảnh, tool sẽ tự xử lý ảnh.`,
       messages: recentMessages,
@@ -93,6 +94,25 @@ export async function POST(req: Request) {
               price: "Liên hệ" 
             }));
           },
+        }),
+        showRelatedProducts: tool({
+          description: 'Hiển thị sản phẩm liên quan',
+          parameters: z.object({
+            slugs: z.array(z.string())
+          }),
+        
+          execute: async ({ slugs }) => {
+        
+            const related = await getRelatedProducts(slugs);
+        
+            return related.map(p => ({
+              title: p.name,
+              slug: p.slug,
+              image: p.thumbnail_url || "/placeholder.jpg",
+              price: "Liên hệ",
+              url: `/testSearchParam/products/${p.slug}`
+            }));
+          }
         }),
       },
     });
@@ -149,3 +169,54 @@ async function searchProductSlugs(query: string) {
 
   return rows;
 }
+
+
+/*
+showRelatedProducts: tool({
+  description: 'Hiển thị sản phẩm liên quan',
+  parameters: z.object({
+    slugs: z.array(z.string())
+  }),
+
+  execute: async ({ slugs }) => {
+
+    const related = await getRelatedProducts(slugs);
+
+    return related.map(p => ({
+      title: p.name,
+      slug: p.slug,
+      image: p.thumbnail_url || "/placeholder.jpg",
+      price: "Liên hệ",
+      url: `/testSearchParam/products/${p.slug}`
+    }));
+  }
+})
+*/
+
+async function getRelatedProducts(slugs: string[]) {
+
+  // 1. lấy category
+  const base = await db
+    .select({
+      categoryId: products.category_id
+    })
+    .from(products)
+    .where(inArray(products.slug, slugs));
+
+  const categoryIds = base.map(p => p.categoryId);
+
+  // 2. lấy related
+  const related = await db
+    .select({
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url
+    })
+    .from(products)
+    .where(inArray(products.category_id, categoryIds))
+    .limit(6);
+
+  return related;
+}
+
+
