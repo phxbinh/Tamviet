@@ -60,7 +60,13 @@ export function ChatMessage({ message }: { message: any }) {
         </div>
       ))}
 
-      {/* Render Tools (Related Product) */} {/*
+      {/* Render Tools (Related Product) */} 
+    </div>
+  );
+}
+
+
+/*
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
           {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
@@ -73,7 +79,4 @@ export function ChatMessage({ message }: { message: any }) {
             </div>
           )}
         </div>
-      ))}*/}
-    </div>
-  );
-}
+      ))}*/
