@@ -17,9 +17,13 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Đổi mật mã', href: '/change-password', showInSidebar: true },
 */
   { name: 'Orders', href: '/orders', showInSidebar: true },
+
+/* Chat bot bên dưới đều chạy được
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
   { name: 'Chat bot Policies', href: '/chatbot-policies', showInSidebar: true },
   { name: 'Chat bot v1 client', href: '/chatbotv1-client', showInSidebar: true },
+*/
+
   { name: 'Bot sell', href: '/chatbot-sell', showInSidebar: true },
   { name: 'Bot sell - v1', href: '/chatbot-sell-v1', showInSidebar: true },
 
