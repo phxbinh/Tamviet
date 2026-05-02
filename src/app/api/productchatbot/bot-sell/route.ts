@@ -437,14 +437,14 @@ YÊU CẦU:
                 ...p,
                 image: p.image || "/placeholder.jpg",
                 price: "Liên hệ",
-                url: `/products/${p.slug}`,
+                url: `/testSearchParam/products/${p.slug}`,
               })),
               related: related.map(p => ({
                 title: p.name,
                 slug: p.slug,
                 image: p.thumbnail_url || "/placeholder.jpg",
                 price: "Liên hệ",
-                url: `/products/${p.slug}`,
+                url: `/testSearchParam/products/${p.slug}`,
               })),
             };
           },
@@ -463,7 +463,7 @@ YÊU CẦU:
               slug: p.slug,
               image: p.thumbnail_url || "/placeholder.jpg",
               price: "Liên hệ",
-              url: `/products/${p.slug}`,
+              url: `/testSearchParam/products/${p.slug}`,
             }));
           },
         }),
