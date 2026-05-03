@@ -395,9 +395,25 @@ Chỉ trả JSON.
       return result.toDataStreamResponse();
     }
 
+/*
     const context = vectorResults
       .map(p => `ID: ${p.slug} | Tên: ${p.title}`)
       .join("\n");
+*/
+const context = vectorResults
+  .map(p => {
+    const meta = p.metadata as any;
+
+    return `ID: ${p.slug}
+Tên: ${p.title}
+Giá: ${meta?.minPrice ?? "?"} - ${meta?.maxPrice ?? "?"}
+Danh mục: ${meta?.categories?.join(", ") ?? "?"}`;
+  })
+  .join("\n\n");
+
+
+
+
 
     // ================= 4. RESPONSE + TOOL =================
     const result = await streamText({
