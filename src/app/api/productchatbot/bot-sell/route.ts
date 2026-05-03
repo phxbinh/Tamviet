@@ -529,16 +529,17 @@ async function searchProductSlugs({
     conditions.push(sql`metadata->'categories' ? ${category}`);
   }
 
+
   const rows = await db
     .select({
       title: productDocuments.title,
       slug: productDocuments.slug,
+      metadata: productDocuments.metadata,
     })
     .from(productDocuments)
     .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(asc(distance))
     .limit(8);
-
   return rows;
 }
 
