@@ -2,7 +2,7 @@ import { db } from "@/productchatbot";
 import { products } from "@/productchatbot/productsSchema";
 import { productCategories } from "@/productchatbot/schemaProductCategories";
 import { categories } from "@/productchatbot/schemaCategories";
-import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell"
+import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
 import { eq, inArray, like, sql } from "drizzle-orm";
 
 export async function getCrossSellProducts(productId: string) {
@@ -18,21 +18,25 @@ export async function getCrossSellProducts(productId: string) {
 
   const categoryIds = productCats.map(c => c.categoryId);
 
-  // 2. Lấy category_path của các category này
+  // 2. Lấy category + path + depth
   const cats = await db
     .select({
       id: categories.id,
       path: categories.categoryPath,
+      depth: categories.categoryDepth,
     })
     .from(categories)
     .where(inArray(categories.id, categoryIds));
 
   if (cats.length === 0) return [];
 
-  // 3. Tìm parent level (use-case level)
-  // 👉 lấy path ngắn nhất (ít depth nhất)
-  const parent = cats.reduce((prev, curr) => {
-    return prev.path.length < curr.path.length ? prev : curr;
+  // 🔥 3. Chọn parent đúng (dùng depth thay vì path.length)
+  const validCats = cats.filter(c => c.depth !== null);
+
+  if (validCats.length === 0) return [];
+
+  const parent = validCats.reduce((prev, curr) => {
+    return (prev.depth ?? 999) < (curr.depth ?? 999) ? prev : curr;
   });
 
   // 4. Lấy cross-sell categories
@@ -47,7 +51,7 @@ export async function getCrossSellProducts(productId: string) {
 
   const targetIds = crossSellCats.map(c => c.targetId);
 
-  // 5. Expand subtree của target categories
+  // 5. Lấy path của target categories (lọc null)
   const targetPaths = await db
     .select({
       id: categories.id,
@@ -56,11 +60,13 @@ export async function getCrossSellProducts(productId: string) {
     .from(categories)
     .where(inArray(categories.id, targetIds));
 
-  if (targetPaths.length === 0) return [];
+  const validTargetPaths = targetPaths.filter(tp => tp.path);
 
-  // build LIKE conditions
-  const likeConditions = targetPaths.map(tp =>
-    like(categories.categoryPath, `${tp.path}%`)
+  if (validTargetPaths.length === 0) return [];
+
+  // 6. Expand subtree bằng LIKE
+  const likeConditions = validTargetPaths.map(tp =>
+    like(categories.categoryPath, `${tp.path!}%`)
   );
 
   const expandedTargetCats = await db
@@ -70,7 +76,9 @@ export async function getCrossSellProducts(productId: string) {
 
   const expandedIds = expandedTargetCats.map(c => c.id);
 
-  // 6. Lấy products thuộc các category này
+  if (expandedIds.length === 0) return [];
+
+  // 7. Lấy products thuộc các category này
   const result = await db
     .select({
       id: products.id,
