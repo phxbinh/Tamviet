@@ -450,6 +450,24 @@ YÊU CẦU:
 
             const related = await getRelatedProducts(slugs);
 
+    const baseProducts = await db
+          .select({
+            id: products.id,
+            slug: products.slug,
+          })
+          .from(products)
+          .where(inArray(products.slug, slugs))
+          .limit(1); // chỉ lấy 1 sản phẩm chính
+
+    if (!baseProducts.length) return [];
+
+    const baseProduct = baseProducts[0];
+
+    // 2. 🔥 GỌI FUNCTION CỦA BẠN
+    const crossSell = await getCrossSellProducts(baseProduct.id);
+
+
+
             return {
               products: data.map(p => ({
                 ...p,
@@ -458,6 +476,13 @@ YÊU CẦU:
                 url: `/testSearchParam/products/${p.slug}`,
               })),
               related: related.map(p => ({
+                title: p.name,
+                slug: p.slug,
+                image: p.thumbnail_url || "/placeholder.jpg",
+                price: "Liên hệ",
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+              crossSell: crossSell.map(p => ({
                 title: p.name,
                 slug: p.slug,
                 image: p.thumbnail_url || "/placeholder.jpg",
@@ -491,6 +516,7 @@ YÊU CẦU:
 */
 
 // check cho gọi các sản phẩm bán kèm (kiểu như phụ kiện)
+/*
 showRelatedProducts: tool({
   description: "Sản phẩm bán kèm (cross-sell)",
   parameters: z.object({
@@ -525,7 +551,7 @@ showRelatedProducts: tool({
     }));
   },
 }),
-
+*/
       },
     });
 
