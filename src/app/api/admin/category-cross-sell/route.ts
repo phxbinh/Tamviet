@@ -6,7 +6,7 @@ import { db } from "@/productchatbot";
 import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
 import { eq } from "drizzle-orm";
-import { dbCrossSell } form "./schema-sql-db"
+import { dbCrossSell } from "./schema-sql-db"
 
 // GET
 export async function GET(req: Request) {
