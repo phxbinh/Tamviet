@@ -91,7 +91,7 @@ export async function getCrossSellProducts(productId: string) {
       eq(products.id, productCategories.productId)
     )
     .where(inArray(productCategories.categoryId, expandedIds))
-    .limit(10);
+    .limit(3); // 🍏Có thể tăng lên
 
   return result;
 }
