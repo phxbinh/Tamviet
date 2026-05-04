@@ -32,6 +32,7 @@ export async function GET(req: Request) {
 }
 
 // POST
+/*
 export async function POST(req: Request) {
   const body = await req.json();
   const { sourceCategoryId, targetCategoryIds } = body;
@@ -61,6 +62,72 @@ export async function POST(req: Request) {
 
   return Response.json({ success: true });
 }
+*/
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const { sourceCategoryId, targetCategoryIds } = body;
+
+  if (!sourceCategoryId) {
+    return Response.json(
+      { error: "Missing sourceCategoryId" },
+      { status: 400 }
+    );
+  }
+
+  // 1. check source tồn tại
+  const source = await db.query.categories.findFirst({
+    where: (c, { eq }) => eq(c.id, sourceCategoryId),
+  });
+
+  if (!source) {
+    return Response.json(
+      { error: "Source category not found" },
+      { status: 404 }
+    );
+  }
+
+  // 2. clean target list
+  const uniqueTargets = [
+    ...new Set(
+      (targetCategoryIds || []).filter(
+        (id: string) => id && id !== sourceCategoryId
+      )
+    ),
+  ];
+
+  // ✅ 3. CHECK TỒN TẠI Ở ĐÂY
+  const targets = await db.query.categories.findMany({
+    where: (c, { inArray }) => inArray(c.id, uniqueTargets),
+  });
+
+  if (targets.length !== uniqueTargets.length) {
+    return Response.json(
+      { error: "Some target categories not found" },
+      { status: 400 }
+    );
+  }
+
+  // 4. transaction
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(categoryCrossSell)
+      .where(eq(categoryCrossSell.sourceCategoryId, sourceCategoryId));
+
+    if (uniqueTargets.length > 0) {
+      await tx.insert(categoryCrossSell).values(
+        uniqueTargets.map((id: string, index: number) => ({
+          sourceCategoryId,
+          targetCategoryId: id,
+          priority: 100 - index,
+        }))
+      );
+    }
+  });
+
+  return Response.json({ success: true });
+}
+
 
 
 
