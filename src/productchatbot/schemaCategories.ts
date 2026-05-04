@@ -1,4 +1,5 @@
 import {
+  pgTable,
   uuid,
   text,
   boolean,
@@ -6,7 +7,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export const categories = {
+export const categories = pgTable("categories", {
   id: uuid("id").defaultRandom().primaryKey(),
 
   parentId: uuid("parent_id").references(() => categories.id, {
@@ -15,7 +16,7 @@ export const categories = {
 
   name: text("name").notNull(),
 
-  slug: text("slug").notNull(), // ⚠️ không set unique (DB đã dùng lower(slug))
+  slug: text("slug").notNull(),
 
   isActive: boolean("is_active").notNull().default(true),
 
@@ -32,4 +33,4 @@ export const categories = {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-};
+});
