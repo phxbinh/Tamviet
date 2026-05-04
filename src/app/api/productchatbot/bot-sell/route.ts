@@ -519,7 +519,7 @@ showRelatedProducts: tool({
     return crossSell.map(p => ({
       title: p.name,
       slug: p.slug,
-      image: "/placeholder.jpg",
+      image: p.thumbnail_url || "/placeholder.jpg",
       price: "Liên hệ",
       url: `/testSearchParam/products/${p.slug}`,
     }));
