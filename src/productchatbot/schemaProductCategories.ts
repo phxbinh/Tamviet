@@ -1,5 +1,5 @@
 import { pgTable, uuid, index, primaryKey } from "drizzle-orm/pg-core";
-import { products } from "./schemaProducts";
+import { products } from "./productsSchema";
 import { categories } from "./schemaCategories";
 
 export const productCategories = pgTable(
