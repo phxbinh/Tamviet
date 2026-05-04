@@ -84,6 +84,7 @@ export async function getCrossSellProducts(productId: string) {
       id: products.id,
       name: products.name,
       slug: products.slug,
+      thumbnail_url: products.thumbnail_url,
     })
     .from(products)
     .innerJoin(
