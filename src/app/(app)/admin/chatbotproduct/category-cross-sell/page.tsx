@@ -100,7 +100,9 @@ useEffect(() => {
 
       {/* Target list */}
       <div className="grid grid-cols-2 gap-2">
-        {categories.map(c => (
+        {categories.
+        .filter(c => c.id !== sourceId) // Ngăn chặn việc chọn chính target
+        .map(c => (
           <label key={c.id} className="flex gap-2">
             <input
               type="checkbox"
