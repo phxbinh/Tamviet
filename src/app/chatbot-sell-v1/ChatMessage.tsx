@@ -11,6 +11,8 @@ export function ChatMessage({ message }: { message: any }) {
     alert("Đã sao chép!");
   };
 
+alert(message.toolInvocations?.tool.result.crossSell)
+
   return (
     <div className={`flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-3 duration-500`}>
       <div className={`max-w-[85%] px-6 py-4 shadow-2xl border backdrop-blur-md ${
