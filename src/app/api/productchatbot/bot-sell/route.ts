@@ -311,6 +311,8 @@ import { asc, cosineDistance, inArray, and, sql } from "drizzle-orm";
 import { not, ne } from "drizzle-orm";
 import { z } from "zod";
 
+import { getCrossSellProducts } from "./getCrossSellProducts";
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -466,6 +468,9 @@ YÊU CẦU:
           },
         }),
 
+/*
+// Gọi các sản phẩm tương tự (
+// Tìm áo thun Tâm Việt thì sẽ gọi thêm các sản phẩm áo thun
         showRelatedProducts: tool({
           description: "Sản phẩm liên quan",
           parameters: z.object({
@@ -483,8 +488,47 @@ YÊU CẦU:
             }));
           },
         }),
+*/
+
+// check cho gọi các sản phẩm bán kèm (kiểu như phụ kiện)
+showRelatedProducts: tool({
+  description: "Sản phẩm bán kèm (cross-sell)",
+  parameters: z.object({
+    slugs: z.array(z.string()),
+  }),
+
+  execute: async ({ slugs }) => {
+    // 1. Lấy productId từ slug
+    const baseProducts = await db
+      .select({
+        id: products.id,
+        slug: products.slug,
+      })
+      .from(products)
+      .where(inArray(products.slug, slugs))
+      .limit(1); // chỉ lấy 1 sản phẩm chính
+
+    if (!baseProducts.length) return [];
+
+    const baseProduct = baseProducts[0];
+
+    // 2. 🔥 GỌI FUNCTION CỦA BẠN
+    const crossSell = await getCrossSellProducts(baseProduct.id);
+
+    // 3. format output
+    return crossSell.map(p => ({
+      title: p.name,
+      slug: p.slug,
+      image: "/placeholder.jpg",
+      price: "Liên hệ",
+      url: `/testSearchParam/products/${p.slug}`,
+    }));
+  },
+}),
+
       },
     });
+
 
     return result.toDataStreamResponse();
 
