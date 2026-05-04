@@ -7,10 +7,6 @@ import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
 import { eq } from "drizzle-orm";
 
-// Dùng cho POST
-import { dbCrossSell } from "./schema-sql-db"
-import { z } from "zod";
-
 // GET
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -36,7 +32,6 @@ export async function GET(req: Request) {
 }
 
 // POST
-/*
 export async function POST(req: Request) {
   const body = await req.json();
   const { sourceCategoryId, targetCategoryIds } = body;
@@ -66,8 +61,14 @@ export async function POST(req: Request) {
 
   return Response.json({ success: true });
 }
-*/
 
+
+
+
+/*
+// Dùng cho POST -> transaction chỉ chạy ở client
+import { dbCrossSell } from "./schema-sql-db"
+import { z } from "zod";
 export async function POST(req: Request) {
   const schema = z.object({
     sourceCategoryId: z.string(),
@@ -137,7 +138,7 @@ export async function POST(req: Request) {
 
   return Response.json({ success: true });
 }
-
+*/
 
 
 
