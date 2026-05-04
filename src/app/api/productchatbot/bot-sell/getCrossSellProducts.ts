@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/productchatbot";
 import { products } from "@/productchatbot/productsSchema";
 import { productCategories } from "@/productchatbot/schemaProductCategories";
 import { categories } from "@/productchatbot/schemaCategories";
