@@ -8,6 +8,7 @@ export default function CrossSellManager() {
   const [sourceId, setSourceId] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
 
+/*
   // load all categories
   useEffect(() => {
     fetch("/api/admin/categories")
@@ -25,6 +26,36 @@ export default function CrossSellManager() {
         setSelected(data.map((d: any) => d.id));
       });
   }, [sourceId]);
+*/
+
+useEffect(() => {
+  fetch("/api/admin/categories")
+    .then(res => {
+      if (!res.ok) throw new Error("Failed categories");
+      return res.json();
+    })
+    .then(data => {
+      const list = Array.isArray(data) ? data : data.data || [];
+      setCategories(list);
+    })
+    .catch(console.error);
+}, []);
+
+useEffect(() => {
+  if (!sourceId) return;
+
+  fetch(`/api/admin/category-cross-sell?sourceId=${sourceId}`)
+    .then(res => res.json())
+    .then(data => {
+      const list = Array.isArray(data) ? data : data.data || [];
+      setSelected(list.map((d: any) => d.id));
+    })
+    .catch(console.error);
+}, [sourceId]);
+
+
+
+
 
   const toggle = (id: string) => {
     setSelected(prev =>
@@ -37,6 +68,9 @@ export default function CrossSellManager() {
   const save = async () => {
     await fetch("/api/admin/category-cross-sell", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         sourceCategoryId: sourceId,
         targetCategoryIds: selected,
