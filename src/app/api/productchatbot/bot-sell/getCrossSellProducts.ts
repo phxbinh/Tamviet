@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { products } from "@/productchatbot/productsSchema";
-import { productCategories } from "@/productchatbot/schemaProductsCategories";
+import { productCategories } from "@/productchatbot/schemaProductCategories";
 import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell"
 import { eq, inArray, like, sql } from "drizzle-orm";
