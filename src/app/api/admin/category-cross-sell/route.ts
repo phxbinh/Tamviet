@@ -6,6 +6,7 @@ import { db } from "@/productchatbot";
 import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
 import { eq } from "drizzle-orm";
+import { dbCrossSell } form "./schema-sql-db"
 
 // GET
 export async function GET(req: Request) {
@@ -76,7 +77,7 @@ export async function POST(req: Request) {
   }
 
   // 1. check source tồn tại
-  const source = await db.query.categories.findFirst({
+  const source = await dbCrossSell.query.categories.findFirst({
     where: (c, { eq }) => eq(c.id, sourceCategoryId),
   });
 
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
   ];
 
   // ✅ 3. CHECK TỒN TẠI Ở ĐÂY
-  const targets = await db.query.categories.findMany({
+  const targets = await dbCrossSell.query.categories.findMany({
     where: (c, { inArray }) => inArray(c.id, uniqueTargets),
   });
 
@@ -109,7 +110,7 @@ export async function POST(req: Request) {
   }
 
   // 4. transaction
-  await db.transaction(async (tx) => {
+  await dbCrossSell.transaction(async (tx) => {
     await tx
       .delete(categoryCrossSell)
       .where(eq(categoryCrossSell.sourceCategoryId, sourceCategoryId));
