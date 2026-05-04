@@ -64,8 +64,10 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Box, label: 'ChatbotPolicies', href: '/admin/chatbotPolicies' },
     { icon: Box, label: 'chatbov1', href: '/admin/chatbotv1-admin' },
     { icon: Box, label: 'productchatbot', href: '/admin/chatbotproduct' },
-  ];
+    { icon: Box, label: 'Tạo cross sell Category', href: '/admin/chatbotproduct/category-cross-sell' },
 
+  ];
+//src/app/(app)/admin/chatbotproduct/category-cross-sell
   return (
 /*      <aside className={`
           fixed inset-y-0 left-0 z-50 w-64 
