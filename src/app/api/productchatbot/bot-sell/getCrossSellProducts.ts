@@ -47,12 +47,23 @@ console.log("2️⃣ cats:", cats);
 console.log("3️⃣ parent:", parent);
 
   // 4. Lấy cross-sell categories
+/*
   const crossSellCats = await db
     .select({
       targetId: categoryCrossSell.targetCategoryId,
     })
     .from(categoryCrossSell)
     .where(eq(categoryCrossSell.sourceCategoryId, parent.id));
+*/
+const crossSellCats = await db
+  .select({
+    targetId: categoryCrossSell.targetCategoryId,
+  })
+  .from(categoryCrossSell)
+  .where(inArray(categoryCrossSell.sourceCategoryId, categoryIds));
+
+
+
 
 console.log("4️⃣ crossSellCats:", crossSellCats);
 
