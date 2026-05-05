@@ -119,3 +119,46 @@ const crossSellCats = await db
 
   return result;
 }
+
+// Viết gọi lại từ 6 queries ở trên còn 3 queries
+export async function getCrossSellProducts_(productId: string) {
+  const productCats = await db
+    .select({ categoryId: productCategories.categoryId })
+    .from(productCategories)
+    .where(eq(productCategories.productId, productId));
+
+  if (!productCats.length) return [];
+
+  const categoryIds = productCats.map(c => c.categoryId);
+
+  const crossSellCats = await db
+    .select({ targetId: categoryCrossSell.targetCategoryId })
+    .from(categoryCrossSell)
+    .where(inArray(categoryCrossSell.sourceCategoryId, categoryIds));
+
+  if (!crossSellCats.length) return [];
+
+  const targetIds = crossSellCats.map(c => c.targetId);
+
+  const result = await db
+    .selectDistinct({
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url,
+    })
+    .from(products)
+    .innerJoin(
+      productCategories,
+      eq(products.id, productCategories.productId)
+    )
+    .where(inArray(productCategories.categoryId, targetIds))
+    .limit(3);
+
+  return result;
+}
+
+
+
+
+
