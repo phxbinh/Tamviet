@@ -16,6 +16,9 @@ export async function getCrossSellProducts(productId: string) {
 
   if (productCats.length === 0) return [];
 
+console.log("1️⃣ productCats:", productCats);
+
+
   const categoryIds = productCats.map(c => c.categoryId);
 
   // 2. Lấy category + path + depth
@@ -28,6 +31,8 @@ export async function getCrossSellProducts(productId: string) {
     .from(categories)
     .where(inArray(categories.id, categoryIds));
 
+console.log("2️⃣ cats:", cats);
+
   if (cats.length === 0) return [];
 
   // 🔥 3. Chọn parent đúng (dùng depth thay vì path.length)
@@ -39,6 +44,8 @@ export async function getCrossSellProducts(productId: string) {
     return (prev.depth ?? 999) < (curr.depth ?? 999) ? prev : curr;
   });
 
+console.log("3️⃣ parent:", parent);
+
   // 4. Lấy cross-sell categories
   const crossSellCats = await db
     .select({
@@ -46,6 +53,8 @@ export async function getCrossSellProducts(productId: string) {
     })
     .from(categoryCrossSell)
     .where(eq(categoryCrossSell.sourceCategoryId, parent.id));
+
+console.log("4️⃣ crossSellCats:", crossSellCats);
 
   if (crossSellCats.length === 0) return [];
 
@@ -60,6 +69,8 @@ export async function getCrossSellProducts(productId: string) {
     .from(categories)
     .where(inArray(categories.id, targetIds));
 
+console.log("5️⃣ targetPaths:", targetPaths);
+
   const validTargetPaths = targetPaths.filter(tp => tp.path);
 
   if (validTargetPaths.length === 0) return [];
@@ -73,6 +84,8 @@ export async function getCrossSellProducts(productId: string) {
     .select({ id: categories.id })
     .from(categories)
     .where(sql.join(likeConditions, sql` OR `));
+
+console.log("6️⃣ expandedTargetCats:", expandedTargetCats);
 
   const expandedIds = expandedTargetCats.map(c => c.id);
 
@@ -93,6 +106,8 @@ export async function getCrossSellProducts(productId: string) {
     )
     .where(inArray(productCategories.categoryId, expandedIds))
     .limit(3); // 🍏Có thể tăng lên
+
+console.log("7️⃣ FINAL RESULT:", result);
 
   return result;
 }
