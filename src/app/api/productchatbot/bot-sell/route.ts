@@ -311,7 +311,7 @@ import { asc, cosineDistance, inArray, and, sql } from "drizzle-orm";
 import { not, ne } from "drizzle-orm";
 import { z } from "zod";
 
-import { getCrossSellProducts } from "./getCrossSellProducts";
+import { getCrossSellProducts, getCrossSellProducts_ } from "./getCrossSellProducts";
 
 export const maxDuration = 30;
 
@@ -464,7 +464,7 @@ YÊU CẦU:
     const baseProduct = baseProducts[0];
 
     // 2. 🔥 GỌI FUNCTION CỦA BẠN
-    const crossSell = await getCrossSellProducts(baseProduct.id);
+    const crossSell = await getCrossSellProducts_(baseProduct.id);
 
 
 
