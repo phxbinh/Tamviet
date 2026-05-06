@@ -3,7 +3,7 @@ import { products } from "@/productchatbot/productsSchema";
 import { productCategories } from "@/productchatbot/schemaProductCategories";
 import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
-import { eq, inArray, like, sql } from "drizzle-orm";
+import { eq, inArray, like, sql, and } from "drizzle-orm";
 
 export async function getCrossSellProducts(productId: string) {
   // 1. Lấy category của product
@@ -159,7 +159,7 @@ export async function getCrossSellProducts_(productId: string) {
 }
 
 
-export async function getCrossSellProductsOptimized(productId: string) {
+export async function getCrossSellProductsOptimized_error(productId: string) {
   // 1. Lấy category của product
   const productCats = await db
     .select({ categoryId: productCategories.categoryId })
@@ -205,4 +205,65 @@ export async function getCrossSellProductsOptimized(productId: string) {
   return result;
 }
 
+
+
+//import { and, eq, inArray, like, sql } from "drizzle-orm";
+
+export async function getCrossSellProductsOptimized(productId: string) {
+  const productCats = await db
+    .select({ categoryId: productCategories.categoryId })
+    .from(productCategories)
+    .where(eq(productCategories.productId, productId));
+
+  if (!productCats.length) return [];
+
+  const categoryIds = productCats.map(c => c.categoryId);
+
+  // 2. Lấy target categories + path
+  const targets = await db
+    .select({
+      targetId: categoryCrossSell.targetCategoryId,
+      path: categories.categoryPath,
+    })
+    .from(categoryCrossSell)
+    .innerJoin(
+      categories, 
+      eq(categories.id, categoryCrossSell.targetCategoryId)
+    )
+    .where(
+      and(
+        inArray(categoryCrossSell.sourceCategoryId, categoryIds),
+        sql`${categories.categoryPath} IS NOT NULL`
+      )
+    );
+
+  if (!targets.length) return [];
+
+  // 3. Xây dựng điều kiện LIKE cho subtree
+  const likeConditions = targets.map(t => 
+    like(categories.categoryPath, `${t.path}%`)
+  );
+
+  // 4. Lấy sản phẩm
+  const result = await db
+    .selectDistinct({
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url,
+    })
+    .from(products)
+    .innerJoin(
+      productCategories, 
+      eq(products.id, productCategories.productId)
+    )
+    .innerJoin(
+      categories, 
+      eq(categories.id, productCategories.categoryId)
+    )
+    .where(sql.join(likeConditions, sql` OR `))
+    .limit(6);
+
+  return result;
+}
 
