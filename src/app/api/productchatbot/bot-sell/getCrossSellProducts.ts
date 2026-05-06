@@ -3,7 +3,7 @@ import { products } from "@/productchatbot/productsSchema";
 import { productCategories } from "@/productchatbot/schemaProductCategories";
 import { categories } from "@/productchatbot/schemaCategories";
 import { categoryCrossSell } from "@/productchatbot/schemaCategoryCrossSell";
-import { eq, inArray, like, sql, and } from "drizzle-orm";
+import { eq, neq, inArray, like, sql, and } from "drizzle-orm";
 
 export async function getCrossSellProducts(productId: string) {
   // 1. Lấy category của product
@@ -233,8 +233,8 @@ export async function getCrossSellProductsOptimized(productId: string) {
     .where(
       and(
         sql.join(likeConditions, sql` OR `),
-        eq(products.id, productId) === false   // ❌ Loại trừ sản phẩm hiện tại
-        // hoặc dùng: neq(products.id, productId)
+        //eq(products.id, productId) === false   // ❌ Loại trừ sản phẩm hiện tại
+        neq(products.id, productId)
       )
     )
     .limit(6);
