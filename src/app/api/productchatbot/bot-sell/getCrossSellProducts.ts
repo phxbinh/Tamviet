@@ -139,7 +139,7 @@ export async function getCrossSellProducts_(productId: string) {
   if (!crossSellCats.length) return [];
 
   const targetIds = crossSellCats.map(c => c.targetId);
-
+/*
   const result = await db
     .selectDistinct({
       id: products.id,
@@ -154,6 +154,27 @@ export async function getCrossSellProducts_(productId: string) {
     )
     .where(inArray(productCategories.categoryId, targetIds))
     .limit(6);
+*/
+
+const result = await db
+  .selectDistinct({
+    id: products.id,
+    name: products.name,
+    slug: products.slug,
+    thumbnail_url: products.thumbnail_url,
+  })
+  .from(products)
+  .innerJoin(
+    productCategories,
+    eq(products.id, productCategories.productId)
+  )
+  .where(
+    and(
+      inArray(productCategories.categoryId, targetIds),
+      ne(products.id, productId) // 🔥 fix chính
+    )
+  )
+  .limit(6);
 
   return result;
 }
