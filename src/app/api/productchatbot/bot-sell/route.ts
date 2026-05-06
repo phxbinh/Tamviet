@@ -120,7 +120,7 @@ Danh mục: ${meta?.categories?.join(", ") ?? "?"}`;
     // ================= 4. RESPONSE + TOOL =================
     const result = await streamText({
       model: google("gemini-2.5-flash"),
-      maxSteps: 3,
+      maxSteps: 1, // khi lên agent mới tăng
       system: `Bạn là trợ lý bán hàng.
 
 Danh sách sản phẩm:
