@@ -153,7 +153,7 @@ export async function getCrossSellProducts_(productId: string) {
       eq(products.id, productCategories.productId)
     )
     .where(inArray(productCategories.categoryId, targetIds))
-    .limit(3);
+    .limit(6);
 
   return result;
 }
