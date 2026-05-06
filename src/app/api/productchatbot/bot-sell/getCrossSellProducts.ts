@@ -159,6 +159,50 @@ export async function getCrossSellProducts_(productId: string) {
 }
 
 
+export async function getCrossSellProductsOptimized(productId: string) {
+  // 1. Lấy category của product
+  const productCats = await db
+    .select({ categoryId: productCategories.categoryId })
+    .from(productCategories)
+    .where(eq(productCategories.productId, productId));
 
+  if (!productCats.length) return [];
+
+  const categoryIds = productCats.map(c => c.categoryId);
+
+  // 2. Lấy cross-sell targets + path một lần
+  const targets = await db
+    .select({
+      targetId: categoryCrossSell.targetCategoryId,
+      path: categories.categoryPath,
+    })
+    .from(categoryCrossSell)
+    .innerJoin(categories, eq(categories.id, categoryCrossSell.targetCategoryId))
+    .where(inArray(categoryCrossSell.sourceCategoryId, categoryIds))
+    .where(sql`${categories.categoryPath} IS NOT NULL`);
+
+  if (!targets.length) return [];
+
+  // 3. Xây dựng điều kiện LIKE cho subtree
+  const likeConditions = targets.map(t => 
+    like(categories.categoryPath, `${t.path}%`)
+  );
+
+  // 4. Lấy sản phẩm + DISTINCT
+  const result = await db
+    .selectDistinct({
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url,
+    })
+    .from(products)
+    .innerJoin(productCategories, eq(products.id, productCategories.productId))
+    .innerJoin(categories, eq(categories.id, productCategories.categoryId))
+    .where(sql.join(likeConditions, sql` OR `))
+    .limit(6); // Có thể điều chỉnh
+
+  return result;
+}
 
 
