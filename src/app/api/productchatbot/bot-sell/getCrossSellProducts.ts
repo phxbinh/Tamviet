@@ -199,6 +199,7 @@ export async function getCrossSellProductsOptimized(productId: string) {
   );
 
   // 4. Lấy sản phẩm
+/* Kết quả trả về có sản phẩm bị trùng với sản phẩm user tìm
   const result = await db
     .selectDistinct({
       id: products.id,
@@ -216,6 +217,26 @@ export async function getCrossSellProductsOptimized(productId: string) {
       eq(categories.id, productCategories.categoryId)
     )
     .where(sql.join(likeConditions, sql` OR `))
+    .limit(6);
+*/
+
+  const result = await db
+    .selectDistinct({
+      id: products.id,
+      name: products.name,
+      slug: products.slug,
+      thumbnail_url: products.thumbnail_url,
+    })
+    .from(products)
+    .innerJoin(productCategories, eq(products.id, productCategories.productId))
+    .innerJoin(categories, eq(categories.id, productCategories.categoryId))
+    .where(
+      and(
+        sql.join(likeConditions, sql` OR `),
+        eq(products.id, productId) === false   // ❌ Loại trừ sản phẩm hiện tại
+        // hoặc dùng: neq(products.id, productId)
+      )
+    )
     .limit(6);
 
   return result;
