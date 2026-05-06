@@ -164,8 +164,8 @@ YÊU CẦU:
     const baseProduct = baseProducts[0];
 
     // 2. 🔥 GỌI FUNCTION CỦA BẠN
-    //const crossSell = await getCrossSellProducts_(baseProduct.id);
-const crossSell = await getCrossSellProductsOptimized(baseProduct.id);
+    const crossSell = await getCrossSellProducts_(baseProduct.id);
+//const crossSell = await getCrossSellProductsOptimized(baseProduct.id);
 
 
 
