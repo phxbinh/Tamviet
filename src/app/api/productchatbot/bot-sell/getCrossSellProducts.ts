@@ -230,11 +230,19 @@ export async function getCrossSellProductsOptimized(productId: string) {
     .from(products)
     .innerJoin(productCategories, eq(products.id, productCategories.productId))
     .innerJoin(categories, eq(categories.id, productCategories.categoryId))
+/*
     .where(
       and(
         sql.join(likeConditions, sql` OR `),
         //eq(products.id, productId) === false   // ❌ Loại trừ sản phẩm hiện tại
         ne(products.id, productId)
+      )
+    )*/
+    .where(
+      and(
+        sql.join(likeConditions, sql` OR `),
+        ne(products.id, productId),
+        sql`${products.id} != ${productId}`   // Ép điều kiện raw
       )
     )
     .limit(6);
