@@ -7,7 +7,7 @@ import { streamText, embed, generateText, tool } from "ai";
 import { google } from "@ai-sdk/google";
 
 import { asc, cosineDistance, inArray, and, sql } from "drizzle-orm";
-import { not, ne } from "drizzle-orm";
+import { not, ne, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { getCrossSellProducts,
