@@ -76,7 +76,7 @@ export function ChatMessage({ message }: { message: any }) {
 */}
 
 {/* Fix dựa trên Gốc 1 và 2 ở trên */}
-{message.toolInvocations?.map((tool) => {
+{message.toolInvocations?.map((tool: any) => {
 
   if (
     tool.toolName === "showProductCards" &&
