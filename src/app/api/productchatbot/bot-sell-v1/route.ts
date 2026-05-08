@@ -12,7 +12,7 @@ import { z } from "zod";
 
 import { getCrossSellProducts,
          getCrossSellProducts_,
-         getCrossSellProductsOptimized } from "./bot-sell/getCrossSellProducts";
+         getCrossSellProductsOptimized } from "../bot-sell/getCrossSellProducts";
 
 export const maxDuration = 30;
 
