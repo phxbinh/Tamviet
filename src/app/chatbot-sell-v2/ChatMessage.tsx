@@ -42,7 +42,7 @@ export function ChatMessage({ message }: { message: any }) {
       </div>
 
       {/* Render Tools (Product Cards) */}
-{/* Gốc 1
+{/* Gốc 1 */}
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
           {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
@@ -56,13 +56,12 @@ export function ChatMessage({ message }: { message: any }) {
           )}
         </div>
       ))}
-*/}
 
       {/* Render Tools (Related Product) */}
-{/* Gốc 2
+{/* Gốc 2 */}
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
+          {tool.toolName === 'showCrossSellProducts' && tool.state === 'result' ? (
             <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
               {tool.result.crossSell.map((p: any) => <ProductCard key={p.slug} product={p} />)}
             </div>
@@ -73,9 +72,10 @@ export function ChatMessage({ message }: { message: any }) {
           )}
         </div>
       ))}
-*/}
+
 
 {/* Fix dựa trên Gốc 1 và 2 ở trên */}
+{/*
 {message.toolInvocations?.map((tool: any) => {
 
   if (
@@ -113,7 +113,7 @@ export function ChatMessage({ message }: { message: any }) {
 
   return null;
 })}
-
+*/}
 
 
 
