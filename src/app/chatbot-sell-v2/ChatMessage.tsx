@@ -43,6 +43,7 @@ export function ChatMessage({ message }: { message: any }) {
 
       {/* Render Tools (Product Cards) */}
 {/* Gốc 1 */}
+{/*
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
           {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
@@ -56,9 +57,10 @@ export function ChatMessage({ message }: { message: any }) {
           )}
         </div>
       ))}
-
+*/}
       {/* Render Tools (Related Product) */}
 {/* Gốc 2 */}
+{/*
       {message.toolInvocations?.map((tool: any) => (
         <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
           {tool.toolName === 'showCrossSellProducts' && tool.state === 'result' ? (
@@ -72,6 +74,53 @@ export function ChatMessage({ message }: { message: any }) {
           )}
         </div>
       ))}
+*/}
+
+{/* Render Tools: Gộp hai cái lại tránh render duplication UI */}
+{message.toolInvocations?.map((tool: any) => (
+  <div
+    key={tool.toolCallId}
+    className="w-full mt-4 flex flex-col justify-start pl-2"
+  >
+
+    {/* DEBUG HEADER */}
+    <div className="text-[10px] font-bold text-red-500 uppercase mb-2">
+      TOOL: {tool.toolName}
+    </div>
+
+    {/* showProductCards */}
+    {tool.toolName === "showProductCards" &&
+      tool.state === "result" && (
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
+          {tool.result.products.map((p: any) => (
+            <ProductCard key={p.slug} product={p} />
+          ))}
+        </div>
+      )}
+
+    {/* showCrossSellProducts */}
+    {tool.toolName === "showCrossSellProducts" &&
+      tool.state === "result" && (
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
+          {tool.result.crossSell.map((p: any) => (
+            <ProductCard key={p.slug} product={p} />
+          ))}
+        </div>
+      )}
+
+    {/* Loading */}
+    {tool.state !== "result" && (
+      <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
+        <div className="w-2 h-2 bg-blue-500 rounded-full" />
+        Đang tải sản phẩm...
+      </div>
+    )}
+  </div>
+))}
+
+
+
+
 
 
 {/* Fix dựa trên Gốc 1 và 2 ở trên */}
