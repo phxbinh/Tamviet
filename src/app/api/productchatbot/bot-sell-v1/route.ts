@@ -1,503 +1,312 @@
-// app/api/productchatbot/bot-sell/route.ts
-
 import { db } from "@/productchatbot";
+import { productDocuments } from "@/productchatbot/schema";
+import { products } from "@/productchatbot/productsSchema";
 
-import {
-  productDocuments,
-} from "@/productchatbot/schema";
-
-import {
-  products,
-} from "@/productchatbot/productsSchema";
-
-import {
-  streamText,
-  embed,
-  generateText,
-  tool,
-} from "ai";
-
+import { streamText, embed, generateText, tool } from "ai";
 import { google } from "@ai-sdk/google";
 
-import {
-  asc,
-  cosineDistance,
-  inArray,
-  and,
-  sql,
-  eq,
-  ne,
-  not,
-} from "drizzle-orm";
-
+import { asc, cosineDistance, inArray, and, sql } from "drizzle-orm";
+import { not, ne, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import {
-  getCrossSellProducts_,
-} from "../bot-sell/getCrossSellProducts";
+import { getCrossSellProducts,
+         getCrossSellProducts_,
+         getCrossSellProductsOptimized } from "../bot-sell/getCrossSellProducts";
 
 export const maxDuration = 30;
-
-// ======================================================
-// MAIN
-// ======================================================
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
 
     const lastMessage =
-      messages[messages.length - 1]
-        ?.content as string;
+      messages[messages.length - 1]?.content as string;
 
-    // ======================================================
-    // VALIDATE
-    // ======================================================
-
-    if (
-      !lastMessage ||
-      lastMessage.trim().length < 3
-    ) {
-      return new Response(
-        "Câu hỏi quá ngắn.",
-        {
-          status: 400,
-        }
-      );
+    if (!lastMessage || lastMessage.trim().length < 3) {
+      return new Response("Câu hỏi quá ngắn.", {
+        status: 400,
+      });
     }
 
-    // ======================================================
-    // SHORT HISTORY
-    // ======================================================
+    // Giữ history ngắn để tiết kiệm token
+    const recentMessages = messages.slice(-4);
 
-    const recentMessages =
-      messages.slice(-4);
+    // =========================
+    // 1. ROUTER
+    // =========================
 
-    // ======================================================
-    // INTENT CLASSIFIER
-    // ======================================================
+    const { text: intent } = await generateText({
+      model: google("gemini-2.5-flash"),
 
-    const { text: rawIntent } =
-      await generateText({
-        model: google(
-          "gemini-2.5-flash"
-        ),
+      system: `
+Classify user intent.
 
-        system: `
-Classify ecommerce intent.
-
-Chỉ trả đúng 1 giá trị:
-
-- CATEGORY_SEARCH
-- PRODUCT_DETAIL
-- CONSULTATION
+Chỉ trả đúng 1 từ:
+- PRODUCT
 - GREETING
 - OTHER
 `,
-        prompt: lastMessage,
-      });
 
-    const intent =
-      rawIntent.trim();
+      prompt: lastMessage,
+    });
 
-    // ======================================================
-    // GREETING / OTHER CHAT
-    // ======================================================
+    // =========================
+    // 2. NON PRODUCT CHAT
+    // =========================
 
-    if (
-      intent === "GREETING" ||
-      intent === "OTHER"
-    ) {
-      const casual =
-        await streamText({
-          model: google(
-            "gemini-2.5-flash"
-          ),
+    if (intent !== "PRODUCT") {
+      const result = await streamText({
+        model: google("gemini-2.5-flash"),
 
-          system: `
+        system: `
 Bạn là chatbot bán hàng thân thiện.
 
-QUY TẮC:
 - Trả lời ngắn gọn
 - Tự nhiên
 - Không bịa dữ liệu
 `,
 
-          messages: recentMessages,
-        });
-
-      return casual.toDataStreamResponse();
-    }
-
-    // ======================================================
-    // SEARCH PHASE
-    // ======================================================
-
-    const aiSearch =
-      await generateText({
-        model: google(
-          "gemini-2.5-flash"
-        ),
-
-        system: `
-Bạn là AI tìm sản phẩm.
-
-QUY TẮC:
-- Khi user muốn tìm sản phẩm → gọi searchProducts
-- Không bịa dữ liệu
-- Không tự tạo sản phẩm
-- Không tự tạo slug
-`,
-
         messages: recentMessages,
-
-        tools: {
-          searchProducts: tool({
-            description:
-              "Tìm sản phẩm phù hợp với nhu cầu user",
-
-            parameters:
-              z.object({
-                query:
-                  z.string(),
-
-                category:
-                  z.string().optional(),
-
-                minPrice:
-                  z.number().optional(),
-
-                maxPrice:
-                  z.number().optional(),
-              }),
-
-            execute: async ({
-              query,
-              category,
-              minPrice,
-              maxPrice,
-            }) => {
-
-              const results =
-                await searchProductSlugs({
-                  semanticQuery:
-                    query,
-
-                  category,
-
-                  minPrice,
-
-                  maxPrice,
-                });
-
-              return {
-                products:
-                  results.map((p) => ({
-                    slug:
-                      p.slug,
-
-                    title:
-                      p.title,
-                  })),
-              };
-            },
-          }),
-        },
-
-        toolChoice: "required",
-
-        maxSteps: 1,
       });
 
-    // ======================================================
-    // EXTRACT SEARCH RESULT
-    // ======================================================
-
-    const toolResults =
-      aiSearch.toolResults || [];
-
-    const searchTool =
-      toolResults.find(
-        (t: any) =>
-          t.toolName ===
-          "searchProducts"
-      );
-
-    const foundProducts =
-      searchTool?.result
-        ?.products || [];
-
-    // ======================================================
-    // NO PRODUCT FOUND
-    // ======================================================
-
-    if (!foundProducts.length) {
-      const notFound =
-        await streamText({
-          model: google(
-            "gemini-2.5-flash"
-          ),
-
-          system: `
-Không tìm thấy sản phẩm phù hợp.
-
-Hãy:
-- xin lỗi user
-- gợi ý user mô tả rõ hơn
-- trả lời ngắn gọn
-`,
-
-          messages: recentMessages,
-        });
-
-      return notFound.toDataStreamResponse();
+      return result.toDataStreamResponse();
     }
 
-    // ======================================================
-    // FETCH MAIN PRODUCTS
-    // ======================================================
+    // =========================
+    // 3. AGENT MODE
+    // =========================
 
-    const slugs =
-      foundProducts.map(
-        (p: any) => p.slug
-      );
+    const result = await streamText({
+      model: google("gemini-2.5-flash"),
 
-    const mainProducts =
-      await db
-        .select({
-          id: products.id,
+      maxSteps: 3,
 
-          title: products.name,
-
-          slug: products.slug,
-
-          image:
-            products.thumbnail_url,
-
-          description:
-            products.short_description,
-        })
-        .from(products)
-        .where(
-          inArray(
-            products.slug,
-            slugs
-          )
-        );
-
-    // ======================================================
-    // ORCHESTRATION
-    // ======================================================
-
-    let relatedProducts:
-      any[] = [];
-
-    let crossSellProducts:
-      any[] = [];
-
-    // ======================================================
-    // CATEGORY SEARCH
-    // ======================================================
-
-    if (
-      intent ===
-      "CATEGORY_SEARCH"
-    ) {
-
-      relatedProducts =
-        await getRelatedProducts(
-          slugs
-        );
-    }
-
-    // ======================================================
-    // PRODUCT DETAIL
-    // ======================================================
-
-    if (
-      intent ===
-      "PRODUCT_DETAIL"
-    ) {
-
-      const firstProduct =
-        mainProducts[0];
-
-      const [
-        related,
-        crossSell,
-      ] = await Promise.all([
-        getRelatedProducts(
-          slugs
-        ),
-
-        firstProduct?.id
-          ? getCrossSellProducts_(
-              firstProduct.id
-            )
-          : Promise.resolve([]),
-      ]);
-
-      relatedProducts =
-        related;
-
-      crossSellProducts =
-        crossSell;
-    }
-
-    // ======================================================
-    // LIGHTWEIGHT CONTEXT
-    // ======================================================
-
-    const lightweightContext = {
-      intent,
-
-      mainProducts:
-        mainProducts.map((p) => ({
-          title: p.title,
-
-          slug: p.slug,
-        })),
-
-      relatedProducts:
-        relatedProducts.map(
-          (p) => ({
-            title: p.name,
-
-            slug: p.slug,
-          })
-        ),
-
-      crossSellProducts:
-        crossSellProducts.map(
-          (p) => ({
-            title: p.name,
-
-            slug: p.slug,
-          })
-        ),
-    };
-
-    // ======================================================
-    // FINAL RESPONSE
-    // ======================================================
-
-    const finalResponse =
-      await streamText({
-        model: google(
-          "gemini-2.5-flash"
-        ),
-
-        system: `
-Bạn là Tâm Việt AI.
-
-Mục tiêu:
-- Tư vấn sản phẩm ngắn gọn
-- Thân thiện
-- Tự nhiên
+/*
+      system: `
+Bạn là trợ lý bán hàng AI.
 
 QUY TẮC:
+
+- Khi user muốn tìm sản phẩm → dùng searchProducts
+- Sau khi tìm thấy sản phẩm phù hợp → dùng showProductCards
+- Nếu user muốn thêm lựa chọn tương tự → dùng showRelatedProducts
+- Nếu phù hợp với ngữ cảnh mua hàng → có thể dùng showCrossSellProducts
+- Không spam cross sell
 - Không bịa dữ liệu
-- Chỉ dùng sản phẩm trong context
-- Không nhắc đến tool
-- Không tự tạo sản phẩm
+- Không tự tạo slug hoặc sản phẩm không tồn tại
+`,
+*/
+
+
+system: ` Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp, vui vẻ, nhiệt tình của cửa hàng.
+
+Phong cách: Thân thiện, gần gũi, dùng emoji vừa phải, tập trung lợi ích cho khách hàng. Trả lời ngắn gọn, rõ ràng.
+
+Mục tiêu: Giúp khách tìm sản phẩm phù hợp, tư vấn tốt và thúc đẩy mua hàng.
+
+### Quy tắc bắt buộc:
+- Luôn dùng tool 'searchProducts' trước khi gợi ý sản phẩm.
+- Sau khi search, phải dùng 'showProductCards' để hiển thị.
+- Không bao giờ bịa thông tin giá, tồn kho, khuyến mãi.
+- Ưu tiên sản phẩm có khuyến mãi và best-seller.
+- Khi khách quan tâm 1 sản phẩm → luôn gợi ý cross-sell.
+
+### Hướng dẫn Tools:
+- searchProducts → Khi khách tìm kiếm hoặc hỏi về sản phẩm
+- showProductCards → Hiển thị sản phẩm cho khách xem
+- showRelatedProducts → Hiển thị sản phẩm liên quan khi khách hỏi sản phẩm chung chung
+- addToCart → Chỉ dùng khi khách rõ ràng muốn mua
+- showCrossSellProducts → Gợi ý sản phẩm mua kèm khi khách hỏi một sản phẩm cụ thể
+
+Hãy suy nghĩ từng bước: Hiểu ý khách → Dùng tool nếu cần → Trả lời tự nhiên và thuyết phục.
 `,
 
-        messages: [
-          ...recentMessages,
 
-          {
-            role: "system",
 
-            content: `
-AVAILABLE DATA:
+      messages: recentMessages,
 
-${JSON.stringify(
-  lightweightContext
-)}
-`,
+      tools: {
+        // =========================
+        // SEARCH PRODUCTS
+        // =========================
+
+        searchProducts: tool({
+          description:
+            "Tìm sản phẩm phù hợp với nhu cầu user",
+
+          parameters: z.object({
+            query: z.string(),
+
+            category: z.string().optional(),
+
+            minPrice: z.number().optional(),
+
+            maxPrice: z.number().optional(),
+          }),
+
+          execute: async ({
+            query,
+            category,
+            minPrice,
+            maxPrice,
+          }) => {
+
+            const results =
+              await searchProductSlugs({
+                semanticQuery: query,
+                category,
+                minPrice,
+                maxPrice,
+              });
+
+            return {
+              products: results.map((p) => ({
+                slug: p.slug,
+                title: p.title,
+              })),
+            };
           },
-        ],
-      });
+        }),
 
-    // ======================================================
-    // API RESPONSE
-    // ======================================================
+        // =========================
+        // SHOW PRODUCT CARDS
+        // =========================
 
-    return Response.json({
-      text:
-        await finalResponse.text,
+        showProductCards: tool({
+          description:
+            "Hiển thị sản phẩm cho user",
 
-      intent,
+          parameters: z.object({
+            slugs: z.array(z.string()),
+          }),
 
-      products:
-        mainProducts.map((p) => ({
-          ...p,
+          execute: async ({ slugs }) => {
 
-          image:
-            p.image ||
-            "/placeholder.jpg",
+            const data = await db
+              .select({
+                id: products.id,
+                title: products.name,
+                slug: products.slug,
+                image: products.thumbnail_url,
+                description:
+                  products.short_description,
+              })
+              .from(products)
+              .where(
+                inArray(products.slug, slugs)
+              );
 
-          price: "Liên hệ",
+            return {
+              products: data.map((p) => ({
+                ...p,
+                image:
+                  p.image || "/placeholder.jpg",
 
-          url:
-            `/testSearchParam/products/${p.slug}`,
-        })),
+                price: "Liên hệ",
 
-      relatedProducts:
-        relatedProducts.map(
-          (p) => ({
-            title: p.name,
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+            };
+          },
+        }),
 
-            slug: p.slug,
+        // =========================
+        // RELATED PRODUCTS
+        // =========================
 
-            image:
-              p.thumbnail_url ||
-              "/placeholder.jpg",
+        showRelatedProducts: tool({
+          description:
+            "Hiển thị sản phẩm tương tự hoặc cùng loại",
 
-            price: "Liên hệ",
+          parameters: z.object({
+            slugs: z.array(z.string()),
+          }),
 
-            url:
-              `/testSearchParam/products/${p.slug}`,
-          })
-        ),
+          execute: async ({ slugs }) => {
 
-      crossSellProducts:
-        crossSellProducts.map(
-          (p) => ({
-            title: p.name,
+            const related =
+              await getRelatedProducts(slugs);
 
-            slug: p.slug,
+            return {
+              related: related.map((p) => ({
+                title: p.name,
+                slug: p.slug,
 
-            image:
-              p.thumbnail_url ||
-              "/placeholder.jpg",
+                image:
+                  p.thumbnail_url ||
+                  "/placeholder.jpg",
 
-            price: "Liên hệ",
+                price: "Liên hệ",
 
-            url:
-              `/testSearchParam/products/${p.slug}`,
-          })
-        ),
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+            };
+          },
+        }),
+
+        // =========================
+        // CROSS SELL
+        // =========================
+
+        showCrossSellProducts: tool({
+          description:
+            "Hiển thị sản phẩm mua kèm phù hợp như phụ kiện hoặc đồ bổ trợ",
+
+          parameters: z.object({
+            slug: z.string(),
+          }),
+
+          execute: async ({ slug }) => {
+
+            const baseProducts = await db
+              .select({
+                id: products.id,
+              })
+              .from(products)
+              .where(eq(products.slug, slug))
+              .limit(1);
+
+            if (!baseProducts.length) {
+              return {
+                crossSell: [],
+              };
+            }
+
+            const crossSell =
+              await getCrossSellProducts_(
+                baseProducts[0].id
+              );
+
+            return {
+              crossSell: crossSell.map((p) => ({
+                title: p.name,
+                slug: p.slug,
+
+                image:
+                  p.thumbnail_url ||
+                  "/placeholder.jpg",
+
+                price: "Liên hệ",
+
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+            };
+          },
+        }),
+      },
     });
 
-  } catch (error) {
-    console.error(
-      "❌ BOT ERROR:",
-      error
-    );
+    return result.toDataStreamResponse();
 
-    return new Response(
-      "Internal Server Error",
-      {
-        status: 500,
-      }
-    );
+  } catch (error) {
+    console.error("❌ ERROR:", error);
+
+    return new Response("Error occurred", {
+      status: 500,
+    });
   }
 }
 
-// ======================================================
-// SEARCH PRODUCTS
-// ======================================================
 
 async function searchProductSlugs({
   semanticQuery,
@@ -506,143 +315,80 @@ async function searchProductSlugs({
   minPrice,
 }: {
   semanticQuery?: string;
-
   category?: string;
-
   maxPrice?: number;
-
   minPrice?: number;
 }) {
+  const { embedding } = await embed({
+    model: google.embedding("gemini-embedding-001"),
+    value: semanticQuery || "",
+  });
 
-  const { embedding } =
-    await embed({
-      model:
-        google.embedding(
-          "gemini-embedding-001"
-        ),
-
-      value:
-        semanticQuery || "",
-    });
-
-  const distance =
-    cosineDistance(
-      productDocuments.embedding,
-      embedding
-    );
+  const distance = cosineDistance(productDocuments.embedding, embedding);
 
   const conditions = [];
 
   if (maxPrice) {
-    conditions.push(
-      sql`(metadata->>'maxPrice')::int <= ${maxPrice}`
-    );
+    conditions.push(sql`(metadata->>'maxPrice')::int <= ${maxPrice}`);
   }
 
   if (minPrice) {
-    conditions.push(
-      sql`(metadata->>'minPrice')::int >= ${minPrice}`
-    );
+    conditions.push(sql`(metadata->>'minPrice')::int >= ${minPrice}`);
   }
 
   if (category) {
-    conditions.push(
-      sql`metadata->'categories' ? ${category}`
-    );
+    conditions.push(sql`metadata->'categories' ? ${category}`);
   }
+
 
   const rows = await db
     .select({
-      title:
-        productDocuments.title,
-
-      slug:
-        productDocuments.slug,
-
-      metadata:
-        productDocuments.metadata,
+      title: productDocuments.title,
+      slug: productDocuments.slug,
+      metadata: productDocuments.metadata,
     })
     .from(productDocuments)
-    .where(
-      conditions.length
-        ? and(...conditions)
-        : undefined
-    )
+    .where(conditions.length ? and(...conditions) : undefined)
     .orderBy(asc(distance))
     .limit(8);
-
   return rows;
 }
 
-// ======================================================
-// RELATED PRODUCTS
-// ======================================================
 
-async function getRelatedProducts(
-  slugs: string[]
-) {
+
+// Dùng chung ⛳️🟢
+//import { and, inArray, not, ne } from "drizzle-orm";
+async function getRelatedProducts(slugs: string[]) {
 
   const base = await db
     .select({
-      product_type:
-        products.product_type,
+      product_type: products.product_type
     })
     .from(products)
-    .where(
-      inArray(
-        products.slug,
-        slugs
-      )
-    );
+    .where(inArray(products.slug, slugs));
 
   const productTypes = [
     ...new Set(
       base
-        .map(
-          (p) =>
-            p.product_type
-        )
-        .filter(
-          (
-            v
-          ): v is string =>
-            v !== null &&
-            v !== "default"
-        )
-    ),
+        .map(p => p.product_type)
+        .filter((v): v is string => v !== null && v !== "default")
+    )
   ];
 
-  if (!productTypes.length)
-    return [];
+  if (!productTypes.length) return [];
 
   const related = await db
     .select({
       name: products.name,
-
       slug: products.slug,
-
-      thumbnail_url:
-        products.thumbnail_url,
+      thumbnail_url: products.thumbnail_url
     })
     .from(products)
     .where(
       and(
-        inArray(
-          products.product_type,
-          productTypes
-        ),
-
-        not(
-          inArray(
-            products.slug,
-            slugs
-          )
-        ),
-
-        ne(
-          products.product_type,
-          "default"
-        )
+        inArray(products.product_type, productTypes),
+        not(inArray(products.slug, slugs)),
+        ne(products.product_type, "default")
       )
     )
     .limit(6);
