@@ -207,7 +207,7 @@ YÊU CẦU:
 
 
 // ================= SEARCH FUNCTION =================
-/* Chạy được
+/* Chạy được */
 async function searchProductSlugs({
   semanticQuery,
   category,
@@ -253,8 +253,9 @@ async function searchProductSlugs({
     .limit(8);
   return rows;
 }
-*/
 
+/* Lỗi khi lọc theo giá 
+// Kiểm tra cách cài đặt điều kiện tìm kiếm where
 async function searchProductSlugs({
   semanticQuery,
   category,
@@ -352,7 +353,7 @@ async function searchProductSlugs({
 
   return rows;
 }
-
+*/
 
 
 
