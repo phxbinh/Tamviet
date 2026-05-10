@@ -207,7 +207,7 @@ YÊU CẦU:
 
 
 // ================= SEARCH FUNCTION =================
-
+/* Chạy được
 async function searchProductSlugs({
   semanticQuery,
   category,
@@ -253,9 +253,105 @@ async function searchProductSlugs({
     .limit(8);
   return rows;
 }
+*/
 
+async function searchProductSlugs({
+  semanticQuery,
+  category,
+  maxPrice,
+  minPrice,
+}: {
+  semanticQuery?: string;
+  category?: string;
+  maxPrice?: number;
+  minPrice?: number;
+}) {
+  // ===============================
+  // 1. CLEAN QUERY
+  // ===============================
+  const query = semanticQuery?.trim();
 
+  // ===============================
+  // 2. BUILD FILTER CONDITIONS
+  // ===============================
+  const conditions = [];
 
+  if (maxPrice !== undefined && maxPrice !== null) {
+    conditions.push(
+      sql`(metadata->>'maxPrice')::int <= ${maxPrice}`
+    );
+  }
+
+  if (minPrice !== undefined && minPrice !== null) {
+    conditions.push(
+      sql`(metadata->>'minPrice')::int >= ${minPrice}`
+    );
+  }
+
+  if (category) {
+    conditions.push(
+      sql`metadata->'categories' ? ${category}`
+    );
+  }
+
+  // ===============================
+  // 3. NO SEMANTIC QUERY
+  // → ONLY FILTER SEARCH
+  // ===============================
+  if (!query) {
+    const rows = await db
+      .select({
+        title: productDocuments.title,
+        slug: productDocuments.slug,
+        metadata: productDocuments.metadata,
+      })
+      .from(productDocuments)
+      .where(
+        conditions.length
+          ? and(...conditions)
+          : undefined
+      )
+      .limit(8);
+
+    return rows;
+  }
+
+  // ===============================
+  // 4. EMBEDDING SEARCH
+  // ===============================
+  const { embedding } = await embed({
+    model: google.embedding(
+      "gemini-embedding-001"
+    ),
+    value: query,
+  });
+
+  const distance = cosineDistance(
+    productDocuments.embedding,
+    embedding
+  );
+
+  // ===============================
+  // 5. HYBRID SEARCH
+  // ===============================
+  const rows = await db
+    .select({
+      title: productDocuments.title,
+      slug: productDocuments.slug,
+      metadata: productDocuments.metadata,
+      similarity: distance,
+    })
+    .from(productDocuments)
+    .where(
+      conditions.length
+        ? and(...conditions)
+        : undefined
+    )
+    .orderBy(asc(distance))
+    .limit(8);
+
+  return rows;
+}
 
 
 
