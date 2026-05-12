@@ -208,6 +208,310 @@ YÊU CẦU:
 }
 */
 
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json();
+
+    const lastMessage =
+      messages[messages.length - 1]?.content as string;
+
+    if (!lastMessage || lastMessage.trim().length < 3) {
+      return new Response("Câu hỏi quá ngắn.", {
+        status: 400,
+      });
+    }
+
+    const recentMessages = messages.slice(-6);
+
+    // ================= 1. INTENT + FILTER EXTRACTION =================
+
+    const parsedResult = await generateObject({
+      model: google("gemini-2.5-flash"),
+
+      schema: z.object({
+        intent: z.enum([
+          "PRODUCT",
+          "GREETING",
+          "OTHER",
+        ]),
+
+        semanticQuery: z.string().nullable(),
+
+        category: z.string().nullable(),
+
+        minPrice: z.number().nullable(),
+
+        maxPrice: z.number().nullable(),
+      }),
+
+      system: `
+Phân tích câu người dùng.
+
+Rules:
+
+- Nếu user muốn tìm/mua/xem/gợi ý sản phẩm:
+  intent = PRODUCT
+
+- Nếu user chào hỏi xã giao:
+  intent = GREETING
+
+- Còn lại:
+  intent = OTHER
+
+- semanticQuery phải là từ khóa sạch.
+Ví dụ:
+"Tôi muốn tìm nước uống ngon"
+→ "nước uống"
+
+- Nếu không có giá trị thì trả null.
+
+- Chỉ trả dữ liệu đúng schema.
+`,
+
+      prompt: lastMessage,
+    });
+
+    const parsed = parsedResult.object;
+
+    // ================= 2. NON PRODUCT CHAT =================
+
+    if (parsed.intent !== "PRODUCT") {
+      const result = await streamText({
+        model: google("gemini-2.5-flash"),
+
+        system: `
+Bạn là chatbot bán hàng thân thiện.
+
+- Trả lời ngắn gọn
+- Tự nhiên
+- Có thể gợi ý khách tìm sản phẩm
+- Không lan man
+`,
+
+        messages: recentMessages,
+      });
+
+      return result.toDataStreamResponse();
+    }
+
+    // ================= 3. SEARCH =================
+
+    let vectorResults = await searchProductSlugs({
+      semanticQuery:
+        parsed.semanticQuery || lastMessage,
+
+      category:
+        parsed.category || undefined,
+
+      maxPrice:
+        parsed.maxPrice || undefined,
+
+      minPrice:
+        parsed.minPrice || undefined,
+    });
+
+    // ================= 4. FALLBACK =================
+
+    if (
+      !vectorResults.length &&
+      (parsed.category ||
+        parsed.maxPrice ||
+        parsed.minPrice)
+    ) {
+      vectorResults =
+        await searchProductSlugs({
+          // ❌ KHÔNG dùng query rỗng nữa
+          semanticQuery:
+            parsed.category ||
+            parsed.semanticQuery ||
+            "sản phẩm",
+
+          category:
+            parsed.category || undefined,
+
+          maxPrice:
+            parsed.maxPrice || undefined,
+
+          minPrice:
+            parsed.minPrice || undefined,
+        });
+    }
+
+    // ================= 5. NO RESULTS =================
+
+    if (!vectorResults.length) {
+      const result = await streamText({
+        model: google("gemini-2.5-flash"),
+
+        system: `
+Không tìm thấy sản phẩm phù hợp.
+
+- Xin lỗi ngắn gọn
+- Hỏi lại nhu cầu user
+- Gợi ý user thử mô tả khác
+`,
+
+        messages: [
+          {
+            role: "user",
+            content: lastMessage,
+          },
+        ],
+      });
+
+      return result.toDataStreamResponse();
+    }
+
+    // ================= 6. BUILD CONTEXT =================
+
+    const context = vectorResults
+      .slice(0, 8)
+      .map((p) => {
+        const meta = p.metadata as any;
+
+        return `
+ID: ${p.slug}
+Tên: ${p.title}
+Giá: ${
+          meta?.minPrice ?? "?"
+        } - ${meta?.maxPrice ?? "?"}
+Danh mục: ${
+          meta?.categories?.join(", ") ??
+          "?"
+        }
+`;
+      })
+      .join("\n");
+
+    // ================= 7. FINAL RESPONSE =================
+
+    const result = await streamText({
+      model: google("gemini-2.5-flash"),
+
+      maxSteps: 2,
+
+      system: `
+Bạn là trợ lý bán hàng.
+
+DANH SÁCH SẢN PHẨM:
+${context}
+
+RULES:
+
+- Nếu có sản phẩm phù hợp:
+  BẮT BUỘC gọi tool showProductCards 1 lần duy nhất.
+
+- Sau khi gọi tool:
+  giải thích ngắn gọn vì sao phù hợp.
+
+- KHÔNG gọi tool nhiều lần.
+
+- KHÔNG tự bịa sản phẩm.
+
+- Không nhắc tới internal tool.
+`,
+
+      messages: recentMessages,
+
+      tools: {
+        showProductCards: tool({
+          description:
+            "Hiển thị danh sách sản phẩm phù hợp cho user",
+
+          parameters: z.object({
+            slugs: z.array(z.string()),
+          }),
+
+          execute: async ({ slugs }) => {
+            const data = await db
+              .select({
+                id: products.id,
+                title: products.name,
+                slug: products.slug,
+                image:
+                  products.thumbnail_url,
+                description:
+                  products.short_description,
+              })
+              .from(products)
+              .where(
+                inArray(products.slug, slugs)
+              );
+
+            if (!data.length) {
+              return {
+                products: [],
+                related: [],
+                crossSell: [],
+              };
+            }
+
+            // ================= RELATED =================
+
+            const related =
+              await getRelatedProducts(slugs);
+
+            // ================= CROSS SELL =================
+
+            const baseProduct = data[0];
+
+            const crossSell =
+              await getCrossSellProducts_(
+                baseProduct.id
+              );
+
+            return {
+              products: data.map((p) => ({
+                title: p.title,
+                slug: p.slug,
+                image:
+                  p.image ||
+                  "/placeholder.jpg",
+                description:
+                  p.description,
+                price: "Liên hệ",
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+
+              related: related.map((p) => ({
+                title: p.name,
+                slug: p.slug,
+                image:
+                  p.thumbnail_url ||
+                  "/placeholder.jpg",
+                price: "Liên hệ",
+                url: `/testSearchParam/products/${p.slug}`,
+              })),
+
+              crossSell: crossSell.map(
+                (p) => ({
+                  title: p.name,
+                  slug: p.slug,
+                  image:
+                    p.thumbnail_url ||
+                    "/placeholder.jpg",
+                  price: "Liên hệ",
+                  url: `/testSearchParam/products/${p.slug}`,
+                })
+              ),
+            };
+          },
+        }),
+      },
+    });
+
+    return result.toDataStreamResponse();
+  } catch (error) {
+    console.error("❌ ERROR:", error);
+
+    return new Response(
+      "Error occurred",
+      {
+        status: 500,
+      }
+    );
+  }
+}
 
 // ================= SEARCH FUNCTION =================
 /* Chạy được */
