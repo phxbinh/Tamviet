@@ -97,7 +97,7 @@ QUY TẮC:
 `,
 */
 
-
+/*
 system: ` Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp, vui vẻ, nhiệt tình của cửa hàng.
 
 Phong cách: Thân thiện, gần gũi, dùng emoji vừa phải, tập trung lợi ích cho khách hàng. Trả lời ngắn gọn, rõ ràng.
@@ -120,8 +120,23 @@ Mục tiêu: Giúp khách tìm sản phẩm phù hợp, tư vấn tốt và thú
 
 Hãy suy nghĩ từng bước: Hiểu ý khách → Dùng tool nếu cần → Trả lời tự nhiên và thuyết phục.
 `,
+*/
 
+system: `Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp.
 
+### QUY TẮC TÌM KIẾM:
+1. Khi khách hỏi về sản phẩm, hãy trích xuất các thông tin:
+   - 'query': Từ khóa chính yếu (VD: khách nói "tìm cà phê" -> query là "cà phê").
+   - 'category': Nếu khách nhắc đến nhóm sản phẩm (VD: "thức uống", "đồ ăn").
+   - 'maxPrice', 'minPrice': Nếu khách nhắc đến ngân sách.
+
+2. LUÔN dùng tool 'searchProducts' trước. 
+3. Nếu 'searchProducts' trả về danh sách, dùng 'showProductCards' để hiển thị.
+4. Nếu không thấy sản phẩm nào, hãy xin lỗi lịch sự và hỏi thêm nhu cầu khách.
+
+### PHONG CÁCH:
+- Trả lời ngắn gọn, thân thiện. 
+- Không tự bịa slug hay giá sản phẩm.`,
 
       messages: recentMessages,
 
@@ -129,7 +144,7 @@ Hãy suy nghĩ từng bước: Hiểu ý khách → Dùng tool nếu cần → T
         // =========================
         // SEARCH PRODUCTS
         // =========================
-
+/*
         searchProducts: tool({
           description:
             "Tìm sản phẩm phù hợp với nhu cầu user",
@@ -167,6 +182,52 @@ Hãy suy nghĩ từng bước: Hiểu ý khách → Dùng tool nếu cần → T
             };
           },
         }),
+*/
+
+searchProducts: tool({
+  description: "Tìm sản phẩm phù hợp với nhu cầu user dựa trên từ khóa, danh mục hoặc giá cả.",
+  parameters: z.object({
+    query: z.string().describe("Từ khóa tìm kiếm sạch (ví dụ: 'thức uống' thay vì 'tìm thức uống')"),
+    category: z.string().optional().describe("Tên danh mục sản phẩm nếu có"),
+    minPrice: z.number().optional(),
+    maxPrice: z.number().optional(),
+  }),
+  execute: async ({ query, category, minPrice, maxPrice }) => {
+    // Bước A: Thử tìm kiếm Hybrid (Vector + Filter)
+    let results = await searchProductSlugs({
+      semanticQuery: query,
+      category,
+      minPrice,
+      maxPrice,
+    });
+
+    // Bước B: 🔥 LOGIC FALLBACK (Giúp tìm đúng "thức uống" như Số 1)
+    // Nếu tìm vector không ra kết quả nhưng user có cung cấp Category hoặc Giá
+    if (!results.length && (category || maxPrice || minPrice)) {
+      results = await searchProductSlugs({
+        semanticQuery: "", // Xóa query để chỉ tập trung lọc cứng trong DB
+        category,
+        maxPrice,
+        minPrice,
+      });
+    }
+
+    // Bước C: Trả về kết quả cho Agent
+    return {
+      products: results.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        // Trả thêm thông tin để Agent dễ tư vấn
+        category: (p.metadata as any)?.categories?.join(", "),
+        price: (p.metadata as any)?.minPrice
+      })),
+    };
+  },
+}),
+
+
+
+
 
         // =========================
         // SHOW PRODUCT CARDS
