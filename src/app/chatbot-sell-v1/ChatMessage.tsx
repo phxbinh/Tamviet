@@ -15,10 +15,15 @@ export function ChatMessage({ message }: { message: any }) {
 
   return (
     <div className={`flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-3 duration-500`}>
-      <div className={`max-w-[85%] px-6 py-4 shadow-2xl border backdrop-blur-md ${
-        message.role === 'user' ? 'bg-blue-600 text-white border-transparent rounded-[28px] rounded-tr-none' : 'bg-card text-foreground border-border/50 rounded-[28px] rounded-tl-none'
-      }`}>
-        <ReactMarkdown
+{message.content?.trim() && (
+  <div
+    className={`max-w-[85%] px-6 py-4 shadow-2xl border backdrop-blur-md ${
+      message.role === 'user'
+        ? 'bg-blue-600 text-white border-transparent rounded-[28px] rounded-tr-none'
+        : 'bg-card text-foreground border-border/50 rounded-[28px] rounded-tl-none'
+    }`}
+  >
+    <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           className="prose dark:prose-invert prose-sm max-w-none break-words leading-relaxed"
           components={{
@@ -39,80 +44,50 @@ export function ChatMessage({ message }: { message: any }) {
               );
             }
           }}
-        >
-          {message.content}
-        </ReactMarkdown>
-      </div>
+    >
+      {message.content}
+    </ReactMarkdown>
+  </div>
+)}
 
       {/* Render Tools (Product Cards) */}
-      {message.toolInvocations?.map((tool: any) => (
-        <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.products.map((p: any) => <ProductCard key={p.slug} product={p} />)}
-            </div> 
-          ) : tool.state !== 'result' && (
-            <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
-               <div className="w-2 h-2 bg-blue-500 rounded-full" /> Đang tải sản phẩm...
-            </div>
-          )}
+{message.toolInvocations?.map((tool: any) => {
+  if (
+    tool.toolName !== 'showProductCards' ||
+    tool.state !== 'result'
+  ) {
+    return null;
+  }
+
+  return (
+    <div
+      key={tool.toolCallId}
+      className="w-full mt-4 flex flex-col gap-4"
+    >
+      {/* Main Products */}
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+        {tool.result.products?.map((p: any) => (
+          <ProductCard
+            key={p.slug}
+            product={p}
+          />
+        ))}
+      </div>
+
+      {/* Cross Sell */}
+      {!!tool.result.crossSell?.length && (
+        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+          {tool.result.crossSell.map((p: any) => (
+            <ProductCard
+              key={p.slug}
+              product={p}
+            />
+          ))}
         </div>
-      ))}
-
-      {/* Render Tools (Related Product) */}
-
-
-      {message.toolInvocations?.map((tool: any) => (
-        <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.crossSell.map((p: any) => <ProductCard key={p.slug} product={p} />)}
-            </div>
-          ) : tool.state !== 'result' && (
-            <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
-               <div className="w-2 h-2 bg-blue-500 rounded-full" /> Đang tải sản phẩm...
-            </div>
-          )}
-        </div>
-      ))}
-
-
+      )}
+    </div>
+  );
+})}
     </div>
   );
 }
-
-
-      /* Chạy tốt
-      {message.toolInvocations?.map((tool: any) => (
-        <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.related.map((p: any) => <ProductCard key={p.slug} product={p} />)}
-            </div>
-          ) : tool.state !== 'result' && (
-            <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
-               <div className="w-2 h-2 bg-blue-500 rounded-full" /> Đang tải sản phẩm...
-            </div>
-          )}
-        </div>
-      ))} */
-
-
-
-
-
-
-/* lỗi
-      {message.toolInvocations?.map((tool: any) => (
-        <div key={tool.toolCallId} className="w-full mt-4 flex justify-start pl-2">
-          {tool.toolName === 'showProductCards' && tool.state === 'result' ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar max-w-full">
-              {tool.result.related.map((p: any) => <ProductCard key={p.slug} product={p} />)}
-            </div>
-          ) : tool.state !== 'result' && (
-            <div className="flex items-center gap-3 py-2 text-[10px] text-muted-foreground font-bold uppercase animate-pulse">
-               <div className="w-2 h-2 bg-blue-500 rounded-full" /> Đang tải sản phẩm...
-            </div>
-          )}
-        </div>
-      ))}*/
