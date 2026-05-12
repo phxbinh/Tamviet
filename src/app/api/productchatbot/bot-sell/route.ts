@@ -388,7 +388,7 @@ Danh mục: ${
     const result = await streamText({
       model: google("gemini-2.5-flash"),
 
-      maxSteps: 2,
+      maxSteps: 3,
 
       system: `
 Bạn là trợ lý bán hàng.
@@ -399,8 +399,12 @@ ${context}
 RULES:
 
 - Nếu có sản phẩm phù hợp:
-  BẮT BUỘC gọi tool showProductCards 1 lần duy nhất.
+  1. BẮT BUỘC Gọi tool showProductCards trước và 1 lần duy nhất.
+  2. Và BẮT BUỘC Sau đó phải trả lời ngắn gọn:
+   • vì sao phù hợp
+   • gợi ý user chọn
 
+Không được kết thúc ngay sau tool call.
 - Sau khi gọi tool:
   giải thích ngắn gọn vì sao phù hợp.
 
