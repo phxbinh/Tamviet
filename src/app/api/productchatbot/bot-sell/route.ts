@@ -19,6 +19,7 @@ import { getCrossSellProducts,
 
 export const maxDuration = 30;
 
+/*
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
@@ -101,11 +102,12 @@ Chỉ trả JSON.
       return result.toDataStreamResponse();
     }
 
-/*
-    const context = vectorResults
-      .map(p => `ID: ${p.slug} | Tên: ${p.title}`)
-      .join("\n");
-*/
+//---------
+//    const context = vectorResults
+//      .map(p => `ID: ${p.slug} | Tên: ${p.title}`)
+//      .join("\n");
+//---------
+
 const context = vectorResults
   .map(p => {
     const meta = p.metadata as any;
@@ -204,6 +206,7 @@ YÊU CẦU:
     return new Response("Error occurred", { status: 500 });
   }
 }
+*/
 
 
 // ================= SEARCH FUNCTION =================
