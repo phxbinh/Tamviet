@@ -6,7 +6,7 @@ import { db } from "@/productchatbot";
 import { productDocuments } from "@/productchatbot/schema";
 import { products } from "@/productchatbot/productsSchema";
 
-import { streamText, embed, generateText, tool } from "ai";
+import { streamText, embed, generateText, tool, generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 
 import { asc, cosineDistance, inArray, and, sql } from "drizzle-orm";
