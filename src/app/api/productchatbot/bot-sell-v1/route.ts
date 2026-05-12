@@ -97,7 +97,7 @@ QUY TẮC:
 `,
 */
 
-/*
+
 system: ` Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp, vui vẻ, nhiệt tình của cửa hàng.
 
 Phong cách: Thân thiện, gần gũi, dùng emoji vừa phải, tập trung lợi ích cho khách hàng. Trả lời ngắn gọn, rõ ràng.
@@ -120,8 +120,9 @@ Mục tiêu: Giúp khách tìm sản phẩm phù hợp, tư vấn tốt và thú
 
 Hãy suy nghĩ từng bước: Hiểu ý khách → Dùng tool nếu cần → Trả lời tự nhiên và thuyết phục.
 `,
-*/
 
+
+/*
 system: `Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp.
 
 ### QUY TẮC TÌM KIẾM:
@@ -137,14 +138,13 @@ system: `Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp.
 ### PHONG CÁCH:
 - Trả lời ngắn gọn, thân thiện. 
 - Không tự bịa slug hay giá sản phẩm.`,
-
+*/
       messages: recentMessages,
 
       tools: {
         // =========================
         // SEARCH PRODUCTS
         // =========================
-/*
         searchProducts: tool({
           description:
             "Tìm sản phẩm phù hợp với nhu cầu user",
@@ -182,8 +182,9 @@ system: `Bạn là **Tâm Việt AI** - trợ lý bán hàng chuyên nghiệp.
             };
           },
         }),
-*/
 
+
+/* lỗi bị loop vô tận
 searchProducts: tool({
   description: "Tìm sản phẩm phù hợp với nhu cầu user dựa trên từ khóa, danh mục hoặc giá cả.",
   parameters: z.object({
@@ -224,7 +225,7 @@ searchProducts: tool({
     };
   },
 }),
-
+*/
 
 
 
