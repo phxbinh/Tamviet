@@ -19,195 +19,6 @@ import { getCrossSellProducts,
 
 export const maxDuration = 30;
 
-/*
-export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json();
-    const lastMessage = messages[messages.length - 1]?.content as string;
-
-    if (!lastMessage || lastMessage.trim().length < 3) {
-      return new Response("Câu hỏi quá ngắn.", { status: 400 });
-    }
-
-    const recentMessages = messages.slice(-6);
-
-    // ================= 1. ROUTER =================
-    const { text: intent } = await generateText({
-      model: google("gemini-2.5-flash"),
-      system: `Classify intent: PRODUCT, GREETING, OTHER. Trả về đúng 1 từ.`,
-      prompt: lastMessage,
-    });
-
-    if (intent !== "PRODUCT") {
-      const result = await streamText({
-        model: google("gemini-2.5-flash"),
-        system: "Bạn là chatbot bán hàng thân thiện. Trả lời ngắn gọn và gợi ý khách tìm sản phẩm.",
-        messages: recentMessages,
-      });
-      return result.toDataStreamResponse();
-    }
-
-    // ================= 2. PARSE QUERY =================
-    const { text: parsedText } = await generateText({
-      model: google("gemini-2.5-flash"),
-      system: `
-Trích xuất JSON từ câu người dùng.
-
-Fields:
-- semanticQuery: string
-- category: string | null
-- maxPrice: number | null
-- minPrice: number | null
-
-Chỉ trả JSON.
-`,
-      prompt: lastMessage,
-    });
-
-    let parsed: any;
-    try {
-      parsed = JSON.parse(parsedText);
-    } catch {
-      parsed = { semanticQuery: lastMessage };
-    }
-
-    // ================= 3. HYBRID SEARCH =================
-    let vectorResults = await searchProductSlugs({
-      semanticQuery: parsed.semanticQuery || lastMessage,
-      category: parsed.category,
-      maxPrice: parsed.maxPrice,
-      minPrice: parsed.minPrice,
-    });
-
-    // 🔥 Fallback nếu semantic fail nhưng filter có
-    if (!vectorResults.length && (parsed.category || parsed.maxPrice)) {
-      const fallback = await searchProductSlugs({
-        semanticQuery: "",
-        category: parsed.category,
-        maxPrice: parsed.maxPrice,
-        minPrice: parsed.minPrice,
-      });
-
-      if (fallback.length) {
-        vectorResults = fallback;
-      }
-    }
-
-    if (!vectorResults.length) {
-      const result = await streamText({
-        model: google("gemini-2.5-flash"),
-        system: "Không tìm thấy sản phẩm phù hợp, hãy xin lỗi và hỏi lại khách.",
-        messages: [{ role: "user", content: lastMessage }],
-      });
-      return result.toDataStreamResponse();
-    }
-
-//---------
-//    const context = vectorResults
-//      .map(p => `ID: ${p.slug} | Tên: ${p.title}`)
-//      .join("\n");
-//---------
-
-const context = vectorResults
-  .map(p => {
-    const meta = p.metadata as any;
-
-    return `ID: ${p.slug}
-Tên: ${p.title}
-Giá: ${meta?.minPrice ?? "?"} - ${meta?.maxPrice ?? "?"}
-Danh mục: ${meta?.categories?.join(", ") ?? "?"}`;
-  })
-  .join("\n\n");
-
-    // ================= 4. RESPONSE + TOOL =================
-    const result = await streamText({
-      model: google("gemini-2.5-flash"),
-      maxSteps: 2, // khi lên agent mới tăng
-      system: `Bạn là trợ lý bán hàng.
-
-Danh sách sản phẩm:
-${context}
-
-YÊU CẦU:
-- BẮT BUỘC dùng tool showProductCards nếu có sản phẩm phù hợp
-- Sau đó dùng showRelatedProducts
-- Không bịa dữ liệu`,
-      messages: recentMessages,
-      tools: {
-        showProductCards: tool({
-          description: "Hiển thị sản phẩm",
-          parameters: z.object({
-            slugs: z.array(z.string()),
-          }),
-          execute: async ({ slugs }) => {
-            const data = await db
-              .select({
-                title: products.name,
-                slug: products.slug,
-                image: products.thumbnail_url,
-                description: products.short_description,
-              })
-              .from(products)
-              .where(inArray(products.slug, slugs));
-
-            const related = await getRelatedProducts(slugs);
-
-    const baseProducts = await db
-          .select({
-            id: products.id,
-            slug: products.slug,
-          })
-          .from(products)
-          .where(inArray(products.slug, slugs))
-          .limit(1); // chỉ lấy 1 sản phẩm chính
-
-    if (!baseProducts.length) return [];
-
-    const baseProduct = baseProducts[0];
-
-    // 2. 🔥 GỌI FUNCTION CỦA BẠN
-    const crossSell = await getCrossSellProducts_(baseProduct.id);
-//const crossSell = await getCrossSellProductsOptimized(baseProduct.id);
-
-
-
-            return {
-              products: data.map(p => ({
-                ...p,
-                image: p.image || "/placeholder.jpg",
-                price: "Liên hệ",
-                url: `/testSearchParam/products/${p.slug}`,
-              })),
-              related: related.map(p => ({
-                title: p.name,
-                slug: p.slug,
-                image: p.thumbnail_url || "/placeholder.jpg",
-                price: "Liên hệ",
-                url: `/testSearchParam/products/${p.slug}`,
-              })),
-              crossSell: crossSell.map(p => ({
-                title: p.name,
-                slug: p.slug,
-                image: p.thumbnail_url || "/placeholder.jpg",
-                price: "Liên hệ",
-                url: `/testSearchParam/products/${p.slug}`,
-              })),
-            };
-          },
-        }),
-      },
-    });
-
-
-    return result.toDataStreamResponse();
-
-  } catch (error) {
-    console.error("❌ ERROR:", error);
-    return new Response("Error occurred", { status: 500 });
-  }
-}
-*/
-
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
@@ -391,31 +202,6 @@ Danh mục: ${
       maxSteps: 3,
 
 /*
-      system: `
-Bạn là trợ lý bán hàng.
-
-DANH SÁCH SẢN PHẨM:
-${context}
-
-RULES:
-
-- Nếu có sản phẩm phù hợp:
-  1. BẮT BUỘC Gọi tool showProductCards trước và 1 lần duy nhất.
-  2. Và BẮT BUỘC Sau đó phải trả lời ngắn gọn:
-   • vì sao phù hợp
-   • gợi ý user chọn
-
-Không được kết thúc ngay sau tool call.
-- Sau khi gọi tool:
-  giải thích ngắn gọn vì sao phù hợp.
-
-- KHÔNG gọi tool nhiều lần.
-
-- KHÔNG tự bịa sản phẩm.
-
-- Không nhắc tới internal tool.
-`,
-*/
 system:`
 Bạn là nhân viên bán hàng thân thiện và hiểu sản phẩm.
 
@@ -445,6 +231,37 @@ CÁCH NÓI:
 
 - Mỗi câu trả lời chỉ nên dài 1–3 câu ngắn.
 `,
+*/
+
+system: `
+Bạn là nhân viên bán hàng thân thiện và tư vấn tự nhiên như người thật.
+
+DANH SÁCH SẢN PHẨM:
+${context}
+
+QUY TRÌNH:
+
+- Nếu có sản phẩm phù hợp:
+  1. Gọi tool showProductCards ngay lập tức và chỉ 1 lần.
+  2. Không viết text trước tool call.
+  3. Sau tool call:
+     - viết 1-2 câu ngắn tự nhiên
+     - giải thích nhẹ vì sao phù hợp
+
+CÁCH NÓI:
+
+- Tự nhiên như chat với khách
+- Không máy móc
+- Không lặp ý
+- Không dùng kiểu:
+  "Sản phẩm này phù hợp với yêu cầu của bạn"
+
+Ưu tiên kiểu:
+
+- "Bạn có thể tham khảo mẫu này nha 😊"
+- "Dòng này khá ổn nếu dùng hằng ngày đó."
+`
+
       messages: recentMessages,
 
       tools: {
