@@ -260,7 +260,7 @@ CÁCH NÓI:
 
 - "Bạn có thể tham khảo mẫu này nha 😊"
 - "Dòng này khá ổn nếu dùng hằng ngày đó."
-`
+`,
 
       messages: recentMessages,
 
