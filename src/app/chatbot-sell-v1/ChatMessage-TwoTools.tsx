@@ -23,6 +23,22 @@ export function ChatMessage({ message }: { message: any }) {
     alert('Đã sao chép!');
   };
 
+// Dùng để gọi modal productDetail khi user hỏi
+// xem chi tiết sản phẩm cụ thể
+useEffect(() => {
+
+  for (const tool of message.toolInvocations || []) {
+
+    if (
+      tool.toolName === 'openProductDetail' &&
+      tool.state === 'result'
+    ) {
+      setSelectedSlug(tool.result.slug);
+    }
+  }
+
+}, [message]);
+
   return (
     <div
       className={`flex flex-col ${
