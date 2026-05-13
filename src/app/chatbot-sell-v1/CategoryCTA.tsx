@@ -37,7 +37,7 @@ export function CategoryCTA({
 
   const params = new URLSearchParams({
       page: String(page),
-      type: data.name,
+      type: data.code,
     });
 
     router.push(`/testSearchParam?${params}`);
