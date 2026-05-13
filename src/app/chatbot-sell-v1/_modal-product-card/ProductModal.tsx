@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Modal } from './Modal';
 import ProductDetailClient from './ProductDetailClient';
-import { getProductCached } from "./getProductCached";
+//import { getProductCached } from "./getProductCached";
 
 interface ProductModalProps {
   slug: string;
@@ -22,7 +22,7 @@ export function ProductModal({
 
 
   
-
+//src/app/api/productchatbot/bot-sell/getProduct
   useEffect(() => {
   if (!open) return;
 
@@ -30,7 +30,7 @@ export function ProductModal({
     try {
       setLoading(true);
 
-      const res = await fetch(`/api/products/${slug}`);
+      const res = await fetch(`/api/productchatbot/bot-sell/getProduct/${slug}`);
 
       if (!res.ok) {
         throw new Error("Fetch failed");
