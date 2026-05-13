@@ -32,7 +32,8 @@ export function ProductModal({
   
 //src/app/api/productchatbot/bot-sell/getProduct
   useEffect(() => {
-  if (!open) return;
+  //if (!open) return;
+  if (!open || !slug) return null;
 
   async function loadProduct() {
     try {
