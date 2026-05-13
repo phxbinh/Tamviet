@@ -1,0 +1,38 @@
+// src/app/api/resolve-category/route.ts
+
+import { NextRequest, NextResponse } from 'next/server';
+import { sqlApp as sql } from '@/lib/neon/sql';
+
+export async function GET(req: NextRequest) {
+  const name = req.nextUrl.searchParams.get('name');
+
+  if (!name) {
+    return NextResponse.json(
+      { error: 'Missing name' },
+      { status: 400 }
+    );
+  }
+
+  const rows = await sql`
+    SELECT id, name, slug
+    FROM categories
+    WHERE is_active = true
+      AND (
+        LOWER(name) LIKE LOWER(${`%${name}%`})
+        OR LOWER(slug) LIKE LOWER(${`%${name}%`})
+      )
+    ORDER BY display_order ASC
+    LIMIT 1
+  `;
+
+  const category = rows[0];
+
+  if (!category) {
+    return NextResponse.json(
+      { error: 'Category not found' },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json(category);
+}
