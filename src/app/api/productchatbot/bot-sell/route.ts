@@ -19,6 +19,9 @@ import { getCrossSellProducts,
 
 import { openCategoryPage } from "./openRoute/navigationTool";
 
+//src/app/api/productchatbot/bot-sell/openRoute/openProductDetail.ts
+import { openProductDetail } from "./openRoute/openProductDetail";
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -65,6 +68,17 @@ Rules:
 
 - Nếu user muốn tìm/mua/xem/gợi ý sản phẩm:
   intent = PRODUCT
+
+- Nếu user muốn:
+  - xem chi tiết sản phẩm
+  - mở sản phẩm cụ thể
+  - xem thông tin sản phẩm cụ thể
+  → intent = PRODUCT_DETAIL
+  Ví dụ:
+    - "xem chi tiết Yonex Astrox 88D"
+    - "mở sản phẩm coca cola"
+    - "show detail of iphone 15"
+    - "cho tôi xem sản phẩm này"
 
 - Nếu user muốn mở/truy cập/xem một danh mục hoặc trang:
   intent = NAVIGATION
@@ -120,6 +134,80 @@ thì bắt buộc gọi tool openCategoryPage.
   return result.toDataStreamResponse();
 }
 
+// Chạy khi user yêu cầu xem chi tiết sản phẩm
+if (parsed.intent === "PRODUCT_DETAIL") {
+
+  // 1. SEARCH PRODUCT
+/*
+  const products =
+    await searchProductSlugs({
+      semanticQuery:
+        parsed.semanticQuery || lastMessage,
+    });
+*/
+const products = await searchProductSlugs({
+      semanticQuery:
+        parsed.semanticQuery || lastMessage,
+
+      category:
+        parsed.category || undefined,
+
+      maxPrice:
+        parsed.maxPrice || undefined,
+
+      minPrice:
+        parsed.minPrice || undefined,
+    });
+
+
+  // Không tìm thấy
+  if (!products.length) {
+
+    const result = await streamText({
+      model: google("gemini-2.5-flash"),
+
+      system: `
+Không tìm thấy sản phẩm phù hợp.
+
+- Xin lỗi ngắn gọn
+- Hỏi lại tên sản phẩm
+`,
+
+      messages: recentMessages,
+    });
+
+    return result.toDataStreamResponse();
+  }
+
+  // 2. LẤY PRODUCT TỐT NHẤT
+  const bestProduct = products[0];
+
+  // 3. STREAM TOOL
+  const result = await streamText({
+    model: google("gemini-2.5-flash"),
+
+    messages: recentMessages,
+
+    tools: {
+      openProductDetail,
+    },
+
+    toolChoice: "required",
+
+    system: `
+User muốn xem chi tiết sản phẩm.
+
+Bắt buộc gọi tool openProductDetail
+với đúng slug sản phẩm bên dưới.
+
+PRODUCT:
+- title: ${bestProduct.title}
+- slug: ${bestProduct.slug}
+`,
+  });
+
+  return result.toDataStreamResponse();
+}
 
 
     // ================= 2. NON PRODUCT CHAT =================
