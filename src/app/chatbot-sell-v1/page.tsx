@@ -2,8 +2,16 @@
 
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useRef } from 'react';
+
+// Chạy ổn
 //import { ChatMessage } from './ChatMessage';
-import { ChatMessage } from './ChatMessage_';
+
+// Chạy ổn
+//import { ChatMessage } from './ChatMessage_';
+
+import { ChatMessage } from './ChatMessage-TwoTools';
+
+
 
 export default function ChatSellPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({ 
