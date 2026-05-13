@@ -21,33 +21,33 @@ export function ProductModal({
   const [loading, setLoading] = useState(false);
 
 
-  /*
-  const data = await getProductCached(slug);
-  if (!data) {
-    return {
-      title: "Sản phẩm không tồn tại",
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-  if (data) {
-    setData(data);
-    setLoading(false);
-  }
-  */
+  
 
   useEffect(() => {
-    if (!open) return;
+  if (!open) return;
 
-    setLoading(true);
+  async function loadProduct() {
+    try {
+      setLoading(true);
 
-    fetch(`/api/products/${slug}`)
-      .then((r) => r.json())
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, [slug, open]);
+      const res = await fetch(`/api/products/${slug}`);
+
+      if (!res.ok) {
+        throw new Error("Fetch failed");
+      }
+
+      const data = await res.json();
+
+      setData(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  loadProduct();
+}, [slug, open]);
 
   return (
     <Modal
