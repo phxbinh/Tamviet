@@ -18,8 +18,7 @@ export function Modal({
   children,
   maxWidth = 'max-w-4xl',
 }: ModalProps) {
-  //if (!open) return null;
-  if (!open || !slug) return null;
+  if (!open) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
