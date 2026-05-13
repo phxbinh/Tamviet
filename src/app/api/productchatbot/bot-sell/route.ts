@@ -247,6 +247,12 @@ QUY TRÌNH:
   3. Sau tool call:
      - viết 1-2 câu ngắn tự nhiên
      - giải thích nhẹ vì sao phù hợp
+- Nếu user muốn mở/xem danh mục:
+  gọi tool openCategoryPage
+  Ví dụ:
+    - "mở đồ thể thao"
+    - "xem danh mục cầu lông"
+    - "cho tôi xem sports"
 
 CÁCH NÓI:
 
@@ -348,6 +354,36 @@ CÁCH NÓI:
             };
           },
         }),
+
+openCategoryPage: tool({
+  description:
+    "Mở trang category/filter sản phẩm",
+
+  parameters: z.object({
+    category: z.string(),
+
+    page: z.number().optional(),
+  }),
+
+  execute: async ({
+    category,
+    page = 1,
+  }) => {
+    return {
+      type: "category_navigation",
+
+      category,
+
+      page,
+
+      ctaLabel: `Xem ${category}`,
+    };
+  },
+}),
+
+
+
+
       },
     });
 
