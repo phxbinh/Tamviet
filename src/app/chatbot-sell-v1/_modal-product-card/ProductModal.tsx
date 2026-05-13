@@ -32,6 +32,10 @@ export function ProductModal({
       },
     };
   }
+  if (data) {
+    setData(data);
+    setLoading(false);
+  }
   */
 
   useEffect(() => {
