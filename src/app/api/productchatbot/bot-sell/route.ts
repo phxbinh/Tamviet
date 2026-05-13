@@ -252,12 +252,6 @@ QUY TRÌNH:
   3. Sau tool call:
      - viết 1-2 câu ngắn tự nhiên
      - giải thích nhẹ vì sao phù hợp
-- Nếu user muốn mở/xem danh mục:
-  gọi tool openCategoryPage
-  Ví dụ:
-    - "mở đồ thể thao"
-    - "xem danh mục cầu lông"
-    - "cho tôi xem sports"
 
 CÁCH NÓI:
 
