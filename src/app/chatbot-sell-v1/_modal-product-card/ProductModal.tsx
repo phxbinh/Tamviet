@@ -6,8 +6,16 @@ import { Modal } from './Modal';
 import ProductDetailClient from './ProductDetailClient';
 //import { getProductCached } from "./getProductCached";
 
+/*
 interface ProductModalProps {
   slug: string;
+  open: boolean;
+  onClose: () => void;
+}
+*/
+
+interface ProductModalProps {
+  slug: string | null;
   open: boolean;
   onClose: () => void;
 }
