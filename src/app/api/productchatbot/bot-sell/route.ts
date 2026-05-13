@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       schema: z.object({
         intent: z.enum([
           "PRODUCT",
+          "PRODUCT_DETAIL",
           "NAVIGATION",
           "GREETING",
           "OTHER",
