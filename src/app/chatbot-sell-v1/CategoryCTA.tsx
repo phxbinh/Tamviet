@@ -15,8 +15,11 @@ export function CategoryCTA({
 
   const handleClick = async () => {
 
+//src/app/api/productchatbot/bot-sell/openRoute/resolve-category
+
+
     const res = await fetch(
-      `/api/resolve-category?name=${encodeURIComponent(
+      `/api/productchatbot/bot-sell/openRoute/resolve-category?name=${encodeURIComponent(
         category
       )}`
     );
