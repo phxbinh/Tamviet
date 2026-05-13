@@ -9,7 +9,10 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import { ProductCard } from './ProductCard_';
-import { ProductModal } from './ProductModal';
+import { ProductModal } from './_modal-product-card/ProductModal';
+//src/app/chatbot-sell-v1/_modal-product-card
+
+
 
 export function ChatMessage({ message }: { message: any }) {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
