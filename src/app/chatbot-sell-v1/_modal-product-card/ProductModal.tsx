@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Modal } from './Modal';
 import ProductDetailClient from './ProductDetailClient';
+import { getProductCached } from "./getProductCached";
 
 interface ProductModalProps {
   slug: string;
@@ -18,6 +19,20 @@ export function ProductModal({
 }: ProductModalProps) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+
+
+  /*
+  const data = await getProductCached(slug);
+  if (!data) {
+    return {
+      title: "Sản phẩm không tồn tại",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+  */
 
   useEffect(() => {
     if (!open) return;
