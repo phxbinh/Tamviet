@@ -43,7 +43,7 @@ export function ProductCard({
           onClick={onViewDetail}
           className="mt-4 block w-full text-center py-3 bg-secondary/50 hover:bg-blue-600 hover:text-white rounded-[18px] text-[11px] font-black transition-all duration-300 uppercase tracking-widest shadow-sm"
         >
-          Chi tiết
+          Chi tiết modal
         </button>
       </div>
     </div>
