@@ -28,9 +28,16 @@ export function CategoryCTA({
 
     if (!data?.slug) return;
 
+/*
     const params = new URLSearchParams({
       page: String(page),
       type: data.slug,
+    });
+*/
+
+  const params = new URLSearchParams({
+      page: String(page),
+      type: data.name,
     });
 
     router.push(`/testSearchParam?${params}`);
