@@ -41,7 +41,7 @@ export default function ChatSellPage() {
         {/* 2. Loading state */}
         {isLoading && (
           <div className="flex items-center gap-3 text-muted-foreground animate-pulse ml-4 mb-8">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">AI đang trả lời...</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Đang tìm sản phẩm phù hợp...</span>
           </div>
         )}
 
