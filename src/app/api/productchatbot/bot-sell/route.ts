@@ -22,6 +22,8 @@ import { openCategoryPage } from "./openRoute/navigationTool";
 //src/app/api/productchatbot/bot-sell/openRoute/openProductDetail.ts
 import { openProductDetail } from "./openRoute/openProductDetail";
 
+import { getCategory } from "./getCategory";
+
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
@@ -458,6 +460,15 @@ CÁCH NÓI:
   }
 }
 
+
+
+// Chuyển chữ cái đầu tiên thành chữ hoa
+export function capitalizeFirstLetter(category: string) {
+  if (!category) return "";
+
+  return category[0].toLocaleUpperCase("vi-VN") + category.slice(1);
+}
+
 // ================= SEARCH FUNCTION =================
 /* Chạy được */
 async function searchProductSlugs({
@@ -489,7 +500,8 @@ async function searchProductSlugs({
   }
 
   if (category) {
-    conditions.push(sql`metadata->'categories' ? ${category}`);
+    let categoryConvert = capitalizeFirstLetter(category);
+    conditions.push(sql`metadata->'categories' ? ${categoryConvert}`);
   }
 
 
