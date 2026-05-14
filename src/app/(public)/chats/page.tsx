@@ -1,0 +1,156 @@
+// app/chat/page.tsx
+'use client';
+
+import { useChat } from '@ai-sdk/react';
+import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+import { Send, SendHorizontal } from 'lucide-react';
+
+ function SendButton() {
+  return (
+    <div className="flex gap-4 p-4">
+      {/* Kiểu truyền thống */}
+      <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        <span>Gửi</span>
+        <Send size={18} strokeWidth={2.5} />
+      </button>
+
+      {/* Kiểu hiện đại (Nằm ngang) */}
+      <button className="p-2 text-slate-600 hover:text-blue-600 transition">
+        <SendHorizontal size={24} />
+      </button>
+    </div>
+  );
+}
+
+
+
+
+
+
+export default function ChatPage() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({ api: '/api/chat' });
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  return (
+    <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 sm:px-6 bg-transparent">
+      
+    
+      <header className="py-6 flex justify-between items-center border-b border-border/50">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-neon-cyan animate-pulse" />
+          <h1 className="font-bold tracking-tight opacity-90">GEMINI AI</h1>
+        </div>
+        <span className="text-[10px] opacity-40 font-mono">v3.0.0-flash</span>
+      </header>
+
+      
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar py-8 space-y-8">
+        {messages.map((m) => (
+          <div
+            key={m.id}
+            className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-3 duration-500`}
+          >
+            <div
+              className={`max-w-[90%] sm:max-w-[80%] px-5 py-4 shadow-xl border backdrop-blur-sm
+              ${
+                m.role === 'user'
+                  ? 'bg-primary text-white border-transparent rounded-3xl rounded-tr-none shadow-primary/10'
+                  : 'bg-card text-foreground border-border rounded-3xl rounded-tl-none shadow-black/5'
+              }`}
+            >
+              
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                className="prose dark:prose-invert prose-sm max-w-none break-words"
+                components={{
+                  // Tinh chỉnh hiển thị Code Block
+                  code({ node, inline, className, children, ...props }: any) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      <div className="relative my-4 rounded-lg overflow-hidden border border-white/10 shadow-2xl">
+                        <div className="flex items-center justify-between px-4 py-2 bg-[#1e1e1e] border-b border-white/5">
+                           <span className="text-[10px] font-mono text-gray-400 uppercase">{match[1]}</span>
+                           <button className="text-[10px] text-gray-500 hover:text-white transition-colors">Copy</button>
+                        </div>
+                        <SyntaxHighlighter
+                          style={vscDarkPlus}
+                          language={match[1]}
+                          PreTag="div"
+                          customStyle={{ margin: 0, padding: '1.25rem', fontSize: '13px', background: '#1e1e1e' }}
+                          {...props}
+                        >
+                          {String(children).replace(/\n$/, '')}
+                        </SyntaxHighlighter>
+                      </div>
+                    ) : (
+                      <code className="bg-black/10 dark:bg-white/10 px-1.5 py-0.5 rounded text-neon-cyan font-mono" {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                  // Tinh chỉnh list và link
+                  ul: ({children}) => <ul className="list-disc ml-4 space-y-1">{children}</ul>,
+                  a: ({children, href}) => <a href={href} target="_blank" className="text-neon-cyan hover:underline">{children}</a>
+                }}
+              >
+                {m.content}
+              </ReactMarkdown>
+            </div>
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="flex items-center gap-3 text-muted-foreground animate-pulse">
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+            <span className="text-xs font-medium italic opacity-60">AI is generating...</span>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      
+      <div className="py-6 border-t border-border/30">
+        <form
+          onSubmit={handleSubmit}
+          className="group relative flex items-center p-1.5 bg-card/80 backdrop-blur-md border border-border rounded-[22px] shadow-2xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10 transition-all duration-300"
+        >
+          <input
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Type your message..."
+            className="flex-1 bg-transparent border-none focus:ring-0 px-4 py-3 text-[15px] placeholder:opacity-40 focus:outline-none 
+         focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          />
+
+          <button
+            type="submit"
+            disabled={!input.trim() || isLoading}
+            className="h-11 px-6 bg-primary text-white font-bold rounded-[16px] hover:scale-[1.02] active:scale-95 disabled:opacity-20 disabled:grayscale transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
+          >
+            <span>Gửi</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
