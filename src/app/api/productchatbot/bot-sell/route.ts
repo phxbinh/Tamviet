@@ -463,7 +463,7 @@ CÁCH NÓI:
 
 
 // Chuyển chữ cái đầu tiên thành chữ hoa
-export function capitalizeFirstLetter(category: string) {
+function capitalizeFirstLetter(category: string) {
   if (!category) return "";
 
   return category[0].toLocaleUpperCase("vi-VN") + category.slice(1);
