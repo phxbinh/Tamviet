@@ -67,7 +67,7 @@ export default function ChatSellPage() {
             className="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 outline-none"
           />
           <button type="submit" disabled={!input.trim() || isLoading} className="h-14 px-8 bg-blue-600 text-white font-black rounded-[24px]">
-            GỬI NGAY
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
           </button>
         </form>
       </div>
