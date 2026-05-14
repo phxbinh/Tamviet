@@ -2,6 +2,8 @@
 
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useRef } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
+import { SendHorizontal } from 'lucide-react';
 
 // Chạy ổn
 //import { ChatMessage } from './ChatMessage';
@@ -59,7 +61,7 @@ export default function ChatSellPage() {
 
       {/* Input Form */}
       <div className="py-8 border-t border-border/20">
-        <form onSubmit={handleSubmit} className="group relative flex items-center p-2 bg-card/40 backdrop-blur-2xl border border-border/50 rounded-[30px] shadow-xl">
+        {/* <form onSubmit={handleSubmit} className="group relative flex items-center p-2 bg-card/40 backdrop-blur-2xl border border-border/50 rounded-[30px] shadow-xl">
           <input
             value={input}
             onChange={handleInputChange}
@@ -69,7 +71,36 @@ export default function ChatSellPage() {
           <button type="submit" disabled={!input.trim() || isLoading} className="h-14 px-8 bg-blue-600 text-white font-black rounded-[24px]">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
           </button>
-        </form>
+        </form> */}
+
+<form 
+  onSubmit={handleSubmit} 
+  className="group relative flex items-end gap-2 p-2 bg-card/40 backdrop-blur-2xl border border-border/50 rounded-[30px] shadow-xl focus-within:border-border transition-all"
+>
+  <TextareaAutosize
+    value={input}
+    onChange={handleInputChange}
+    maxRows={5} // Giới hạn chiều cao tối đa để không tràn màn hình
+    placeholder="Tìm nước sâm, cà phê..."
+    className="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 outline-none resize-none min-h-[56px] py-[18px] leading-relaxed"
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e);
+      }
+    }}
+  />
+  
+  <button 
+    type="submit" 
+    disabled={!input.trim() || isLoading} 
+    className="h-[56px] w-[56px] flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all disabled:opacity-50 disabled:grayscale shrink-0"
+  >
+    <SendHorizontal size={22} strokeWidth={2.5} />
+  </button>
+</form>
+
+
       </div>
 
       <style jsx global>{`
@@ -80,3 +111,37 @@ export default function ChatSellPage() {
     </div>
   );
 }
+
+
+
+// ... trong component của bạn
+/*
+<form 
+  onSubmit={handleSubmit} 
+  className="group relative flex items-end gap-2 p-2 bg-card/40 backdrop-blur-2xl border border-border/50 rounded-[30px] shadow-xl focus-within:border-border transition-all"
+>
+  <TextareaAutosize
+    value={input}
+    onChange={handleInputChange}
+    maxRows={5} // Giới hạn chiều cao tối đa để không tràn màn hình
+    placeholder="Tìm nước sâm, cà phê..."
+    className="flex-1 bg-transparent border-none focus:ring-0 px-6 py-4 outline-none resize-none min-h-[56px] py-[18px] leading-relaxed"
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e);
+      }
+    }}
+  />
+  
+  <button 
+    type="submit" 
+    disabled={!input.trim() || isLoading} 
+    className="h-[56px] w-[56px] flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white rounded-full transition-all disabled:opacity-50 disabled:grayscale shrink-0"
+  >
+    <SendHorizontal size={22} strokeWidth={2.5} />
+  </button>
+</form>
+*/
+
+
