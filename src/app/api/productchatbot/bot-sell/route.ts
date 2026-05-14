@@ -480,12 +480,12 @@ async function searchProductSlugs({
 
   const conditions = [];
 
-  if (maxPrice) {
-    conditions.push(sql`(metadata->>'maxPrice')::int <= ${maxPrice}`);
+  if (maxPrice != null) {
+    conditions.push(sql`(metadata->>'maxPrice')::numeric <= ${maxPrice}`);
   }
 
-  if (minPrice) {
-    conditions.push(sql`(metadata->>'minPrice')::int >= ${minPrice}`);
+  if (minPrice != null) {
+    conditions.push(sql`(metadata->>'minPrice')::numeric >= ${minPrice}`);
   }
 
   if (category) {
