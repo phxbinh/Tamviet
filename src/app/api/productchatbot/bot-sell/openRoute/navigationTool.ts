@@ -72,11 +72,14 @@ Ví dụ:
 
     message: z.string().optional().describe(`
 Câu CTA ngắn hiển thị cho user.
+Bạn là nhân viên tư vấn bán hàng thân thiện và chuyên nghiệp.
+Trả lời tự nhiên, ngắn gọn, dễ hiểu.
+`),/*
 Ví dụ:
 - "Xem sản phẩm"
 - "Mở danh mục"
 - "Xem đồ thể thao"
-`),
+`),*/
   }),
 
   execute: async ({
