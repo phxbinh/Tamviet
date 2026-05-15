@@ -280,6 +280,7 @@ Bạn là chatbot bán hàng thân thiện.
       return result.toDataStreamResponse();
     }
 
+/*
     // ================= 3. SEARCH =================
 
     let vectorResults = await searchProductSlugs({
@@ -368,6 +369,92 @@ Danh mục: ${
 `;
       })
       .join("\n");
+*/
+
+    // ================= 3. SEARCH (Lấy kết quả thô từ DB bằng Vector) =================
+    let vectorResults = await searchProductSlugs({
+      semanticQuery: parsed.semanticQuery || lastMessage,
+      category: parsed.category || undefined,
+      maxPrice: parsed.maxPrice || undefined,
+      minPrice: parsed.minPrice || undefined,
+    });
+
+    // ================= 4. FALLBACK (Nếu DB không tìm thấy gì) =================
+    if (
+      !vectorResults.length &&
+      (parsed.category || parsed.maxPrice || parsed.minPrice)
+    ) {
+      vectorResults = await searchProductSlugs({
+        semanticQuery: parsed.category || parsed.semanticQuery || "sản phẩm",
+        category: parsed.category || undefined,
+        maxPrice: parsed.maxPrice || undefined,
+        minPrice: parsed.minPrice || undefined,
+      });
+    }
+
+    // ================= 5. NO RESULTS =================
+    if (!vectorResults.length) {
+        const result = await streamText({
+        model: google("gemini-2.5-flash"),
+
+        system: `
+          Không tìm thấy sản phẩm phù hợp.
+          - Xin lỗi ngắn gọn
+          - Hỏi lại nhu cầu user
+          - Gợi ý user thử mô tả khác
+          `,
+
+        messages: [
+          {
+            role: "user",
+            content: lastMessage,
+          },
+        ],
+      });
+
+      return result.toDataStreamResponse();
+    }
+
+    // 🔥 ================= 5.5. TIẾN HÀNH RERANK BẰNG GEMINI =================
+    // Chuyển đổi dữ liệu vectorResults thành định dạng candidates đầu vào cho hàm Rerank
+    const candidates = vectorResults.map(p => ({
+      id: p.slug, // Dùng slug làm ID định danh duy nhất
+      title: p.title,
+      description: (p.metadata as any)?.description || p.title // Đảm bảo có mô tả sản phẩm
+    }));
+
+    const rankedResults = await rerankWithGemini(lastMessage, candidates);
+
+    // Ánh xạ ngược lại để lấy đầy đủ data từ vectorResults dựa trên thứ tự đã Rerank
+    const finalOrderedResults = rankedResults
+      .map(r => vectorResults.find(p => p.slug === r.id))
+      .filter((p): p is NonNullable<typeof p> => !!p);
+
+
+    // ================= 6. BUILD CONTEXT (Dùng data đã được Rerank chuẩn chỉnh) =================
+    const context = finalOrderedResults
+      .slice(0, 8) // Lấy top những cái ngon nhất sau Rerank
+      .map((p) => {
+        const meta = p.metadata as any;
+        return `
+          ID: ${p.slug}
+          Tên: ${p.title}
+          Giá: ${meta?.minPrice ?? "?"} - ${meta?.maxPrice ?? "?"}
+          Danh mục: ${meta?.categories?.join(", ") ?? "?"}
+          `;
+      })
+      .join("\n");
+
+
+
+
+
+
+
+
+
+
+
 
     // ================= 7. FINAL RESPONSE =================
 
