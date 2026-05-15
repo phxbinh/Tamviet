@@ -95,9 +95,9 @@ Ví dụ:
 
       page,
 
-      ctaLabel:
-        message ||
-        `Xem ${category}`,
+      message: message,
+
+      ctaLabel: `Xem ${category}`,
     };
   },
 });
