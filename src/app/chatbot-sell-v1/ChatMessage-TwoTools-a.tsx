@@ -173,6 +173,7 @@ export function ChatMessage({ message }: { message: any }) {
               <CategoryCTA
                 category={tool.result.category}
                 page={tool.result.page}
+                message={tool.result.message}
                 label={tool.result.ctaLabel}
               />
             </div>
