@@ -128,16 +128,16 @@ if (parsed.intent === "NAVIGATION") {
 
     toolChoice: "required",
 
-    maxSteps: 2,
+    maxSteps: 1,
 
   system: `
+Bạn là nhân viên tư vấn bán hàng thân thiện và chuyên nghiệp. Trả lời tự nhiên, ngắn gọn, dễ hiểu.
+
 Nếu user muốn mở/xem category thì bắt buộc phải gọi tool openCategoryPage.
-Sau khi gọi tool:
-- Hãy tiếp tục trả lời tự nhiên cho khách hàng.
+Sau khi gọi tool KHÔNG được lặp lại tool result.
+Sau khi gọi tool BẮT BUỘC:
+- Trả lời ngắn gọn, tự nhiên như nhân viên tư vấn.
 - Giới thiệu ngắn gọn category đã mở.
-- Giữ giọng văn tư vấn thân thiện và chuyên nghiệp.
-Bạn là nhân viên tư vấn bán hàng thân thiện và chuyên nghiệp.
-Trả lời tự nhiên, ngắn gọn, dễ hiểu.
 `,
   });
 
