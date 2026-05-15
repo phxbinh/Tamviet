@@ -207,6 +207,7 @@ useEffect(() => {
         key={tool.toolCallId}
         category={tool.result.category}
         page={tool.result.page}
+        message={tool.result.message}
         label={tool.result.ctaLabel}
       />
     );
