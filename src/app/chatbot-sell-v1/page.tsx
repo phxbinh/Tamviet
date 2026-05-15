@@ -11,7 +11,7 @@ import { SendHorizontal } from 'lucide-react';
 // Chạy ổn
 //import { ChatMessage } from './ChatMessage_';
 
-import { ChatMessage } from './ChatMessage-TwoTools';
+import { ChatMessage } from './ChatMessage-TwoTools-a';
 
 //export default 
 function ChatSellPage_() {
