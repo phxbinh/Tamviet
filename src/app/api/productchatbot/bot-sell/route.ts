@@ -26,6 +26,46 @@ import { getCategory } from "./getCategory";
 
 export const maxDuration = 30;
 
+
+// Sử dụng cho reranked tăng độ chính xác
+const rerankWithGemini = async (
+  query: string, 
+  candidates: Array<{ id: string; title: string; description: string }>
+) => {
+  // Nếu danh sách rỗng thì trả về luôn để đỡ tốn tiền gọi API
+  if (!candidates.length) return [];
+
+  const result = await generateObject({
+    model: google("models/gemini-2.5-flash"), // Đã sửa cú pháp model đúng chuẩn
+    schema: z.object({
+      ranked: z.array(z.object({
+        id: z.string(),
+        score: z.number().min(0).max(1), 
+        reason: z.string().optional()
+      })).max(15)
+    }),
+    system: `Bạn là reranker chuyên nghiệp cho sản phẩm.
+Xếp hạng các sản phẩm theo độ liên quan với query của người dùng.
+Chỉ giữ lại những sản phẩm thực sự phù hợp với nhu cầu của khách hàng.
+QUY TẮC BẮT BUỘC: Giữ nguyên chính xác 'id' đầu vào, không tự bịa ID mới.`,
+    prompt: `
+Query của khách: "${query}"
+
+Danh sách sản phẩm cần xếp hạng:
+${candidates.map((c, idx) => `
+${idx + 1}. ID: ${c.id}
+   Tên: ${c.title}
+   Mô tả: ${c.description}`).join('\n')}
+`,
+  });
+
+  // Trích xuất mảng đã được sắp xếp, ưu tiên điểm cao lên trước
+  return result.object.ranked.sort((a, b) => b.score - a.score);
+};
+
+
+
+
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
