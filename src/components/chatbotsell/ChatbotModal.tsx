@@ -1,8 +1,9 @@
+
 'use client';
 
 import { X } from 'lucide-react';
 import { useChatbotStore } from './stores/chatbot-store';
-import { ChatWindow } from './ChatWindow';
+//import { ChatWindow } from './ChatWindow';
 
 export function ChatbotModal() {
   const { isOpen, close } = useChatbotStore();
@@ -66,7 +67,7 @@ export function ChatbotModal() {
           </button>
         </div>
 
-        <ChatWindow />
+        {/*<ChatWindow /> */}
       </div>
     </>
   );
