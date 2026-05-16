@@ -287,7 +287,7 @@ export function ChatbotLauncher() {
   // click open chatbot
   const handleClick = () => {
     if (movedRef.current) return;
-
+    alert("Chatbot được mở");
     open();
   };
 
