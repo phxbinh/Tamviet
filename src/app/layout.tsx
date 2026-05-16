@@ -11,6 +11,7 @@ import type { Metadata, Viewport } from "next";
 
 // Sử dụng cho chát bót
 import { ChatbotLauncher } from "@/components/chatbotsell/ChatbotLauncher";
+import { ChatbotModal } from "@/components/chatbotsell/ChatbotModal";
 
 
 // Sử dụng cho font
@@ -129,7 +130,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <CartProvider>
             <AppShell>{children}</AppShell>
+            {/* Dùng mở chát bót */}
             <ChatbotLauncher/>
+            <ChatbotModal/>
           </CartProvider>
         </ThemeProvider>
 
