@@ -25,7 +25,7 @@ export function ChatbotModal() {
       <div
         className="
           fixed z-[9999]
-          bottom-24 right-6
+          bottom-1 right-6
           w-[380px]
           h-[700px]
           bg-white
