@@ -152,30 +152,32 @@ import { useEffect, useRef, useState } from 'react';
 import { useChatbotStore } from './stores/chatbot-store';
 
 const BUTTON_SIZE = 64;
-const VIEWPORT_PADDING = 16;
+const PADDING = 16;
 
 export function ChatbotLauncher() {
   const open = useChatbotStore((s) => s.open);
 
-  // vị trí button
   const [position, setPosition] = useState({
     x: 0,
     y: 0,
   });
 
   // tracking drag
-  const draggingRef = useRef(false);
+  const isDraggingRef = useRef(false);
 
-  // khoảng cách từ chuột -> góc button
-  const dragOffsetRef = useRef({
+  // detect moved
+  const movedRef = useRef(false);
+
+  // offset từ điểm chạm -> góc button
+  const pointerOffsetRef = useRef({
     x: 0,
     y: 0,
   });
 
-  // detect click hay drag
-  const movedRef = useRef(false);
+  // button element
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  // set default position = bottom-6 right-6
+  // init default = bottom-6 right-6
   useEffect(() => {
     setPosition({
       x: window.innerWidth - BUTTON_SIZE - 24,
@@ -183,31 +185,42 @@ export function ChatbotLauncher() {
     });
   }, []);
 
-  // giới hạn trong viewport
+  // clamp viewport
   const clampPosition = (x: number, y: number) => {
     const maxX =
-      window.innerWidth - BUTTON_SIZE - VIEWPORT_PADDING;
+      window.innerWidth - BUTTON_SIZE - PADDING;
 
     const maxY =
-      window.innerHeight - BUTTON_SIZE - VIEWPORT_PADDING;
+      window.innerHeight - BUTTON_SIZE - PADDING;
 
     return {
-      x: Math.min(Math.max(VIEWPORT_PADDING, x), maxX),
-      y: Math.min(Math.max(VIEWPORT_PADDING, y), maxY),
+      x: Math.min(Math.max(PADDING, x), maxX),
+      y: Math.min(Math.max(PADDING, y), maxY),
     };
   };
 
-  // bắt đầu drag
+  // pointer down
   const handlePointerDown = (
     e: React.PointerEvent<HTMLButtonElement>
   ) => {
-    draggingRef.current = true;
+    const button = buttonRef.current;
+
+    if (!button) return;
+
+    isDraggingRef.current = true;
     movedRef.current = false;
 
-    dragOffsetRef.current = {
-      x: e.clientX - position.x,
-      y: e.clientY - position.y,
+    // lấy vị trí THỰC của button
+    const rect = button.getBoundingClientRect();
+
+    // lưu offset giữa điểm chạm và button
+    pointerOffsetRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
     };
+
+    // bắt pointer
+    button.setPointerCapture(e.pointerId);
 
     window.addEventListener(
       'pointermove',
@@ -220,24 +233,24 @@ export function ChatbotLauncher() {
     );
   };
 
-  // dragging
+  // pointer move
   const handlePointerMove = (e: PointerEvent) => {
-    if (!draggingRef.current) return;
+    if (!isDraggingRef.current) return;
 
     movedRef.current = true;
 
     const nextX =
-      e.clientX - dragOffsetRef.current.x;
+      e.clientX - pointerOffsetRef.current.x;
 
     const nextY =
-      e.clientY - dragOffsetRef.current.y;
+      e.clientY - pointerOffsetRef.current.y;
 
     setPosition(clampPosition(nextX, nextY));
   };
 
-  // kết thúc drag
+  // pointer up
   const handlePointerUp = () => {
-    draggingRef.current = false;
+    isDraggingRef.current = false;
 
     window.removeEventListener(
       'pointermove',
@@ -250,7 +263,7 @@ export function ChatbotLauncher() {
     );
   };
 
-  // resize viewport
+  // resize
   useEffect(() => {
     const handleResize = () => {
       setPosition((prev) =>
@@ -271,9 +284,8 @@ export function ChatbotLauncher() {
     };
   }, []);
 
-  // click mở chatbot
+  // click open chatbot
   const handleClick = () => {
-    // nếu vừa drag thì không open
     if (movedRef.current) return;
 
     open();
@@ -281,10 +293,12 @@ export function ChatbotLauncher() {
 
   return (
     <button
+      ref={buttonRef}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
       style={{
         transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+        willChange: 'transform',
       }}
       className="
         fixed left-0 top-0 z-[9999]
@@ -296,12 +310,6 @@ export function ChatbotLauncher() {
         flex items-center justify-center
 
         shadow-2xl
-
-        transition-transform
-
-        hover:scale-105
-
-        active:scale-95
 
         touch-none
         select-none
