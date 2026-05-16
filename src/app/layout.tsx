@@ -9,6 +9,9 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { InstallPrompt } from "@/components/InstallPrompt"; // Đường dẫn đến file bạn vừa tạo
 import type { Metadata, Viewport } from "next";
 
+// Sử dụng cho chát bót
+import { ChatbotLauncher } from "@/components/chatbotsell/ChatbotLauncher";
+
 
 // Sử dụng cho font
 // app/fonts.ts hoặc ngay trong app/layout.tsx
@@ -126,6 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <CartProvider>
             <AppShell>{children}</AppShell>
+            <ChatbotLauncher/>
           </CartProvider>
         </ThemeProvider>
 
