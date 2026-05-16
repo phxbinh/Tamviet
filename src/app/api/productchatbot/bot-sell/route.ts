@@ -44,18 +44,18 @@ const rerankWithGemini = async (
         reason: z.string().optional()
       })).max(15)
     }),
+    temperature: 0,
     system: `Bạn là reranker chuyên nghiệp cho sản phẩm.
 Xếp hạng các sản phẩm theo độ liên quan với query của người dùng.
 Chỉ giữ lại những sản phẩm thực sự phù hợp với nhu cầu của khách hàng.
 QUY TẮC BẮT BUỘC: Giữ nguyên chính xác 'id' đầu vào, không tự bịa ID mới.`,
     prompt: `
 Query của khách: "${query}"
-
 Danh sách sản phẩm cần xếp hạng:
 ${candidates.map((c, idx) => `
 ${idx + 1}. ID: ${c.id}
-   Tên: ${c.title}
-   Mô tả: ${c.description}`).join('\n')}
+ Tên: ${c.title}
+ Mô tả: ${c.description}`).join('\n')}
 `,
   });
 
