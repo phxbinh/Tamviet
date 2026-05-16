@@ -22,12 +22,11 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Chat Bot', href: '/chat', showInSidebar: true },
   { name: 'Chat bot Policies', href: '/chatbot-policies', showInSidebar: true },
   { name: 'Chat bot v1 client', href: '/chatbotv1-client', showInSidebar: true },
-*/
-
   { name: 'Bot sell', href: '/chatbot-sell', showInSidebar: true },
-  { name: 'Bot sell - v1', href: '/chatbot-sell-v1', showInSidebar: true },
   { name: 'Bot sell - v2', href: '/chatbot-sell-v2', showInSidebar: true },
   { name: 'Chat test', href: '/chats', showInSidebar: true },
+*/
+  { name: 'Bot sell - v1', href: '/chatbot-sell-v1', showInSidebar: true },
 
   {
     name: 'Environments',
