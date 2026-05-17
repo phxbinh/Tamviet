@@ -10,6 +10,10 @@ import { ProductCard } from './ProductCard_';
 import { ProductModal } from './_modal-product-card/ProductModal';
 import { CategoryCTA } from './CategoryCTA';
 
+
+//src/app/chatbot-sell-v1/_modal-product-card/ButtonViewDetail.tsx
+import { ViewDetailButton } from './_modal-product-card/ButtonViewDetail';
+
 export function ChatMessage({ message }: { message: any }) {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
@@ -175,6 +179,22 @@ export function ChatMessage({ message }: { message: any }) {
                 page={tool.result.page}
                 message={tool.result.message}
                 label={tool.result.ctaLabel}
+              />
+            </div>
+          );
+        }
+
+        // Xem lại chi tiết sau khi tắt modal
+        if (
+          tool.toolName === 'openProductDetail' &&
+          tool.state === 'result'
+        ) {
+          return (
+            <div key={tool.result.slug} className="mt-4 w-full">
+              <ViewDetailButton
+                slug={tool.result.slug}
+                title={tool.result.title}
+                onOpen={setSelectedSlug}
               />
             </div>
           );
