@@ -131,7 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CartProvider>
             <AppShell>{children}</AppShell>
             {/* Dùng mở chát bót */}
-            <ChatbotLauncher/>
+            {/* <ChatbotLauncher/> */}
             <ChatbotModal/>
           </CartProvider>
         </ThemeProvider>
