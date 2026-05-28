@@ -33,6 +33,8 @@ export const sidebarLinks: SidebarLink[] = [
     showInSidebar: true,
     children: [
       { name: 'Hiếu khí', href: '/wastewater/aerationTank' },
+      { name: 'Oxygen require', href: '/wastewater/OxygenDemand' },
+
     ],
   },
 
@@ -56,7 +58,7 @@ export const sidebarLinks: SidebarLink[] = [
 
 ];
 
-
+//src/app/(public)/wastewater/OxygenDemand/AerationReport.tsx
 
 
 
