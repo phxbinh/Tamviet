@@ -1,3 +1,4 @@
+/*
 "use client";
 
 import React, { useMemo } from "react";
@@ -139,7 +140,7 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.23
     <div className="min-h-screen bg-neutral-50 py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-amber-100">
       <div className="max-w-4xl mx-auto bg-white border border-neutral-200/80 shadow-sm rounded-xl overflow-hidden">
         
-        {/* Header Giao diện cao cấp, tinh tế */}
+        
         <div className="px-8 py-6 bg-gradient-to-r from-neutral-900 to-neutral-800 text-white flex justify-between items-center">
           <div>
             <span className="text-xs font-semibold tracking-widest text-neutral-400 uppercase">Phúc An Engineering SaaS</span>
@@ -150,7 +151,7 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.23
           </div>
         </div>
 
-        {/* Nội dung báo cáo render qua ReactMarkdown */}
+        
         <div className="p-8 sm:p-10">
           <article className="prose prose-neutral max-w-none prose-headings:font-light prose-h1:text-2xl prose-h1:text-neutral-900 prose-h2:text-xl prose-h2:border-b prose-h2:border-neutral-100 prose-h2:pb-2 prose-strong:font-semibold prose-strong:text-neutral-900 prose-p:text-neutral-600 prose-p:leading-relaxed">
             <ReactMarkdown 
@@ -162,7 +163,7 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.23
           </article>
         </div>
 
-        {/* Khối Cảnh báo AI Agent (RAG Insight Box) mang phong cách luxury tối giản */}
+        
         <div className="mx-8 mb-10 p-5 bg-neutral-50 border-l-2 border-neutral-900 rounded-r-lg">
           <div className="flex items-start gap-3">
             <span className="text-base mt-0.5">⚠️</span>
@@ -181,3 +182,4 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.23
     </div>
   );
 };
+*/
