@@ -154,7 +154,7 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.23
         <div className="p-8 sm:p-10">
           <article className="prose prose-neutral max-w-none prose-headings:font-light prose-h1:text-2xl prose-h1:text-neutral-900 prose-h2:text-xl prose-h2:border-b prose-h2:border-neutral-100 prose-h2:pb-2 prose-strong:font-semibold prose-strong:text-neutral-900 prose-p:text-neutral-600 prose-p:leading-relaxed">
             <ReactMarkdown 
-              remarkPlugins={[remarkMath]} 
+              remarkPlugins={[remarkMath, remarkGfm]} 
               rehypePlugins={[rehypeKatex]}
             >
               {reportMarkdown}
