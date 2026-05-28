@@ -31,8 +31,7 @@ interface AerotankReportViewProps {
 }
 
 export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ data }) => {
-  // 1. Thực thi thuật toán lõi tính toán động học
-  const reportMarkdown = useMemo(() => {
+  const calculations = useMemo(() => {
     const {
       q, s_0, temp, x_tss, srt, bcod_bod_ratio,
       alpha, f_factor, beta, elevation, depth_sat, ote, do_target,
@@ -68,7 +67,15 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ data }) 
     const o2_per_m3_air = 0.2318 * rho_air_altitude;
     const air_flowrate_m3_min = sotr_kg_h / (ote * 60 * o2_per_m3_air);
 
-    // Chuỗi dữ liệu Markdown phẳng, sử dụng cặp $$ đối xứng tuyệt đối cho khối phương trình
+    return {
+      q, s_0, temp, x_tss, srt, s_eff, v_tank, tau_days, tau_hours,
+      r_o_day, aotr_kg_h, p_x_tss_kg, sbod_eff, elevation, sotr_kg_h, air_flowrate_m3_min
+    };
+  }, [data]);
+
+  // Khởi tạo chuỗi văn bản Markdown phẳng, tách biệt hoàn toàn các cấu trúc toán học phức tạp
+  const reportMarkdown = useMemo(() => {
+    const c = calculations;
     return `
 # BÁO CÁO THUYẾT MINH THIẾT KẾ BỂ SINH HỌC HIẾU KHÍ AEROTANK
 *Hệ thống tính toán tự động dựa trên tiêu chuẩn thiết kế quốc tế QCVN & Metcalf_Eddy.*
@@ -78,166 +85,101 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ data }) 
 ## I. Thông số thiết kế đầu vào
 
 ### 1. Chỉ tiêu ô nhiễm nước thải đầu vào
-* Lưu lượng nước thải sinh hóa ($Q$): **${q.toLocaleString()}** $\\text{m}^3/\\text{ngày}$
-* Hàm lượng bCOD ô nhiễm đầu vào ($S_0$): **${s_0.toLocaleString()}** $\\text{mg/L}$
-* Nồng độ bùn sinh khối hỗn hợp thiết kế ($X_{\\text{TSS}}$): **${x_tss.toLocaleString()}** $\\text{mg/L}$
-* Thời gian lưu bùn sinh học lựa chọn ($\\text{SRT}$): **${srt}** $\\text{ngày}$
-* Nhiệt độ nước thải tính toán ($T$): **${temp}** $^\\circ\\text{C}$
-
-### 2. Các hệ số động học vi sinh
-* Tốc độ sinh trưởng riêng tối đa ($\\mu_{\\text{max}}$): **${mu_max}** $\\text{g VSS/g VSS}\\cdot\\text{d}$
-* Hằng số bán tốc độ ($K_s$): **${k_s}** $\\text{mg/L}$
-* Hệ số sản lượng vi sinh vật dị dưỡng ($Y_H$): **${y_h}** $\\text{g VSS/g bCOD}$
-* Hệ số phân hủy nội bào tự hủy của bùn ($b_H$): **${b_h}** $\\text{g VSS/g VSS}\\cdot\\text{d}$
+* Lưu lượng nước thải sinh hóa (Q): **${c.q.toLocaleString()}** m³/ngày
+* Hàm lượng bCOD ô nhiễm đầu vào (S₀): **${c.s_0.toLocaleString()}** mg/L
+* Nồng độ bùn sinh khối hỗn hợp thiết kế (X_TSS): **${c.x_tss.toLocaleString()}** mg/L
+* Thời gian lưu bùn sinh học lựa chọn (SRT): **${c.srt}** ngày
+* Nhiệt độ nước thải tính toán (T): **${c.temp}** °C
 
 ---
 
 ## II. Kết quả phân tích động học hệ thống
 
-### Bước 1: Hàm lượng chất hữu cơ bCOD còn lại ở dòng ra ($S$)
+### Bước 1: Hàm lượng chất hữu cơ bCOD còn lại ở dòng ra (S)
 Áp dụng phương trình cân bằng nồng độ cơ chất giới hạn tăng trưởng:
 
-$$\\text{S} = \\frac{K_s \\cdot [1 + b_H \\cdot (\\text{SRT})]}{\\text{SRT} \\cdot (Y_H \\cdot k - b_H) - 1}$$
+$$S = \\frac{K_s \\cdot [1 + b_H \\cdot SRT]}{SRT \\cdot (Y_H \\cdot k - b_H) - 1}$$
 
-* Kết quả tính toán động học: $S =$ **${s_eff.toFixed(1)}** $\\text{mg/L bCOD}$
+* Kết quả tính toán động học: S = **${c.s_eff.toFixed(1)}** mg/L bCOD
 
 ### Bước 2: Xác định kích thước hình học bể Aerotank
 Tính toán thể tích vùng phản ứng dựa trên cả lượng bùn hoạt tính sinh ra và phần bùn trơ tích lũy:
 
-$$V = \\frac{Q \\cdot Y_H \\cdot (S_0 - S) \\cdot \\text{SRT}}{[1 + b_H \\cdot (\\text{SRT})] \\cdot 0.85 \\cdot X_{\\text{TSS}}} + \\frac{f_d \\cdot b_H \\cdot Q \\cdot Y_H \\cdot (S_0 - S) \\cdot \\text{SRT}^2}{[1 + b_H \\cdot (\\text{SRT})] \\cdot 0.85 \\cdot X_{\\text{TSS}}}$$
+$$V = \\frac{Q \\cdot Y_H \\cdot (S_0 - S) \\cdot SRT}{[1 + b_H \\cdot SRT] \\cdot 0.85 \\cdot X_{TSS}} + \\frac{f_d \\cdot b_H \\cdot Q \\cdot Y_H \\cdot (S_0 - S) \\cdot SRT^2}{[1 + b_H \\cdot SRT] \\cdot 0.85 \\cdot X_{TSS}}$$
 
-* **Thể tích bể cần xây dựng ($V$):** ✨ **${v_tank.toFixed(1)}** $\\text{m}^3$
-* **Thời gian lưu nước thủy lực ($\\tau$):** **${tau_days.toFixed(2)}** $\\text{ngày}$ (Tương đương **${tau_hours.toFixed(1)}** $\\text{giờ}$)
+* **Thể tích bể cần xây dựng (V):** ✨ **${c.v_tank.toFixed(1)}** m³
+* **Thời gian lưu nước thủy lực (tau):** **${c.tau_days.toFixed(2)}** ngày (Tương đương **${c.tau_hours.toFixed(1)}** giờ)
 
-### Bước 3: Nhu cầu hấp thụ Oxy sinh học thực tế ($R_o$)
+### Bước 3: Nhu cầu hấp thụ Oxy sinh học thực tế (R_o)
 Lượng oxy cần cấp để vi sinh vật dị dưỡng oxy hóa chất hữu cơ và tự hủy nội bào:
 
-$$R_o = Q \\cdot (S_0 - S) - 1.42 \\cdot P_{X,\\text{bio}}$$
+$$R_o = Q \\cdot (S_0 - S) - 1.42 \\cdot P_{X,bio}$$
 
-* Nhu cầu hấp thụ thực tế hàng ngày: **${(r_o_day / 1000).toFixed(0)}** $\\text{kg O}_2/\\text{ngày}$
-* Nhu cầu hấp thụ trung bình mỗi giờ ($\\text{AOTR}$): **${aotr_kg_h.toFixed(1)}** $\\text{kg O}_2/\\text{giờ}$
+* Nhu cầu hấp thụ thực tế hàng ngày: **${(c.r_o_day / 1000).toFixed(0)}** kg O₂/ngày
+* Nhu cầu hấp thụ trung bình mỗi giờ (AOTR): **${c.aotr_kg_h.toFixed(1)}** kg O₂/giờ
 
 ### Bước 4: Khối lượng sinh khối bùn dư xả thải mỗi ngày
-Lượng bùn hoạt tính dư cần rút ra khỏi hệ thống để duy trì tuổi bùn $\\text{SRT} = ${srt}\\,\\text{ngày}$:
+Lượng bùn hoạt tính dư cần rút ra khỏi hệ thống để duy trì tuổi bùn:
 
-$$P_{X,\\text{TSS}} = \\frac{X_{\\text{TSS}} \\cdot V}{\\text{SRT}}$$
+$$P_{X,TSS} = \\frac{X_{TSS} \\cdot V}{SRT}$$
 
-* Khối lượng bùn khô phát sinh ($P_{X,\\text{TSS}}$): **${p_x_tss_kg.toFixed(0)}** $\\text{kg TSS/ngày}$
+* Khối lượng bùn khô phát sinh (P_X_TSS): **${c.p_x_tss_kg.toFixed(0)}** kg TSS/ngày
 
 ### Bước 5: Đánh giá chất lượng dòng ra theo chỉ tiêu hiệu suất sBOD
-* Hàm lượng BOD hòa tan đầu ra ($sBOD$): **${sbod_eff.toFixed(1)}** $\\text{mg/L}$
-* Hiệu suất loại bỏ chất hữu cơ hòa tan của hệ thống: 📈 **${((1 - s_eff / s_0) * 100).toFixed(2)}%**
+* Hàm lượng BOD hòa tan đầu ra (sBOD): **${c.sbod_eff.toFixed(1)}** mg/L
+* Hiệu suất loại bỏ chất hữu cơ hòa tan của hệ thống: 📈 **${((1 - c.s_eff / c.s_0) * 100).toFixed(2)}%**
 
 ### Bước 6: Thiết kế hệ thống phân phối khí mịn (Fine Bubble Diffusers)
-Hiệu chỉnh điều kiện vận hành thực tế tại cao độ ${elevation} $\\text{m}$ về điều kiện tiêu chuẩn mặt nước biển:
+Hiệu chỉnh điều kiện vận hành thực tế tại cao độ ${c.elevation} m về điều kiện tiêu chuẩn mặt nước biển:
 
-$$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\times 60 \\times (0.2318 \\times \\rho_{\\text{air}})}$$
+$$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.2318 \\cdot \\rho_{\\text{air}})}$$
 
-* Tốc độ truyền oxy tiêu chuẩn yêu cầu ($\\text{SOTR}$): **${sotr_kg_h.toFixed(1)}** $\\text{kg O}_2/\\text{giờ}$
-* **LƯU LƯỢNG KHÔNG KHÍ THỰC TẾ CẦN THỔI:** 🚀 **${air_flowrate_m3_min.toFixed(1)}** $\\text{m}^3/\\text{phút}$
+* Tốc độ truyền oxy tiêu chuẩn yêu cầu (SOTR): **${c.sotr_kg_h.toFixed(1)}** kg O₂/giờ
+* **LƯU LƯỢNG KHÔNG KHÍ THỰC TẾ CẦN THỔI:** 🚀 **${c.air_flowrate_m3_min.toFixed(1)}** m³/phút
 `;
-  }, [data]);
+  }, [calculations]);
 
-  // 2. Custom Components Map: Định nghĩa padding, margin và phong cách cho từng thẻ HTML được sinh ra từ Markdown
+  // Cấu hình các khối thẻ HTML an toàn, chặn hoàn toàn xung đột Layout trên Safari iOS
   const markdownComponents = useMemo(() => ({
-    h1: ({ children }: any) => (
-      <h1 className="text-xl sm:text-2xl font-light tracking-wide text-neutral-900 mt-2 mb-4 uppercase border-b border-neutral-200 pb-3 leading-snug">
-        {children}
-      </h1>
-    ),
-    h2: ({ children }: any) => (
-      <h2 className="text-base sm:text-lg font-medium tracking-wide text-neutral-800 mt-8 mb-4 border-l-2 border-neutral-900 pl-3 uppercase">
-        {children}
-      </h2>
-    ),
-    h3: ({ children }: any) => (
-      <h3 className="text-sm sm:text-base font-semibold text-neutral-900 mt-6 mb-2">
-        {children}
-      </h3>
-    ),
-    p: ({ children }: any) => (
-      <p className="text-sm text-neutral-600 leading-relaxed my-3">
-        {children}
-      </p>
-    ),
-    ul: ({ children }: any) => (
-      <ul className="list-disc pl-5 my-3 space-y-2 text-sm text-neutral-600">
-        {children}
-      </ul>
-    ),
-    li: ({ children }: any) => (
-      <li className="leading-relaxed">
-        {children}
-      </li>
-    ),
-    hr: () => <hr className="my-8 border-t border-neutral-200/60" />,
-    // Tinh chỉnh riêng khoảng cách (Padding/Margin) cho khối công thức toán học lớn ($$...$$)
-/*
+    h1: ({ children }: any) => <h1 className="text-xl font-light tracking-wide text-neutral-950 mt-4 mb-4 uppercase border-b border-neutral-200/80 pb-3">{children}</h1>,
+    h2: ({ children }: any) => <h2 className="text-base font-semibold tracking-wide text-neutral-900 mt-8 mb-4 border-l-2 border-neutral-900 pl-3 uppercase">{children}</h2>,
+    h3: ({ children }: any) => <h3 className="text-sm font-bold text-neutral-950 mt-5 mb-2">{children}</h3>,
+    p: ({ children }: any) => <p className="text-sm text-neutral-600 leading-relaxed my-2.5">{children}</p>,
+    ul: ({ children }: any) => <ul className="list-disc pl-5 my-3 space-y-1.5 text-sm text-neutral-600">{children}</ul>,
+    li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+    hr: () => <hr className="my-6 border-t border-neutral-200/60" />,
+    // Thẻ div cô lập cấu hình toán học block khỏi hệ thống bố cục tự động
     div: ({ className, children }: any) => {
       if (className?.includes("math-display")) {
         return (
-          <div className="my-6 p-4 sm:p-6 bg-neutral-50 border border-neutral-100 rounded-lg overflow-x-auto text-neutral-900 flex justify-center items-center shadow-xs scrollbar-thin">
-            {children}
-          </div>
-        );
-      }
-      return <div className={className}>{children}</div>;
-    },
-    // Tinh chỉnh riêng cho công thức toán học nhỏ nằm trên dòng ($...$)
-    span: ({ className, children }: any) => {
-      if (className?.includes("math-inline")) {
-        return <span className="px-1 py-0.5 bg-neutral-100/60 text-neutral-900 rounded font-mono text-[13px]">{children}</span>;
-      }
-      return <span className={className}>{children}</span>;
-    }
-*/
-
-    // Tinh chỉnh riêng khoảng cách và cấu trúc hiển thị cho khối công thức toán học lớn ($$...$$)
-    div: ({ className, children }: any) => {
-      if (className?.includes("math-display")) {
-        return (
-          <div className="my-8 p-5 bg-neutral-50 border border-neutral-100 rounded-xl overflow-x-auto text-neutral-950 text-center block clear-both scrollbar-none">
-            <span className="inline-block min-w-full text-base sm:text-lg md:text-xl py-2 leading-relaxed tracking-wide dynamic-katex-block">
+          <div className="my-6 p-4 bg-neutral-50 border border-neutral-100 rounded-xl overflow-x-auto text-neutral-900 text-center block clear-both scrollbar-none">
+            <div className="inline-block min-w-full text-sm sm:text-base py-1 text-left sm:text-center whitespace-nowrap antialiased tracking-normal">
               {children}
-            </span>
+            </div>
           </div>
         );
       }
       return <div className={className}>{children}</div>;
-    },
-    // Tinh chỉnh riêng cho công thức toán học nhỏ nằm trên dòng ($...$) để tránh đè chữ
-    span: ({ className, children }: any) => {
-      if (className?.includes("math-inline")) {
-        return (
-          <span className="px-1.5 py-0.5 bg-neutral-100/70 text-neutral-900 rounded font-mono text-[13px] inline-block align-middle whitespace-nowrap mx-0.5">
-            {children}
-          </span>
-        );
-      }
-      return <span className={className}>{children}</span>;
     }
-
-
-
   }), []);
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 py-6 sm:py-12 px-3 sm:px-6 lg:px-8 font-sans selection:bg-neutral-200">
+    <div className="min-h-screen bg-neutral-50/40 py-4 sm:py-10 px-2 sm:px-6 font-sans">
       <div className="max-w-3xl mx-auto bg-white border border-neutral-200/60 shadow-xs rounded-xl overflow-hidden">
         
-        {/* Top Header */}
-        <div className="px-6 py-5 bg-neutral-900 text-white flex justify-between items-center border-b border-neutral-800">
+        {/* Header Cao Cấp */}
+        <div className="px-6 py-4 bg-neutral-900 text-white flex justify-between items-center">
           <div>
             <span className="text-[10px] font-bold tracking-widest text-neutral-400 uppercase block">Phúc An Lab System</span>
             <h2 className="text-base font-light tracking-wide text-neutral-100 mt-0.5">Biện Luận Kỹ Thuật Bể Sinh Học</h2>
           </div>
           <div className="px-2.5 py-0.5 text-[10px] font-medium bg-neutral-800 text-neutral-300 border border-neutral-700 rounded-full">
-            M&E v5 Standard
+            Metcalf & Eddy Standard
           </div>
         </div>
 
-        {/* Khối Render Markdown kết hợp Custom Padding & Margin */}
-        <div className="px-6 sm:px-10 py-8">
+        {/* Khối Render Báo Cáo */}
+        <div className="px-5 sm:px-10 py-6">
           <ReactMarkdown 
             remarkPlugins={[remarkMath]} 
             rehypePlugins={[rehypeKatex]}
@@ -247,8 +189,8 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\times 60 \\times (0.
           </ReactMarkdown>
         </div>
 
-        {/* Khối Cảnh báo Expert RAG Box */}
-        <div className="mx-6 sm:mx-10 mb-10 p-4 bg-neutral-50 border-l border-neutral-900 rounded-r-md">
+        {/* Khối Thông Tin Vận Hành */}
+        <div className="mx-5 sm:mx-10 mb-8 p-4 bg-neutral-50 border-l border-neutral-900 rounded-r-md">
           <div className="flex items-start gap-2.5">
             <span className="text-sm mt-0.5">⚠️</span>
             <div>
