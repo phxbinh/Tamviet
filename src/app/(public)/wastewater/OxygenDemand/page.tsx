@@ -4,7 +4,7 @@
 //-> OK
 //import { AerotankReportView, AerotankInputs } from "./AerationTank__";
 
-import { AerotankReportView, AerotankInputs } from "./AerationReport_To_Pdf";
+import { AerotankReportView, AerotankInputs } from "./AerationRepot_To_Pdf";
 
 
 export default function Page() {
