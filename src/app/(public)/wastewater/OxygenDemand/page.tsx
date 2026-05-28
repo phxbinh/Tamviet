@@ -66,7 +66,7 @@ export default function Page() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-8 bg-gray-50 min-h-screen">
+    <>
       {/* Form nhập liệu */}
       <AerotankForm defaultData={data} onSubmitData={setData} />
       
@@ -75,8 +75,21 @@ export default function Page() {
         <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Kết Quả Báo Cáo</h2>
         <AerotankReportView data={data} />
       </div>
-    </div>
+    </>
   );
 }
+
+/*
+    <div className="max-w-6xl mx-auto p-4 space-y-8 bg-gray-50 min-h-screen">
+
+      <AerotankForm defaultData={data} onSubmitData={setData} />
+      
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Kết Quả Báo Cáo</h2>
+        <AerotankReportView data={data} />
+      </div>
+    </div>
+
+*/
 
 
