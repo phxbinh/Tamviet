@@ -172,6 +172,7 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\times 60 \\times (0.
     ),
     hr: () => <hr className="my-8 border-t border-neutral-200/60" />,
     // Tinh chỉnh riêng khoảng cách (Padding/Margin) cho khối công thức toán học lớn ($$...$$)
+/*
     div: ({ className, children }: any) => {
       if (className?.includes("math-display")) {
         return (
@@ -189,6 +190,35 @@ $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\times 60 \\times (0.
       }
       return <span className={className}>{children}</span>;
     }
+*/
+
+    // Tinh chỉnh riêng khoảng cách và cấu trúc hiển thị cho khối công thức toán học lớn ($$...$$)
+    div: ({ className, children }: any) => {
+      if (className?.includes("math-display")) {
+        return (
+          <div className="my-8 p-5 bg-neutral-50 border border-neutral-100 rounded-xl overflow-x-auto text-neutral-950 text-center block clear-both scrollbar-none">
+            <span className="inline-block min-w-full text-base sm:text-lg md:text-xl py-2 leading-relaxed tracking-wide dynamic-katex-block">
+              {children}
+            </span>
+          </div>
+        );
+      }
+      return <div className={className}>{children}</div>;
+    },
+    // Tinh chỉnh riêng cho công thức toán học nhỏ nằm trên dòng ($...$) để tránh đè chữ
+    span: ({ className, children }: any) => {
+      if (className?.includes("math-inline")) {
+        return (
+          <span className="px-1.5 py-0.5 bg-neutral-100/70 text-neutral-900 rounded font-mono text-[13px] inline-block align-middle whitespace-nowrap mx-0.5">
+            {children}
+          </span>
+        );
+      }
+      return <span className={className}>{children}</span>;
+    }
+
+
+
   }), []);
 
   return (
