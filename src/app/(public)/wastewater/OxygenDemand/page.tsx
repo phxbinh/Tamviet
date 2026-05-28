@@ -1,5 +1,5 @@
 //src/app/(public)/wastewater/OxygenDemand/page.tsx
-import { AerotankReportView, AerotankInputs } from "./AerationReport";
+import { AerotankReportView, AerotankInputs } from "./AerationReport_";
 
 export default function Page() {
   // Dữ liệu chuẩn từ sách Metcalf & Eddy bài 8-22
