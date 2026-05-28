@@ -127,7 +127,7 @@ $$P_{X,\\text{TSS}} = \\frac{X_{\\text{TSS}} \\cdot V}{\\text{SRT}}$$
 * Hiệu suất loại bỏ chất hữu cơ hòa tan của hệ thống: 📈 **${((1 - s_eff / s_0) * 100).toFixed(2)}%**
 
 ### Bước 6: Thiết kế hệ thống phân phối khí mịn (Fine Bubble Diffusers)
-Hiệu chỉnh điều kiện vận hành thực tế tại cao độ ${elevation}\\,\\text{m}$ về điều kiện tiêu chuẩn tiêu chuẩn mặt nước biển:
+Hiệu chỉnh điều kiện vận hành thực tế tại cao độ $${elevation}\\,\\text{m}$$ về điều kiện tiêu chuẩn tiêu chuẩn mặt nước biển:
 $$\\text{Air flowrate} = \\frac{\\text{SOTR}}{\\text{OTE} \\cdot 60 \\cdot (0.2318 \\cdot \\rho_{\\text{air}})}$$
 
 * Tốc độ truyền oxy tiêu chuẩn yêu cầu ($\\text{SOTR}$): **${sotr_kg_h.toFixed(1)}** $\\text{kg O}_2/\\text{giờ}$
