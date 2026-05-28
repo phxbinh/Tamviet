@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
 
 /* Update */
 /* 1. ĐỊNH NGHĨA BIẾN MÀU SẮC (CSS VARIABLES) */
