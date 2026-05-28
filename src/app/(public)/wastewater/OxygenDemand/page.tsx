@@ -10,8 +10,8 @@ import { AerotankReportView, AerotankInputs } from "./AerationRepot_To_Pdf";
 export default function Page() {
   // Dữ liệu chuẩn từ sách Metcalf & Eddy bài 8-22
   const sampleData: AerotankInputs = {
-    q: 3000.0,
-    s_0: 1800.0,
+    q: 2500.0,
+    s_0: 1200.0,
     temp: 15.0,
     x_tss: 2500.0,
     srt: 8.0,
