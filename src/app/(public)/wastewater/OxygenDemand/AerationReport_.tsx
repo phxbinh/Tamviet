@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import remarkGfm from 'remark-gfm';
 
 // 1. Định nghĩa Interface cấu trúc dữ liệu đầu vào chuẩn hóa
 export interface AerotankInputs {
