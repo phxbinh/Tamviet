@@ -71,7 +71,7 @@ export default function Page() {
       <AerotankForm defaultData={data} onSubmitData={setData} />
       
       {/* View báo cáo / Kết quả tính toán */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-0 rounded-lg shadow">
         <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Kết Quả Báo Cáo</h2>
         <AerotankReportView data={data} />
       </div>
