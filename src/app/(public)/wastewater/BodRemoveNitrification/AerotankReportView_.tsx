@@ -19,7 +19,7 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ calculat
     contentRef: reportRef,
     documentTitle: `Thuyet_Minh_Ky_Thuat_Aerotank_Metcalf_Eddy`,
   });
-
+/*
   const reportMarkdown = useMemo(() => {
     const c = calculations;
     return `
@@ -163,6 +163,344 @@ $$\text{Solids Loading} = \frac{(1 + R) \cdot Q \cdot X_{\text{TSS}}}{\text{Area
 * Đánh giá kết quả kiểm tra kỹ thuật: Chỉ số nằm hoàn toàn trong khung tiêu chuẩn kỹ thuật an toàn cho phép ($4 \div 6 kg/m^2 \cdot h$).
 `;
   }, [calculations, rawInputs]);
+*/
+const reportMarkdown = useMemo(() => {
+  const c = calculations;
+  return `
+# BÁO CÁO THUYẾT MINH CHI TIẾT THIẾT KẾ BỂ SINH HỌC HOẠT TÍNH AEROTANK
+*Phương pháp luận tính toán Động học Hệ thống Vi sinh theo Tiêu chuẩn Quốc tế Metcalf & Eddy.*
+---
+## I. THÔNG SỐ ĐẦU VÀO VÀ ĐẶC TRƯNG NƯỚC THẢI
+### 1. Lưu lượng và nồng độ chất ô nhiễm nền
+* Lưu lượng nước thải tính toán ($Q$): **${c.q.toLocaleString()}** $m^3/\\text{ngày}$
+* Hàm lượng COD có khả năng phân hủy sinh học ($(\text{COD})_b$): **${c.s_0.toLocaleString()}** $g/m^3$
+* Hàm lượng chất hữu cơ dễ phân hủy ($\\text{BOD}_5$): **${c.bod_in.toLocaleString()}** $g/m^3$
+* Tổng chất rắn lơ lửng dải vào ($\\text{TSS}$): **${c.tss_in.toLocaleString()}** $g/m^3$
+* Chất rắn lơ lửng bay hơi dòng vào ($\\text{VSS}$): **${c.vss_in.toLocaleString()}** $g/m^3$
+* Phần chất rắn lơ lửng trơ không phân hủy ($\\text{VSS}_{nb}$): **${c.vss_nb.toLocaleString()}** $g/m^3$
+* Tổng nồng độ Nitơ Amoni ($NH_4\\text{-}N$): **${c.nh4_in.toLocaleString()}** $g/m^3$
+* Độ kiềm tổng của nước thải đầu vào ($\\text{Alkalinity}$): **${c.alkalinity_in.toLocaleString()}** $g/m^3 \\text{ as CaCO}_3$
+* Tỷ số $(\\text{COD})_b/\\text{BOD}$: **1.6**
+* Nhiệt độ làm việc thiết kế ($T$): **${c.temp}** °C
+### 2. Các chỉ tiêu đầu ra mục tiêu
+* Hàm lượng $(\\text{COD})_b$ dòng ra tiêu chuẩn: **${c.s_eff.toFixed(1)}** $g/m^3$
+* Hàm lượng $NH_4\\text{-}N$ dòng ra sau xử lý lắng hai: **${c.nh4_eff.toFixed(2)}** $g/m^3$
+### 3. Giả định vận hành kỹ thuật khống chế
+* Nồng độ Oxy hòa tan mục tiêu duy trì tại ngăn hiếu khí ($DO$): **${c.do_basin.toFixed(1)}** $g/m^3$
+* Nồng độ chất rắn lơ lửng hỗn hợp bùn hoạt tính mục tiêu ($X_{\\text{TSS}}$): **${c.x_tss.toLocaleString()}** $g/m^3$
+* Hệ số an toàn thiết kế xử lý sinh học nitơ ($\\text{Safety factor}$): **${c.safety_factor}**
+* Thành phần sinh khối duy trì lại cấu trúc trơ ($f_d$): **0.15**
+---
+## II. QUY TRÌNH LUẬN CHỨNG KỸ THUẬT VÀ TÍNH TOÁN 15 BƯỚC CHUYÊN NGÀNH
+### (1) Xác định tốc độ tăng trưởng cụ thể $\\mu_n$ của vi khuẩn nitơ hóa
+Áp dụng mô hình toán học tích hợp động học cơ chất giới hạn Monod và nồng độ dưỡng khí $DO$ khuếch tán:
+$$
+\\mu_n =
+\\left(
+\\frac{
+\\mu_{n,\\text{max}} \\cdot (NH_4\\text{-}N)_e
+}{
+K_n + (NH_4\\text{-}N)_e
+}
+\\right)
+\\cdot
+\\left(
+\\frac{DO}{K_o + DO}
+\\right)
+- k_{dn}
+$$
+Thế số trực tiếp:
+$$
+\\mu_n =
+\\left(
+\\frac{
+0.50 \\cdot ${c.nh4_eff.toFixed(2)}
+}{
+0.60 + ${c.nh4_eff.toFixed(2)}
+}
+\\right)
+\\cdot
+\\left(
+\\frac{
+${c.do_basin.toFixed(1)}
+}{
+0.60 + ${c.do_basin.toFixed(1)}
+}
+\\right)
+- 0.05
+$$
+* Kết quả tính toán: **${c.mu_n.toFixed(4)}** $g/g \\cdot d$
+---
+### (2) Xác định tuổi lưu bùn sinh học thiết kế (SRT)
+* Tuổi lưu bùn lý thuyết tối thiểu:
+$$
+SRT_{\\text{theoretical}}
+=
+\\frac{1}{\\mu_n}
+=
+\\frac{1}{${c.mu_n.toFixed(4)}}
+=
+${c.srt_theoretical.toFixed(1)}
+\\text{ ngày}
+$$
+* Tuổi lưu bùn thiết kế:
+$$
+SRT_{\\text{design}}
+=
+${c.safety_factor}
+\\times
+${c.srt_theoretical.toFixed(1)}
+=
+${c.srt_design.toFixed(1)}
+\\text{ ngày}
+$$
+---
+### (3) Xác định khối lượng sinh khối vi sinh vật tổng hợp hàng ngày
+$$
+P_{\\text{bio}}
+=
+\\frac{
+Q \\cdot Y \\cdot [(COD)_b_{\\text{in}} - (COD)_b_e]
+}{
+1 + k_d \\cdot SRT
+}
++
+\\frac{
+f_d \\cdot k_d \\cdot Q \\cdot Y \\cdot [(COD)_b_{\\text{in}} - (COD)_b_e] \\cdot SRT
+}{
+1 + k_d \\cdot SRT
+}
++
+\\frac{
+Q \\cdot Y_n \\cdot (NH_4\\text{-}N)_{\\text{in}}
+}{
+1 + k_{dn} \\cdot SRT
+}
+$$
+* Sinh khối vi khuẩn dị dưỡng: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
+* Mảnh vỡ tế bào trơ: **${(c.p_debris / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
+* Sinh khối Nitơ hóa: **${(c.p_bio_nitrifier / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
+* Tổng sinh khối phát sinh:
+**${c.p_bio_total.toLocaleString(undefined, {
+  maximumFractionDigits: 1,
+})}**
+$g\\text{ VSS}/d$
+---
+### (4) Xác định tải lượng Nitơ chuyển hóa thành Nitrat
+$$
+NO_x\\text{-}N
+=
+${c.nh4_in}
+-
+${c.nh4_eff}
+-
+0.12
+\\times
+\\frac{
+${c.p_bio_total.toFixed(1)}
+}{
+${c.q}
+}
+=
+${c.no_x_n.toFixed(2)}
+\\text{ g/m}^3
+$$
+---
+### (5) Xác định nồng độ và khối lượng cặn
+$$
+P_{\\text{VSS}}
+=
+P_{\\text{bio}}
++
+Q \\cdot (VSS)_{nb}
+=
+${(c.p_vss_day / 1000).toFixed(1)}
+\\text{ kg VSS/ngày}
+$$
+$$
+P_{\\text{TSS}}
+=
+\\frac{P_{\\text{bio}}}{0.85}
++
+Q \\cdot (VSS)_{nb}
++
+Q \\cdot (TSS_{\\text{in}} - VSS_{\\text{in}})
+=
+${(c.p_tss_day / 1000).toFixed(1)}
+\\text{ kg TSS/ngày}
+$$
+* Khối lượng trạng thái VSS:
+$M_{\\text{VSS}} = ${c.mass_vss_basin.toLocaleString(undefined, {
+  maximumFractionDigits: 1,
+})} \\text{ kg}$
+* Khối lượng trạng thái TSS:
+$M_{\\text{TSS}} = ${c.mass_tss_basin.toLocaleString(undefined, {
+  maximumFractionDigits: 1,
+})} \\text{ kg}$
+---
+### (6) Tính toán thể tích Aerotank
+$$
+V
+=
+\\frac{
+${c.mass_tss_basin.toFixed(1)} \\times 1000
+}{
+${c.x_tss}
+}
+=
+${c.v_tank.toFixed(0)}
+\\text{ m}^3
+$$
+* Thể tích mỗi đơn nguyên:
+**${c.v_per_tank.toFixed(0)}** $m^3$
+---
+### (7) Xác định thời gian lưu nước thủy lực
+$$
+HRT
+=
+\\frac{
+${c.v_tank.toFixed(0)}
+}{
+${c.q}
+}
+\\times 24
+=
+${c.hrt_hours.toFixed(1)}
+\\text{ giờ}
+$$
+---
+### (8) Xác định nồng độ MLVSS
+$$
+\\text{Fraction}
+=
+\\frac{
+${c.mass_vss_basin.toFixed(1)}
+}{
+${c.mass_tss_basin.toFixed(1)}
+}
+=
+${c.vss_tss_ratio.toFixed(2)}
+$$
+$$
+X_{\\text{VSS}}
+=
+${c.vss_tss_ratio.toFixed(2)}
+\\times
+${c.x_tss}
+=
+${c.x_vss.toFixed(0)}
+\\text{ g/m}^3
+$$
+---
+### (9) Tính toán F/M và tải trọng hữu cơ
+$$
+F/M
+=
+${c.f_m_ratio.toFixed(2)}
+\\text{ g BOD/g VSS} \\cdot d
+$$
+$$
+L_{\\text{BOD}}
+=
+${c.volumetric_loading.toFixed(2)}
+\\text{ kg BOD/m}^3 \\cdot d
+$$
+---
+### (10) Hệ số năng suất tăng trưởng thực tế
+* BOD loại bỏ:
+**${c.bod_removed_day.toFixed(1)}**
+$kg\\text{ BOD}/d$
+* $Y_{\\text{TSS}}$:
+**${c.y_tss_obs.toFixed(2)}**
+* $Y_{\\text{VSS}}$:
+**${c.y_vss_obs.toFixed(2)}**
+---
+### (11) Nhu cầu Oxy thực tế
+$$
+R_o
+=
+Q \\cdot [(COD)_b_{\\text{in}} - (COD)_b_e]
+-
+1.42 \\cdot P_{\\text{bio,total}}
++
+4.33 \\cdot Q \\cdot (NO_x\\text{-}N)
+$$
+* Nhu cầu Oxy hàng ngày:
+**${c.r_o_day.toLocaleString(undefined, {
+  maximumFractionDigits: 0,
+})}**
+$kg\\ O_2/\\text{ngày}$
+* Nhu cầu Oxy trung bình mỗi giờ:
+**${c.r_o_hour.toFixed(1)}**
+$kg\\ O_2/\\text{giờ}$
+---
+### (12) Độ kiềm và cân bằng pH
+$$
+\\text{Alkalinity Used}
+=
+7.14
+\\times
+${c.no_x_n.toFixed(2)}
+=
+${c.alkalinity_nitrification.toFixed(1)}
+\\text{ g/m}^3
+\\text{ as CaCO}_3
+$$
+* Độ kiềm cần bổ sung:
+**${c.alkalinity_required_daily.toFixed(0)}**
+$kg/\\text{ngày}$
+---
+### (13) BOD tổng dòng ra
+$$
+\\text{Total BOD}
+=
+3.0
++
+0.70
+\\times
+0.85
+\\times
+8.0
+=
+${c.effluent_total_bod.toFixed(1)}
+\\text{ g/m}^3
+$$
+---
+### (14) Bể lắng thứ cấp
+$$
+R
+=
+\\frac{
+${c.x_tss}
+}{
+7500 - ${c.x_tss}
+}
+=
+${c.sludge_return_ratio.toFixed(2)}
+$$
+$$
+\\text{Surface Area}
+=
+\\frac{Q}{25}
+=
+${c.clarifier_area.toFixed(0)}
+\\text{ m}^2
+$$
+* Đường kính mỗi bể:
+**${c.clarifier_diameter.toFixed(1)}**
+$m$
+---
+### (15) Kiểm tra tải trọng chất rắn
+$$
+\\text{Solids Loading}
+=
+${c.solids_loading_rate.toFixed(2)}
+\\text{ kg TSS}/m^2 \\cdot h
+$$
+* Đánh giá:
+Đạt giới hạn an toàn thiết kế.
+`;
+}, [calculations, rawInputs]);
 
   const markdownComponents = useMemo(() => ({
     h1: ({ children }: any) => <h1 className="text-xl font-light tracking-wide text-neutral-950 mt-6 mb-4 uppercase border-b border-neutral-200/80 pb-3 print:text-base">{children}</h1>,
