@@ -125,6 +125,9 @@ $$F/M = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{X_{\\text{VSS}} \\cdot V} = **
 
 $$L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = **${c.volumetric_loading.toFixed(2)}** \\text{ kg BOD/m}^3 \\cdot d$$
 
+$$L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = \\mathbf{${c.volumetric_loading.toFixed(2)}} \\text{ kg BOD/m}^3 \\cdot d$$
+
+
 ### (10) Xác định hệ số năng suất tăng trưởng thực tế quan trắc ($Y_{\\text{obs}}$)
 * Tổng lượng hữu cơ chất nền $\text{BOD}$ được phân hủy loại bỏ khỏi hệ thống hàng ngày: **${c.bod_removed_day.toFixed(1)}** $kg\\text{ BOD}/d$
 * Hệ số năng suất thực tế quan trắc theo chỉ số tổng cặn chất rắn ($Y_{\\text{TSS}}$): **${c.y_tss_obs.toFixed(2)}**
@@ -133,7 +136,7 @@ $$L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = *
 ### (11) Tính toán lượng nhu cầu khí cấp sục Oxy thực tế ($R_o$)
 Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết hữu cơ carbon kết hợp năng lượng cung cấp cho vi khuẩn tự dưỡng trong phản ứng oxy hóa Nitơ hóa hiếu khí:
 
-$$R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \cdot P_{\\text{bio, total}} + 4.33 \cdot Q \cdot (NO_x\\text{-}N)$$
+$$R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \\cdot P_{\\text{bio, total}} + 4.33 \\cdot Q \\cdot (NO_x\\text{-}N)$$
 
 * Nhu cầu hấp thụ Oxy thực tế hàng ngày tính toán ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** $kg\\ O_2/\\text{ngày}$
 * **Nhu cầu lưu lượng Oxy cấp đỉnh trung bình mỗi giờ:** 🚀 **${c.r_o_hour.toFixed(1)}** $kg\\ O_2/\\text{giờ}$
