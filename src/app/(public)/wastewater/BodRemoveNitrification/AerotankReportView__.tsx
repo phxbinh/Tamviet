@@ -70,8 +70,8 @@ $$mu_n = \\left(\\frac{0.50 \\cdot ${c.nh4_eff.toFixed(2)}}{0.60 + ${c.nh4_eff.t
 * Tuổi lưu bùn lý thuyết tối thiểu:
 $$SRT_{\\text{theoretical}} = \\frac{1}{\\mu_n} = \\frac{1}{${c.mu_n.toFixed(4)}} = \\mathbf{${c.srt_theoretical.toFixed(1)}} \\text{ ngày}$$
 
-* Tuổi lưu bùn thiết kế an toàn tích hợp hệ số $SF = {c.safety_factor}$:
-$$SRT_{\\text{design}} = \\text{Safety Factor} \\times SRT_{\\text{theoretical}} = ${c.safety_factor} \\times ${c.srt_theoretical.toFixed(1)} = **${c.srt_design.toFixed(1)}** \\text{ ngày}$$
+* Tuổi lưu bùn thiết kế an toàn tích hợp hệ số SF = ${c.safety_factor}:
+$$SRT_{\\text{design}} = \\text{Safety Factor} \\times SRT_{\\text{theoretical}} = ${c.safety_factor} \\times ${c.srt_theoretical.toFixed(1)} = \\mathbf{${c.srt_design.toFixed(1)}} \\text{ ngày}$$
 
 ### (3) Xác định khối lượng sinh khối vi sinh vật tổng hợp hàng daily ($P_{\\text{bio}}$)
 Tính toán phân tách lượng sinh khối hình thành từ tế bào vi khuẩn dị dưỡng dị hóa hữu cơ, phần bùn xác mảnh vỡ tế bào nội bào trơ và vi khuẩn tự dưỡng nitơ hóa:
@@ -108,7 +108,7 @@ $$V = \\frac{M_{\\text{TSS}} \\cdot 1000}{X_{\\text{TSS}}} = \\frac{${c.mass_tss
 * Phương án xây dựng trạm: Bố trí chia đều làm **2 đơn nguyên bể vận hành song song**, thể tích làm việc mỗi đơn nguyên là **${c.v_per_tank.toFixed(0)}** $m^3$.
 
 ### (7) Xác định thời gian lưu nước thủy lực ($HRT$)
-$$HRT = \\frac{V}{Q} = \\frac{${c.v_tank.toFixed(0)}}{${c.q}} \\times 24 \\text{ giờ/ngày} = **${c.hrt_hours.toFixed(1)}** \\text{ giờ}$$
+$$HRT = \\frac{V}{Q} = \\frac{${c.v_tank.toFixed(0)}}{${c.q}} \\times 24 \\text{ giờ/ngày} = \\mathbf{${c.hrt_hours.toFixed(1)}} \\text{ giờ}$$
 
 ### (8) Xác định nồng độ chất hữu cơ bay hơi sinh khối ($X_{\\text{VSS}}$)
 Tỷ lệ thành phần hữu cơ vi sinh hoạt tính trong bùn hoạt tính:
@@ -119,11 +119,11 @@ $$X_{\\text{VSS}} = \\text{Fraction} \\times X_{\\text{TSS}} = ${c.vss_tss_ratio
 ### (9) Tính toán tỷ số tỷ lệ F/M và Tải trọng thể tích hữu cơ bể phản ứng
 * Tỷ số F/M (Tỷ lệ lượng thức ăn hữu cơ trên mật độ khối lượng vi sinh):
 
-$$F/M = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{X_{\\text{VSS}} \\cdot V} = \\mathbf{${c.f_m_ratio.toFixed(2)}} \\text{ g BOD/g VSS} \\cdot d$$
+$$\\large F/M = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{X_{\\text{VSS}} \\cdot V} = \\mathbf{${c.f_m_ratio.toFixed(2)}} \\text{ g BOD/g VSS} \\cdot d$$
 
 * Tải trọng chất hữu cơ theo thể tích bể ($L_{\\text{BOD}}$):
 
-$$L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = \\mathbf{${c.volumetric_loading.toFixed(2)}} \\text{ kg BOD/m}^3 \\cdot d$$
+$$\\large L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = \\mathbf{${c.volumetric_loading.toFixed(2)}} \\text{ kg BOD/m}^3 \\cdot d$$
 
 ### (10) Xác định hệ số năng suất tăng trưởng thực tế quan trắc ($Y_{\\text{obs}}$)
 * Tổng lượng hữu cơ chất nền $\text{BOD}$ được phân hủy loại bỏ khỏi hệ thống hàng ngày: **${c.bod_removed_day.toFixed(1)}** $kg\\text{ BOD}/d$
