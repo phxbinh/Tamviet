@@ -486,7 +486,7 @@ $$
 Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết hữu cơ carbon kết hợp năng lượng cung cấp cho vi khuẩn tự dưỡng trong phản ứng oxy hóa Nitơ hóa hiếu khí:
 
 $$
-R_o = Q \\cdot [ (COD)_b_{\\text{in}} - (COD)_b_e ] - 1.42 \\cdot P_{\\text{bio, total}} + 4.33 \\cdot Q \\cdot (NO_x\\text{-}N)
+R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \\cdot P_{\\text{bio, total}} + 4.33 \\cdot Q \\cdot (NO_x\\text{-}N)
 $$
 
 * Nhu cầu hấp thụ Oxy thực tế hàng ngày tính toán ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** $kg\\ O_2/\\text{ngày}$
@@ -494,9 +494,11 @@ $$
 
 ### (12) Đánh giá kiểm soát độ kiềm và cân bằng pH hệ thống
 * Độ kiềm hệ thống bị tiêu hao trực tiếp phục vụ phản ứng khử Amoni chuyển hóa Nitơ hiếu khí:
+
 $$
-\\text{Alkalinity Used} = 7.14 \\times NO_x\\text{-}N = 7.14 \\times {c.no_x_n.toFixed(2)} = **${c.alkalinity_nitrification.toFixed(1)}** g/m^3 \\text{ as CaCO}_3
+\\text{Alkalinity Used} = 7.14 \\times NO_x\\text{-}N = 7.14 \\times ${c.no_x_n.toFixed(2)} = \\mathbf{${c.alkalinity_nitrification.toFixed(1)}} \\text{ g/m}^3\\text{ as CaCO}_3
 $$
+
 * Nhằm mục tiêu duy trì độ pH dung dịch ổn định trong biên độ tối ưu 6.8 - 7.0 chống ức chế sinh trưởng, nồng độ độ kiềm dư an toàn duy trì tối thiểu là $75 g/m^3$.
 * **Khối lượng độ kiềm thiếu hụt cần bổ sung châm hóa chất:** **${c.alkalinity_required_daily.toFixed(0)}** $kg/\\text{ngày}$
 
