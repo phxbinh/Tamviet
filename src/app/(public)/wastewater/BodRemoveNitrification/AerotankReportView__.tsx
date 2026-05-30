@@ -59,9 +59,7 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ calculat
 ### (1) Xác định tốc độ tăng trưởng cụ thể $\\mu_n$ của vi khuẩn nitơ hóa
 Áp dụng mô hình toán học tích hợp động học cơ chất giới hạn Monod và nồng độ dưỡng khí $DO$ khuếch tán:
 
-$$
-\\mu_n = \\left(\\frac{\\mu_{n,\\text{max}} \\cdot (NH_4\\text{-}N)_e}{K_n + (NH_4\\text{-}N)_e}\\right) \\cdot \\left(\\frac{DO}{K_o + DO}\\right) - k_{dn}
-$$
+$$mu_n = \\left(\\frac{\\mu_{n,\\text{max}} \\cdot (NH_4\\text{-}N)_e}{K_n + (NH_4\\text{-}N)_e}\\right) \\cdot \\left(\\frac{DO}{K_o + DO}\\right) - k_{dn}$$
 
 Thế số trực tiếp từ bảng hằng số hằng số lý thuyết:
 $$
