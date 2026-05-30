@@ -112,9 +112,9 @@ $$HRT = \\frac{V}{Q} = \\frac{${c.v_tank.toFixed(0)}}{${c.q}} \\times 24 \\text{
 
 ### (8) Xác định nồng độ chất hữu cơ bay hơi sinh khối ($X_{\\text{VSS}}$)
 Tỷ lệ thành phần hữu cơ vi sinh hoạt tính trong bùn hoạt tính:
-$$\\text{Fraction} = \\frac{M_{\\text{VSS}}}{M_{\\text{TSS}}} = \\frac{${c.mass_vss_basin.toFixed(1)}}{${c.mass_tss_basin.toFixed(1)}} = **${c.vss_tss_ratio.toFixed(2)}**$$
+$$\\text{Fraction} = \\frac{M_{\\text{VSS}}}{M_{\\text{TSS}}} = \\frac{${c.mass_vss_basin.toFixed(1)}}{${c.mass_tss_basin.toFixed(1)}} = \\mathbf{${c.vss_tss_ratio.toFixed(2)}}$$
 
-$$X_{\\text{VSS}} = \\text{Fraction} \\times X_{\\text{TSS}} = {c.vss_tss_ratio.toFixed(2)} \\times {c.x_tss} = **${c.x_vss.toFixed(0)}** g/m^3$$
+$$X_{\\text{VSS}} = \\text{Fraction} \\times X_{\\text{TSS}} = ${c.vss_tss_ratio.toFixed(2)} \\times ${c.x_tss} = \\mathbf{${c.x_vss.toFixed(0)}} \\text{ g/m}^3$$
 
 ### (9) Tính toán tỷ số tỷ lệ F/M và Tải trọng thể tích hữu cơ bể phản ứng
 * Tỷ số F/M (Tỷ lệ lượng thức ăn hữu cơ trên mật độ khối lượng vi sinh):
