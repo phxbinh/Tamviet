@@ -63,28 +63,22 @@ $$mu_n = \\left(\\frac{\\mu_{n,\\text{max}} \\cdot (NH_4\\text{-}N)_e}{K_n + (NH
 
 Thế số trực tiếp từ bảng hằng số hằng số lý thuyết:
 $$
-\\mu_n = \\left(\\frac{0.50 \\cdot ${c.nh4_eff.toFixed(2)}}{0.60 + ${c.nh4_eff.toFixed(2)}}\\right) \\cdot \\left(\\frac{${c.do_basin.toFixed(1)}}{0.60 + ${c.do_basin.toFixed(1)}}\\right) - 0.05
+mu_n = \\left(\\frac{0.50 \\cdot ${c.nh4_eff.toFixed(2)}}{0.60 + ${c.nh4_eff.toFixed(2)}}\\right) \\cdot \\left(\\frac{${c.do_basin.toFixed(1)}}{0.60 + ${c.do_basin.toFixed(1)}}\\right) - 0.05
 $$
 
 * Kết quả tính toán: $\\mu_n$ = **${c.mu_n.toFixed(4)}** $g/g \\cdot d$
 
 ### (2) Xác định tuổi lưu bùn sinh học thiết kế (SRT)
 * Tuổi lưu bùn lý thuyết tối thiểu:
-$$
-SRT_{\\text{theoretical}} = \\frac{1}{\\mu_n} = \\frac{1}{${c.mu_n.toFixed(4)}} = **${c.srt_theoretical.toFixed(1)}** \\text{ ngày}
-$$
+$$SRT_{\\text{theoretical}} = \\frac{1}{\\mu_n} = \\frac{1}{${c.mu_n.toFixed(4)}} = **${c.srt_theoretical.toFixed(1)}** \\text{ ngày}$$
 
 * Tuổi lưu bùn thiết kế an toàn tích hợp hệ số $SF = {c.safety_factor}$:
-$$
-SRT_{\\text{design}} = \\text{Safety Factor} \\times SRT_{\\text{theoretical}} = ${c.safety_factor} \\times ${c.srt_theoretical.toFixed(1)} = **${c.srt_design.toFixed(1)}** \\text{ ngày}
-$$
+$$SRT_{\\text{design}} = \\text{Safety Factor} \\times SRT_{\\text{theoretical}} = ${c.safety_factor} \\times ${c.srt_theoretical.toFixed(1)} = **${c.srt_design.toFixed(1)}** \\text{ ngày}$$
 
 ### (3) Xác định khối lượng sinh khối vi sinh vật tổng hợp hàng daily ($P_{\\text{bio}}$)
 Tính toán phân tách lượng sinh khối hình thành từ tế bào vi khuẩn dị dưỡng dị hóa hữu cơ, phần bùn xác mảnh vỡ tế bào nội bào trơ và vi khuẩn tự dưỡng nitơ hóa:
 
-$$
-P_{\\text{bio}} = \\frac{Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e]}{1 + k_d \\cdot SRT} + \\frac{f_d \\cdot k_d \\cdot Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e] \\cdot SRT}{1 + k_d \\cdot SRT} + \\frac{Q \\cdot Y_n \\cdot (NH_4\\text{-}N)_{\\text{in}}}{1 + k_{dn} \\cdot SRT}
-$$
+$$P_{\\text{bio}} = \\frac{Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e]}{1 + k_d \\cdot SRT} + \\frac{f_d \\cdot k_d \\cdot Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e] \\cdot SRT}{1 + k_d \\cdot SRT} + \\frac{Q \\cdot Y_n \\cdot (NH_4\\text{-}N)_{\\text{in}}}{1 + k_{dn} \\cdot SRT}$$
 
 * Sinh khối vi khuẩn dị dưỡng hoạt tính phát sinh: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
 * Khối lượng mảnh vỡ tế bào trơ tích lũy hữu cơ ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
