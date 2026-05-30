@@ -1,6 +1,6 @@
 // app/reports/page.tsx
-import { calculateAerotank, AerotankInputs } from "@/lib/aerotank-calc";
-import { AerotankReportView } from "@/components/AerotankReportView";
+import { calculateAerotank, AerotankInputs } from "./cals";
+import { AerotankReportView } from "./AerotankReportView";
 
 export default async function Page() {
   // Đồng bộ toàn bộ dữ liệu mẫu chính xác từ file tài liệu PDF đầu vào của bạn
