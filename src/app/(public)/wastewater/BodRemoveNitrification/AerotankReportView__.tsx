@@ -76,7 +76,7 @@ $$SRT_{\\text{design}} = \\text{Safety Factor} \\times SRT_{\\text{theoretical}}
 ### (3) Xác định khối lượng sinh khối vi sinh vật tổng hợp hàng daily ($P_{\\text{bio}}$)
 Tính toán phân tách lượng sinh khối hình thành từ tế bào vi khuẩn dị dưỡng dị hóa hữu cơ, phần bùn xác mảnh vỡ tế bào nội bào trơ và vi khuẩn tự dưỡng nitơ hóa:
 
-$$P_{\\text{bio}} = \\frac{Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e]}{1 + k_d \\cdot SRT} + \\frac{f_d \\cdot k_d \\cdot Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e] \\cdot SRT}{1 + k_d \\cdot SRT} + \\frac{Q \\cdot Y_n \\cdot (NH_4\\text{-}N)_{\\text{in}}}{1 + k_{dn} \\cdot SRT}$$
+$$\\large P_{\\text{bio}} = \\frac{Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e]}{1 + k_d \\cdot SRT} + \\frac{f_d \\cdot k_d \\cdot Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}_e] \\cdot SRT}{1 + k_d \\cdot SRT} + \\frac{Q \\cdot Y_n \\cdot (NH_4\\text{-}N)_{\\text{in}}}{1 + k_{dn} \\cdot SRT}$$
 
 * Sinh khối vi khuẩn dị dưỡng hoạt tính phát sinh: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
 * Khối lượng mảnh vỡ tế bào trơ tích lũy hữu cơ ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\\text{ VSS}/d$
