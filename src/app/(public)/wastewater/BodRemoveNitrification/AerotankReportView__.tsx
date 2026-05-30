@@ -62,9 +62,7 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ calculat
 $$mu_n = \\left(\\frac{\\mu_{n,\\text{max}} \\cdot (NH_4\\text{-}N)_e}{K_n + (NH_4\\text{-}N)_e}\\right) \\cdot \\left(\\frac{DO}{K_o + DO}\\right) - k_{dn}$$
 
 Thế số trực tiếp từ bảng hằng số hằng số lý thuyết:
-$$
-mu_n = \\left(\\frac{0.50 \\cdot ${c.nh4_eff.toFixed(2)}}{0.60 + ${c.nh4_eff.toFixed(2)}}\\right) \\cdot \\left(\\frac{${c.do_basin.toFixed(1)}}{0.60 + ${c.do_basin.toFixed(1)}}\\right) - 0.05
-$$
+$$mu_n = \\left(\\frac{0.50 \\cdot ${c.nh4_eff.toFixed(2)}}{0.60 + ${c.nh4_eff.toFixed(2)}}\\right) \\cdot \\left(\\frac{${c.do_basin.toFixed(1)}}{0.60 + ${c.do_basin.toFixed(1)}}\\right) - 0.05$$
 
 * Kết quả tính toán: $\\mu_n$ = **${c.mu_n.toFixed(4)}** $g/g \\cdot d$
 
@@ -88,59 +86,44 @@ $$P_{\\text{bio}} = \\frac{Q \\cdot Y \\cdot [{(COD)_b}_{\\text{in}} - {(COD)_b}
 ### (4) Xác định tải lượng Nitơ chuyển hóa oxy hóa thành Nitrat ($NO_x\\text{-}N$)
 Lượng cấu phần nitơ bị chuyển hóa oxy hóa sau khi đã bù trừ phần nitơ dùng để đồng hóa xây dựng cấu trúc tế bào vi sinh vật (định mức chiếm 12% hàm lượng sinh khối VSS):
 
-$$
-NO_x\\text{-}N = (NH_4\\text{-}N)_{\\text{in}} - (NH_4\\text{-}N)_e - 0.12 \\cdot \\frac{P_{\\text{bio}}}{Q}
-$$
-$$
-NO_x\\text{-}N = ${c.nh4_in} - ${c.nh4_eff} - 0.12 \\times \\frac{${c.p_bio_total.toFixed(1)}}{${c.q}} = **${c.no_x_n.toFixed(2)}** g/m^3
-$$
+$$NO_x\\text{-}N = (NH_4\\text{-}N)_{\\text{in}} - (NH_4\\text{-}N)_e - 0.12 \\cdot \\frac{P_{\\text{bio}}}{Q}$$
+
+$$NO_x\\text{-}N = ${c.nh4_in} - ${c.nh4_eff} - 0.12 \\times \\frac{${c.p_bio_total.toFixed(1)}}{${c.q}} = **${c.no_x_n.toFixed(2)}** g/m^3$$
 
 ### (5) Xác định nồng độ và khối lượng cặn lơ lửng trong hệ thống
 * Tốc độ phát sinh chất rắn lơ lửng hữu cơ bay hơi ($P_{\\text{VSS}}$):
-$$
-P_{\\text{VSS}} = P_{\\text{bio}} + Q \\cdot (VSS)_{nb} = **${(c.p_vss_day / 1000).toFixed(1)}** \\text{ kg VSS/ngày}
-$$
-$$
-P_{\\text{TSS}} = \\frac{P_{\\text{bio}}}{0.85} + Q \\cdot (VSS)_{nb} + Q \\cdot (TSS_{\\text{in}} - VSS_{\\text{in}}) = **${(c.p_tss_day / 1000).toFixed(1)}** \\text{ kg TSS/ngày}
-$$
+$$P_{\\text{VSS}} = P_{\\text{bio}} + Q \\cdot (VSS)_{nb} = **${(c.p_vss_day / 1000).toFixed(1)}** \\text{ kg VSS/ngày}$$
+
+$$P_{\\text{TSS}} = \\frac{P_{\\text{bio}}}{0.85} + Q \\cdot (VSS)_{nb} + Q \\cdot (TSS_{\\text{in}} - VSS_{\\text{in}}) = **${(c.p_tss_day / 1000).toFixed(1)}** \\text{ kg TSS/ngày}$$
 
 * Tổng khối lượng bùn sinh khối cần duy trì cố định trong hệ thống Aerotank:
-   * Khối lượng trạng thái VSS: $M_{\\text{VSS}} = P_{\\text{VSS}} \\cdot SRT = **${c.mass_vss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \\text{ kg}$
-   * Khối lượng trạng thái TSS: $M_{\\text{TSS}} = P_{\\text{TSS}} \\cdot SRT = **${c.mass_tss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \\text{ kg}$
+   * Khối lượng trạng thái VSS: $$M_{\\text{VSS}} = P_{\\text{VSS}} \\cdot SRT = **${c.mass_vss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \\text{ kg}$$
+   * Khối lượng trạng thái TSS: $$M_{\\text{TSS}} = P_{\\text{TSS}} \\cdot SRT = **${c.mass_tss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \\text{ kg}$$
 
 ### (6) Tính toán thể tích làm việc hình học của bể Aerotank ($V$)
 Dựa trên tải lượng sinh khối trạng thái chất rắn lơ lửng tổng $M_{\\text{TSS}}$ cần tích lũy tại nồng độ thiết kế khống chế $X_{\\text{TSS}} = {c.x_tss} g/m^3$:
 
-$$
-V = \\frac{M_{\\text{TSS}} \\cdot 1000}{X_{\\text{TSS}}} = \\frac{${c.mass_tss_basin.toFixed(1)} \\times 1000}{${c.x_tss}} = **${c.v_tank.toFixed(0)}** m^3
-$$
+$$V = \\frac{M_{\\text{TSS}} \\cdot 1000}{X_{\\text{TSS}}} = \\frac{${c.mass_tss_basin.toFixed(1)} \\times 1000}{${c.x_tss}} = **${c.v_tank.toFixed(0)}** m^3$$
 
 * Phương án xây dựng trạm: Bố trí chia đều làm **2 đơn nguyên bể vận hành song song**, thể tích làm việc mỗi đơn nguyên là **${c.v_per_tank.toFixed(0)}** $m^3$.
 
 ### (7) Xác định thời gian lưu nước thủy lực ($HRT$)
-$$
-HRT = \\frac{V}{Q} = \\frac{${c.v_tank.toFixed(0)}}{${c.q}} \\times 24 \\text{ giờ/ngày} = **${c.hrt_hours.toFixed(1)}** \\text{ giờ}
-$$
+$$HRT = \\frac{V}{Q} = \\frac{${c.v_tank.toFixed(0)}}{${c.q}} \\times 24 \\text{ giờ/ngày} = **${c.hrt_hours.toFixed(1)}** \\text{ giờ}$$
 
 ### (8) Xác định nồng độ chất hữu cơ bay hơi sinh khối ($X_{\\text{VSS}}$)
 Tỷ lệ thành phần hữu cơ vi sinh hoạt tính trong bùn hoạt tính:
-$$
-\\text{Fraction} = \\frac{M_{\\text{VSS}}}{M_{\\text{TSS}}} = \\frac{${c.mass_vss_basin.toFixed(1)}}{${c.mass_tss_basin.toFixed(1)}} = **${c.vss_tss_ratio.toFixed(2)}**
-$$
-$$
-X_{\\text{VSS}} = \\text{Fraction} \\times X_{\\text{TSS}} = {c.vss_tss_ratio.toFixed(2)} \\times {c.x_tss} = **${c.x_vss.toFixed(0)}** g/m^3
-$$
+$$\\text{Fraction} = \\frac{M_{\\text{VSS}}}{M_{\\text{TSS}}} = \\frac{${c.mass_vss_basin.toFixed(1)}}{${c.mass_tss_basin.toFixed(1)}} = **${c.vss_tss_ratio.toFixed(2)}**$$
+
+$$X_{\\text{VSS}} = \\text{Fraction} \\times X_{\\text{TSS}} = {c.vss_tss_ratio.toFixed(2)} \\times {c.x_tss} = **${c.x_vss.toFixed(0)}** g/m^3$$
 
 ### (9) Tính toán tỷ số tỷ lệ F/M và Tải trọng thể tích hữu cơ bể phản ứng
 * Tỷ số F/M (Tỷ lệ lượng thức ăn hữu cơ trên mật độ khối lượng vi sinh):
-$$
-F/M = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{X_{\\text{VSS}} \\cdot V} = **${c.f_m_ratio.toFixed(2)}** \\text{ g BOD/g VSS} \\cdot d
-$$
+
+$$F/M = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{X_{\\text{VSS}} \\cdot V} = **${c.f_m_ratio.toFixed(2)}** \\text{ g BOD/g VSS} \\cdot d$$
 
 * Tải trọng chất hữu cơ theo thể tích bể ($L_{\\text{BOD}}$):
-$$
-L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = **${c.volumetric_loading.toFixed(2)}** \\text{ kg BOD/m}^3 \\cdot d
-$$
+
+$$L_{\\text{BOD}} = \\frac{Q \\cdot \\text{BOD}_{\\text{in}}}{V \\cdot 1000} = **${c.volumetric_loading.toFixed(2)}** \\text{ kg BOD/m}^3 \\cdot d$$
 
 ### (10) Xác định hệ số năng suất tăng trưởng thực tế quan trắc ($Y_{\\text{obs}}$)
 * Tổng lượng hữu cơ chất nền $\text{BOD}$ được phân hủy loại bỏ khỏi hệ thống hàng ngày: **${c.bod_removed_day.toFixed(1)}** $kg\\text{ BOD}/d$
@@ -150,9 +133,7 @@ $$
 ### (11) Tính toán lượng nhu cầu khí cấp sục Oxy thực tế ($R_o$)
 Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết hữu cơ carbon kết hợp năng lượng cung cấp cho vi khuẩn tự dưỡng trong phản ứng oxy hóa Nitơ hóa hiếu khí:
 
-$$
-R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \cdot P_{\\text{bio, total}} + 4.33 \cdot Q \cdot (NO_x\\text{-}N)
-$$
+$$R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \cdot P_{\\text{bio, total}} + 4.33 \cdot Q \cdot (NO_x\\text{-}N)$$
 
 * Nhu cầu hấp thụ Oxy thực tế hàng ngày tính toán ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** $kg\\ O_2/\\text{ngày}$
 * **Nhu cầu lưu lượng Oxy cấp đỉnh trung bình mỗi giờ:** 🚀 **${c.r_o_hour.toFixed(1)}** $kg\\ O_2/\\text{giờ}$
@@ -160,9 +141,7 @@ $$
 ### (12) Đánh giá kiểm soát độ kiềm và cân bằng pH hệ thống
 * Độ kiềm hệ thống bị tiêu hao trực tiếp phục vụ phản ứng khử Amoni chuyển hóa Nitơ hiếu khí:
 
-$$
-\\text{Alkalinity Used} = 7.14 \\times NO_x\\text{-}N = 7.14 \\times ${c.no_x_n.toFixed(2)} = \\mathbf{${c.alkalinity_nitrification.toFixed(1)}} \\text{ g/m}^3\\text{ as CaCO}_3
-$$
+$$\\text{Alkalinity Used} = 7.14 \\times NO_x\\text{-}N = 7.14 \\times ${c.no_x_n.toFixed(2)} = \\mathbf{${c.alkalinity_nitrification.toFixed(1)}} \\text{ g/m}^3\\text{ as CaCO}_3$$
 
 * Nhằm mục tiêu duy trì độ pH dung dịch ổn định trong biên độ tối ưu 6.8 - 7.0 chống ức chế sinh trưởng, nồng độ độ kiềm dư an toàn duy trì tối thiểu là $75 g/m^3$.
 * **Khối lượng độ kiềm thiếu hụt cần bổ sung châm hóa chất:** **${c.alkalinity_required_daily.toFixed(0)}** $kg/\\text{ngày}$
@@ -170,26 +149,20 @@ $$
 ### (13) Ước lượng hàm lượng ô nhiễm BOD tổng chất lượng dòng ra ($BOD_e$)
 Bao gồm hàm lượng ô nhiễm BOD hòa tan và hàm lượng chất rắn lơ lửng mịn thoát qua máng thu bể lắng hai:
 
-$$
-\\text{Total BOD} = 3.0 + 0.70 \\times 0.85 \\times 8.0 = **${c.effluent_total_bod.toFixed(1)}** g/m^3
-$$
+$$\\text{Total BOD} = 3.0 + 0.70 \\times 0.85 \\times 8.0 = **${c.effluent_total_bod.toFixed(1)}** g/m^3$$
 
 ### (14) Luận chứng thông số kỹ thuật hệ thống bể lắng thứ cấp (Secondary Clarifier)
 * Tỷ lệ dòng bùn tuần hoàn hoạt tính yêu cầu từ đáy bể lắng quay lại đầu bể ($R$):
-$$
-R = \\frac{X_{\\text{TSS}}}{7500 - ${c.x_tss}} = **${c.sludge_return_ratio.toFixed(2)}**
-$$
-$$
-\\text{Surface Area} = \\frac{Q}{25} = **${c.clarifier_area.toFixed(0)}** m^2
-$$
+$$R = \\frac{X_{\\text{TSS}}}{7500 - ${c.x_tss}} = **${c.sludge_return_ratio.toFixed(2)}**$$
+
+$$\\text{Surface Area} = \\frac{Q}{25} = **${c.clarifier_area.toFixed(0)}** m^2$$
+
 * Định hướng bố trí thiết kế phân tách thành 2 bể lắng ly tâm độc lập, đường kính định mức mỗi bể lắng hai: **${c.clarifier_diameter.toFixed(1)}** $m$.
 
 ### (15) Kiểm tra kiểm soát tải trọng chất rắn lơ lửng lắng hai ($Solids\\,Loading$)
 Kiểm tra an toàn động lực tĩnh bề mặt bể lắng để ngăn ngừa triệt để hiện tượng bùn trào trôi tràn qua máng:
 
-$$
-\\text{Solids Loading} = ${c.solids_loading_rate.toFixed(2)} \\text{ kg TSS}/m^2 \\cdot h
-$$
+$$\\text{Solids Loading} = ${c.solids_loading_rate.toFixed(2)} \\text{ kg TSS}/m^2 \\cdot h$$
 
 * Đánh giá kết quả kiểm tra kỹ thuật: Chỉ số nằm hoàn toàn trong khung tiêu chuẩn kỹ thuật an toàn cho phép, đạt giới hạn an toàn thiết kế.
 `;
