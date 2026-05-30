@@ -161,7 +161,23 @@ export function calculateAerotank(data: AerotankInputs): AerotankOutputs {
 
   // (15) Check solids loading to the secondary clarifier
   const solids_loading_rate = ((1 + sludge_return_ratio) * q * x_tss) / (clarifier_area * 24 * 1000); // kg TSS/m2.h
+// lib/aerotank-calc.ts
+// ... (Các phần tính toán phía trên giữ nguyên)
 
+  return {
+    q, s_0, bod_in, tss_in, vss_in, vss_nb, nh4_in, alkalinity_in, temp, s_eff, nh4_eff, x_tss, safety_factor, do_basin,
+    mu_n, srt_theoretical, srt_design, 
+    p_bio_hetero, p_debris, p_bio_nitrifier, // ✨ ĐẢM BẢO ĐÃ THÊM 3 DÒNG NÀY VÀO ĐÂY
+    p_bio_total, no_x_n, p_vss_day, p_tss_day,
+    mass_vss_basin, mass_tss_basin, v_tank, v_per_tank, hrt_hours, vss_tss_ratio, x_vss, f_m_ratio, volumetric_loading,
+    cod_removed_day, bod_removed_day, y_tss_obs, y_vss_obs, r_o_day, r_o_hour, alkalinity_nitrification,
+    alkalinity_required_total, alkalinity_required_daily, effluent_total_bod, sludge_return_ratio,
+    clarifier_area, clarifier_diameter, solids_loading_rate
+  };
+}
+
+
+/*
   return {
     q, s_0, bod_in, tss_in, vss_in, vss_nb, nh4_in, alkalinity_in, temp, s_eff, nh4_eff, x_tss, safety_factor, do_basin,
     mu_n, srt_theoretical, srt_design, p_bio_hetero, p_debris, p_bio_nitrifier, p_bio_total, no_x_n, p_vss_day, p_tss_day,
@@ -171,3 +187,4 @@ export function calculateAerotank(data: AerotankInputs): AerotankOutputs {
     clarifier_area, clarifier_diameter, solids_loading_rate
   };
 }
+*/
