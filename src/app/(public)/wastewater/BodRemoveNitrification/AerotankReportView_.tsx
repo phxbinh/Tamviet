@@ -241,3 +241,14 @@ $$\text{Solids Loading} = \frac{(1 + R) \cdot Q \cdot X_{\text{TSS}}}{\text{Area
     </div>
   );
 };
+
+
+/*
+* Sinh khối vi khuẩn dị dưỡng hoạt tính: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* Khối lượng mảnh vỡ tế bào trơ tích lũy ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* Sinh khối vi khuẩn Nitơ hóa tự dưỡng sinh ra: **${(c.p_bio_nitrifier / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* **Tổng lượng sinh khối tổng hợp phát sinh ($P_{\text{bio}}$):** 📈 **${c.p_bio_total.toLocaleString(undefined, {maximumFractionDigits:1})}** $g\text{ VSS}/d$ (Tương đương **${(c.p_bio_total / 1000).toFixed(1)}** $kg\text{ VSS}/d$)
+
+
+*/
+
