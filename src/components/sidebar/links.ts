@@ -34,7 +34,8 @@ export const sidebarLinks: SidebarLink[] = [
     children: [
       { name: 'Hiếu khí', href: '/wastewater/aerationTank' },
       { name: 'Oxygen require', href: '/wastewater/OxygenDemand' },
-
+      //src/app/(public)/wastewater/BodRemoveNitrification
+      { name: 'BOD remove Nitrification', href: '/wastewater/BodRemoveNitrification' },
     ],
   },
 
