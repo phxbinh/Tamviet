@@ -61,10 +61,10 @@ export const AerotankReportView: React.FC<AerotankReportViewProps> = ({ calculat
 
 $$\mu_n = \left(\frac{\mu_{n,\text{max}} \cdot (NH_4\text{-}N)_e}{K_n + (NH_4\text{-}N)_e}\right) \cdot \left(\frac{DO}{K_o + DO}\right) - k_{dn}$$
 
-Thế số trực tiếp từ bảng hằng số Metcalf & Eddy:
+Thế số trực tiếp từ bảng hằng số hằng số lý thuyết:
 $$\mu_n = \left(\frac{0.50 \cdot {c.nh4_eff.toFixed(2)}}{0.60 + {c.nh4_eff.toFixed(2)}}\right) \cdot \left(\frac{{c.do_basin.toFixed(1)}}{0.60 + {c.do_basin.toFixed(1)}}\right) - 0.05$$
 
-* Kết quả: $\mu_n$ = **${c.mu_n.toFixed(4)}** $g/g \cdot d$
+* Kết quả tính toán: $\mu_n$ = **${c.mu_n.toFixed(4)}** $g/g \cdot d$
 
 ### (2) Xác định tuổi lưu bùn sinh học thiết kế (SRT)
 * Tuổi lưu bùn lý thuyết tối thiểu:
@@ -78,13 +78,13 @@ Tính toán phân tách lượng sinh khối hình thành từ tế bào vi khu�
 
 $$P_{\text{bio}} = \frac{Q \cdot Y \cdot [(COD)_b_{\text{in}} - (COD)_b_e]}{1 + k_d \cdot SRT} + \frac{f_d \cdot k_d \cdot Q \cdot Y \cdot [(COD)_b_{\text{in}} - (COD)_b_e] \cdot SRT}{1 + k_d \cdot SRT} + \frac{Q \cdot Y_n \cdot (NH_4\text{-}N)_{\text{in}}}{1 + k_{dn} \cdot SRT}$$
 
-* Sinh khối vi khuẩn dị dưỡng hoạt tính: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\text{ VSS}/d$
-* Khối lượng mảnh vỡ tế bào trơ tích lũy ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\text{ VSS}/d$
-* Sinh khối vi khuẩn Nitơ hóa tự dưỡng sinh ra: **${(c.p_bio_nitrifier / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* Sinh khối vi khuẩn dị dưỡng hoạt tính phát sinh: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* Khối lượng mảnh vỡ tế bào trơ tích lũy hữu cơ ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\text{ VSS}/d$
+* Sinh khối vi khuẩn tự dưỡng Nitơ hóa sinh ra: **${(c.p_bio_nitrifier / 1000).toFixed(2)}** $kg\text{ VSS}/d$
 * **Tổng lượng sinh khối tổng hợp phát sinh ($P_{\text{bio}}$):** 📈 **${c.p_bio_total.toLocaleString(undefined, {maximumFractionDigits:1})}** $g\text{ VSS}/d$ (Tương đương **${(c.p_bio_total / 1000).toFixed(1)}** $kg\text{ VSS}/d$)
 
 ### (4) Xác định tải lượng Nitơ chuyển hóa oxy hóa thành Nitrat ($NO_x\text{-}N$)
-Lượng cấu phần nitơ bị chuyển hóa oxy hóa sau khi đã bù trừ phần nitơ dùng để đồng hóa xây dựng tế bào vi sinh (chiếm khoảng 12% cấu trúc VSS):
+Lượng cấu phần nitơ bị chuyển hóa oxy hóa sau khi đã bù trừ phần nitơ dùng để đồng hóa xây dựng cấu trúc tế bào vi sinh vật (định mức chiếm 12% hàm lượng sinh khối VSS):
 
 $$NO_x\text{-}N = (NH_4\text{-}N)_{\text{in}} - (NH_4\text{-}N)_e - 0.12 \cdot \frac{P_{\text{bio}}}{Q}$$
 $$NO_x\text{-}N = {c.nh4_in} - {c.nh4_eff} - 0.12 \times \frac{${c.p_bio_total.toFixed(1)}}{${c.q}} = **${c.no_x_n.toFixed(2)}** g/m^3$$
@@ -93,74 +93,74 @@ $$NO_x\text{-}N = {c.nh4_in} - {c.nh4_eff} - 0.12 \times \frac{${c.p_bio_total.t
 * Tốc độ phát sinh chất rắn lơ lửng hữu cơ bay hơi ($P_{\text{VSS}}$):
 $$P_{\text{VSS}} = P_{\text{bio}} + Q \cdot (VSS)_{nb} = **${(c.p_vss_day / 1000).toFixed(1)}** \text{ kg VSS/ngày}$$
 
-* Tốc độ phát sinh tổng chất rắn lơ lửng ($P_{\text{TSS}}$):
+* Tốc độ phát sinh tổng chất rắn lơ lửng cặn xả ($P_{\text{TSS}}$):
 $$P_{\text{TSS}} = \frac{P_{\text{bio}}}{0.85} + Q \cdot (VSS)_{nb} + Q \cdot (TSS_{\text{in}} - VSS_{\text{in}}) = **${(c.p_tss_day / 1000).toFixed(1)}** \text{ kg TSS/ngày}$$
 
-* Tổng khối lượng bùn sinh khối duy trì trong bể phản ứng hiếu khí:
+* Tổng khối lượng bùn sinh khối cần duy trì cố định trong hệ thống Aerotank:
    * Khối lượng trạng thái VSS: $M_{\text{VSS}} = P_{\text{VSS}} \cdot SRT = **${c.mass_vss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \text{ kg}$
    * Khối lượng trạng thái TSS: $M_{\text{TSS}} = P_{\text{TSS}} \cdot SRT = **${c.mass_tss_basin.toLocaleString(undefined, {maximumFractionDigits:1})}** \text{ kg}$
 
 ### (6) Tính toán thể tích làm việc hình học của bể Aerotank ($V$)
-Dựa trên tải lượng sinh khối trạng thái chất rắn lơ lửng $M_{\text{TSS}}$ cần duy trì tại nồng độ thiết kế $X_{\text{TSS}} = {c.x_tss} g/m^3$:
+Dựa trên tải lượng sinh khối trạng thái chất rắn lơ lửng tổng $M_{\text{TSS}}$ cần tích lũy tại nồng độ thiết kế khống chế $X_{\text{TSS}} = {c.x_tss} g/m^3$:
 
 $$V = \frac{M_{\text{TSS}} \cdot 1000}{X_{\text{TSS}}} = \frac{${c.mass_tss_basin.toFixed(1)} \times 1000}{${c.x_tss}} = **${c.v_tank.toFixed(0)}** m^3$$
 
-* Phân tách module xây dựng: Khuyến nghị bố trí **2 đơn nguyên bể song song**, thể tích mỗi bể đơn là **${c.v_per_tank.toFixed(0)}** $m^3$.
+* Phương án xây dựng trạm: Bố trí chia đều làm **2 đơn nguyên bể vận hành song song**, thể tích làm việc mỗi đơn nguyên là **${c.v_per_tank.toFixed(0)}** $m^3$.
 
 ### (7) Xác định thời gian lưu nước thủy lực ($HRT$)
 $$HRT = \frac{V}{Q} = \frac{${c.v_tank.toFixed(0)}}{${c.q}} \times 24 \text{ giờ/ngày} = **${c.hrt_hours.toFixed(1)}** \text{ giờ}$$
 
-### (8) Xác định nồng độ hữu cơ bay hơi sinh khối ($X_{\text{VSS}}$)
-Tỷ lệ thành phần hữu cơ tinh khiết trong bùn hoạt tính:
+### (8) Xác định nồng độ chất hữu cơ bay hơi sinh khối ($X_{\text{VSS}}$)
+Tỷ lệ thành phần hữu cơ vi sinh hoạt tính trong bùn hoạt tính:
 $$\text{Fraction} = \frac{M_{\text{VSS}}}{M_{\text{TSS}}} = \frac{${c.mass_vss_basin.toFixed(1)}}{${c.mass_tss_basin.toFixed(1)}} = **${c.vss_tss_ratio.toFixed(2)}**$$
 $$X_{\text{VSS}} = \text{Fraction} \times X_{\text{TSS}} = {c.vss_tss_ratio.toFixed(2)} \times {c.x_tss} = **${c.x_vss.toFixed(0)}** g/m^3$$
 
-### (9) Tính toán tỷ số tỷ lệ F/M và Tải trọng thể tích bể hiếu khí
-* Tỷ số F/M (Tỷ lệ chất dinh dưỡng hữu cơ trên mật độ vi sinh):
+### (9) Tính toán tỷ số tỷ lệ F/M và Tải trọng thể tích hữu cơ bể phản ứng
+* Tỷ số F/M (Tỷ lệ lượng thức ăn hữu cơ trên mật độ khối lượng vi sinh):
 $$F/M = \frac{Q \cdot \text{BOD}_{\text{in}}}{X_{\text{VSS}} \cdot V} = **${c.f_m_ratio.toFixed(2)}** \text{ g BOD/g VSS} \cdot d$$
 
-* Tải trọng hữu cơ thể tích ($L_{\text{BOD}}$):
+* Tải trọng chất hữu cơ theo thể tích bể ($L_{\text{BOD}}$):
 $$L_{\text{BOD}} = \frac{Q \cdot \text{BOD}_{\text{in}}}{V \cdot 1000} = **${c.volumetric_loading.toFixed(2)}** \text{ kg BOD/m}^3 \cdot d$$
 
 ### (10) Xác định hệ số năng suất tăng trưởng thực tế quan trắc ($Y_{\text{obs}}$)
-* Tổng lượng hữu cơ $\text{BOD}$ được loại bỏ khỏi hệ thống hàng ngày: **${c.bod_removed_day.toFixed(1)}** $kg\text{ BOD}/d$
-* Hệ số năng suất thực tế theo chỉ số chất rắn TSS ($Y_{\text{TSS}}$): **${c.y_tss_obs.toFixed(2)}** $g\text{ TSS}/g\text{ BOD}$
-* Hệ số năng suất thực tế theo chỉ số sinh khối VSS ($Y_{\text{VSS}}$): **${c.y_vss_obs.toFixed(2)}** $g\text{ VSS}/g\text{ BOD}$
+* Tổng lượng hữu cơ chất nền $\text{BOD}$ được phân hủy loại bỏ khỏi hệ thống hàng ngày: **${c.bod_removed_day.toFixed(1)}** $kg\text{ BOD}/d$
+* Hệ số năng suất thực tế quan trắc theo chỉ số tổng cặn chất rắn ($Y_{\text{TSS}}$): **${c.y_tss_obs.toFixed(2)}** $g\text{ TSS}/g\text{ BOD}$
+* Hệ số năng suất thực tế quan trắc theo chỉ số hữu cơ bay hơi ($Y_{\text{VSS}}$): **${c.y_vss_obs.toFixed(2)}** $g\text{ VSS}/g\text{ BOD}$
 
 ### (11) Tính toán lượng nhu cầu khí cấp sục Oxy thực tế ($R_o$)
-Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết hữu cơ carbon kết hợp năng lượng cung cấp cho vi khuẩn phản ứng Nitơ hóa oxy hóa:
+Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết hữu cơ carbon kết hợp năng lượng cung cấp cho vi khuẩn tự dưỡng trong phản ứng oxy hóa Nitơ hóa hiếu khí:
 
 $$R_o = Q \cdot [ (COD)_b_{\text{in}} - (COD)_b_e ] - 1.42 \cdot P_{\text{bio, total}} + 4.33 \cdot Q \cdot (NO_x\text{-}N)$$
 
-* Nhu cầu hấp thụ Oxy thực tế hàng ngày ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** kg O_2/\text{ngày}$
-* **Nhu cầu lưu lượng Oxy cấp trung bình mỗi giờ:** 🚀 **${c.r_o_hour.toFixed(1)}** kg O_2/\text{giờ}$
+* Nhu cầu hấp thụ Oxy thực tế hàng ngày tính toán ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** kg O_2/\text{ngày}$
+* **Nhu cầu lưu lượng Oxy cấp đỉnh trung bình mỗi giờ:** 🚀 **${c.r_o_hour.toFixed(1)}** kg O_2/\text{giờ}$
 
 ### (12) Đánh giá kiểm soát độ kiềm và cân bằng pH hệ thống
-* Độ kiềm tiêu hao phục vụ phản ứng chuyển hóa Nitơ hiếu khí:
+* Độ kiềm hệ thống bị tiêu hao trực tiếp phục vụ phản ứng khử Amoni chuyển hóa Nitơ hiếu khí:
 $$\text{Alkalinity Used} = 7.14 \times NO_x\text{-}N = 7.14 \times {c.no_x_n.toFixed(2)} = **${c.alkalinity_nitrification.toFixed(1)}** g/m^3 \text{ as CaCO}_3$$
-* Để giữ độ pH dung dịch ổn định trong biên độ tối ưu 6.8 - 7.0, duy trì độ kiềm dư an toàn tối thiểu là $75 g/m^3$.
-* **Lượng hóa chất độ kiềm thiếu hụt cần bổ sung:** **${c.alkalinity_required_daily.toFixed(0)}** $kg/\text{ngày} \text{ as CaCO}_3$
+* Nhằm mục tiêu duy trì độ pH dung dịch ổn định trong biên độ tối ưu 6.8 - 7.0 chống ức chế sinh trưởng, nồng độ độ kiềm dư an toàn duy trì tối thiểu là $75 g/m^3$.
+* **Khối lượng độ kiềm thiếu hụt cần bổ sung châm hóa chất:** **${c.alkalinity_required_daily.toFixed(0)}** $kg/\text{ngày} \text{ as CaCO}_3$
 
 ### (13) Ước lượng hàm lượng ô nhiễm BOD tổng chất lượng dòng ra ($BOD_e$)
-Bao gồm hàm lượng BOD hòa tan và hàm lượng chất rắn lơ lửng mịn thoát qua bể lắng hai:
+Bao gồm hàm lượng ô nhiễm BOD hòa tan hòa tan và hàm lượng chất rắn lơ lửng mịn thoát qua máng thu bể lắng hai:
 
 $$\text{Total BOD} = \text{BOD}_{se} + \left(\frac{1}{1.42}\right) \cdot \left(\frac{0.85\text{ g VSS}}{\text{g TSS}}\right) \cdot \text{TSS}_{\text{out}}$$
 $$\text{Total BOD} = 3.0 + 0.70 \times 0.85 \times 8.0 = **${c.effluent_total_bod.toFixed(1)}** g/m^3$$
 
-### (14) Luận chứng thông số bể lắng thứ cấp (Secondary Clarifier)
-* Tỷ lệ tuần hoàn bùn hoạt tính yêu cầu ($R$):
-$$R = \frac{X_{\text{TSS}}}{X_{r,\text{TSS}} - X_{\text{TSS}}} = \frac{${c.x_tss}} {7500 - ${c.x_tss}} = **${c.sludge_return_ratio.toFixed(2)}** \text{ (Tương đương } ${(c.sludge_return_ratio * 100).toFixed(0)}\%)$$
+### (14) Luận chứng thông số kỹ thuật hệ thống bể lắng thứ cấp (Secondary Clarifier)
+* Tỷ lệ dòng bùn tuần hoàn hoạt tính yêu cầu từ đáy bể lắng quay lại đầu bể ($R$):
+$$R = \frac{X_{\text{TSS}}}{X_{r,\text{TSS}} - X_{\text{TSS}}} = \frac{${c.x_tss}}{7500 - ${c.x_tss}} = **${c.sludge_return_ratio.toFixed(2)}** \text{ (Tương đương } ${(c.sludge_return_ratio * 100).toFixed(0)}\%)$$
 
-* Diện tích bề mặt vùng công tác lắng lắng (với tải trọng thủy lực áp dụng $25 m^3/m^2 \cdot d$):
+* Diện tích bề mặt công tác vùng lắng lắng (tính toán dựa trên tải trọng thủy lực áp dụng tiêu chuẩn $25 m^3/m^2 \cdot d$):
 $$\text{Surface Area} = \frac{Q}{25} = **${c.clarifier_area.toFixed(0)}** m^2$$
-* Thiết kế phân tách làm 2 bể lắng độc lập, đường kính mỗi bể lắng hai ly tâm: **${c.clarifier_diameter.toFixed(1)}** $m$.
+* Định hướng bố trí thiết kế phân tách thành 2 bể lắng ly tâm độc lập, đường kính định mức mỗi bể lắng hai: **${c.clarifier_diameter.toFixed(1)}** $m$.
 
-### (15) Kiểm tra kiểm soát tải trọng chất rắn lơ lửng lơ lửng ($Solids~Loading$)
-Kiểm tra an toàn tĩnh bề mặt để ngăn ngừa hiện tượng bùn trào trôi tràn qua máng thu:
+### (15) Kiểm tra kiểm soát tải trọng chất rắn lơ lửng chất rắn lơ lửng lắng hai ($Solids~Loading$)
+Kiểm tra an toàn động lực tĩnh bề mặt bể lắng để ngăn ngừa triệt để hiện tượng bùn trào trôi trôi tràn qua máng:
 
 $$\text{Solids Loading} = \frac{(1 + R) \cdot Q \cdot X_{\text{TSS}}}{\text{Area}_{\text{total}} \cdot 24 \cdot 1000} = **${c.solids_loading_rate.toFixed(2)}** kg\text{ TSS}/m^2 \cdot h$$
 
-* Đánh giá kiểm tra: Chỉ số nằm trong khung tiêu chuẩn kỹ thuật an toàn cho phép ($4 \div 6 kg/m^2 \cdot h$).
+* Đánh giá kết quả kiểm tra kỹ thuật: Chỉ số nằm hoàn toàn trong khung tiêu chuẩn kỹ thuật an toàn cho phép ($4 \div 6 kg/m^2 \cdot h$).
 `;
   }, [calculations, rawInputs]);
 
@@ -241,14 +241,3 @@ $$\text{Solids Loading} = \frac{(1 + R) \cdot Q \cdot X_{\text{TSS}}}{\text{Area
     </div>
   );
 };
-
-
-/*
-* Sinh khối vi khuẩn dị dưỡng hoạt tính: **${(c.p_bio_hetero / 1000).toFixed(2)}** $kg\text{ VSS}/d$
-* Khối lượng mảnh vỡ tế bào trơ tích lũy ($f_d$): **${(c.p_debris / 1000).toFixed(2)}** $kg\text{ VSS}/d$
-* Sinh khối vi khuẩn Nitơ hóa tự dưỡng sinh ra: **${(c.p_bio_nitrifier / 1000).toFixed(2)}** $kg\text{ VSS}/d$
-* **Tổng lượng sinh khối tổng hợp phát sinh ($P_{\text{bio}}$):** 📈 **${c.p_bio_total.toLocaleString(undefined, {maximumFractionDigits:1})}** $g\text{ VSS}/d$ (Tương đương **${(c.p_bio_total / 1000).toFixed(1)}** $kg\text{ VSS}/d$)
-
-
-*/
-
