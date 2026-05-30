@@ -38,7 +38,7 @@ export default async function Page() {
 // src/app/(public)/wastewater/BodRemoveNitrification/page.tsx
 
 import { calculateAerotank, AerotankInputs } from "./cals_";
-import { AerotankReportView } from "./AerotankReportView_";
+import { AerotankReportView } from "./AerotankReportView__";
 
 export default async function Page() {
   // Thay đổi các key cũ sang key mới đã định nghĩa trong Interface AerotankInputs
