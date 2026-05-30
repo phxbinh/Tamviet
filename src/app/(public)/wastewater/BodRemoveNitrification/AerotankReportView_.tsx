@@ -532,7 +532,7 @@ $$
 
 
 
-
+/*
   const markdownComponents = useMemo(() => ({
     h1: ({ children }: any) => <h1 className="text-xl font-light tracking-wide text-neutral-950 mt-6 mb-4 uppercase border-b border-neutral-200/80 pb-3 print:text-base">{children}</h1>,
     h2: ({ children }: any) => <h2 className="text-base font-semibold tracking-wide text-neutral-900 mt-8 mb-4 border-l-2 border-neutral-900 pl-3 uppercase page-break-before-avoid print:text-sm">{children}</h2>,
@@ -554,6 +554,31 @@ $$
       return <div className={className}>{children}</div>;
     }
   }), []);
+*/
+
+const markdownComponents = useMemo(() => ({
+    h1: ({ children }: any) => <h1 className="text-xl font-light tracking-wide text-neutral-950 mt-4 mb-4 uppercase border-b border-neutral-200/80 pb-3 print:text-lg">{children}</h1>,
+    h2: ({ children }: any) => <h2 className="text-base font-semibold tracking-wide text-neutral-900 mt-8 mb-4 border-l-2 border-neutral-900 pl-3 uppercase page-break-before-avoid print:text-sm">{children}</h2>,
+    h3: ({ children }: any) => <h3 className="text-sm font-bold text-neutral-950 mt-5 mb-2 page-break-before-avoid">{children}</h3>,
+    p: ({ children }: any) => <p className="text-sm text-neutral-600 leading-relaxed my-2.5 print:text-xs print:text-neutral-800">{children}</p>,
+    ul: ({ children }: any) => <ul className="list-disc pl-5 my-3 space-y-1.5 text-sm text-neutral-600 print:text-xs">{children}</ul>,
+    li: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+    hr: () => <hr className="my-6 border-t border-neutral-200/60 print:my-4" />,
+    div: ({ className, children }: any) => {
+      if (className?.includes("math-display")) {
+        return (
+          <div className="my-6 p-4 bg-neutral-50 border border-neutral-100 rounded-xl overflow-x-auto text-neutral-900 text-center block clear-both scrollbar-none print:break-inside-avoid print:bg-neutral-50/50 print:my-4">
+            <div className="inline-block min-w-full text-sm sm:text-base py-1 text-left sm:text-center whitespace-nowrap antialiased tracking-normal print:text-[11px]">
+              {children}
+            </div>
+          </div>
+        );
+      }
+      return <div className={className}>{children}</div>;
+    }
+  }), []);
+
+
 
   return (
     <div className="min-h-screen bg-neutral-50/40 py-4 sm:py-10 px-2 sm:px-6 font-sans">
