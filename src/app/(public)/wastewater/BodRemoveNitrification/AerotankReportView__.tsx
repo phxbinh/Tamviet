@@ -139,11 +139,7 @@ Lượng oxy cần thiết sục vào dòng để bẻ gãy mạch liên kết h
 
 $$R_o = Q \\cdot [ {(COD)_b}_{\\text{in}} - {(COD)_b}_e ] - 1.42 \\cdot P_{\\text{bio, total}} + 4.33 \\cdot Q \\cdot (NO_x\\text{-}N)$$
 
-$$
-\\R_O = Q \\cdot \\left( COD_{b,\\text{in}} - COD_{b,e} \\right)
-      - 1.42 \\cdot P_X
-      + 4.33 \\cdot Q \\cdot (NO_x{-}N)
-$$
+$$R_O = Q \\cdot \\left( COD_{b,\\text{in}} - COD_{b,e} \\right) - 1.42 \\cdot P_X + 4.33 \\cdot Q \\cdot (NO_x{-}N)$$
 
 
 * Nhu cầu hấp thụ Oxy thực tế hàng ngày tính toán ($R_o$): **${c.r_o_day.toLocaleString(undefined, {maximumFractionDigits:0})}** $kg\\ O_2/\\text{ngày}$
