@@ -1,604 +1,532 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
-interface Point {
+type ArrowProps = {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+const Arrow = ({ x1, y1, x2, y2 }: ArrowProps) => (
+  <line
+    x1={x1}
+    y1={y1}
+    x2={x2}
+    y2={y2}
+    stroke="#111"
+    strokeWidth="2"
+    markerEnd="url(#arrow)"
+  />
+);
+
+type PolyArrowProps = {
+  points: string;
+};
+
+const PolyArrow = ({ points }: PolyArrowProps) => (
+  <polyline
+    points={points}
+    fill="none"
+    stroke="#111"
+    strokeWidth="2"
+    markerEnd="url(#arrow)"
+  />
+);
+
+type ClarifierProps = {
   x: number;
   y: number;
-}
-
-const WastewaterDiagram: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // =========================================================
-    // HI-DPI / RETINA FIX
-    // =========================================================
-
-    const cssWidth = 1200;
-    const cssHeight = 420;
-
-    const dpr = window.devicePixelRatio || 1;
-
-    canvas.width = cssWidth * dpr;
-    canvas.height = cssHeight * dpr;
-
-    canvas.style.width = `${cssWidth}px`;
-    canvas.style.height = `${cssHeight}px`;
-
-    ctx.scale(dpr, dpr);
-
-    // =========================================================
-    // STYLE
-    // =========================================================
-
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, cssWidth, cssHeight);
-
-    ctx.strokeStyle = '#111';
-    ctx.fillStyle = '#111';
-
-    ctx.lineWidth = 1.6;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    ctx.font = '13px Arial';
-
-    // =========================================================
-    // CONSTANTS
-    // =========================================================
-
-    const WATER_Y = 180;
-    const FLOW_Y = WATER_Y + 22;
-
-    // =========================================================
-    // HELPERS
-    // =========================================================
-
-    const line = (x1: number, y1: number, x2: number, y2: number) => {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-    };
-
-    const arrowHead = (
-      x1: number,
-      y1: number,
-      x2: number,
-      y2: number
-    ) => {
-      const angle = Math.atan2(y2 - y1, x2 - x1);
-      const size = 9;
-
-      ctx.beginPath();
-      ctx.moveTo(x2, y2);
-
-      ctx.lineTo(
-        x2 - size * Math.cos(angle - Math.PI / 7),
-        y2 - size * Math.sin(angle - Math.PI / 7)
-      );
-
-      ctx.lineTo(
-        x2 - size * Math.cos(angle + Math.PI / 7),
-        y2 - size * Math.sin(angle + Math.PI / 7)
-      );
-
-      ctx.closePath();
-      ctx.fill();
-    };
-
-    const arrow = (
-      x1: number,
-      y1: number,
-      x2: number,
-      y2: number
-    ) => {
-      line(x1, y1, x2, y2);
-      arrowHead(x1, y1, x2, y2);
-    };
-
-    const polyArrow = (pts: Point[]) => {
-      ctx.beginPath();
-
-      ctx.moveTo(pts[0].x, pts[0].y);
-
-      for (let i = 1; i < pts.length; i++) {
-        ctx.lineTo(pts[i].x, pts[i].y);
-      }
-
-      ctx.stroke();
-
-      const p1 = pts[pts.length - 2];
-      const p2 = pts[pts.length - 1];
-
-      arrowHead(p1.x, p1.y, p2.x, p2.y);
-    };
-
-    // =========================================================
-    // WATER LEVEL
-    // =========================================================
-
-    const drawWaterLine = (
-      x: number,
-      y: number,
-      width: number
-    ) => {
-      ctx.save();
-
-      ctx.strokeStyle = '#666';
-      ctx.lineWidth = 1;
-
-      ctx.beginPath();
-      ctx.moveTo(x + 4, y);
-      ctx.lineTo(x + width - 4, y);
-
-      ctx.stroke();
-
-      ctx.restore();
-    };
-
-    // =========================================================
-    // CLARIFIER
-    // =========================================================
-
-    const drawClarifier = (
-      x: number,
-      y: number,
-      w: number,
-      h: number,
-      title: string
-    ) => {
-      const topH = 34;
-
-      // outer
-
-      ctx.beginPath();
-
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + w, y);
-
-      ctx.lineTo(x + w, y + topH);
-
-      ctx.lineTo(x + w / 2, y + h);
-
-      ctx.lineTo(x, y + topH);
-
-      ctx.closePath();
-
-      ctx.stroke();
-
-      // water level
-
-      drawWaterLine(x, WATER_Y, w);
-
-      // sludge hopper center
-
-      line(
-        x + w / 2,
-        y + h,
-        x + w / 2,
-        y + h + 28
-      );
-
-      arrowHead(
-        x + w / 2,
-        y + h,
-        x + w / 2,
-        y + h + 28
-      );
-
-      ctx.fillText(
-        'Sludge',
-        x + w / 2 - 20,
-        y + h + 45
-      );
-
-      // title
-
-      ctx.font = '13px Arial';
-
-      const tw = ctx.measureText(title).width;
-
-      ctx.fillText(
-        title,
-        x + w / 2 - tw / 2,
-        y - 18
-      );
-    };
-
-    // =========================================================
-    // AERATION TANK
-    // =========================================================
-
-    const drawAerationTank = (
-      x: number,
-      y: number,
-      w: number,
-      h: number
-    ) => {
-      ctx.strokeRect(x, y, w, h);
-
-      drawWaterLine(x, WATER_Y, w);
-
-      // air pipe
-
-      line(x + 18, y - 42, x + 18, y + h - 10);
-
-      line(
-        x + 18,
-        y + h - 10,
-        x + w - 18,
-        y + h - 10
-      );
-
-      ctx.fillText('Air', x + 4, y - 48);
-
-      // diffuser
-
-      ctx.save();
-
-      ctx.setLineDash([3, 3]);
-
-      line(
-        x + 24,
-        y + h - 10,
-        x + w - 24,
-        y + h - 10
-      );
-
-      ctx.restore();
-
-      // circulation arrow
-
-      ctx.beginPath();
-
-      ctx.arc(
-        x + w / 2,
-        y + h / 2 + 6,
-        22,
-        0.3,
-        Math.PI * 1.9
-      );
-
-      ctx.stroke();
-
-      arrowHead(
-        x + w / 2 + 15,
-        y + h / 2 - 15,
-        x + w / 2 + 18,
-        y + h / 2 - 10
-      );
-
-      ctx.fillText(
-        'Nitrification tank',
-        x + 16,
-        y + h + 22
-      );
-    };
-
-    // =========================================================
-    // DENITRIFICATION
-    // =========================================================
-
-    const drawDenitrification = (
-      x: number,
-      y: number,
-      w: number,
-      h: number
-    ) => {
-      ctx.strokeRect(x, y, w, h);
-
-      drawWaterLine(x, WATER_Y, w);
-
-      const baffleX = x + 108;
-
-      // hanging baffle
-
-      line(
-        baffleX,
-        y,
-        baffleX,
-        y + h - 18
-      );
-
-      // mixer shaft
-
-      const mixerX = x + 54;
-
-      line(mixerX, y - 20, mixerX, y + 50);
-
-      // impeller
-
-      ctx.beginPath();
-
-      ctx.ellipse(
-        mixerX,
-        y + 50,
-        14,
-        5,
-        0,
-        0,
-        Math.PI * 2
-      );
-
-      ctx.stroke();
-
-      // rotation arrow
-
-      ctx.beginPath();
-
-      ctx.arc(
-        mixerX,
-        y - 18,
-        9,
-        0,
-        Math.PI * 1.7
-      );
-
-      ctx.stroke();
-
-      arrowHead(
-        mixerX + 5,
-        y - 25,
-        mixerX + 8,
-        y - 20
-      );
-
-      ctx.fillText(
-        'Mixer',
-        mixerX - 18,
-        y - 32
-      );
-
-      // reaeration pipe
-
-      line(
-        baffleX + 18,
-        y - 42,
-        baffleX + 18,
-        y + h - 10
-      );
-
-      line(
-        baffleX + 18,
-        y + h - 10,
-        x + w - 10,
-        y + h - 10
-      );
-
-      ctx.fillText(
-        'Air',
-        baffleX + 6,
-        y - 48
-      );
-
-      // bubbles
-
-      const bubbles = [
-        [baffleX + 26, y + 52],
-        [baffleX + 32, y + 42],
-        [baffleX + 38, y + 32],
-        [baffleX + 44, y + 22],
-      ];
-
-      bubbles.forEach(([bx, by]) => {
-        ctx.beginPath();
-        ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
-        ctx.stroke();
-      });
-
-      ctx.fillText(
-        'Denitrification tank',
-        x + 12,
-        y + h + 22
-      );
-    };
-
-    // =========================================================
-    // DRAW SYSTEM
-    // =========================================================
-
-    const clar1X = 90;
-
-    drawClarifier(
-      clar1X,
-      160,
-      88,
-      92,
-      'Primary clarifier'
-    );
-
-    arrow(20, FLOW_Y, clar1X, FLOW_Y);
-
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText('Influent', 24, FLOW_Y - 12);
-
-    // =========================================================
-
-    const nitX = 280;
-
-    drawAerationTank(
-      nitX,
-      160,
-      150,
-      80
-    );
-
-    arrow(
-      clar1X + 88,
-      FLOW_Y,
-      nitX,
-      FLOW_Y
-    );
-
-    // =========================================================
-
-    const clar2X = 500;
-
-    drawClarifier(
-      clar2X,
-      160,
-      88,
-      92,
-      'Nitrification clarifier'
-    );
-
-    arrow(
-      nitX + 150,
-      FLOW_Y,
-      clar2X,
-      FLOW_Y
-    );
-
-    // =========================================================
-
-    const denitX = 670;
-
-    drawDenitrification(
-      denitX,
-      160,
-      170,
-      80
-    );
-
-    arrow(
-      clar2X + 88,
-      FLOW_Y,
-      denitX,
-      FLOW_Y
-    );
-
-    // methanol
-
-    arrow(
-      630,
-      105,
-      630,
-      FLOW_Y
-    );
-
-    ctx.fillText('Methanol', 598, 95);
-
-    // =========================================================
-
-    const clar3X = 920;
-
-    drawClarifier(
-      clar3X,
-      160,
-      88,
-      92,
-      'Secondary clarifier'
-    );
-
-    arrow(
-      denitX + 170,
-      FLOW_Y,
-      clar3X,
-      FLOW_Y
-    );
-
-    arrow(
-      clar3X + 88,
-      FLOW_Y,
-      1090,
-      FLOW_Y
-    );
-
-    ctx.font = 'bold 13px Arial';
-
-    ctx.fillText(
-      'Effluent',
-      1020,
-      FLOW_Y - 12
-    );
-
-    // =========================================================
-    // RAS LINES
-    // =========================================================
-
-    ctx.font = '12px Arial';
-
-    polyArrow([
-      {
-        x: clar2X + 44,
-        y: 280,
-      },
-      {
-        x: clar2X + 44,
-        y: 315,
-      },
-      {
-        x: 210,
-        y: 315,
-      },
-      {
-        x: 210,
-        y: FLOW_Y,
-      },
-    ]);
-
-    ctx.fillText(
-      'Return activated sludge',
-      255,
-      330
-    );
-
-    polyArrow([
-      {
-        x: clar3X + 44,
-        y: 280,
-      },
-      {
-        x: clar3X + 44,
-        y: 350,
-      },
-      {
-        x: 610,
-        y: 350,
-      },
-      {
-        x: 610,
-        y: FLOW_Y,
-      },
-    ]);
-
-    ctx.fillText(
-      'Return activated sludge',
-      700,
-      365
-    );
-
-    // =========================================================
-
-    ctx.font = '15px Arial';
-    ctx.fillText('(c)', 35, 370);
-
-  }, []);
+  title: string;
+};
+
+const Clarifier = ({
+  x,
+  y,
+  title,
+}: ClarifierProps) => {
+  const w = 90;
+  const h = 92;
+
+  return (
+    <g>
+      {/* Tank */}
+      <path
+        d={`
+          M ${x} ${y}
+          L ${x + w} ${y}
+          L ${x + w} ${y + 34}
+          L ${x + w / 2} ${y + h}
+          L ${x} ${y + 34}
+          Z
+        `}
+        fill="white"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      {/* Water level */}
+      <line
+        x1={x + 4}
+        y1={180}
+        x2={x + w - 4}
+        y2={180}
+        stroke="#666"
+        strokeWidth="1.5"
+      />
+
+      {/* Sludge line */}
+      <Arrow
+        x1={x + w / 2}
+        y1={y + h}
+        x2={x + w / 2}
+        y2={y + h + 28}
+      />
+
+      <text
+        x={x + w / 2}
+        y={y + h + 46}
+        textAnchor="middle"
+        fontSize="13"
+      >
+        Sludge
+      </text>
+
+      {/* Title */}
+      <text
+        x={x + w / 2}
+        y={y - 18}
+        textAnchor="middle"
+        fontSize="13"
+      >
+        {title}
+      </text>
+    </g>
+  );
+};
+
+type AerationTankProps = {
+  x: number;
+  y: number;
+};
+
+const AerationTank = ({
+  x,
+  y,
+}: AerationTankProps) => {
+  const w = 150;
+  const h = 80;
+
+  return (
+    <g>
+      {/* Tank */}
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        fill="white"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      {/* Water level */}
+      <line
+        x1={x + 4}
+        y1={180}
+        x2={x + w - 4}
+        y2={180}
+        stroke="#666"
+        strokeWidth="1.5"
+      />
+
+      {/* Air pipe */}
+      <path
+        d={`
+          M ${x + 20} ${y - 42}
+          L ${x + 20} ${y + h - 10}
+          L ${x + w - 20} ${y + h - 10}
+        `}
+        fill="none"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      <text
+        x={x + 6}
+        y={y - 48}
+        fontSize="13"
+      >
+        Air
+      </text>
+
+      {/* Diffuser */}
+      <line
+        x1={x + 28}
+        y1={y + h - 10}
+        x2={x + w - 28}
+        y2={y + h - 10}
+        stroke="#111"
+        strokeWidth="1.5"
+        strokeDasharray="4 4"
+      />
+
+      {/* Circulation */}
+      <path
+        d={`
+          M ${x + 72} ${y + 35}
+          a 24 24 0 1 1 -1 0
+        `}
+        fill="none"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      <polygon
+        points={`
+          ${x + 92},${y + 30}
+          ${x + 84},${y + 31}
+          ${x + 89},${y + 37}
+        `}
+        fill="#111"
+      />
+
+      <text
+        x={x + 16}
+        y={y + h + 24}
+        fontSize="13"
+      >
+        Nitrification tank
+      </text>
+    </g>
+  );
+};
+
+type DenitrificationProps = {
+  x: number;
+  y: number;
+};
+
+const DenitrificationTank = ({
+  x,
+  y,
+}: DenitrificationProps) => {
+  const w = 175;
+  const h = 80;
+
+  return (
+    <g>
+      {/* Tank */}
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        fill="white"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      {/* Water level */}
+      <line
+        x1={x + 4}
+        y1={180}
+        x2={x + w - 4}
+        y2={180}
+        stroke="#666"
+        strokeWidth="1.5"
+      />
+
+      {/* Hanging baffle */}
+      <line
+        x1={x + 110}
+        y1={y}
+        x2={x + 110}
+        y2={y + h - 18}
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      {/* Mixer */}
+      <line
+        x1={x + 54}
+        y1={y - 20}
+        x2={x + 54}
+        y2={y + 50}
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      <ellipse
+        cx={x + 54}
+        cy={y + 50}
+        rx={14}
+        ry={5}
+        fill="none"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      {/* Rotation */}
+      <path
+        d={`
+          M ${x + 48} ${y - 26}
+          a 10 10 0 1 1 1 0
+        `}
+        fill="none"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      <polygon
+        points={`
+          ${x + 63},${y - 18}
+          ${x + 56},${y - 18}
+          ${x + 60},${y - 12}
+        `}
+        fill="#111"
+      />
+
+      <text
+        x={x + 34}
+        y={y - 30}
+        fontSize="13"
+      >
+        Mixer
+      </text>
+
+      {/* Air */}
+      <path
+        d={`
+          M ${x + 128} ${y - 42}
+          L ${x + 128} ${y + h - 10}
+          L ${x + w - 10} ${y + h - 10}
+        `}
+        fill="none"
+        stroke="#111"
+        strokeWidth="2"
+      />
+
+      <text
+        x={x + 116}
+        y={y - 48}
+        fontSize="13"
+      >
+        Air
+      </text>
+
+      {/* Bubbles */}
+      <circle cx={x + 140} cy={y + 52} r={2.5} fill="none" stroke="#111" />
+      <circle cx={x + 145} cy={y + 40} r={2.5} fill="none" stroke="#111" />
+      <circle cx={x + 150} cy={y + 28} r={2.5} fill="none" stroke="#111" />
+      <circle cx={x + 156} cy={y + 18} r={2.5} fill="none" stroke="#111" />
+
+      <text
+        x={x + 14}
+        y={y + h + 24}
+        fontSize="13"
+      >
+        Denitrification tank
+      </text>
+    </g>
+  );
+};
+
+const WastewaterDiagram = () => {
+  const FLOW_Y = 202;
 
   return (
     <div
       style={{
-        display: 'flex',
-        justifyContent: 'center',
-        padding: 20,
+        width: '100%',
+        overflowX: 'auto',
+        background: '#fff',
+        padding: 24,
       }}
     >
-      <canvas
-        ref={canvasRef}
+      <svg
+        width="1200"
+        height="420"
+        viewBox="0 0 1200 420"
         style={{
-          maxWidth: '100%',
-          border: '1px solid #ddd',
+          width: '100%',
+          height: 'auto',
           background: '#fff',
+          border: '1px solid #ddd',
         }}
-      />
+      >
+        <defs>
+          <marker
+            id="arrow"
+            markerWidth="10"
+            markerHeight="10"
+            refX="8"
+            refY="3"
+            orient="auto"
+            markerUnits="strokeWidth"
+          >
+            <path
+              d="M0,0 L0,6 L9,3 z"
+              fill="#111"
+            />
+          </marker>
+        </defs>
+
+        {/* PRIMARY */}
+        <Clarifier
+          x={90}
+          y={160}
+          title="Primary clarifier"
+        />
+
+        <Arrow
+          x1={20}
+          y1={FLOW_Y}
+          x2={90}
+          y2={FLOW_Y}
+        />
+
+        <text
+          x={24}
+          y={188}
+          fontWeight="bold"
+          fontSize="13"
+        >
+          Influent
+        </text>
+
+        {/* NITRIFICATION */}
+        <AerationTank
+          x={280}
+          y={160}
+        />
+
+        <Arrow
+          x1={180}
+          y1={FLOW_Y}
+          x2={280}
+          y2={FLOW_Y}
+        />
+
+        {/* NITRIFICATION CLARIFIER */}
+        <Clarifier
+          x={500}
+          y={160}
+          title="Nitrification clarifier"
+        />
+
+        <Arrow
+          x1={430}
+          y1={FLOW_Y}
+          x2={500}
+          y2={FLOW_Y}
+        />
+
+        {/* DENITRIFICATION */}
+        <DenitrificationTank
+          x={670}
+          y={160}
+        />
+
+        <Arrow
+          x1={590}
+          y1={FLOW_Y}
+          x2={670}
+          y2={FLOW_Y}
+        />
+
+        {/* Methanol */}
+        <Arrow
+          x1={630}
+          y1={105}
+          x2={630}
+          y2={FLOW_Y}
+        />
+
+        <text
+          x={596}
+          y={95}
+          fontSize="13"
+        >
+          Methanol
+        </text>
+
+        {/* SECONDARY */}
+        <Clarifier
+          x={930}
+          y={160}
+          title="Secondary clarifier"
+        />
+
+        <Arrow
+          x1={845}
+          y1={FLOW_Y}
+          x2={930}
+          y2={FLOW_Y}
+        />
+
+        <Arrow
+          x1={1020}
+          y1={FLOW_Y}
+          x2={1110}
+          y2={FLOW_Y}
+        />
+
+        <text
+          x={1030}
+          y={188}
+          fontWeight="bold"
+          fontSize="13"
+        >
+          Effluent
+        </text>
+
+        {/* RAS 1 */}
+        <PolyArrow
+          points="
+            545,280
+            545,320
+            210,320
+            210,202
+          "
+        />
+
+        <text
+          x={280}
+          y={338}
+          fontSize="12"
+        >
+          Return activated sludge
+        </text>
+
+        {/* RAS 2 */}
+        <PolyArrow
+          points="
+            975,280
+            975,355
+            610,355
+            610,202
+          "
+        />
+
+        <text
+          x={720}
+          y={374}
+          fontSize="12"
+        >
+          Return activated sludge
+        </text>
+
+        {/* Figure label */}
+        <text
+          x={36}
+          y={385}
+          fontSize="16"
+        >
+          (c)
+        </text>
+      </svg>
     </div>
   );
 };
