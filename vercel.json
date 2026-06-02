@@ -6,7 +6,7 @@
   "trailingSlash": false,
   "functions": {
     "api-go/**/*.go": {
-      "runtime": "go1.x"
+      "runtime": "@vercel/go@0.0.1"
     }
   }
 }
