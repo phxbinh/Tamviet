@@ -27,6 +27,7 @@ export const sidebarLinks: SidebarLink[] = [
   { name: 'Chat test', href: '/chats', showInSidebar: true },
 */
   { name: 'Bot sell - v1', href: '/chatbot-sell-v1', showInSidebar: true },
+  { name: 'Test GO lang', href: '/go', showInSidebar: true },
 
   {
     name: 'Environments',
