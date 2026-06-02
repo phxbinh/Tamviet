@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
 const WastewaterDiagram = () => {
-  const canvasRef = useRef(null);
+  // Thay vì viết thế này:
+// const canvasRef = useRef(null);
+
+// Bạn hãy sửa thành thế này:
+const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
