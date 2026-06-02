@@ -41,7 +41,8 @@ import { useState } from "react";
 import AerotankForm from "./input/AerationForm";
 import { AerotankInputs } from "./input/schema";
 import { AerotankReportView } from "./AerationRepot_To_Pdf";
-import WastewaterDiagram from "./diagrams";
+//import WastewaterDiagram from "./diagrams";
+import WastewaterDiagram from "./WastewaterDiagram";
 
 export default function Page() {
   // Dữ liệu chuẩn ban đầu từ sách Metcalf & Eddy bài 8-22
