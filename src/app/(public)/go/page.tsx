@@ -15,7 +15,7 @@ export default function Home() {
     setLoading(true);
     try {
       // Vercel tự động map file api/hello.go thành endpoint /api/hello
-      const res = await fetch('/api/hello?name=Tâm Việt');
+      const res = await fetch('/api-go/hello?name=Tâm Việt');
       const result: ApiResponse = await res.json();
       setData(result);
     } catch (error) {
