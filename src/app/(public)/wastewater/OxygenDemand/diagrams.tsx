@@ -1,12 +1,14 @@
+'use strict';
 import React, { useEffect, useRef } from 'react';
 
-const WastewaterDiagram = () => {
-  // Thay vì viết thế này:
-// const canvasRef = useRef(null);
+// Định nghĩa kiểu dữ liệu cho tọa độ điểm của đường ống gấp khúc
+interface Point {
+  x: number;
+  y: number;
+}
 
-// Bạn hãy sửa thành thế này:
-const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
+const WastewaterDiagram: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -23,10 +25,10 @@ const canvasRef = useRef<HTMLCanvasElement | null>(null);
     ctx.strokeStyle = '#333';
     ctx.fillStyle = '#333';
 
-    // --- HÀM VẼ TRỢ GIÚP (HELPERS) ---
+    // --- HÀM VẼ TRỢ GIÚP (HELPERS) ĐÃ KHAI BÁO TYPE ---
 
     // Hàm vẽ mũi tên từ (x1, y1) đến (x2, y2)
-    const drawArrow = (x1, y1, x2, y2) => {
+    const drawArrow = (x1: number, y1: number, x2: number, y2: number): void => {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -43,7 +45,7 @@ const canvasRef = useRef<HTMLCanvasElement | null>(null);
     };
 
     // Hàm vẽ đường ống gấp khúc có mũi tên ở cuối
-    const drawPolylineArrow = (points) => {
+    const drawPolylineArrow = (points: Point[]): void => {
       if (points.length < 2) return;
       ctx.beginPath();
       ctx.moveTo(points[0].x, points[0].y);
@@ -59,7 +61,7 @@ const canvasRef = useRef<HTMLCanvasElement | null>(null);
     };
 
     // Hàm vẽ bể lắng (Clarifier) dạng hình phễu đáy
-    const drawClarifier = (x, y, width, height, title) => {
+    const drawClarifier = (x: number, y: number, width: number, height: number, title: string): void => {
       const topWidth = width;
       const straightHeight = height * 0.4;
 
