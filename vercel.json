@@ -4,9 +4,4 @@
   "framework": "nextjs", 
   "cleanUrls": true,      
   "trailingSlash": false,
-  "functions": {
-    "api-go/**/*.go": {
-      "runtime": "@vercel/go@0.0.1"
-    }
-  }
 }
