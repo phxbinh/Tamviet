@@ -21,7 +21,7 @@ func isPrimeGo(n int) bool {
 func Handler(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 
-	limit := 2000000
+	limit := 10000000
 	var sum int64 = 0
 	for i := 2; i < limit; i++ {
 		if isPrimeGo(i) {
