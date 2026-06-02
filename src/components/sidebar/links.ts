@@ -28,6 +28,7 @@ export const sidebarLinks: SidebarLink[] = [
 */
   { name: 'Bot sell - v1', href: '/chatbot-sell-v1', showInSidebar: true },
   { name: 'Test GO lang', href: '/go', showInSidebar: true },
+  { name: 'Test GO DB', href: '/go-testDB', showInSidebar: true },
 
   {
     name: 'Environments',
