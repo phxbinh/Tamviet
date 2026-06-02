@@ -11,7 +11,7 @@ interface Category {
 async function getCategories(): Promise<Category[]> {
   // Thay url này bằng đường dẫn thực tế tới API Go của bạn
   // Ví dụ: 'https://api.yourdomain.com/api/categories' hoặc '/api/categories' nếu cùng domain Vercel
-  const res = await fetch('/api/categories/getCategories', {
+  const res = await fetch('https://tamviet.vercel.app/api/categories/getCategories', {
     // no-store giúp Next.js luôn lấy dữ liệu mới nhất từ API mỗi khi user load trang (SSR)
     cache: 'no-store', 
   });
