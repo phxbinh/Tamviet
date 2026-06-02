@@ -11,7 +11,7 @@ function isPrimeTS(n: number): boolean {
 export async function GET() {
   const start = performance.now();
 
-  const limit = 2000000;
+  const limit = 10000000;
   let sum = 0;
   for (let i = 2; i < limit; i++) {
     if (isPrimeTS(i)) {
