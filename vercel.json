@@ -3,5 +3,10 @@
   "version": 2,
   "framework": "nextjs", 
   "cleanUrls": true,      
-  "trailingSlash": false
+  "trailingSlash": false,
+  "functions": {
+    "api/**/*.go": {
+      "runtime": "go1.x"
+    }
+  }
 }
