@@ -41,6 +41,7 @@ import { useState } from "react";
 import AerotankForm from "./input/AerationForm";
 import { AerotankInputs } from "./input/schema";
 import { AerotankReportView } from "./AerationRepot_To_Pdf";
+import WastewaterDiagram from "./diagrams";
 
 export default function Page() {
   // Dữ liệu chuẩn ban đầu từ sách Metcalf & Eddy bài 8-22
@@ -69,7 +70,7 @@ export default function Page() {
     <>
       {/* Form nhập liệu */}
       <AerotankForm defaultData={data} onSubmitData={setData} />
-      
+      <WastewaterDiagram/>
       {/* View báo cáo / Kết quả tính toán */}
       <div className="bg-white p-0 rounded-lg shadow">
         <h2 className="text-xl font-bold text-gray-800 border-b pb-2 mb-4">Kết Quả Báo Cáo</h2>
