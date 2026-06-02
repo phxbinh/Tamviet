@@ -155,7 +155,18 @@ const DynamicWastewaterDiagram: React.FC = () => {
     // Tìm index của các bể quan trọng trong chuỗi
     const anoxicIdx = tanks.findIndex(t => t.type === 'denitrification_tank');
     const aerationIdx = tanks.findIndex(t => t.type === 'nitrification_tank');
-    const secondaryClarifierIdx = tanks.findLastIndex(t => t.type === 'secondary_clarifier');
+    //const secondaryClarifierIdx = tanks.findLastIndex(t => t.type === 'secondary_clarifier');
+
+// THAY BẰNG ĐOẠN NÀY:
+let secondaryClarifierIdx = -1;
+for (let i = tanks.length - 1; i >= 0; i--) {
+  if (tanks[i].type === 'secondary_clarifier') {
+    secondaryClarifierIdx = i;
+    break;
+  }
+}
+
+
 
     // 1. TUẦN HOÀN BÙN (RAS): Từ bể lắng bậc hai về bể Anoxic (Chạy ngầm ở ĐÁY)
     if (secondaryClarifierIdx !== -1 && anoxicIdx !== -1 && secondaryClarifierIdx > anoxicIdx) {
