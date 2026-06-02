@@ -3,10 +3,5 @@
   "version": 2,
   "framework": "nextjs", 
   "cleanUrls": true,      
-  "trailingSlash": false,
-  "functions": {
-    "api/**/*.go": {
-      "runtime": "@vercel/go@1.0.1"
-    }
-  }
+  "trailingSlash": false
 }
