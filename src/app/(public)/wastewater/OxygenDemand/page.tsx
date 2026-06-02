@@ -43,7 +43,7 @@ import { AerotankInputs } from "./input/schema";
 import { AerotankReportView } from "./AerationRepot_To_Pdf";
 //import WastewaterDiagram from "./diagrams";
 import WastewaterDiagram from "./WastewaterDiagram";
-import DynamicWastewaterDiagram from "./DynamicWastewaterDiagram";
+import DynamicWastewaterDiagram from "./DynamicWastewaterDiagram_";
 export default function Page() {
   // Dữ liệu chuẩn ban đầu từ sách Metcalf & Eddy bài 8-22
   const [data, setData] = useState<AerotankInputs>({
