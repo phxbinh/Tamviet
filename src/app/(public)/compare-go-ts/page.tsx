@@ -9,9 +9,11 @@ interface BenchmarkResult {
 
 // Hàm fetch API (Phải dùng URL tuyệt đối để tránh lỗi SSR)
 async function fetchBenchmark(apiPath: string): Promise<BenchmarkResult> {
-  const baseUrl = process.env.VERCEL_URL 
+  const baseUrl_ = process.env.VERCEL_URL 
     ? `https://${process.env.VERCEL_URL}` 
     : 'http://localhost:3000';
+
+  const baseUrl = 'https://tamviet.vercel.app';
 
   const res = await fetch(`${baseUrl}${apiPath}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Lỗi khi gọi ${apiPath}`);
