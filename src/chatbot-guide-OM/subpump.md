@@ -65,7 +65,8 @@ Hướng dẫn quy trình vận hành an toàn và ổn định cho hệ bơm ch
 ### 4.2 Chế độ bằng tay (MANUAL)
 * **Bước 1:** Chuyển công tắc sang **MANUAL**.
 * **Bước 2:** Nhấn nút **START**.
-* **Bước 3 (Quan sát):** * Dòng điện.
+* **Bước 3 (Quan sát):**
+  * Dòng điện.
   * Độ rung.
   * Lưu lượng nước ra.
 * **Bước 4:** Khi cần dừng:
