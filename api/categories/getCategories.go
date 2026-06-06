@@ -188,7 +188,7 @@ var pool *pgxpool.Pool
 
 func init() {
 	connStr := os.Getenv("DATABASE_URL")
-/*
+
 	if connStr == "" {
 		fmt.Println("WARNING: DATABASE_URL is not set! Function will fail on requests.")
 		return // Không panic nữa
@@ -199,23 +199,6 @@ func init() {
 		fmt.Printf("Failed to parse DATABASE_URL: %v\n", err)
 		return
 	}
-*/
-if connStr == "" {
-		panic("DATABASE_URL environment variable is not set")
-	}
-
-	config, err := pgxpool.ParseConfig(connStr)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to parse DATABASE_URL: %v", err))
-	}
-
-
-
-
-
-
-
-
 
 	// Tối ưu cho Vercel Serverless + Neon
 	config.MaxConns = 8
