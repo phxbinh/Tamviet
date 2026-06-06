@@ -3,6 +3,38 @@
   "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
-  "trailingSlash": false
-}
+  "trailingSlash": false,
 
+  "fluid": true,
+
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 15
+    },
+    "api/**/*.go": {
+      "maxDuration": 15
+    }
+  },
+
+  "crons": [
+    {
+      "path": "/api/health",
+      "schedule": "*/8 * * * *"
+    },
+    {
+      "path": "/api/categories/getCategories",
+      "schedule": "*/12 * * * *"
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Requested-With" }
+      ]
+    }
+  ]
+}
