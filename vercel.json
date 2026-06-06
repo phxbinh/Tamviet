@@ -6,13 +6,11 @@
   "trailingSlash": false,
 
   "functions": {
-    // Tối ưu cho tất cả API routes TypeScript (Next.js)
-    "app/api/**/*.ts": {
+      "app/api/**/*.ts": {
       "runtime": "nodejs",
       "fluid": true,
       "maxDuration": 15
     },
-    // Tối ưu cho Go API routes
     "api/**/*.go": {
       "runtime": "go",
       "fluid": true,
