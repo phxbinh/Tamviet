@@ -274,6 +274,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 */
 
+/*
 // Grok -> Fix (from Gemini code) -> Thêm CORS
 package handler
 
@@ -417,7 +418,317 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(items)
 }
+*/
 
+
+// Fix Cors với ChatGPT 
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+var pool *pgxpool.Pool
+
+// =====================================================
+// ALLOWED ORIGINS
+// =====================================================
+
+var allowedOrigins = map[string]bool{
+	"http://localhost:3000":          true,
+	"https://localhost:3000":         true,
+	"https://tamviet.vercel.app":     true,
+	"https://www.tamviet.vercel.app": true,
+}
+
+// =====================================================
+// CORS
+// =====================================================
+
+func setCORS(w http.ResponseWriter, r *http.Request) {
+	origin := r.Header.Get("Origin")
+
+	if !allowedOrigins[origin] {
+		return
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	w.Header().Set(
+		"Access-Control-Allow-Methods",
+		"GET, OPTIONS",
+	)
+
+	w.Header().Set(
+		"Access-Control-Allow-Headers",
+		"Content-Type, Authorization",
+	)
+
+	w.Header().Set("Vary", "Origin")
+}
+
+func handleOptions(w http.ResponseWriter, r *http.Request) {
+	origin := r.Header.Get("Origin")
+
+	if origin != "" && !allowedOrigins[origin] {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	setCORS(w, r)
+
+	w.WriteHeader(http.StatusOK)
+}
+
+// =====================================================
+// DATABASE INIT
+// =====================================================
+
+func init() {
+	connStr := os.Getenv("DATABASE_URL")
+
+	if connStr == "" {
+		fmt.Println("ERROR: DATABASE_URL not found")
+		return
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		fmt.Printf("ParseConfig error: %v\n", err)
+		return
+	}
+
+	config.MaxConns = 2
+	config.MinConns = 0
+
+	config.MaxConnLifetime = 15 * time.Minute
+	config.MaxConnIdleTime = 2 * time.Minute
+
+	config.HealthCheckPeriod = 1 * time.Minute
+
+	config.ConnConfig.ConnectTimeout = 10 * time.Second
+
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		10*time.Second,
+	)
+	defer cancel()
+
+	p, err := pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		fmt.Printf("Pool create error: %v\n", err)
+		return
+	}
+
+	if err := p.Ping(ctx); err != nil {
+		fmt.Printf("Database ping error: %v\n", err)
+		p.Close()
+		return
+	}
+
+	pool = p
+
+	fmt.Println("Database pool initialized successfully")
+}
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+func writeJSON(
+	w http.ResponseWriter,
+	status int,
+	payload any,
+) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	_ = json.NewEncoder(w).Encode(payload)
+}
+
+func writeError(
+	w http.ResponseWriter,
+	status int,
+	msg string,
+) {
+	writeJSON(
+		w,
+		status,
+		ErrorResponse{
+			Error: msg,
+		},
+	)
+}
+
+// =====================================================
+// HANDLER
+// =====================================================
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+
+	// -------------------------------------------------
+	// OPTIONS
+	// -------------------------------------------------
+
+	if r.Method == http.MethodOptions {
+		handleOptions(w, r)
+		return
+	}
+
+	// -------------------------------------------------
+	// METHOD CHECK
+	// -------------------------------------------------
+
+	if r.Method != http.MethodGet {
+		writeError(
+			w,
+			http.StatusMethodNotAllowed,
+			"Method not allowed",
+		)
+		return
+	}
+
+	// -------------------------------------------------
+	// CORS
+	// -------------------------------------------------
+
+	setCORS(w, r)
+
+	origin := r.Header.Get("Origin")
+
+	if origin != "" && !allowedOrigins[origin] {
+		writeError(
+			w,
+			http.StatusForbidden,
+			"Origin not allowed",
+		)
+		return
+	}
+
+	// -------------------------------------------------
+	// DB CHECK
+	// -------------------------------------------------
+
+	if pool == nil {
+		fmt.Println("Database pool is nil")
+
+		writeError(
+			w,
+			http.StatusInternalServerError,
+			"Dịch vụ tạm thời không khả dụng",
+		)
+
+		return
+	}
+
+	// -------------------------------------------------
+	// QUERY
+	// -------------------------------------------------
+
+	ctx, cancel := context.WithTimeout(
+		r.Context(),
+		5*time.Second,
+	)
+	defer cancel()
+
+	rows, err := pool.Query(
+		ctx,
+		`
+		SELECT
+			id,
+			name,
+			slug
+		FROM categories
+		ORDER BY name
+		LIMIT 10
+		`,
+	)
+
+	if err != nil {
+		fmt.Printf("Query error: %v\n", err)
+
+		writeError(
+			w,
+			http.StatusInternalServerError,
+			"Không thể lấy danh sách danh mục",
+		)
+
+		return
+	}
+
+	defer rows.Close()
+
+	items := make([]Category, 0, 10)
+
+	for rows.Next() {
+		var c Category
+
+		if err := rows.Scan(
+			&c.ID,
+			&c.Name,
+			&c.Slug,
+		); err != nil {
+
+			fmt.Printf(
+				"Scan error: %v\n",
+				err,
+			)
+
+			writeError(
+				w,
+				http.StatusInternalServerError,
+				"Lỗi xử lý dữ liệu",
+			)
+
+			return
+		}
+
+		items = append(items, c)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Printf(
+			"Rows error: %v\n",
+			err,
+		)
+
+		writeError(
+			w,
+			http.StatusInternalServerError,
+			"Lỗi đồng bộ dữ liệu",
+		)
+
+		return
+	}
+
+	// -------------------------------------------------
+	// SUCCESS
+	// -------------------------------------------------
+
+	writeJSON(
+		w,
+		http.StatusOK,
+		items,
+	)
+}
 
 
 
