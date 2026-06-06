@@ -1,3 +1,4 @@
+/*
 package handler
 
 import (
@@ -64,3 +65,107 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(items)
 }
+*/
+
+
+
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+// Biến global pool (quan trọng nhất)
+var pool *pgxpool.Pool
+
+func init() {
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		panic("DATABASE_URL environment variable is not set")
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to parse DATABASE_URL: %v", err))
+	}
+
+	// === Tối ưu cho Vercel Serverless + Neon ===
+	config.MaxConns = 10
+	config.MinConns = 2
+	config.MaxConnLifetime = 30 * time.Minute
+	config.MaxConnIdleTime = 5 * time.Minute
+	config.HealthCheckPeriod = 1 * time.Minute
+
+	// Tăng timeout khi Neon đang wake up
+	config.ConnConfig.ConnectTimeout = 15 * time.Second
+
+	ctx := context.Background()
+	pool, err = pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to create connection pool: %v", err))
+	}
+
+	// Kiểm tra kết nối ban đầu
+	if err := pool.Ping(ctx); err != nil {
+		fmt.Printf("Warning: Initial ping failed: %v\n", err)
+	}
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context() // Dùng context từ request để hỗ trợ timeout/cancel
+
+	// Test connection (nếu cần)
+	if err := pool.Ping(ctx); err != nil {
+		http.Error(w, fmt.Sprintf("Database connection error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	rows, err := pool.Query(ctx, "SELECT id, name, slug FROM categories LIMIT 10")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Query error: %v", err), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	items := make([]Category, 0, 10)
+
+	for rows.Next() {
+		var c Category
+		err := rows.Scan(&c.ID, &c.Name, &c.Slug)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Scan error: %v", err), http.StatusInternalServerError)
+			return
+		}
+		items = append(items, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		http.Error(w, fmt.Sprintf("Rows error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(items); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
+}
+
+
+
+
+
+
