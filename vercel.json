@@ -14,13 +14,6 @@
     }
   },
 
-  "crons": [
-    {
-      "path": "/api/health",
-      "schedule": "*/10 * * * *"
-    }
-  ],
-
   "headers": [
     {
       "source": "/api/(.*)",
