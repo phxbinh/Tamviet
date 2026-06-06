@@ -1,7 +1,60 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "framework": "nextjs", 
-  "cleanUrls": true,      
-  "trailingSlash": false
+  "framework": "nextjs",
+  "cleanUrls": true,
+  "trailingSlash": false,
+
+  "functions": {
+    // Tối ưu cho tất cả API routes TypeScript (Next.js)
+    "app/api/**/*.ts": {
+      "runtime": "nodejs",
+      "fluid": true,
+      "maxDuration": 15
+    },
+    // Tối ưu cho Go API routes
+    "api/**/*.go": {
+      "runtime": "go",
+      "fluid": true,
+      "maxDuration": 15
+    }
+  },
+
+  "crons": [
+    {
+      "path": "/api/health",
+      "schedule": "*/8 * * * *"
+    },
+    {
+      "path": "/api/categories/getCategories",
+      "schedule": "*/12 * * * *"
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET,POST,PUT,DELETE,OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-Requested-With"
+        }
+      ]
+    }
+  ],
+
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    }
+  ]
 }
