@@ -69,7 +69,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 
 
-/* //Chạy được 
+/* //Chạy được -> Grok -> chưa tối ưu
 package handler
 
 import (
@@ -160,6 +160,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 */
 
 
+/* // Chạy được -> Gemini -> tối ưu kết nối với neon
 package handler
 
 import (
@@ -271,7 +272,151 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(items)
 }
+*/
 
+// Grok -> Fix (from Gemini code) -> Thêm CORS
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+var pool *pgxpool.Pool
+
+// ==================== CORS CONFIG ====================
+var allowedOrigins = map[string]bool{
+	"http://localhost:3000":                  true, // Development
+	"https://localhost:3000":                 true,
+	"https://tamviet.vercel.app":             true, // Production
+	"https://www.tamviet.vercel.app":         true,
+	// Thêm domain production thật của bạn vào đây
+}
+
+// setCORS set các header CORS
+func setCORS(w http.ResponseWriter, r *http.Request) {
+	origin := r.Header.Get("Origin")
+
+	// Cho phép origin nếu nằm trong danh sách hoặc dùng wildcard (*) cho dev
+	if allowedOrigins[origin] {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+	} else {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Hoặc comment nếu muốn chặt chẽ
+	}
+
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+}
+
+// Handle OPTIONS request (Preflight)
+func handleOptions(w http.ResponseWriter, r *http.Request) {
+	setCORS(w, r)
+	w.WriteHeader(http.StatusOK)
+}
+
+func init() {
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		fmt.Println("WARNING: DATABASE_URL is not set! Function will fail on requests.")
+		return
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		fmt.Printf("Failed to parse DATABASE_URL: %v\n", err)
+		return
+	}
+
+	// Tối ưu cho Vercel + Neon
+	config.MaxConns = 2
+	config.MinConns = 0
+	config.MaxConnLifetime = 15 * time.Minute
+	config.MaxConnIdleTime = 2 * time.Minute
+	config.HealthCheckPeriod = 1 * time.Minute
+	config.ConnConfig.ConnectTimeout = 10 * time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	pool, err = pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		fmt.Printf("Failed to create pool: %v\n", err)
+		return
+	}
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	// Xử lý Preflight OPTIONS request
+	if r.Method == http.MethodOptions {
+		handleOptions(w, r)
+		return
+	}
+
+	// Set CORS cho các request khác
+	setCORS(w, r)
+
+	// Luôn trả về JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	if pool == nil {
+		fmt.Println("ERROR: Database pool is nil. Check DATABASE_URL.")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Dịch vụ tạm thời không khả dụng"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	rows, err := pool.Query(ctx, "SELECT id, name, slug FROM categories LIMIT 10")
+	if err != nil {
+		fmt.Printf("Database query error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Không thể lấy danh sách danh mục"})
+		return
+	}
+	defer rows.Close()
+
+	items := make([]Category, 0, 10)
+
+	for rows.Next() {
+		var c Category
+		if err := rows.Scan(&c.ID, &c.Name, &c.Slug); err != nil {
+			fmt.Printf("Row scan error: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: "Lỗi xử lý dữ liệu"})
+			return
+		}
+		items = append(items, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		fmt.Printf("Rows iteration error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Lỗi đồng bộ dữ liệu"})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(items)
+}
 
 
 
