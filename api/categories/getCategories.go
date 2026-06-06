@@ -68,103 +68,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 */
 
 
-/*
-package handler
 
-import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"os"
-	"time"
-
-	"github.com/jackc/pgx/v5/pgxpool"
-)
-
-type Category struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Slug string `json:"slug"`
-}
-
-// Biến global pool (quan trọng nhất)
-var pool *pgxpool.Pool
-
-func init() {
-	connStr := os.Getenv("DATABASE_URL")
-	if connStr == "" {
-		panic("DATABASE_URL environment variable is not set")
-	}
-
-	config, err := pgxpool.ParseConfig(connStr)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to parse DATABASE_URL: %v", err))
-	}
-
-	// === Tối ưu cho Vercel Serverless + Neon ===
-	config.MaxConns = 10
-	config.MinConns = 2
-	config.MaxConnLifetime = 30 * time.Minute
-	config.MaxConnIdleTime = 5 * time.Minute
-	config.HealthCheckPeriod = 1 * time.Minute
-
-	// Tăng timeout khi Neon đang wake up
-	config.ConnConfig.ConnectTimeout = 15 * time.Second
-
-	ctx := context.Background()
-	pool, err = pgxpool.NewWithConfig(ctx, config)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to create connection pool: %v", err))
-	}
-
-	// Kiểm tra kết nối ban đầu
-	if err := pool.Ping(ctx); err != nil {
-		fmt.Printf("Warning: Initial ping failed: %v\n", err)
-	}
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context() // Dùng context từ request để hỗ trợ timeout/cancel
-
-	// Test connection (nếu cần)
-	if err := pool.Ping(ctx); err != nil {
-		http.Error(w, fmt.Sprintf("Database connection error: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	rows, err := pool.Query(ctx, "SELECT id, name, slug FROM categories LIMIT 10")
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Query error: %v", err), http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-
-	items := make([]Category, 0, 10)
-
-	for rows.Next() {
-		var c Category
-		err := rows.Scan(&c.ID, &c.Name, &c.Slug)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Scan error: %v", err), http.StatusInternalServerError)
-			return
-		}
-		items = append(items, c)
-	}
-
-	if err = rows.Err(); err != nil {
-		http.Error(w, fmt.Sprintf("Rows error: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(items); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
-}
-*/
-
+/* //Chạy được 
 package handler
 
 import (
@@ -252,6 +157,125 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(items)
 }
+*/
+
+
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+// Cấu trúc chuẩn cho phản hồi lỗi dạng JSON
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+var pool *pgxpool.Pool
+
+func init() {
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		fmt.Println("WARNING: DATABASE_URL is not set! Function will fail on requests.")
+		return
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		fmt.Printf("Failed to parse DATABASE_URL: %v\n", err)
+		return
+	}
+
+	// TỐI ƯU CHO VERCEL SERVERLESS + NEON POOLING
+	// Vì mỗi instance của Vercel xử lý tuần tự (hoặc rất ít request đồng thời),
+	// hạ MaxConns xuống giúp tránh lỗi "Too many connections" khi Vercel scale nhiều instance.
+	config.MaxConns = 2 
+	config.MinConns = 0 // Cho phép pool về 0 khi idle để giải phóng tài nguyên cho Neon
+	config.MaxConnLifetime = 15 * time.Minute
+	config.MaxConnIdleTime = 2 * time.Minute
+	config.HealthCheckPeriod = 1 * time.Minute
+	config.ConnConfig.ConnectTimeout = 10 * time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	pool, err = pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		fmt.Printf("Failed to create pool: %v\n", err)
+		return
+	}
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	// Luôn trả về Content-Type là JSON cho mọi phản hồi
+	w.Header().Set("Content-Type", "application/json")
+
+	if pool == nil {
+		fmt.Println("ERROR: Database pool is nil. Check DATABASE_URL.")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Dịch vụ tạm thời không khả dụng"})
+		return
+	}
+
+	// Đặt timeout cho cả quá trình xử lý request (Tránh treo function gây tốn tiền Vercel)
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	// Query dữ liệu
+	rows, err := pool.Query(ctx, "SELECT id, name, slug FROM categories LIMIT 10")
+	if err != nil {
+		// Log lỗi chi tiết nội bộ để bạn debug trên log của Vercel
+		fmt.Printf("Database query error: %v\n", err)
+		
+		// Trả về lỗi chung chung cho client để bảo mật thông tin hệ thống
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Không thể lấy danh sách danh mục"})
+		return
+	}
+	defer rows.Close()
+
+	items := make([]Category, 0, 10)
+
+	for rows.Next() {
+		var c Category
+		if err := rows.Scan(&c.ID, &c.Name, &c.Slug); err != nil {
+			fmt.Printf("Row scan error: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: "Lỗi xử lý dữ liệu hệ thống"})
+			return
+		}
+		items = append(items, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		fmt.Printf("Rows iteration error: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Lỗi đồng bộ dữ liệu"})
+		return
+	}
+
+	// Trả về kết quả thành công
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(items)
+}
+
+
+
+
+
 
 
 
