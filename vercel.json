@@ -3,16 +3,24 @@
   "framework": "nextjs",
   "cleanUrls": true,
   "trailingSlash": false,
+  
   "fluid": true,
 
   "functions": {
-    "app/api/**/*.ts": {
+    "api/**/*.ts": {
       "maxDuration": 15
     },
     "api/**/*.go": {
       "maxDuration": 15
     }
   },
+
+  "crons": [
+    {
+      "path": "/api/health",
+      "schedule": "*/10 * * * *"
+    }
+  ],
 
   "headers": [
     {
