@@ -1,7 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
   "framework": "nextjs",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "fluid": true,
+
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 15
+    }
+  }
 }
