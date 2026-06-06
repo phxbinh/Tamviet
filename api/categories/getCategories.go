@@ -68,7 +68,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 */
 
 
-
+/*
 package handler
 
 import (
@@ -163,7 +163,94 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
+*/
 
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Slug string `json:"slug"`
+}
+
+var pool *pgxpool.Pool
+
+func init() {
+	connStr := os.Getenv("DATABASE_URL")
+	if connStr == "" {
+		fmt.Println("WARNING: DATABASE_URL is not set! Function will fail on requests.")
+		return // Không panic nữa
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		fmt.Printf("Failed to parse DATABASE_URL: %v\n", err)
+		return
+	}
+
+	// Tối ưu cho Vercel Serverless + Neon
+	config.MaxConns = 8
+	config.MinConns = 1
+	config.MaxConnLifetime = 25 * time.Minute
+	config.MaxConnIdleTime = 5 * time.Minute
+	config.HealthCheckPeriod = 1 * time.Minute
+	config.ConnConfig.ConnectTimeout = 15 * time.Second
+
+	ctx := context.Background()
+	pool, err = pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		fmt.Printf("Failed to create pool: %v\n", err)
+		return
+	}
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	if pool == nil {
+		http.Error(w, "Database pool chưa được khởi tạo. Kiểm tra DATABASE_URL.", http.StatusInternalServerError)
+		return
+	}
+
+	ctx := r.Context()
+
+	// Query
+	rows, err := pool.Query(ctx, "SELECT id, name, slug FROM categories LIMIT 10")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Lỗi truy vấn: %v", err), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	items := make([]Category, 0, 10)
+
+	for rows.Next() {
+		var c Category
+		if err := rows.Scan(&c.ID, &c.Name, &c.Slug); err != nil {
+			http.Error(w, fmt.Sprintf("Lỗi parse dữ liệu: %v", err), http.StatusInternalServerError)
+			return
+		}
+		items = append(items, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		http.Error(w, fmt.Sprintf("Lỗi rows: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(items)
+}
 
 
 
