@@ -1,7 +1,7 @@
 import {
 ParsedGuide,
 GuideChunk,
-} from “./types”;
+} from "./types";
 
 export function createGuideChunks(
 guide: ParsedGuide
@@ -43,22 +43,22 @@ Parameter:
 ${p.parameterName}
 
 Range:
-${p.rangeRaw ?? “”}
+${p.rangeRaw ?? ""}
 
 Min:
-${p.minValue ?? “”}
+${p.minValue ?? ""}
 
 Max:
-${p.maxValue ?? “”}
+${p.maxValue ?? ""}
 
 Unit:
-${p.unit ?? “”}
+${p.unit ?? ""}
 
 Frequency:
-${p.frequency ?? “”}
+${p.frequency ?? ""}
 
 Description:
-${p.description ?? “”}
+${p.description ?? ""}
 `.trim(),
 
   metadata: {
@@ -82,14 +82,14 @@ chunkIndex: index++,
 Procedure:
 ${procedure.title}
 
-${procedure.description ?? “”}
+${procedure.description ?? ""}
 
 ${procedure.steps
 .map(
 (s) =>
 Step ${s.order}: ${s.content}
 )
-.join(”\n”)}
+.join("\n")}
 `.trim(),
 
   metadata: {
@@ -142,10 +142,10 @@ Problem:
 ${item.problem}
 
 Causes:
-${item.causes.join(”\n”)}
+${item.causes.join("\n")}
 
 Solutions:
-${item.solutions.join(”\n”)}
+${item.solutions.join("\n")}
 `.trim(),
 
   metadata: {
