@@ -63,4 +63,7 @@ problem: z.string(),
 ),
 });
 
-export type ParsedGuideSchema = z.infer;
+export type ParsedGuideSchema = z.infer<typeof parsedGuideSchema>;
+
+
+
