@@ -12,6 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { vector } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 // Export
 // 1. Documents -> ✅ Fixed với sql
@@ -40,10 +41,11 @@ export const operationDocuments = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_documents_category")
-      .on(table.category),
-  ]
+  (table) => ({
+    categoryIdx: index(
+      "idx_operation_documents_category"
+    ).on(table.category),
+  })
 );
 
 // 2. Procedures -> ✅ Fixed với sql
@@ -72,13 +74,18 @@ export const operationProcedures = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_procedures_document")
-      .on(table.documentId),
+  (table) => ({
+    documentIdx: index(
+      "idx_operation_procedures_document"
+    ).on(table.documentId),
 
-    index("idx_operation_procedures_order")
-      .on(table.documentId, table.orderIndex),
-  ]
+    orderIdx: index(
+      "idx_operation_procedures_order"
+    ).on(
+      table.documentId,
+      table.orderIndex
+    ),
+  })
 );
 
 // 3. Procedure steps -> ✅ Fixed với sql
@@ -105,13 +112,18 @@ export const operationSteps = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_steps_procedure")
-      .on(table.procedureId),
+  (table) => ({
+    procedureIdx: index(
+      "idx_operation_steps_procedure"
+    ).on(table.procedureId),
 
-    index("idx_operation_steps_order")
-      .on(table.procedureId, table.stepOrder),
-  ]
+    orderIdx: index(
+      "idx_operation_steps_order"
+    ).on(
+      table.procedureId,
+      table.stepOrder
+    ),
+  })
 );
 
 // 4. Parameters -> ✅ Fixed với sql
@@ -155,13 +167,15 @@ export const operationParameters = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_parameters_document")
-      .on(table.documentId),
+  (table) => ({
+    documentIdx: index(
+      "idx_operation_parameters_document"
+    ).on(table.documentId),
 
-    index("idx_operation_parameters_name")
-      .on(table.parameterName),
-  ]
+    parameterIdx: index(
+      "idx_operation_parameters_name"
+    ).on(table.parameterName),
+  })
 );
 
 // 5. Operation health check -> ✅ Fixed với sql
@@ -191,13 +205,15 @@ export const operationHealthChecks = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_health_status")
-      .on(table.statusType),
+  (table) => ({
+    statusIdx: index(
+      "idx_operation_health_status"
+    ).on(table.statusType),
 
-    index("idx_operation_health_document")
-      .on(table.documentId),
-  ]
+    documentIdx: index(
+      "idx_operation_health_document"
+    ).on(table.documentId),
+  })
 );
 
 // 6. Troubleshooting -> ✅ Fixed với sql
@@ -212,7 +228,8 @@ export const operationTroubleshooting = pgTable(
         onDelete: "cascade",
       }),
 
-    problem: text("problem").notNull(),
+    problem: text("problem")
+      .notNull(),
 
     causes: jsonb("causes")
       .notNull()
@@ -228,16 +245,81 @@ export const operationTroubleshooting = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [
-    index("idx_operation_troubleshooting_document")
-      .on(table.documentId),
+  (table) => ({
+    documentIdx: index(
+      "idx_operation_troubleshooting_document"
+    ).on(table.documentId),
 
-    index("idx_operation_troubleshooting_problem")
-      .on(table.problem),
-  ]
+    problemIdx: index(
+      "idx_operation_troubleshooting_problem"
+    ).on(table.problem),
+  })
 );
 
 // RAG chunks -> ✅ Fixed với sql
+export const operationChunks = pgTable(
+  "operation_chunks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+
+    documentId: uuid("document_id")
+      .notNull()
+      .references(() => operationDocuments.id, {
+        onDelete: "cascade",
+      }),
+
+    chunkIndex: integer("chunk_index")
+      .notNull(),
+
+    content: text("content")
+      .notNull(),
+
+    tokenCount: integer("token_count"),
+
+    embedding: vector("embedding", {
+      dimensions: 3072,
+    }),
+
+    metadata: jsonb("metadata")
+      .default(sql`'{}'::jsonb`),
+
+    isActive: boolean("is_active")
+      .notNull()
+      .default(true),
+
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    embeddingIdx: index(
+      "operation_chunks_embedding_idx"
+    ).using(
+      "hnsw",
+      table.embedding.op(
+        "vector_cosine_ops"
+      )
+    ),
+
+    documentIdx: index(
+      "idx_operation_chunks_document"
+    ).on(table.documentId),
+
+    activeIdx: index(
+      "idx_operation_chunks_active"
+    ).on(table.isActive),
+
+    documentActiveIdx: index(
+      "idx_operation_chunks_document_active"
+    ).on(
+      table.documentId,
+      table.isActive
+    ),
+  })
+);
+/*
 export const operationChunks = pgTable(
   "operation_chunks",
   {
@@ -295,3 +377,9 @@ export const operationChunks = pgTable(
   ).on(table.documentId, table.isActive),
 })
 );
+*/
+
+
+
+
+
