@@ -8,17 +8,17 @@
 
   "functions": {
     "app/api/**/*.ts": {
-      "maxDuration": 15
+      "maxDuration": 10
     },
     "api/**/*.go": {
-      "maxDuration": 15
+      "maxDuration": 10
     }
   },
   
   "crons": [
     {
       "path": "/api/health",
-      "schedule": "0 0 * * *"
+      "schedule": "*/10 * * * *"
     }
   ],
 
