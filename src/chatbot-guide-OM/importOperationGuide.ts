@@ -2,7 +2,7 @@
 
 // Import sql
 //src/dbchatbot/index.ts
-import { db } from "./dbchatbot/index";
+import { db } from "./dbchatbot";
 
 import {
 operationDocuments,
