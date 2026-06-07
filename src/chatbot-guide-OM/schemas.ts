@@ -42,8 +42,8 @@ equipment: z.string().optional(),
 healthChecks: z.array(
 z.object({
 statusType: z.enum([
-“healthy”,
-“problem”,
+"healthy",
+"problem",
 ]),
 
   label: z.string(),
