@@ -112,7 +112,7 @@ for (const procedure of guide.procedures) {
     .join("\n");
 
   chunks.push({
-    chunkIndex: chunkIndex++,
+    chunkIndex: index++,
 
     content: [
       "[SOP]",
