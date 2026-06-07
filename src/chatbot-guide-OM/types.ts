@@ -49,7 +49,7 @@ description?: string;
 }
 
 export interface HealthCheck {
-statusType: “healthy” | “problem”;
+statusType: "healthy" | "problem";
 
 label: string;
 
