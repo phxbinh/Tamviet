@@ -187,10 +187,22 @@ async (tx) => {
               p.parameterName,
             rangeRaw:
               p.rangeRaw,
+/*
             minValue:
               p.minValue,
             maxValue:
               p.maxValue,
+*/
+minValue:
+  p.minValue != null
+    ? String(p.minValue)
+    : null,
+
+maxValue:
+  p.maxValue != null
+    ? String(p.maxValue)
+    : null,
+
             unit:
               p.unit,
             frequency:
