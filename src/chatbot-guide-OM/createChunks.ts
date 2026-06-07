@@ -71,6 +71,7 @@ ${p.description ?? ""}
 }
 
 // PROCEDURES
+/*
 for (const procedure of guide.procedures) {
 chunks.push({
 chunkIndex: index++,
@@ -100,6 +101,38 @@ Step ${s.order}: ${s.content}
 });
 
 }
+*/
+for (const procedure of guide.procedures) {
+  const stepText = procedure.steps
+    .sort((a, b) => a.order - b.order)
+    .map(
+      (step) =>
+        `Step ${step.order}: ${step.content}`
+    )
+    .join("\n");
+
+  chunks.push({
+    chunkIndex: chunkIndex++,
+
+    content: [
+      "[SOP]",
+      "",
+      `Procedure: ${procedure.title}`,
+      "",
+      procedure.description ?? "",
+      "",
+      stepText,
+    ].join("\n"),
+
+    metadata: {
+      section: "procedure",
+      title: procedure.title,
+    },
+  });
+}
+
+
+
 
 // HEALTH CHECKS
 for (const health of guide.healthChecks) {
