@@ -25,7 +25,7 @@ import { openProductDetail } from "./openRoute/openProductDetail";
 import { getCategory } from "./getCategory";
 
 export const maxDuration = 30;
-
+export const runtime = 'edge'
 
 // Sử dụng cho reranked tăng độ chính xác
 const rerankWithGemini = async (
