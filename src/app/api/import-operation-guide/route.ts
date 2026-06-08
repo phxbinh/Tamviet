@@ -16,7 +16,7 @@ export async function POST(
 
     return Response.json({
       success: true,
-      ...result,
+      data: result,
     });
   } catch (error) {
     console.error(error);
