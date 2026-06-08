@@ -1,6 +1,6 @@
 import {
   importOperationGuide,
-} from "@/chatbot-guide-OM/importOperationGuide";
+} from "@/chatbot-guide-OM/importOperationGuide_";
 
 export async function POST(
   req: Request
