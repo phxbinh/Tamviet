@@ -28,17 +28,18 @@ export async function importOperationGuide(markdown: string) {
     schema: parsedGuideSchema,
     prompt: `
 Bạn là chuyên gia xử lý tài liệu vận hành.
-
-Trích xuất markdown thành JSON:
-- title
-- category
-- version
-- overview
-- procedures
-- parameters
-- healthChecks
-- troubleshooting
-
+Nhiệm vụ:
+1. Đọc markdown.
+2. Chuyển thành JSON đúng schema.
+3. Trích xuất:
+    * title
+    * category
+    * version
+    * overview
+    * parameters
+    * procedures
+    * healthChecks
+    * troubleshooting
 Markdown:
 ${markdown}
 `,
