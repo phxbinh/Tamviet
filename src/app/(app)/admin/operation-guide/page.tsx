@@ -284,7 +284,7 @@ export default function AssetsPage() {
   async function loadAssets() {
     const response =
       await fetch(
-        "/api/admin/assets"
+        "/api/admin/assets_om"
       );
 
     const data =
@@ -307,7 +307,7 @@ export default function AssetsPage() {
 
       const response =
         await fetch(
-          "/api/admin/assets",
+          "/api/admin/assets_om",
           {
             method: "POST",
 
