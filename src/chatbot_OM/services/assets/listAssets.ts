@@ -1,6 +1,6 @@
 import { db } from "./db";
 
-import { assets } from "../../schema";
+import { assets } from "../../schemas";
 
 import {
   asc,
