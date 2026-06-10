@@ -56,6 +56,10 @@
     "react-to-print": "^3.0.2",
     "@hookform/resolvers": "^3.10.0",
     "react-hook-form": "^7.54.0",
+    
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "unist-util-visit": "^5.0.0",
   
     "sanitize-html": "^2.13.0",
     "rehype-sanitize": "^6.0.0",
