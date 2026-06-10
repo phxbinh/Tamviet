@@ -25,15 +25,13 @@ export async function createAsset(
   //----------------------------------
 
   if (data.code) {
-    const existing =
-      await db.query.assets.findFirst({
-        where: eq(
-          assets.code,
-          data.code
-        ),
-      });
-
-    if (existing) {
+    const existing = await db
+      .select()
+      .from(assets)
+      .where(eq(assets.code, data.code))
+      .limit(1);
+    
+    if (existing.length > 0) {
       throw new Error(
         `Asset code already exists: ${data.code}`
       );
