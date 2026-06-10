@@ -1,52 +1,38 @@
-import { NextRequest, NextResponse } from "next/server";
+import { db } from "./db";
 
-import { createAsset } from "@/chatbot_OM/services/assets/createAsset";
-import { listAssets } from "@/chatbot_OM/services/assets/listAssets";
+import { assets } from "../../schema";
 
-export async function GET() {
-  try {
-    const assets = await listAssets();
+import {
+  asc,
+  eq,
+} from "drizzle-orm";
 
-    return NextResponse.json(assets);
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error",
-      },
-      {
-        status: 500,
-      }
-    );
-  }
-}
-
-export async function POST(
-  request: NextRequest
+export async function listAssets(
+  assetType?: string
 ) {
-  try {
-    const body =
-      await request.json();
+  if (assetType) {
+    return db.query.assets.findMany({
+      where: eq(
+        assets.assetType,
+        assetType
+      ),
 
-    const asset =
-      await createAsset(body);
-
-    return NextResponse.json(
-      asset
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unknown error",
-      },
-      {
-        status: 500,
-      }
-    );
+      orderBy: [
+        asc(
+          assets.name
+        ),
+      ],
+    });
   }
+
+  return db.query.assets.findMany({
+    orderBy: [
+      asc(
+        assets.assetType
+      ),
+      asc(
+        assets.name
+      ),
+    ],
+  });
 }
