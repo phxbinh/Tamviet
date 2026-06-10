@@ -56,331 +56,181 @@ export function sha256(
 // Input interface ---------
 export interface ImportDocumentInput {
   assetId: string;
-
   documentType: string;
-
   title?: string;
-
   version?: string;
-
   markdown: string;
-
   metadata?: Record<string, unknown>;
 }
 
 // Output interface --------
 export interface ImportDocumentResult {
   documentId: string;
-
   sectionCount: number;
-
   chunkCount: number;
 }
 
 export async function insertDocumentTree(
-
   input: ImportDocumentInput
-
 ) {
-
   let documentId: string | null = null;
-
   try {
-
     //----------------------------------
-
     // Parse
-
     //----------------------------------
-
     const ast = parseMarkdownToAST(
-
       input.markdown
-
     );
-
     const sections =
-
       buildSectionRecords(ast);
-
     const chunks =
-
       chunkSections(sections);
 
     //----------------------------------
-
     // Hash
-
     //----------------------------------
-
     const contentHash =
-
       crypto
-
         .createHash("sha256")
-
         .update(input.markdown)
-
         .digest("hex");
 
     //----------------------------------
-
     // Insert document
-
     //----------------------------------
-
     const [document] =
-
       await db
-
         .insert(documents)
-
         .values({
-
           assetId: input.assetId,
-
           documentType:
-
             input.documentType,
-
           title:
-
             input.title ??
-
             ast.title,
-
           version: input.version,
-
           rawMarkdown:
-
             input.markdown,
-
           contentHash,
-
           metadata:
-
             input.metadata ?? {},
-
         })
-
         .returning();
-
     documentId = document.id;
 
     //----------------------------------
-
     // Insert sections
-
     //----------------------------------
-
     const pathToId =
-
       new Map<string, string>();
-
     for (const section of sections) {
-
       const parentId =
-
         section.parentPath
-
           ? pathToId.get(
-
               section.parentPath
-
             ) ?? null
-
           : null;
 
       const [createdSection] =
-
         await db
-
           .insert(
-
             documentSections
-
           )
-
           .values({
-
             documentId:
-
               document.id,
-
             parentId,
-
             level:
-
               section.level,
-
             title:
-
               section.title,
-
             sectionType:
-
               null,
-
             sectionPath:
-
               section.sectionPath,
-
             pathSlug:
-
               section.pathSlug,
-
             content:
-
               section.content,
-
             sortOrder:
-
               section.sortOrder,
-
             metadata: {},
-
           })
-
           .returning();
-
       pathToId.set(
-
         section.sectionPath,
-
         createdSection.id
-
       );
-
     }
 
     //----------------------------------
-
     // Batch chunks
-
     //----------------------------------
-
     const chunkRows =
-
       chunks.map((chunk) => ({
-
         documentId:
-
           document.id,
-
         sectionId:
-
           pathToId.get(
-
             chunk.sectionPath
-
           )!,
-
         sectionPath:
-
           chunk.sectionPath,
-
         chunkIndex:
-
           chunk.chunkIndex,
-
         content:
-
           chunk.content,
-
         metadata: {},
-
       }));
 
     if (chunkRows.length > 0) {
-
       await db
-
         .insert(documentChunks)
-
         .values(chunkRows);
-
     }
 
     //----------------------------------
-
     // Result
-
     //----------------------------------
-
     return {
-
       documentId:
-
         document.id,
-
       sectionCount:
-
         sections.length,
-
       chunkCount:
-
         chunks.length,
-
     };
-
   } catch (error) {
 
     //----------------------------------
-
     // Manual rollback
-
     //----------------------------------
-
     if (documentId) {
-
       try {
-
         await db
-
           .delete(documents)
-
           .where(
-
             eq(
-
               documents.id,
-
               documentId
-
             )
-
           );
 
         // CASCADE:
-
         // document
-
         // -> sections
-
         // -> chunks
-
       } catch (
-
         rollbackError
-
       ) {
-
         console.error(
-
           "Rollback failed",
-
           rollbackError
-
         );
-
       }
-
     }
-
     throw error;
-
   }
-
 }
 
 
