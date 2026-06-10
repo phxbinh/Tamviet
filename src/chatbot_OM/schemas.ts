@@ -20,6 +20,7 @@ import { vector } from "drizzle-orm/pg-core";
 
 
 // 1. asset schema
+/*
 export const assets = pgTable(
   "assets",
   {
@@ -82,6 +83,96 @@ export const assets = pgTable(
     ),
   })
 );
+*/
+export const assets = pgTable(
+  "assets",
+  {
+    id: uuid("id")
+      .defaultRandom()
+      .primaryKey(),
+    assetType: varchar(
+      "asset_type",
+      {
+        length: 50,
+      }
+    ).notNull(),
+    code: varchar("code", {
+      length: 100,
+    }),
+    name: varchar("name", {
+      length: 500,
+    }).notNull(),
+    description: text(
+      "description"
+    ),
+    metadata: jsonb(
+      "metadata"
+    )
+      .$type<Record<string, unknown>>()
+      .default(
+        sql`'{}'::jsonb`
+      )
+      .notNull(),
+    createdAt: timestamp(
+      "created_at",
+      {
+        withTimezone: true,
+      }
+    )
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp(
+      "updated_at",
+      {
+        withTimezone: true,
+      }
+    )
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    codeUnique: unique(
+      "assets_code_unique"
+    ).on(table.code),
+    typeNameUnique: unique(
+      "assets_type_name_unique"
+    ).on(
+      table.assetType,
+      table.name
+    ),
+    assetTypeIdx: index(
+      "assets_asset_type_idx"
+    ).on(
+      table.assetType
+    ),
+    nameIdx: index(
+      "assets_name_idx"
+    ).on(table.name),
+    createdAtIdx: index(
+      "assets_created_at_idx"
+    ).on(
+      table.createdAt
+    ),
+    assetTypeCheck: check(
+      "assets_type_check",
+      sql`${table.assetType} IN (
+        'process',
+        'equipment',
+        'chemical',
+        'instrument',
+        'safety',
+        'maintenance'
+      )`
+    ),
+  })
+);
+
+
+
+
+
+
+
 
 
 // 2. document schema
