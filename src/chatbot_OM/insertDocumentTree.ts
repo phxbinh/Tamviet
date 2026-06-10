@@ -40,7 +40,7 @@ import {
 
 
 // Hash helper
-import crypto from "crypto";
+//import crypto from "crypto";
 
 export function sha256(
   text: string
