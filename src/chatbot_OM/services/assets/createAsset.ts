@@ -1,4 +1,4 @@
-import { db } from "../../dbchatbot";
+import { db } from "../../../dbchatbot";
 
 import { assets } from "../../schemas";
 
