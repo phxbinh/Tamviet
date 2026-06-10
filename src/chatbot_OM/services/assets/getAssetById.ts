@@ -9,10 +9,11 @@ import {
 export async function getAssetById(
   assetId: string
 ) {
-  return db.query.assets.findFirst({
-    where: eq(
-      assets.id,
-      assetId
-    ),
-  });
+  const result = await db
+    .select()
+    .from(assets)
+    .where(eq(assets.id, assetId))
+    .limit(1);
+
+  return result[0] ?? null;
 }
