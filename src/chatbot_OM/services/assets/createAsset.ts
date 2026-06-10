@@ -1,6 +1,6 @@
-import { db } from "@/db";
+import { db } from "../../dbchatbot";
 
-import { assets } from "@/db/schema";
+import { assets } from "../../schemas";
 
 import { eq } from "drizzle-orm";
 
