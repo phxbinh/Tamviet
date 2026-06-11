@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { insertDocument } from "@/chatbot_OM/importDocumentTree_Doc";
+import { insertDocument } from "@/chatbot_OM/insertDocumentTree_Doc";
 
 export async function POST(
   request: NextRequest
