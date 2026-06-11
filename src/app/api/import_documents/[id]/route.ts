@@ -3,6 +3,7 @@ import {
   NextResponse,
 } from "next/server";
 
+// src/chatbot_OM/updateDocumentTree_Doc.ts
 import {
   updateDocument,
 } from "@/chatbot_OM/updateDocumentTree_Doc";
@@ -24,7 +25,7 @@ export async function GET(
       await context.params;
 
     const document =
-      await getDocumentById(id);
+      await getDocumentById({documentId:id});
 
     if (!document) {
       return NextResponse.json(
