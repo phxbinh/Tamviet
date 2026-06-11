@@ -67,7 +67,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Box, label: 'Tạo cross sell Category', href: '/admin/chatbotproduct/category-cross-sell' },
     { icon: Box, label: 'Guide OM', href: '/admin/operation-guide' },
     { icon: Box, label: 'import Doc OM', href: '/admin/import_document_om' },
-    { icon: Box, label: 'Edit Doc OM', href: '/admin/import_document_om/edit' },
+    { icon: Box, label: 'Edit Doc OM', href: '/admin/import_document_om/edit-doc' },
 
   ];
 //src/app/(app)/admin/chatbotproduct/category-cross-sell
