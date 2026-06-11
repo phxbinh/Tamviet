@@ -1,30 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import {
-  insertDocument,
-  type ImportDocumentInput,
-} from "@/chatbot_OM/importDocumentTree_Doc";
+import { insertDocument } from "@/chatbot_OM/importDocumentTree_Doc";
 
 export async function POST(
   request: NextRequest
 ) {
   try {
     const body =
-      (await request.json()) as ImportDocumentInput;
+      await request.json();
 
     const document =
-      await insertDocument(body);
+      await insertDocument({
+        assetId:
+          body.assetId,
+
+        documentType:
+          body.documentType,
+
+        title:
+          body.title,
+
+        version:
+          body.version,
+
+        markdown:
+          body.markdown,
+
+        metadata:
+          body.metadata,
+      });
 
     return NextResponse.json(
       document
     );
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
       {
         error:
           error instanceof Error
             ? error.message
-            : "Unknown error",
+            : "Import failed",
       },
       {
         status: 500,
