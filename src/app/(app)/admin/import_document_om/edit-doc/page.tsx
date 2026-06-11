@@ -83,7 +83,7 @@ export default function DocumentDetailPage() {
     try {
       const response =
         await fetch(
-          `/api/import_documents/${documentId}`
+          `/api/import_documents/${Id}`
         );
 
       const json =
