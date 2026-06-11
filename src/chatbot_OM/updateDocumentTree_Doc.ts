@@ -8,11 +8,11 @@ import {
   eq,
 } from "drizzle-orm";
 
-/*
+
 import {
   syncDocumentSections,
 } from "./syncDocumentSections";
-*/
+
 
 export interface UpdateDocumentInput {
   documentId: string;
@@ -93,16 +93,19 @@ export async function updateDocument(
       )
       .returning();
 
-/*
-  await syncDocumentSections({
-    documentId: input.documentId,
-    markdown: input.markdown,
-  });
-  */
   if (!document) {
     throw new Error(
       "Document not found"
     );
+  }
+
+  if (input.markdown !== undefined) {
+    await syncDocumentSections({
+      documentId:
+        input.documentId,
+      markdown:
+        input.markdown,
+    });
   }
 
   return document;
