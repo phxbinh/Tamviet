@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { insertDocument } from "@/chatbot_OM/insertDocumentTree_Doc";
 
+import {
+  listDocuments,
+} from "@/chatbot_OM/document/listDocuments";
+
 export async function POST(
   request: NextRequest
 ) {
@@ -50,3 +54,29 @@ export async function POST(
     );
   }
 }
+
+export async function GET() {
+  try {
+    const documents =
+      await listDocuments();
+
+    return NextResponse.json({
+      success: true,
+      data: documents,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
