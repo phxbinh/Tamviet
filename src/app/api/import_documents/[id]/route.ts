@@ -6,28 +6,57 @@ import {
 import {
   updateDocument,
 } from "@/chatbot_OM/updateDocumentTree_Doc";
-// app/api/import_documents/[id]/route.ts
+
+import {
+  getDocumentById,
+} from "@/chatbot_OM/document/getDocumentById";
 
 export async function GET(
-  request: Request,
-  {
-    params,
-  }: {
+  request: NextRequest,
+  context: {
     params: Promise<{
       id: string;
     }>;
   }
 ) {
-  const { id } =
-    await params;
+  try {
+    const { id } =
+      await context.params;
 
-  const document =
-    await getDocumentById(id);
+    const document =
+      await getDocumentById(id);
 
-  return Response.json({
-    success: true,
-    data: document,
-  });
+    if (!document) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "Document not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: document,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }
 
 export async function PUT(
