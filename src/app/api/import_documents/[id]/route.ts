@@ -6,6 +6,29 @@ import {
 import {
   updateDocument,
 } from "@/chatbot_OM/updateDocumentTree_Doc";
+// app/api/import_documents/[id]/route.ts
+
+export async function GET(
+  request: Request,
+  {
+    params,
+  }: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) {
+  const { id } =
+    await params;
+
+  const document =
+    await getDocumentById(id);
+
+  return Response.json({
+    success: true,
+    data: document,
+  });
+}
 
 export async function PUT(
   request: NextRequest,
