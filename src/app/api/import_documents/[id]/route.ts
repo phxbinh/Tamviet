@@ -24,8 +24,7 @@ export async function GET(
     const { id } =
       await context.params;
 
-    const document =
-      await getDocumentById({documentId:id});
+    const document = await getDocumentById(id);
 
     if (!document) {
       return NextResponse.json(
