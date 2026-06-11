@@ -75,7 +75,7 @@ export default function DocumentsPage() {
 
       const response =
         await fetch(
-          "/api/admin/import_documents",
+          "/api/import_documents",
           {
             method: "POST",
 
