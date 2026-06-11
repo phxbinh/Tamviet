@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { insertDocument } from "@/chatbot_OM/importDocumentTree_Doc";
+import {
+  insertDocument,
+  type ImportDocumentInput,
+} from "@/chatbot_OM/importDocumentTree_Doc";
 
 export async function POST(
   request: NextRequest
 ) {
   try {
     const body =
-      await request.json();
+      (await request.json()) as ImportDocumentInput;
 
     const document =
-      await insertDocument(input: body);
+      await insertDocument(body);
 
     return NextResponse.json(
       document
