@@ -443,7 +443,7 @@ export default function DocumentsPage() {
 
                 <td className="border p-2">
                   <Link
-                    href={`/import_documents/${document.id}`}
+                    href={`/admin/import_documents/edit-doc/${document.id}`}
                     className="underline"
                   >
                     Edit
