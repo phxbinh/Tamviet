@@ -208,7 +208,7 @@ export default function DocumentDetailPage() {
         <button
           onClick={() =>
             router.push(
-              "/import_documents"
+              "/admin/import_document_om/edit-doc"
             )
           }
           className="border px-3 py-2"
