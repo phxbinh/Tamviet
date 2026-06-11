@@ -1,4 +1,4 @@
-/*
+
 import { NextRequest, NextResponse } from "next/server";
 
 import { insertDocument } from "@/chatbot_OM/importDocumentTree_Doc";
@@ -50,4 +50,3 @@ export async function POST(
     );
   }
 }
-*/
