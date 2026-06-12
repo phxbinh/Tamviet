@@ -91,6 +91,11 @@ import {
   syncDocumentSections,
 } from "./syncDocumentSections";
 
+import {
+  syncDocumentChunks,
+} from "./syncDocumentChunks";
+
+
 export interface ImportDocumentInput {
   assetId: string;
   documentType: string;
@@ -165,6 +170,13 @@ export async function insertDocument(
     markdown:
       input.markdown,
   });
+
+  //----------------------------------
+  // Build chunks
+  //----------------------------------
+  await syncDocumentChunks(
+      input.documentId
+    );
 
   //----------------------------------
   // Result
