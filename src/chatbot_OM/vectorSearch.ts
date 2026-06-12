@@ -45,8 +45,8 @@ export async function vectorSearch(
   const { embedding } =
     await embed({
       model:
-        google.textEmbeddingModel(
-          "text-embedding-004"
+        google.embedding(
+          "gemini-embedding-001"
         ),
 
       value:
