@@ -181,6 +181,7 @@ export async function insertDocumentTree(
         content:
           chunk.content,
         metadata: {},
+        tokenCount: 9,
       }));
 
     if (chunkRows.length > 0) {
