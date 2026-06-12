@@ -68,6 +68,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Box, label: 'Guide OM', href: '/admin/operation-guide' },
     { icon: Box, label: 'import Doc OM', href: '/admin/import_document_om' },
     { icon: Box, label: 'Edit Doc OM', href: '/admin/import_document_om/edit-doc' },
+    { icon: Box, label: 'Test vector search', href: '/admin/vector-search' },
 
   ];
 //src/app/(app)/admin/chatbotproduct/category-cross-sell
