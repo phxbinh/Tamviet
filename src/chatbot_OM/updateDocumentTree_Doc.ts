@@ -13,6 +13,10 @@ import {
   syncDocumentSections,
 } from "./syncDocumentSections";
 
+import {
+  syncDocumentChunks,
+} from "./syncDocumentChunks";
+
 
 export interface UpdateDocumentInput {
   documentId: string;
@@ -107,6 +111,10 @@ export async function updateDocument(
         input.markdown,
     });
   }
+
+  await syncDocumentChunks(
+      input.documentId
+    );
 
   return document;
 }
