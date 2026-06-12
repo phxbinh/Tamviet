@@ -126,6 +126,9 @@ export async function syncDocumentChunks(
                 chunk.sectionPath
               )!,
 
+            sectionPath:
+              chunk.sectionPath,
+
             chunkIndex:
               chunk.chunkIndex,
 
