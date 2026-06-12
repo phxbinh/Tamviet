@@ -20,6 +20,7 @@ export async function generateDocumentEmbeddings(
   // Load chunks
   //----------------------------------
 
+/* Lấy tất cả các chunks */
   const chunks =
     await db
       .select()
@@ -32,6 +33,25 @@ export async function generateDocumentEmbeddings(
           documentId
         )
       );
+
+/*
+Lấy các chunks chưa embbeding
+const chunks =
+  await db
+    .select()
+    .from(documentChunks)
+    .where(
+      and(
+        eq(
+          documentChunks.documentId,
+          documentId
+        ),
+        isNull(
+          documentChunks.embedding
+        )
+      )
+    );
+*/
 
   //----------------------------------
   // Generate embeddings
