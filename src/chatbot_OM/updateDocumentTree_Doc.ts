@@ -17,6 +17,10 @@ import {
   syncDocumentChunks,
 } from "./syncDocumentChunks";
 
+import {
+  generateDocumentEmbeddings,
+} from "./generateDocumentEmbeddings";
+
 
 export interface UpdateDocumentInput {
   documentId: string;
@@ -116,5 +120,16 @@ export async function updateDocument(
       input.documentId
     );
 
+  await generateDocumentEmbeddings(
+    input.documentId
+  );
+
   return document;
 }
+
+
+
+
+
+
+
