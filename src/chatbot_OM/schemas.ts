@@ -20,70 +20,6 @@ import { vector } from "drizzle-orm/pg-core";
 
 
 // 1. asset schema
-/*
-export const assets = pgTable(
-  "assets",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-
-    assetType: varchar("asset_type", {
-      length: 50,
-    }).notNull(),
-
-    code: varchar("code", {
-      length: 100,
-    }),
-
-    name: varchar("name", {
-      length: 500,
-    }).notNull(),
-
-    description: text("description"),
-
-    metadata: jsonb("metadata")
-      .$type<Record<string, unknown>>()
-      .default(sql`'{}'::jsonb`)
-      .notNull(),
-
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
-
-    updatedAt: timestamp("updated_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => ({
-    codeUnique: unique(
-      "assets_code_unique"
-    ).on(table.code),
-
-    assetTypeIdx: index(
-      "assets_asset_type_idx"
-    ).on(table.assetType),
-
-    nameIdx: index(
-      "assets_name_idx"
-    ).on(table.name),
-
-    assetTypeCheck: check(
-      "assets_type_check",
-      sql`${table.assetType} IN (
-        'process',
-        'equipment',
-        'chemical',
-        'instrument',
-        'safety',
-        'maintenance'
-      )`
-    ),
-  })
-);
-*/
 export const assets = pgTable(
   "assets",
   {
@@ -166,14 +102,6 @@ export const assets = pgTable(
     ),
   })
 );
-
-
-
-
-
-
-
-
 
 // 2. document schema
 export const documents = pgTable(
@@ -357,7 +285,7 @@ export const documentSections = pgTable(
 
 
 // 4. document chunks schema
-export const documentChunks = pgTable(
+export const documentChunks_ = pgTable(
   "document_chunks",
   {
     id: uuid("id")
@@ -433,3 +361,96 @@ export const documentChunks = pgTable(
     ),
   })
 );
+
+
+// Thay thế cho documentChunks_ ở trên
+export const documentChunks = pgTable(
+  "document_chunks",
+  {
+    id: uuid("id")
+      .defaultRandom()
+      .primaryKey(),
+
+    documentId: uuid("document_id")
+      .references(() => documents.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+
+    sectionId: uuid("section_id")
+      .references(
+        () => documentSections.id,
+        {
+          onDelete: "cascade",
+        }
+      )
+      .notNull(),
+
+    sectionPath: text(
+      "section_path"
+    ).notNull(),
+
+    chunkIndex: integer(
+      "chunk_index"
+    ).notNull(),
+
+    content: text("content")
+      .notNull(),
+
+    tokenCount: integer(
+      "token_count"
+    ).notNull(),
+
+    embedding: vector(
+      "embedding",
+      {
+        dimensions: 3072,
+      }
+    ),
+
+    metadata: jsonb("metadata")
+      .$type<Record<string, unknown>>()
+      .default(sql`'{}'::jsonb`)
+      .notNull(),
+
+    createdAt: timestamp(
+      "created_at",
+      {
+        withTimezone: true,
+      }
+    )
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    documentIdx: index(
+      "chunks_document_idx"
+    ).on(table.documentId),
+
+    sectionIdx: index(
+      "chunks_section_idx"
+    ).on(table.sectionId),
+
+    tokenCountIdx: index(
+      "chunks_token_count_idx"
+    ).on(table.tokenCount),
+
+    sectionChunkUnique: unique(
+      "document_chunks_section_chunk_unique"
+    ).on(
+      table.sectionId,
+      table.chunkIndex
+    ),
+
+    chunkIndexCheck: check(
+      "chunks_index_check",
+      sql`${table.chunkIndex} >= 0`
+    ),
+
+    tokenCountCheck: check(
+      "chunks_token_count_check",
+      sql`${table.tokenCount} > 0`
+    ),
+  })
+);
+
