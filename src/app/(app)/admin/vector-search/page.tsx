@@ -1,6 +1,6 @@
 // 🟢Sử dụng vector-search ở folder api cho 
 // ✅src/chatbot_OM/search-chatbot/*.ts
-//*
+
 "use client";
 
 import { useState } from "react";
@@ -17,7 +17,7 @@ interface KnowledgeSearchResult {
   rankedSections: RankedSection[];
   context: string;
 }
-*/
+
 /* ------
 // Có thể thay thế cho hai interface ở trên -----
 export interface KnowledgeSearchResult {
@@ -32,7 +32,7 @@ export interface KnowledgeSearchResult {
 }
 */
 
-/*
+
 export default function KnowledgeSearchPage_() {
   const [query, setQuery] =
     useState("");
