@@ -186,6 +186,7 @@ const ranked =
     intent.topic
   );
 
+console.log("Step: topSectionIds")
 const topSectionIds =
   ranked
     .slice(0, 5)
@@ -193,12 +194,13 @@ const topSectionIds =
       x => x.sectionId
     );
 
+console.log("Step: loadSections")
 const fullSections =
   await loadSections(
     topSectionIds
   );
 
-
+console.log("Step: end flow")
 
 
 
