@@ -66,7 +66,7 @@ export async function searchKnowledge(
 
   const topSectionIds =
     ranked
-      .slice(0, 3)
+      .slice(0, 10) //3
       .map(
         (x) =>
           x.sectionId
