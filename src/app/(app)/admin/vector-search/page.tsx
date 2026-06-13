@@ -1,4 +1,6 @@
 /*
+// 🟢Sử dụng vectorSearch.ts và
+// ✅API ở api/vector-search/route.ts (phần comment trên cùng)
 "use client";
 
 import { useState } from "react";
@@ -169,27 +171,38 @@ export default function VectorSearchPage() {
 
 
 
+
+// 🟢Sử dụng vector-search ở folder api cho 
+// ✅src/chatbot_OM/search-chatbot/*.ts
 "use client";
 
 import { useState } from "react";
 
 interface RankedSection {
   sectionId: string;
-
   sectionPath: string;
-
   distance: number;
-
   finalScore: number;
 }
 
 interface KnowledgeSearchResult {
   topic: string;
-
   rankedSections: RankedSection[];
-
   context: string;
 }
+/*
+// Có thể thay thế cho hai interface ở trên -----
+export interface KnowledgeSearchResult {
+  topic: string;
+  rankedSections: {
+    sectionId: string;
+    sectionPath: string;
+    distance: number;
+    finalScore: number;
+  }[];
+  context: string;
+}
+*/
 
 export default function KnowledgeSearchPage() {
   const [query, setQuery] =
