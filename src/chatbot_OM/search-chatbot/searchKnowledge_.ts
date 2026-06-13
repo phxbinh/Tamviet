@@ -112,6 +112,7 @@ const intent =
     question
   );
 
+/* --------
 let assetId:
   string | undefined =
     undefined;
@@ -129,6 +130,37 @@ if (
       asset.id;
   }
 }
+-------- */
+let assetId:
+  string | undefined =
+    undefined;
+
+if (
+  intent.assetName
+) {
+  const asset =
+    await findAsset(
+      intent.assetName
+    );
+
+  if (asset) {
+
+    console.log(
+      "Matched asset:",
+      asset.name,
+      asset.score
+    );
+
+    assetId =
+      asset.id;
+  }
+}
+
+
+
+
+
+
 
 const chunks =
   await vectorSearch({
