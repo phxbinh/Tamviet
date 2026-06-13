@@ -22,6 +22,22 @@ interface SearchResult {
   distance: number;
 }
 
+interface KnowledgeSearchResult {
+  topic: string;
+
+  rankedSections: {
+    sectionId: string;
+
+    sectionPath: string;
+
+    distance: number;
+
+    finalScore: number;
+  }[];
+
+  context: string;
+}
+
 export default function VectorSearchPage() {
   const [query, setQuery] =
     useState("");
@@ -30,7 +46,7 @@ export default function VectorSearchPage() {
     useState(false);
 
   const [results, setResults] =
-    useState<SearchResult[]>([]);
+    useState<KnowledgeSearchResult[]>([]);
 
   async function handleSearch() {
     try {
