@@ -148,7 +148,8 @@ if (
     console.log(
       "Matched asset:",
       asset.name,
-      asset.score
+      asset.score,
+      asset.id
     );
 
     assetId =
