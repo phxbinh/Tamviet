@@ -1,3 +1,4 @@
+/*
 import {
   NextRequest,
   NextResponse,
@@ -41,3 +42,58 @@ export async function POST(
     );
   }
 }
+*/
+
+import {
+  NextRequest,
+  NextResponse,
+} from "next/server";
+
+import {
+  searchKnowledge,
+} from "@/chatbot_OM/search-chatbot/searchKnowledge";
+
+export async function POST(
+  request: NextRequest
+) {
+  try {
+    const body =
+      await request.json();
+
+    const result =
+      await searchKnowledge(
+        body.query,
+        body.assetId
+      );
+
+    return NextResponse.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unknown error",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
