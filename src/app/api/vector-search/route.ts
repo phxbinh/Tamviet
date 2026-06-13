@@ -49,9 +49,15 @@ import {
   NextResponse,
 } from "next/server";
 
+//import {
+//  searchKnowledge,
+//} from "@/chatbot_OM/search-chatbot/searchKnowledge";
+
+
 import {
   searchKnowledge,
-} from "@/chatbot_OM/search-chatbot/searchKnowledge";
+} from "@/chatbot_OM/search-chatbot/searchKnowledge_";
+
 
 export async function POST(
   request: NextRequest
@@ -59,11 +65,17 @@ export async function POST(
   try {
     const body =
       await request.json();
-
+/*
     const result =
       await searchKnowledge(
         body.query,
         body.assetId
+      );
+*/
+
+    const result =
+      await searchKnowledge(
+        body.query
       );
 
     return NextResponse.json({
