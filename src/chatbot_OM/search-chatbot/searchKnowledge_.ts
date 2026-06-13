@@ -162,7 +162,7 @@ if (
 
 
 
-
+console.log(" - Step: vectorSearch")
 const chunks =
   await vectorSearch({
     query:
@@ -173,11 +173,13 @@ const chunks =
     limit: 30,
   });
 
+console.log(" - Step: groupBySection")
 const sections =
   groupBySection(
     chunks
   );
 
+console.log("Step: rerankSections")
 const ranked =
   rerankSections(
     sections,
