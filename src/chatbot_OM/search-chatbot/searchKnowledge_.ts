@@ -229,6 +229,7 @@ ${s.content}
       )
       .join("\n\n");
 
+/*
   return {
     intent,
 
@@ -238,5 +239,22 @@ ${s.content}
 
     sections:
       fullSections,
-  };
+  }; */
+
+return {
+  intent,
+
+  assetId,
+
+  rankedSections:
+    ranked,
+
+  context,
+
+  sections:
+    fullSections,
+};
+
+
+
 }
