@@ -350,6 +350,11 @@ export const documentSections = pgTable(
       .notNull()
       .default(sql`'{}'::text[]`),
 
+    entities: text("entities")
+      .array()
+      .default(sql`ARRAY[]::text[]`)
+      .notNull(),
+
     sortOrder: integer(
       "sort_order"
     ).notNull(),
