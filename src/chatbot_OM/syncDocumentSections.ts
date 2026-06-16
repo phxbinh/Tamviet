@@ -14,6 +14,11 @@ import {
   buildSectionRecords,
 } from "./buildSectionRecords";
 
+//src/chatbot_OM/doc_section_add_metadata/generateSectionMetadata.ts
+import {
+  generateSectionMetadata,
+} from "./doc_section_add_metadata/generateSectionMetadata";
+
 export interface SyncDocumentSectionsInput {
   documentId: string;
   markdown: string;
@@ -62,6 +67,15 @@ export async function syncDocumentSections(
           ) ?? null
         : null;
 
+    const metadata =
+
+    // Thêm chổ này
+    await generateSectionMetadata(
+      section.title,
+      section.content,
+      section.sectionPath
+    );
+
     const [created] =
       await db
         .insert(
@@ -95,6 +109,17 @@ export async function syncDocumentSections(
             section.sortOrder,
 
           metadata: {},
+
+// Thêm chổ này
+          sectionType:
+            metadata.sectionType,
+      
+          keywords:
+            metadata.keywords,
+      
+          intentTags:
+            metadata.intentTags,
+
         })
         .returning({
           id:
