@@ -3,6 +3,8 @@ import { google } from "@ai-sdk/google";
 
 import { vectorSearch } from "./vectorSearch";
 
+// Dùng cho vectorSearch()
+
 export async function chat(
   question: string
 ) {
