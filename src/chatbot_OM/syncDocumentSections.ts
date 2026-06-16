@@ -17,7 +17,7 @@ import {
 //src/chatbot_OM/doc_section_add_metadata/generateSectionMetadata.ts
 import {
   generateSectionMetadata,
-} from "./doc_section_add_metadata/generateSectionMetadata";
+} from "./doc_section_add_metadata/generateSectionMetadata_AI";
 
 export interface SyncDocumentSectionsInput {
   documentId: string;
