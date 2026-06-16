@@ -2,6 +2,8 @@ import { NextRequest } from "next/server";
 
 import { chat } from "@/chatbot_OM/chatbot";
 
+// 🟢Dùng cho vectorSearch()
+
 export async function POST(
   request: NextRequest
 ) {
