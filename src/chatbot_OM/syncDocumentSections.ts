@@ -120,6 +120,9 @@ export async function syncDocumentSections(
           intentTags:
             metadata.intentTags,
 
+          summary:
+            metadata.summary,
+
         })
         .returning({
           id:
