@@ -94,7 +94,7 @@ export async function syncDocumentSections(
             section.title,
 
           sectionType:
-            null,
+            metadata.sectionType,
 
           sectionPath:
             section.sectionPath,
@@ -111,8 +111,8 @@ export async function syncDocumentSections(
           metadata: {},
 
 // Thêm chổ này
-          sectionType:
-            metadata.sectionType,
+          //sectionType:
+            //metadata.sectionType,
       
           keywords:
             metadata.keywords,
