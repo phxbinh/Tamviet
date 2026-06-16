@@ -1,4 +1,6 @@
 /*
+// 🟢Dùng cho vectorSearch();
+
 import {
   NextRequest,
   NextResponse,
