@@ -1,6 +1,7 @@
 // 🟢Sử dụng vector-search ở folder api cho 
 // ✅src/chatbot_OM/search-chatbot/*.ts
 
+// ✳️✳️Đang dùng cho searchKnowledge()
 "use client";
 
 import { useState } from "react";
