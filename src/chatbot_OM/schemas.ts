@@ -181,6 +181,7 @@ export const documents = pgTable(
 
 
 // 3. document section schema
+/*
 export const documentSections = pgTable(
   "document_sections",
   {
@@ -282,6 +283,141 @@ export const documentSections = pgTable(
     ),
   })
 );
+*/
+
+// 3. document section schema
+export const documentSections = pgTable(
+  "document_sections",
+  {
+    id: uuid("id")
+      .defaultRandom()
+      .primaryKey(),
+
+    documentId: uuid("document_id")
+      .references(() => documents.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+
+    parentId: uuid("parent_id").references(
+      (): AnyPgColumn =>
+        documentSections.id,
+      {
+        onDelete: "cascade",
+      }
+    ),
+
+    level: integer("level")
+      .notNull(),
+
+    title: varchar("title", {
+      length: 500,
+    }).notNull(),
+
+    sectionType: varchar(
+      "section_type",
+      {
+        length: 50,
+      }
+    ),
+
+    sectionPath: text(
+      "section_path"
+    ).notNull(),
+
+    pathSlug: text(
+      "path_slug"
+    ).notNull(),
+
+    content: text("content")
+      .notNull(),
+
+    summary: text(
+      "summary"
+    ),
+
+    keywords: text(
+      "keywords"
+    )
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+
+    intentTags: text(
+      "intent_tags"
+    )
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+
+    sortOrder: integer(
+      "sort_order"
+    ).notNull(),
+
+    metadata: jsonb("metadata")
+      .$type<Record<string, unknown>>()
+      .default(sql`'{}'::jsonb`)
+      .notNull(),
+
+    createdAt: timestamp(
+      "created_at",
+      {
+        withTimezone: true,
+      }
+    )
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp(
+      "updated_at",
+      {
+        withTimezone: true,
+      }
+    )
+      .defaultNow()
+      .notNull(),
+
+  },
+  (table) => ({
+    documentIdx: index(
+      "sections_document_idx"
+    ).on(table.documentId),
+
+    parentIdx: index(
+      "sections_parent_idx"
+    ).on(table.parentId),
+
+    levelIdx: index(
+      "sections_level_idx"
+    ).on(table.level),
+
+    typeIdx: index(
+      "sections_section_type_idx"
+    ).on(table.sectionType),
+
+    pathUnique: unique(
+      "document_sections_path_unique"
+    ).on(
+      table.documentId,
+      table.sectionPath
+    ),
+
+    slugUnique: unique(
+      "document_sections_slug_unique"
+    ).on(
+      table.documentId,
+      table.pathSlug
+    ),
+
+    levelCheck: check(
+      "sections_level_check",
+      sql`${table.level} >= 1`
+    ),
+  })
+);
+
+
+
 
 
 // 4. document chunks schema
