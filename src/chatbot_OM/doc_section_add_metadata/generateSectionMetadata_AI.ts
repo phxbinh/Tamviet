@@ -117,6 +117,23 @@ other
 
 Nếu title đã thể hiện rõ sectionType thì ưu tiên dùng title.
 
+5. entities:
+
+Là các thực thể kỹ thuật xuất hiện trong nội dung.
+
+Ví dụ:
+
+[
+ "Aerotank",
+ "BOD",
+ "COD",
+ "NH4",
+ "DO",
+ "MLSS",
+ "PLC",
+ "MCCB"
+]
+
 Chỉ trả JSON.
 `,
 
