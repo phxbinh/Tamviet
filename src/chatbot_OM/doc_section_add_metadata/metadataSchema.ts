@@ -26,6 +26,12 @@ export const MetadataSchema =
     intentTags:
       z.array(z.string())
         .max(10),
+
+    entities:
+      z.array(
+        z.string()
+      ),
+
   });
 
 export type SectionMetadata =
