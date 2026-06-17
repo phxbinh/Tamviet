@@ -123,6 +123,9 @@ export async function syncDocumentSections(
           summary:
             metadata.summary,
 
+          entities:
+            metadata.entities,
+
         })
         .returning({
           id:
