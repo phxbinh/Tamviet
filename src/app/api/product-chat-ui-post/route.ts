@@ -232,6 +232,7 @@ always call resolveDocumentTool.
 
         try {
           const parsed = resolveDocumentSchema.parse(docRequest.result);
+console.log(parsed);
           const foundDoc = await findDocument(parsed.searchText);
 
           if (foundDoc) {
