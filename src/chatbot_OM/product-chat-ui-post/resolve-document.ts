@@ -1,3 +1,4 @@
+/*
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -54,3 +55,52 @@ Examples:
         );
     },
   });
+*/
+
+
+import { tool } from "ai";
+import { z } from "zod";
+
+export const resolveDocumentSchema =
+  z.object({
+    searchText: z
+      .string()
+      .trim()
+      .min(1),
+  });
+
+export type ResolveDocumentResult =
+  z.infer<
+    typeof resolveDocumentSchema
+  >;
+
+export const resolveDocumentTool =
+  tool({
+    description: `
+Use this tool when the user wants:
+
+- open a document
+- view a document
+- SOP
+- operation manual
+- maintenance manual
+- work instruction
+- operating procedure
+
+Extract only the document
+or asset name.
+`,
+
+    parameters:
+      resolveDocumentSchema,
+
+    execute: async (
+      input
+    ): Promise<ResolveDocumentResult> => {
+      return resolveDocumentSchema.parse(
+        input
+      );
+    },
+  });
+
+
