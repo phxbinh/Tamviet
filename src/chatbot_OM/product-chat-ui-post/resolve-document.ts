@@ -41,17 +41,16 @@ Examples:
 "Xem tài liệu bể sinh học hiếu khí"
 => searchText = "bể sinh học hiếu khí"
 `,
-    inputSchema:
+
+    parameters:
       resolveDocumentSchema,
 
     execute: async (
       input
     ): Promise<ResolveDocumentResult> => {
-      const parsed =
+      return
         resolveDocumentSchema.parse(
           input
         );
-
-      return parsed;
     },
   });
