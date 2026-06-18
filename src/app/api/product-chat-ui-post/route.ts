@@ -62,7 +62,7 @@ always call resolveDocumentTool.
 
         const searchText =
           parsed.searchText;
-
+/*
         const document =
           await findDocument(
             searchText
@@ -74,17 +74,28 @@ always call resolveDocumentTool.
           );
           return;
         }
+*/
+const foundDoc =
+  await findDocument(
+    searchText
+  );
+
+if (!foundDoc) {
+  return Response.json({
+    success: false,
+  });
+}
 
         console.log(
           "Found document:",
-          document
+          foundDoc.id
         );
       },
   });
 
   return Response.json({
     success: true,
-    documentId: document.id,
+    documentId: foundDoc,
   });
 }
 
