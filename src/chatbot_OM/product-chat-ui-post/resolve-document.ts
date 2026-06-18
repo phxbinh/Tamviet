@@ -1,6 +1,19 @@
 import { tool } from "ai";
 import { z } from "zod";
 
+export const resolveDocumentSchema =
+  z.object({
+    searchText: z
+      .string()
+      .trim()
+      .min(1),
+});
+
+export type ResolveDocumentResult =
+  z.infer<
+    typeof resolveDocumentSchema
+  >;
+
 export const resolveDocumentTool =
   tool({
     description: `
@@ -28,15 +41,17 @@ Examples:
 "Xem tài liệu bể sinh học hiếu khí"
 => searchText = "bể sinh học hiếu khí"
 `,
-    inputSchema: z.object({
-      searchText: z.string(),
-    }),
+    inputSchema:
+      resolveDocumentSchema,
 
-    execute: async ({
-      searchText,
-    }) => {
-      return {
-        searchText,
-      };
+    execute: async (
+      input
+    ): Promise<ResolveDocumentResult> => {
+      const parsed =
+        resolveDocumentSchema.parse(
+          input
+        );
+
+      return parsed;
     },
   });
