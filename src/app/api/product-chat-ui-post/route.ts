@@ -1,9 +1,10 @@
 import { streamText } from "ai";
 import { google } from "@ai-sdk/google";
 
-//src/chatbot_OM/product-chat-ui-post
-import { resolveDocumentTool }
-  from "@/chatbot_OM/product-chat-ui-post/resolve-document";
+import {
+  resolveDocumentTool,
+  resolveDocumentSchema,
+} from "@/chatbot_OM/product-chat-ui-post/resolve-document";
 
 import { findDocument }
   from "@/chatbot_OM/product-chat-ui-post/find-document";
@@ -22,9 +23,15 @@ export async function POST(
     system: `
 You are an O&M assistant.
 
-When user asks to
-open/view/find a document,
-call resolveDocumentTool.
+When user asks to:
+- open a document
+- view a document
+- find a document
+- SOP
+- operation manual
+- maintenance manual
+
+always call resolveDocumentTool.
 `,
 
     messages,
@@ -37,7 +44,6 @@ call resolveDocumentTool.
 
     onStepFinish:
       async ({ toolResults }) => {
-
         const docRequest =
           toolResults.find(
             (tool) =>
@@ -49,16 +55,28 @@ call resolveDocumentTool.
           return;
         }
 
+        const parsed =
+          resolveDocumentSchema.parse(
+            docRequest.result
+          );
+
         const searchText =
-          docRequest.result
-            .searchText;
+          parsed.searchText;
 
         const document =
           await findDocument(
             searchText
           );
 
+        if (!document) {
+          console.log(
+            "Document not found"
+          );
+          return;
+        }
+
         console.log(
+          "Found document:",
           document
         );
       },
