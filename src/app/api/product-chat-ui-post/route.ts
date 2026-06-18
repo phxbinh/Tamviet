@@ -82,5 +82,14 @@ always call resolveDocumentTool.
       },
   });
 
+  return Response.json({
+    success: true,
+    documentId: document.id,
+  });
+}
+
+/*
   return result.toDataStreamResponse();
 }
+
+*/
