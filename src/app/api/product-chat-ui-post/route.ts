@@ -171,6 +171,11 @@ always call resolveDocumentTool.
 
         resolvedDocumentId =
           foundDoc.id;
+
+        console.log(
+          "Found document:",
+          foundDoc.id
+        );
       },
   });
 
