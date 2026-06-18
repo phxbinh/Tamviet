@@ -142,7 +142,8 @@ export default function DocumentResolverPage() {
   const [result, setResult] = useState<{
     success: boolean;
     documentId?: string;
-    message?: string;
+    message: string;
+    type?: "success" | "error" | "warning";
   } | null>(null);
 
   async function handleResolve() {
@@ -158,14 +159,13 @@ export default function DocumentResolverPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [
-            {
-              role: "user",
-              content: query.trim(),
-            },
-          ],
+          messages: [{ role: "user", content: query.trim() }],
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
 
       const json: ResolveDocumentResponse = await response.json();
 
@@ -174,19 +174,35 @@ export default function DocumentResolverPage() {
           success: true,
           documentId: json.documentId,
           message: "✅ Tìm thấy tài liệu thành công!",
+          type: "success",
         });
       } else {
         setResult({
           success: false,
-          message: json.error || "Không tìm thấy tài liệu phù hợp.",
+          message: json.error || "Không tìm thấy tài liệu phù hợp với yêu cầu.",
+          type: "warning",
         });
       }
     } catch (error) {
+      let errorMessage = "Lỗi kết nối. Vui lòng kiểm tra lại mạng và thử lại.";
+
+      if (error instanceof TypeError) {
+        errorMessage = "❌ Không thể kết nối đến server. Vui lòng kiểm tra mạng.";
+      } else if (error instanceof Error) {
+        if (error.message.includes("Failed to fetch")) {
+          errorMessage = "❌ Lỗi kết nối mạng. Vui lòng kiểm tra internet.";
+        } else {
+          errorMessage = `❌ ${error.message}`;
+        }
+      }
+
       setResult({
         success: false,
-        message: "Lỗi kết nối. Vui lòng thử lại sau.",
+        message: errorMessage,
+        type: "error",
       });
-      console.error(error);
+
+      console.error("Resolve error:", error);
     } finally {
       setLoading(false);
     }
@@ -226,24 +242,22 @@ export default function DocumentResolverPage() {
       {result && (
         <div
           className={`border rounded-2xl p-6 ${
-            result.success
+            result.type === "success"
               ? "bg-green-50 border-green-200"
-              : "bg-red-50 border-red-200"
+              : result.type === "error"
+              ? "bg-red-50 border-red-200"
+              : "bg-yellow-50 border-yellow-200"
           }`}
         >
-          <h2 className="font-bold text-xl mb-4">
-            {result.success ? "✅ Thành công" : "❌ Không tìm thấy"}
+          <h2 className="font-bold text-xl mb-3">
+            {result.type === "success" ? "✅ Thành công" : "❌ Có lỗi xảy ra"}
           </h2>
-
-          {result.message && (
-            <p className="text-lg mb-4">{result.message}</p>
-          )}
+          
+          <p className="text-lg leading-relaxed">{result.message}</p>
 
           {result.documentId && (
-            <div className="bg-white border rounded-lg p-4">
-              <strong className="block text-gray-700 mb-1">
-                Document ID:
-              </strong>
+            <div className="mt-4 bg-white border rounded-lg p-4">
+              <strong className="block text-gray-700 mb-1">Document ID:</strong>
               <code className="text-blue-600 font-mono break-all">
                 {result.documentId}
               </code>
