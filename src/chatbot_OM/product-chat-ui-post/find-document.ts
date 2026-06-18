@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { db } from "@/db";
+import { db } from "../../dbchatbot";
 
 export interface FoundDocument {
   id: string;
