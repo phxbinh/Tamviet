@@ -57,7 +57,7 @@ Examples:
   });
 */
 
-
+/* 
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -102,5 +102,30 @@ or asset name.
       );
     },
   });
+*/
 
+import { tool } from "ai";
+import { z } from "zod";
+
+export const resolveDocumentSchema = z.object({
+  searchText: z.string().trim().min(1, "Search text is required"),
+});
+
+export type ResolveDocumentResult = z.infer<typeof resolveDocumentSchema>;
+
+export const resolveDocumentTool = tool({
+  description: `
+Use this tool when the user wants to open, view, or find:
+- SOP, Operation Manual, Maintenance Manual, Work Instruction...
+
+Extract the main document name or keyword clearly.
+`,
+
+  parameters: resolveDocumentSchema,
+
+  execute: async (input): Promise<ResolveDocumentResult> => {
+    // Chỉ parse, không làm gì thêm
+    return resolveDocumentSchema.parse(input);
+  },
+});
 
