@@ -57,7 +57,7 @@ Examples:
   });
 */
 
-/* 
+
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -102,8 +102,8 @@ or asset name.
       );
     },
   });
-*/
 
+/*
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -128,4 +128,4 @@ Extract the main document name or keyword clearly.
     return resolveDocumentSchema.parse(input);
   },
 });
-
+*/
