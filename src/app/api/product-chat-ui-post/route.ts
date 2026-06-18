@@ -1,11 +1,12 @@
 import { streamText } from "ai";
 import { google } from "@ai-sdk/google";
 
+//src/chatbot_OM/product-chat-ui-post
 import { resolveDocumentTool }
-  from "@/product-chat-ui-post/resolve-document";
+  from "@/chatbot_OM/product-chat-ui-post/resolve-document";
 
 import { findDocument }
-  from "@/product-chat-ui-post/find-document";
+  from "@/chatbot_OM/product-chat-ui-post/find-document";
 
 export async function POST(
   req: Request
