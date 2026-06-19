@@ -334,6 +334,7 @@ always call resolveDocumentTool.
           if (foundDoc) {
             resolvedDocumentId =
               foundDoc.id;
+console.log("foundDoc: ", foundDoc);
           }
         },
     });
