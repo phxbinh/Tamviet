@@ -334,7 +334,7 @@ export default function DocumentResolverPage() {
         await response.json();
 
       if (
-        json.success &&
+        //json.success &&
         json.documentId
       ) {
         setResult({
