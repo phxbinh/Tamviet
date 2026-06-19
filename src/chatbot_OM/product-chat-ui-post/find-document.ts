@@ -34,6 +34,7 @@ export async function findDocument(
       LIMIT 1
     `);
 */
+/*
 const result =
   await db.execute(sql`
     SELECT
@@ -55,7 +56,27 @@ const result =
     ORDER BY score DESC
     LIMIT 1
   `);
-
+*/
+const result = await db.execute(sql`
+  SELECT
+    id,
+    title,
+    document_type,
+    GREATEST(
+      similarity(title, ${normalized}),
+      CASE
+        WHEN title ILIKE ('%' || ${normalized} || '%')
+        THEN 1.0
+        ELSE 0.0
+      END
+    ) AS score
+  FROM documents
+  WHERE
+    title ILIKE ('%' || ${normalized} || '%')
+    OR similarity(title, ${normalized}) > 0.2
+  ORDER BY score DESC
+  LIMIT 1
+`);
 
 
 
