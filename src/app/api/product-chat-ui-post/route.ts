@@ -324,17 +324,18 @@ always call resolveDocumentTool.
             return;
 
           const parsed =
-            docRequest.result;
+            resolveDocumentSchema.parse(docRequest.result);
 
           const foundDoc =
             await findDocument(
               parsed.searchText
             );
+console.log("foundDoc: ", foundDoc);
 
           if (foundDoc) {
             resolvedDocumentId =
               foundDoc.id;
-console.log("foundDoc: ", foundDoc);
+//console.log("foundDoc: ", foundDoc);
           }
         },
     });
