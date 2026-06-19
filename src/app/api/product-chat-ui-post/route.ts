@@ -254,14 +254,37 @@ console.log("foundDoc: ", foundDoc);
   }
 }
 */
-export async function POST(req: Request) {
+export async function POST(
+  req: Request
+) {
   try {
-    const { query } = await req.json();
+    const { query } =
+      await req.json();
 
-    let resolvedDocumentId: string | null = null;
+    if (
+      !query ||
+      typeof query !==
+        "string"
+    ) {
+      return Response.json(
+        {
+          success: false,
+          error:
+            "Query is required",
+        },
+        { status: 400 }
+      );
+    }
+
+    let resolvedDocumentId:
+      | string
+      | null = null;
 
     await streamText({
-      model: google("gemini-2.5-flash"),
+      model: google(
+        "gemini-2.5-flash"
+      ),
+
       system: `
 You are an O&M assistant.
 
@@ -275,32 +298,44 @@ When user asks to:
 
 always call resolveDocumentTool.
 `,
-      messages,
-      tools: { resolveDocumentTool },
-      maxSteps: 3,
-      onStepFinish: async ({ toolResults }) => {
-        const docRequest = toolResults.find(
-          (tool) =>
-            tool.toolName === "resolveDocumentTool"
-        );
 
-        if (!docRequest?.result) return;
+      prompt: query.trim(),
 
-        const parsed =
-          resolveDocumentSchema.parse(
-            docRequest.result
-          );
-
-        const foundDoc =
-          await findDocument(
-            parsed.searchText
-          );
-
-        if (foundDoc) {
-          resolvedDocumentId =
-            foundDoc.id;
-        }
+      tools: {
+        resolveDocumentTool,
       },
+
+      maxSteps: 3,
+
+      onStepFinish:
+        async ({
+          toolResults,
+        }) => {
+          const docRequest =
+            toolResults.find(
+              (tool) =>
+                tool.toolName ===
+                "resolveDocumentTool"
+            );
+
+          if (
+            !docRequest?.result
+          )
+            return;
+
+          const parsed =
+            docRequest.result;
+
+          const foundDoc =
+            await findDocument(
+              parsed.searchText
+            );
+
+          if (foundDoc) {
+            resolvedDocumentId =
+              foundDoc.id;
+          }
+        },
     });
 
     return Response.json({
@@ -310,11 +345,16 @@ always call resolveDocumentTool.
         resolvedDocumentId,
     });
   } catch (error) {
-    console.error(error);
+    console.error(
+      "POST error:",
+      error
+    );
 
     return Response.json(
       {
         success: false,
+        error:
+          "Internal server error",
       },
       { status: 500 }
     );
