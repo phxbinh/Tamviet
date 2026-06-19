@@ -44,8 +44,8 @@ const result =
         similarity(title, ${normalized}),
         CASE
           WHEN title ILIKE ${"%" + normalized + "%"}
-          THEN 1
-          ELSE 0
+          THEN 1.0
+          ELSE 0.0
         END
       ) AS score
     FROM documents
