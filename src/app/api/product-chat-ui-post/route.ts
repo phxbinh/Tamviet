@@ -256,7 +256,7 @@ console.log("foundDoc: ", foundDoc);
 */
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { query } = await req.json();
 
     let resolvedDocumentId: string | null = null;
 
