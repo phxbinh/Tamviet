@@ -232,9 +232,9 @@ always call resolveDocumentTool.
 
         try {
           const parsed = resolveDocumentSchema.parse(docRequest.result);
-console.log("parsed: ", parsed, "parsed.searchText: ", parsed.searchText, "typeof: ", typeof parsed.searchText);
+//console.log("parsed: ", parsed, "parsed.searchText: ", parsed.searchText, "typeof: ", typeof parsed.searchText);
           const foundDoc = await findDocument(parsed.searchText);
-
+console.log("foundDoc: ", foundDoc);
           if (foundDoc) {
             resolvedDocumentId = foundDoc.id;
           }
