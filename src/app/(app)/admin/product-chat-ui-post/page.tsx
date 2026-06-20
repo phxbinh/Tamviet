@@ -58,6 +58,7 @@ export default function AgentChat() {
                 }
 
                 // Render UI Tùy biến cho công cụ 'getAssetData'
+/*
                 if (toolName === 'getAssetData' && data.type === 'financial_card') {
                   return (
                     <div key={toolCallId} className="mr-auto w-full max-w-sm bg-white border border-zinc-200 p-5 rounded-2xl shadow-sm transition-all hover:shadow-md">
@@ -78,7 +79,7 @@ export default function AgentChat() {
                         </div>
                       </div>
 
-                      {/* Render một đồ thị mini đơn giản mô phỏng biến động */}
+                      {// Render một đồ thị mini đơn giản mô phỏng biến động }
                       <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400">
                         <span>Đồ thị xu hướng gần đây:</span>
                         <span className="font-mono text-zinc-500">[{data.sparkline?.join(' → ')}]</span>
@@ -89,7 +90,49 @@ export default function AgentChat() {
                       </div>
                     </div>
                   );
-                }
+                } */
+// ... Bên trong đoạn m.toolInvocations.map((ti) => { ... })
+if (toolName === 'getAssetData' && data.type === 'financial_card') {
+  
+  // Xác định màu sắc chủ đạo dựa trên nhóm tài sản (Category)
+  const theme = {
+    metal: 'border-amber-200 bg-amber-50/20 text-amber-950',
+    crypto: 'border-violet-200 bg-violet-50/20 text-violet-950',
+    commodity: 'border-zinc-300 bg-zinc-100/40 text-zinc-900',
+  }[data.category as 'metal' | 'crypto' | 'commodity'] || 'border-zinc-200 bg-white';
+
+  return (
+    <div key={toolCallId} className={`mr-auto w-full max-w-sm border p-5 rounded-2xl shadow-sm transition-all hover:shadow-md ${theme}`}>
+      <div className="flex justify-between items-start">
+        <div>
+          <h4 className="font-semibold text-sm tracking-tight">{data.name}</h4>
+          <span className="inline-block mt-1.5 px-2 py-0.5 bg-zinc-900 text-white rounded-md font-mono text-[10px] font-bold tracking-widest">
+            {data.code}
+          </span>
+        </div>
+        <div className="text-right">
+          <p className="font-mono font-bold text-lg">
+            ${data.price >= 1 ? data.price.toLocaleString(undefined, {minimumFractionDigits: 2}) : data.price}
+          </p>
+          <p className={`text-xs font-semibold mt-0.5 ${data.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+            {data.change >= 0 ? '▲' : '▼'} {Math.abs(data.change)}%
+          </p>
+        </div>
+      </div>
+
+      {/* Hiển thị sparkline tượng trưng */}
+      <div className="mt-4 pt-3 border-t border-zinc-200/60 flex items-center justify-between text-[11px] opacity-60">
+        <span>Biến động phiên:</span>
+        <span className="font-mono tracking-tighter">{data.sparkline?.map((v: number) => v.toFixed(1)).join(' → ')}</span>
+      </div>
+
+      <div className="mt-1 text-[9px] opacity-40 text-right">
+        Cập nhật: {data.lastUpdated}
+      </div>
+    </div>
+  );
+}
+
               }
 
               return null;
