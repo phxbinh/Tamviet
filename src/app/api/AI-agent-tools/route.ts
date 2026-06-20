@@ -177,7 +177,6 @@ export async function POST(req: Request) {
             }
 
             // 2. NHÓM CRYPTO (Binance
-/*
             if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || symbol === 'SOLUSD') {
               const binanceSymbol = symbol.replace('USD', 'USDT');
               const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
@@ -196,83 +195,6 @@ export async function POST(req: Request) {
                 lastUpdated: new Date().toLocaleTimeString('vi-VN')
               };
             }
-*/
-// 2. NHÓM CRYPTO (Chuyển hẳn sang CoinGecko để né lỗi chặn IP 451 của Binance)
-const isCrypto = 
-  symbol.includes('BTC') || 
-  symbol.includes('ETH') || 
-  symbol.includes('SOL') || 
-  symbol.endsWith('USDT') || 
-  symbol.endsWith('USD');
-
-if (isCrypto) {
-  // CoinGecko dùng tên định danh dạng đầy đủ (id) thay vì mã ticker viết tắt
-  let coinId = 'bitcoin';
-  let displayName = 'Bitcoin';
-  let displayCode = 'BTCUSDT';
-
-  if (symbol.includes('ETH')) {
-    coinId = 'ethereum';
-    displayName = 'Ethereum';
-    displayCode = 'ETHUSDT';
-  } else if (symbol.includes('SOL')) {
-    coinId = 'solana';
-    displayName = 'Solana';
-    displayCode = 'SOLUSDT';
-  }
-
-  try {
-    // Gọi API public của CoinGecko (Lấy giá theo USD và kèm % thay đổi 24h)
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        next: { revalidate: 30 } // Cache 30 giây để tránh bị dính giới hạn rate-limit của CoinGecko
-      }
-    );
-
-    if (!res.ok) {
-      return { error: `Cổng CoinGecko báo lỗi hệ thống: Status ${res.status}` };
-    }
-
-    const data = await res.json();
-    
-    // Cấu trúc data trả về của CoinGecko: { bitcoin: { usd: 65000, usd_24h_change: 2.5 } }
-    const coinData = data[coinId];
-    
-    if (!coinData) {
-      return { error: `Không tìm thấy dữ liệu cấu trúc cho đồng ${displayName}.` };
-    }
-
-    const price = Number(coinData.usd || 0);
-    const change = Number(coinData.usd_24h_change || 0);
-
-    return {
-      type: 'financial_card',
-      category: 'crypto',
-      name: displayName,
-      code: displayCode,
-      price: price,
-      change: change,
-      // Tạo sparkline mô phỏng dựa trên giá mở cửa ước tính từ % thay đổi
-      sparkline: [
-        price * (1 - change / 100), 
-        price * (1 - (change * 0.5) / 100), 
-        price
-      ],
-      lastUpdated: new Date().toLocaleTimeString('vi-VN')
-    };
-
-  } catch (e: any) {
-    return { error: `Lỗi kết nối máy chủ CoinGecko: ${e?.message || 'Unknown Error'}` };
-  }
-}
-
-
-
-
-
 
             // Fallback cho các mã khác
             return { error: `Hệ thống chưa hỗ trợ cấu trúc dữ liệu cho mã: ${symbol}` };
