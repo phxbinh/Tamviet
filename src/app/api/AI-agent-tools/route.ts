@@ -176,7 +176,8 @@ export async function POST(req: Request) {
               };
             }
 
-            // 2. NHÓM CRYPTO (Binance)
+            // 2. NHÓM CRYPTO (Binance
+/*
             if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || symbol === 'SOLUSD') {
               const binanceSymbol = symbol.replace('USD', 'USDT');
               const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
@@ -195,6 +196,50 @@ export async function POST(req: Request) {
                 lastUpdated: new Date().toLocaleTimeString('vi-VN')
               };
             }
+*/
+// 2. NHÓM CRYPTO (Binance)
+if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || symbol === 'SOLUSD') {
+  
+  // Giải pháp an toàn: Nếu chuỗi đã chứa 'USDT' thì giữ nguyên, ngược lại mới chuyển 'USD' thành 'USDT'
+  const binanceSymbol = symbol.includes('USDT') 
+    ? symbol 
+    : symbol.replace('USD', 'USDT');
+  
+  // Gọi API với mã đã được làm sạch chuẩn mã sàn Binance
+  const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
+  
+  if (!res.ok) {
+    return { error: `Mã ${binanceSymbol} không khớp hoặc không tồn tại trên sàn Binance.` };
+  }
+  
+  const data = await res.json();
+
+  // Đổi tên hiển thị cho đẹp dựa trên mã gốc
+  const displayName = binanceSymbol.startsWith('BTC') 
+    ? 'Bitcoin' 
+    : binanceSymbol.startsWith('ETH') 
+    ? 'Ethereum' 
+    : 'Crypto Asset';
+
+  return {
+    type: 'financial_card',
+    category: 'crypto',
+    name: displayName,
+    code: symbol.includes('USDT') ? symbol : `${symbol}T`, // Đồng bộ hiển thị dạng BTCUSDT trên UI
+    price: Number(data.lastPrice || 0),
+    change: Number(data.priceChangePercent || 0),
+    sparkline: [
+      Number(data.openPrice || 0), 
+      Number(data.lowPrice || 0), 
+      Number(data.highPrice || 0), 
+      Number(data.lastPrice || 0)
+    ],
+    lastUpdated: new Date().toLocaleTimeString('vi-VN')
+  };
+}
+
+
+
 
             // Fallback cho các mã khác
             return { error: `Hệ thống chưa hỗ trợ cấu trúc dữ liệu cho mã: ${symbol}` };
