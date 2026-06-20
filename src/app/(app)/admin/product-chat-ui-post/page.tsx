@@ -401,6 +401,34 @@ export default function DocumentResolverPage() {
       </button>
 
       {renderResult()}
+
+    {result && (
+
+      <div className="border rounded-xl p-4 bg-gray-50 border-gray-200">
+
+        <h3 className="font-bold mb-2">
+
+          Raw Response
+
+        </h3>
+
+        <pre className="text-sm whitespace-pre-wrap break-all">
+
+          {JSON.stringify(
+
+            result,
+
+            null,
+
+            2
+
+          )}
+
+        </pre>
+
+      </div>
+
+    )}
     </div>
   );
 }
