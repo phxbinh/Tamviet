@@ -126,12 +126,12 @@ export async function POST(req: Request) {
 
 */
 
-// app/api/agent/route.ts
+// app/api/AI-agent-tools/route.ts
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { z } from 'zod';
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
@@ -139,79 +139,68 @@ export async function POST(req: Request) {
   const result = streamText({
     model: google('gemini-2.5-flash'),
     messages,
-    system: 'Bạn là một trợ lý phân tích thị trường toàn cầu. Sử dụng công cụ getAssetData để tra cứu thông tin thời gian thực cho bất kỳ mã tài sản nào người dùng yêu cầu (Vàng, Dầu, Crypto...).',
+    system: 'Bạn là một trợ lý tài chính thông minh. Hãy luôn dùng công cụ getAssetData để lấy dữ liệu.',
     maxSteps: 3,
     tools: {
       getAssetData: {
-        description: 'Lấy dữ liệu chi tiết hiện tại của một tài sản bất kỳ như Vàng (XAUUSD), Dầu (UKOIL), hoặc Crypto (BTCUSD, ETHUSD).',
+        description: 'Lấy dữ liệu chi tiết hiện tại của một tài sản bất kỳ như XAUUSD, UKOIL, BTCUSD, ETHUSD.',
         parameters: z.object({
-          pair: z.string().describe('Mã tài sản viết liền, ví dụ: XAUUSD, UKOIL, BTCUSD, ETHUSD'),
+          pair: z.string().describe('Mã cặp tài sản, ví dụ: XAUUSD, BTCUSD'),
         }),
         execute: async ({ pair }) => {
           const symbol = pair.toUpperCase().trim();
           
           try {
-            // NHÓM 1: VÀNG & KIM LOẠI QUÝ (Dùng GoldAPI)
+            // 1. NHÓM VÀNG (GoldAPI)
             if (symbol === 'XAUUSD' || symbol === 'XAGUSD') {
-              const metal = symbol.substring(0, 3); // Lấy XAU hoặc XAG
+              const metal = symbol.substring(0, 3);
               const res = await fetch(`https://www.goldapi.io/api/${metal}/USD`, {
                 headers: { 'x-access-token': process.env.GOLD_API_KEY || '' }
               });
               const data = await res.json();
+              
+              // Kiểm tra xem GoldAPI có trả về lỗi hệ thống không
+              if (data.error || !data.price) {
+                return { error: data.error || 'Không thể lấy dữ liệu từ GoldAPI. Vui lòng kiểm tra lại API Key.' };
+              }
+
               return {
                 type: 'financial_card',
                 category: 'metal',
                 name: symbol === 'XAUUSD' ? 'Vàng Thế Giới' : 'Bạc Thế Giới',
                 code: symbol,
-                price: data.price,
-                change: data.chg_pct,
-                sparkline: [data.open, data.low, data.high, data.price],
+                price: Number(data.price),
+                change: Number(data.chg_pct || 0),
+                sparkline: [Number(data.open || data.price), Number(data.low || data.price), Number(data.high || data.price), Number(data.price)],
                 lastUpdated: new Date().toLocaleTimeString('vi-VN')
               };
             }
 
-            // NHÓM 2: TIỀN ĐIỆN TỬ / CRYPTO (Dùng API miễn phí không cần key của Binance)
+            // 2. NHÓM CRYPTO (Binance)
             if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || symbol === 'SOLUSD') {
-              // Chuẩn hóa cặp tiền theo format của Binance (ví dụ: BTCUSDT)
               const binanceSymbol = symbol.replace('USD', 'USDT');
-              
               const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
-              if (!res.ok) throw new Error('Không lấy được dữ liệu từ Binance');
               
+              if (!res.ok) return { error: `Mã ${binanceSymbol} không tồn tại trên sàn Binance.` };
               const data = await res.json();
+
               return {
                 type: 'financial_card',
                 category: 'crypto',
-                name: symbol === 'BTCUSD' || symbol === 'BTCUSDT' ? 'Bitcoin' : symbol.startsWith('ETH') ? 'Ethereum' : 'Crypto Asset',
+                name: symbol.startsWith('BTC') ? 'Bitcoin' : symbol.startsWith('ETH') ? 'Ethereum' : 'Crypto Asset',
                 code: symbol,
-                price: parseFloat(data.lastPrice),
-                change: parseFloat(data.priceChangePercent),
-                sparkline: [parseFloat(data.openPrice), parseFloat(data.lowPrice), parseFloat(data.highPrice), parseFloat(data.lastPrice)],
+                price: Number(data.lastPrice || 0),
+                change: Number(data.priceChangePercent || 0),
+                sparkline: [Number(data.openPrice || 0), Number(data.lowPrice || 0), Number(data.highPrice || 0), Number(data.lastPrice || 0)],
                 lastUpdated: new Date().toLocaleTimeString('vi-VN')
               };
             }
 
-            // NHÓM 3: DẦU THÔ & HÀNG HÓA (Dùng một đầu API hàng hóa hoặc Mockup nếu chưa mua key)
-            if (symbol === 'UKOIL' || symbol === 'USOIL') {
-              // Giả lập dữ liệu hoặc gọi một bên cung cấp năng lượng chuyên biệt
-              return {
-                type: 'financial_card',
-                category: 'commodity',
-                name: symbol === 'UKOIL' ? 'Dầu Thô Brent' : 'Dầu Thô WTI',
-                code: symbol,
-                price: symbol === 'UKOIL' ? 82.45 : 78.12,
-                change: 0.65,
-                sparkline: [81.5, 81.9, 82.1, 82.45],
-                lastUpdated: new Date().toLocaleTimeString('vi-VN')
-              };
-            }
+            // Fallback cho các mã khác
+            return { error: `Hệ thống chưa hỗ trợ cấu trúc dữ liệu cho mã: ${symbol}` };
 
-            // Nếu người dùng nhập một mã lạ hoắc chưa được định nghĩa bộ lọc
-            return { error: `Mã tài sản "${symbol}" hiện chưa được hệ thống hỗ trợ phân tích.` };
-
-          } catch (error) {
-            console.error(`Lỗi khi xử lý mã ${symbol}:`, error);
-            return { error: 'Gặp sự cố kết nối dữ liệu máy chủ toàn cầu.' };
+          } catch (e) {
+            return { error: 'Lỗi kết nối máy chủ dữ liệu.' };
           }
         },
       },
@@ -220,4 +209,5 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
+
 
