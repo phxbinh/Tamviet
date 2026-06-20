@@ -198,34 +198,65 @@ export async function POST(req: Request) {
             }
 */
 // 2. NHÓM CRYPTO (Binance)
-if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || symbol === 'SOLUSD') {
-  
-  // Giải pháp an toàn: Nếu chuỗi đã chứa 'USDT' thì giữ nguyên, ngược lại mới chuyển 'USD' thành 'USDT'
-  const binanceSymbol = symbol.includes('USDT') 
-    ? symbol 
-    : symbol.replace('USD', 'USDT');
-  
-  // Gọi API với mã đã được làm sạch chuẩn mã sàn Binance
-  const res = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`);
-  
-  if (!res.ok) {
-    return { error: `Mã ${binanceSymbol} không khớp hoặc không tồn tại trên sàn Binance.` };
-  }
-  
-  const data = await res.json();
+// 2. NHÓM CRYPTO (Tự động chuyển đổi cổng kết nối dự phòng khi lỗi mạng)
+const isCrypto = 
+  symbol.includes('BTC') || 
+  symbol.includes('ETH') || 
+  symbol.includes('SOL') || 
+  symbol.endsWith('USDT') || 
+  symbol.endsWith('USD');
 
-  // Đổi tên hiển thị cho đẹp dựa trên mã gốc
-  const displayName = binanceSymbol.startsWith('BTC') 
-    ? 'Bitcoin' 
-    : binanceSymbol.startsWith('ETH') 
-    ? 'Ethereum' 
-    : 'Crypto Asset';
+if (isCrypto) {
+  let coinBase = 'BTC';
+  if (symbol.includes('ETH')) coinBase = 'ETH';
+  if (symbol.includes('SOL')) coinBase = 'SOL';
+  
+  const binanceSymbol = `${coinBase}USDT`;
+  
+  // Danh sách các cổng API phân tán của Binance trên thế giới
+  const endpoints = [
+    `https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`,
+    `https://api1.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`,
+    `https://api3.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`
+  ];
+
+  let data = null;
+  let fetchError = '';
+
+  // Vòng lặp thử từng cổng, nếu cổng 1 lỗi sẽ tự nhảy sang cổng 2
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        next: { revalidate: 10 } // Cache ngắn 10 giây để tăng tốc độ phản hồi
+      });
+      
+      if (res.ok) {
+        data = await res.json();
+        break; // Lấy được dữ liệu thành công thì thoát vòng lặp ngay
+      } else {
+        fetchError = `Cổng ${url} trả về mã lỗi: ${res.status}`;
+      }
+    } catch (e: any) {
+      fetchError = e?.message || 'Lỗi kết nối mạng';
+    }
+  }
+
+  // Nếu đi hết tất cả các cổng dự phòng mà vẫn thất bại
+  if (!data) {
+    return { 
+      error: `Không thể kết nối đến máy chủ dữ liệu Crypto lúc này. Chi tiết lỗi: ${fetchError}. Vui lòng thử lại.` 
+    };
+  }
+
+  const displayName = coinBase === 'BTC' ? 'Bitcoin' : coinBase === 'ETH' ? 'Ethereum' : 'Solana';
 
   return {
     type: 'financial_card',
     category: 'crypto',
     name: displayName,
-    code: symbol.includes('USDT') ? symbol : `${symbol}T`, // Đồng bộ hiển thị dạng BTCUSDT trên UI
+    code: binanceSymbol,
     price: Number(data.lastPrice || 0),
     change: Number(data.priceChangePercent || 0),
     sparkline: [
@@ -237,6 +268,7 @@ if (symbol.endsWith('USDT') || symbol === 'BTCUSD' || symbol === 'ETHUSD' || sym
     lastUpdated: new Date().toLocaleTimeString('vi-VN')
   };
 }
+
 
 
 
