@@ -1,439 +1,122 @@
+// app/page.tsx
+'use client';
 
-/*
-"use client";
+import { useChat } from 'ai/react';
 
-import { useState } from "react";
-
-interface ResolveDocumentResponse {
-  success: boolean;
-  documentId?: string;
-}
-
-export default function DocumentResolverPage() {
-  const [query, setQuery] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [documentId, setDocumentId] =
-    useState<string | null>(
-      null
-    );
-
-  async function handleResolve() {
-    try {
-      setLoading(true);
-      setDocumentId(null);
-
-      const response =
-        await fetch(
-          "/api/product-chat-ui-post",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              messages: [
-                {
-                  role: "user",
-                  content: query,
-                },
-              ],
-            }),
-          }
-        );
-
-      const json:
-        ResolveDocumentResponse =
-        await response.json();
-
-      if (!json.success) {
-        throw new Error(
-          "Document not found"
-        );
-      }
-
-      if (json.documentId) {
-        setDocumentId(
-          json.documentId
-        );
-      }
-    } catch (error) {
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Resolve failed"
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
+export default function AgentChat() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    api: '/api/AI-agent-tools',
+  });
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">
-        Document Resolver Test
-      </h1>
+    <main className="max-w-2xl mx-auto p-6 min-h-screen flex flex-col justify-between bg-zinc-50 text-zinc-900">
+      
+      {/* Khung hiển thị nội dung hội thoại */}
+      <div className="space-y-6 flex-1 overflow-y-auto mb-4 pr-2">
+        {messages.map((m) => (
+          <div key={m.id} className="flex flex-col gap-2">
+            
+            {/* Tin nhắn văn bản thông thường của User / Agent */}
+            {m.content && (
+              <div className={`p-4 rounded-2xl max-w-[85%] text-sm ${
+                m.role === 'user' 
+                  ? 'bg-zinc-900 text-white ml-auto rounded-br-none shadow-sm' 
+                  : 'bg-white border border-zinc-200/80 mr-auto rounded-bl-none shadow-sm'
+              }`}>
+                <p className="font-bold text-[10px] uppercase tracking-wider mb-1 opacity-40">
+                  {m.role === 'user' ? 'Bạn' : 'Trợ lý'}
+                </p>
+                <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
+              </div>
+            )}
+            
+            {/* Xử lý Render UI từ kết quả của Công cụ (Tools) */}
+            {m.toolInvocations && m.toolInvocations.map((ti) => {
+              const { toolCallId, toolName, state } = ti;
 
-      <textarea
-        value={query}
-        onChange={(e) =>
-          setQuery(
-            e.target.value
-          )
-        }
-        rows={3}
-        placeholder="Ví dụ: Cho tôi SOP thay màng UF"
-        className="w-full border rounded p-3"
-      />
+              // Trạng thái 1: Khi Agent đang gọi hàm ngầm (Đang tải dữ liệu)
+              if (state === 'call') {
+                return (
+                  <div key={toolCallId} className="text-xs text-zinc-400 italic flex items-center gap-2 px-4">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    Đang đồng bộ dữ liệu hệ thống từ công cụ [{toolName}]...
+                  </div>
+                );
+              }
 
-      <button
-        onClick={
-          handleResolve
-        }
-        disabled={
-          loading ||
-          !query.trim()
-        }
-        className="border px-4 py-2 rounded"
-      >
-        {loading
-          ? "Resolving..."
-          : "Resolve"}
-      </button>
+              // Trạng thái 2: Khi đã có kết quả (Thực thi thành công)
+              if (state === 'result') {
+                const data = ti.result;
 
-      {documentId && (
-        <div className="border rounded p-4 space-y-2">
-          <h2 className="font-bold text-lg">
-            Resolved Document
-          </h2>
+                // Nếu có lỗi từ phía backend trả về
+                if (data.error) {
+                  return (
+                    <div key={toolCallId} className="p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs max-w-[85%]">
+                      ⚠️ {data.error}
+                    </div>
+                  );
+                }
 
-          <div>
-            <strong>
-              Document ID:
-            </strong>{" "}
-            {documentId}
+                // Render UI Tùy biến cho công cụ 'getAssetData'
+                if (toolName === 'getAssetData' && data.type === 'financial_card') {
+                  return (
+                    <div key={toolCallId} className="mr-auto w-full max-w-sm bg-white border border-zinc-200 p-5 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium text-zinc-900 text-sm">{data.name}</h4>
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-md font-mono text-xs font-semibold tracking-wider">
+                            {data.code}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono font-bold text-xl text-zinc-900">
+                            ${data.price?.toLocaleString()}
+                          </p>
+                          <p className={`text-xs font-medium mt-0.5 ${data.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            {data.change >= 0 ? '▲' : '▼'} {Math.abs(data.change)}%
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Render một đồ thị mini đơn giản mô phỏng biến động */}
+                      <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400">
+                        <span>Đồ thị xu hướng gần đây:</span>
+                        <span className="font-mono text-zinc-500">[{data.sparkline?.join(' → ')}]</span>
+                      </div>
+
+                      <div className="mt-2 text-[10px] text-zinc-400 text-right">
+                        Cập nhật lúc: {data.lastUpdated}
+                      </div>
+                    </div>
+                  );
+                }
+              }
+
+              return null;
+            })}
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-*/
-
-/*
-"use client";
-
-import { useState } from "react";
-
-interface ResolveDocumentResponse {
-  success: boolean;
-  documentId?: string;
-  error?: string;
-}
-
-export default function DocumentResolverPage() {
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success: boolean;
-    documentId?: string;
-    message: string;
-    type?: "success" | "error" | "warning";
-  } | null>(null);
-
-  async function handleResolve() {
-    if (!query.trim()) return;
-
-    try {
-      setLoading(true);
-      setResult(null);
-
-      const response = await fetch("/api/product-chat-ui-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messages: [{ role: "user", content: query.trim() }],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const json: ResolveDocumentResponse = await response.json();
-
-      if (json.success && json.documentId) {
-        setResult({
-          success: true,
-          documentId: json.documentId,
-          message: "✅ Tìm thấy tài liệu thành công!",
-          type: "success",
-        });
-      } else {
-        setResult({
-          success: false,
-          message: json.error || "Không tìm thấy tài liệu phù hợp với yêu cầu.",
-          type: "warning",
-        });
-      }
-    } catch (error) {
-      let errorMessage = "Lỗi kết nối. Vui lòng kiểm tra lại mạng và thử lại.";
-
-      if (error instanceof TypeError) {
-        errorMessage = "❌ Không thể kết nối đến server. Vui lòng kiểm tra mạng.";
-      } else if (error instanceof Error) {
-        if (error.message.includes("Failed to fetch")) {
-          errorMessage = "❌ Lỗi kết nối mạng. Vui lòng kiểm tra internet.";
-        } else {
-          errorMessage = `❌ ${error.message}`;
-        }
-      }
-
-      setResult({
-        success: false,
-        message: errorMessage,
-        type: "error",
-      });
-
-      console.error("Resolve error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Document Resolver Test
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Nhập câu hỏi để tìm SOP, Operation Manual, Maintenance Manual...
-        </p>
+        ))}
+        
+        {isLoading && (
+          <div className="flex items-center gap-2 text-zinc-400 text-xs px-4 animate-pulse">
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" />
+            Agent đang phân tích...
+          </div>
+        )}
       </div>
 
-      <div className="space-y-4">
-        <textarea
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          rows={4}
-          placeholder="Ví dụ: Cho tôi SOP thay màng UF hoặc Hướng dẫn bảo dưỡng máy nén khí"
-          className="w-full border border-gray-300 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y min-h-[100px]"
-          disabled={loading}
+      {/* Form nhập liệu tinh giản */}
+      <form onSubmit={handleSubmit} className="flex gap-2 sticky bottom-4 bg-white p-2 border border-zinc-200 rounded-2xl shadow-sm focus-within:border-zinc-400 transition-colors">
+        <input
+          className="flex-1 px-3 py-2 outline-none text-sm bg-transparent"
+          value={input}
+          placeholder="Ví dụ: Kiểm tra tình hình giá XAUUSD hiện tại thế nào..."
+          onChange={handleInputChange}
         />
-
-        <button
-          onClick={handleResolve}
-          disabled={loading || !query.trim()}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-xl transition disabled:cursor-not-allowed"
-        >
-          {loading ? "Đang tìm tài liệu..." : "Tìm Tài Liệu"}
+        <button type="submit" className="bg-zinc-900 text-white px-5 py-2 rounded-xl text-xs font-medium hover:bg-zinc-800 transition-colors active:scale-95">
+          Gửi yêu cầu
         </button>
-      </div>
-
-
-      {result && (
-        <div
-          className={`border rounded-2xl p-6 ${
-            result.type === "success"
-              ? "bg-green-50 border-green-200"
-              : result.type === "error"
-              ? "bg-red-50 border-red-200"
-              : "bg-yellow-50 border-yellow-200"
-          }`}
-        >
-          <h2 className="font-bold text-xl mb-3">
-            {result.type === "success" ? "✅ Thành công" : "❌ Có lỗi xảy ra"}
-          </h2>
-          
-          <p className="text-lg leading-relaxed">{result.message}</p>
-
-          {result.documentId && (
-            <div className="mt-4 bg-white border rounded-lg p-4">
-              <strong className="block text-gray-700 mb-1">Document ID:</strong>
-              <code className="text-blue-600 font-mono break-all">
-                {result.documentId}
-              </code>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+      </form>
+    </main>
   );
 }
-*/
-
-
-"use client";
-
-import { useState } from "react";
-
-interface ResolveDocumentResponse {
-  success: boolean;
-  documentId?: string | null;
-  error?: string;
-}
-
-export default function DocumentResolverPage() {
-  const [query, setQuery] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [result, setResult] =
-    useState<ResolveDocumentResponse | null>(
-      null
-    );
-
-  async function handleResolve() {
-    const normalized =
-      query.trim();
-
-    if (!normalized) return;
-
-    try {
-      setLoading(true);
-      setResult(null);
-
-      const response =
-        await fetch(
-          "/api/product-chat-ui-post",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body: JSON.stringify({
-              query: normalized,
-            }),
-          }
-        );
-
-      const json: ResolveDocumentResponse =
-        await response.json();
-
-      setResult(json);
-    } catch (error) {
-      setResult({
-        success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Network error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function renderResult() {
-    if (!result) return null;
-
-    if (
-      result.success &&
-      result.documentId
-    ) {
-      return (
-        <div className="border rounded-xl p-4 bg-green-50 border-green-200">
-          <p>
-            ✅ Tìm thấy tài liệu
-          </p>
-
-          <code className="block mt-2">
-            {result.documentId}
-          </code>
-        </div>
-      );
-    }
-
-    if (result.error) {
-      return (
-        <div className="border rounded-xl p-4 bg-red-50 border-red-200">
-          ❌ {result.error}
-        </div>
-      );
-    }
-
-    return (
-      <div className="border rounded-xl p-4 bg-yellow-50 border-yellow-200">
-        ⚠ Không tìm thấy tài liệu phù hợp
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <textarea
-        value={query}
-        onChange={(e) =>
-          setQuery(
-            e.target.value
-          )
-        }
-        rows={4}
-        placeholder="Nhập yêu cầu tìm tài liệu..."
-        className="w-full border rounded-xl p-4"
-        disabled={loading}
-      />
-
-      <button
-        onClick={
-          handleResolve
-        }
-        disabled={
-          loading ||
-          !query.trim()
-        }
-        className="w-full border rounded-xl p-3"
-      >
-        {loading
-          ? "Đang xử lý..."
-          : "Tìm tài liệu"}
-      </button>
-
-      {renderResult()}
-
-    {result && (
-
-      <div className="border rounded-xl p-4 bg-gray-50 border-gray-200">
-
-        <h3 className="font-bold mb-2">
-
-          Raw Response
-
-        </h3>
-
-        <pre className="text-sm whitespace-pre-wrap break-all">
-
-          {JSON.stringify(
-
-            result,
-
-            null,
-
-            2
-
-          )}
-
-        </pre>
-
-      </div>
-
-    )}
-    </div>
-  );
-}
-
-
-
-
-
