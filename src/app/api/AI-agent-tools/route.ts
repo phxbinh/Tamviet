@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 export const maxDuration = 30;
 
+/*
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
@@ -55,3 +56,67 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
+*/
+
+// app/api/agent/route.ts
+// ... giữ nguyên các phần import ...
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: google('gemini-2.5-flash'),
+    messages,
+    system: 'Bạn là một trợ lý tài chính thông minh...',
+    maxSteps: 3, 
+    tools: {
+      getAssetData: {
+        description: 'Lấy dữ liệu chi tiết hiện tại của một tài sản tài chính (ví dụ: XAUUSD).',
+        parameters: z.object({
+          pair: z.string().describe('Mã cặp tỷ giá hoặc tài sản, ví dụ: XAUUSD'),
+        }),
+        execute: async ({ pair }) => {
+          const upperPair = pair.toUpperCase();
+          
+          if (upperPair === 'XAUUSD') {
+            try {
+              // Gọi đến một API cập nhật giá vàng thực tế (Ví dụ dùng GoldAPI.io)
+              // Bạn cần đăng ký một API key miễn phí từ các service này để bỏ vào .env
+              const response = await fetch('https://www.goldapi.io/api/XAU/USD', {
+                headers: {
+                  'x-access-token': process.env.GOLD_API_KEY || '',
+                  'Content-Type': 'application/json'
+                }
+              });
+              
+              if (!response.ok) throw new Error('Không thể kết nối API giá vàng');
+              
+              const data = await response.json();
+              
+              // data trả về từ GoldAPI thường có cấu trúc: { price: ..., chg_pct: ..., ... }
+              return {
+                type: 'financial_card',
+                name: 'Vàng thế giới (Gold Spot / US Dollar)',
+                code: 'XAUUSD',
+                price: data.price, // Giá realtime 2026 từ API
+                change: data.chg_pct, // Phần trăm thay đổi trong ngày từ API
+                sparkline: [data.open, data.low, data.high, data.price], // Biến động từ mở cửa đến hiện tại
+                lastUpdated: new Date().toLocaleTimeString('vi-VN')
+              };
+            } catch (error) {
+              console.error('Lỗi khi fetch giá vàng thực tế:', error);
+              // Fallback hoặc báo lỗi nếu API sập
+              return { error: 'Hệ thống không thể lấy giá vàng realtime lúc này. Vui lòng thử lại sau.' };
+            }
+          }
+          
+          return { error: `Không tìm thấy dữ liệu cho cặp ${pair}.` };
+        },
+      },
+    },
+  });
+
+  return result.toDataStreamResponse();
+}
+
+
