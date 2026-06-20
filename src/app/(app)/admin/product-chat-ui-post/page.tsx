@@ -11,12 +11,10 @@ export default function AgentChat() {
   return (
     <main className="max-w-2xl mx-auto p-6 min-h-screen flex flex-col justify-between bg-zinc-50 text-zinc-900">
       
-      {/* Khung hiển thị nội dung hội thoại */}
       <div className="space-y-6 flex-1 overflow-y-auto mb-4 pr-2">
         {messages.map((m) => (
           <div key={m.id} className="flex flex-col gap-2">
             
-            {/* Tin nhắn văn bản thông thường của User / Agent */}
             {m.content && (
               <div className={`p-4 rounded-2xl max-w-[85%] text-sm ${
                 m.role === 'user' 
@@ -30,111 +28,82 @@ export default function AgentChat() {
               </div>
             )}
             
-            {/* Xử lý Render UI từ kết quả của Công cụ (Tools) */}
             {m.toolInvocations && m.toolInvocations.map((ti) => {
               const { toolCallId, toolName, state } = ti;
 
-              // Trạng thái 1: Khi Agent đang gọi hàm ngầm (Đang tải dữ liệu)
               if (state === 'call') {
                 return (
                   <div key={toolCallId} className="text-xs text-zinc-400 italic flex items-center gap-2 px-4">
                     <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                    Đang đồng bộ dữ liệu hệ thống từ công cụ [{toolName}]...
+                    Đang đồng bộ dữ liệu hệ thống từ [{toolName}]...
                   </div>
                 );
               }
 
-              // Trạng thái 2: Khi đã có kết quả (Thực thi thành công)
               if (state === 'result') {
                 const data = ti.result;
 
-                // Nếu có lỗi từ phía backend trả về
-                if (data.error) {
+                // 1. Kiểm tra an toàn xem dữ liệu trả về có bị lỗi không
+                if (!data || data.error) {
                   return (
-                    <div key={toolCallId} className="p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs max-w-[85%]">
-                      ⚠️ {data.error}
+                    <div key={toolCallId} className="p-3 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs max-w-[85%] mr-auto">
+                      ⚠️ {data?.error || 'Dữ liệu trả về bị lỗi cấu trúc bất thường.'}
                     </div>
                   );
                 }
 
-                // Render UI Tùy biến cho công cụ 'getAssetData'
-/*
+                // 2. Render UI Tùy biến cho công cụ 'getAssetData'
                 if (toolName === 'getAssetData' && data.type === 'financial_card') {
+                  
+                  // Chống crash nếu thiếu hoặc sai trường category
+                  const category = (data.category || 'commodity') as 'metal' | 'crypto' | 'commodity';
+                  const theme = {
+                    metal: 'border-amber-200 bg-amber-50/20 text-amber-950',
+                    crypto: 'border-violet-200 bg-violet-50/20 text-violet-950',
+                    commodity: 'border-zinc-300 bg-zinc-100/40 text-zinc-900',
+                  }[category] || 'border-zinc-200 bg-white';
+
+                  // Ép kiểu số an toàn
+                  const price = Number(data.price || 0);
+                  const change = Number(data.change || 0);
+                  const sparkline: number[] = Array.isArray(data.sparkline) ? data.sparkline : [];
+
                   return (
-                    <div key={toolCallId} className="mr-auto w-full max-w-sm bg-white border border-zinc-200 p-5 rounded-2xl shadow-sm transition-all hover:shadow-md">
+                    <div key={toolCallId} className={`mr-auto w-full max-w-sm border p-5 rounded-2xl shadow-sm transition-all hover:shadow-md ${theme}`}>
                       <div className="flex justify-between items-start">
                         <div>
-                          <h4 className="font-medium text-zinc-900 text-sm">{data.name}</h4>
-                          <span className="inline-block mt-1 px-2 py-0.5 bg-zinc-100 text-zinc-600 rounded-md font-mono text-xs font-semibold tracking-wider">
-                            {data.code}
+                          <h4 className="font-semibold text-sm tracking-tight">{data.name || 'Tài sản không tên'}</h4>
+                          <span className="inline-block mt-1.5 px-2 py-0.5 bg-zinc-900 text-white rounded-md font-mono text-[10px] font-bold tracking-widest">
+                            {data.code || 'UNKNOWN'}
                           </span>
                         </div>
                         <div className="text-right">
-                          <p className="font-mono font-bold text-xl text-zinc-900">
-                            ${data.price?.toLocaleString()}
+                          <p className="font-mono font-bold text-lg">
+                            ${price >= 1 ? price.toLocaleString(undefined, { minimumFractionDigits: 2 }) : price}
                           </p>
-                          <p className={`text-xs font-medium mt-0.5 ${data.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                            {data.change >= 0 ? '▲' : '▼'} {Math.abs(data.change)}%
+                          <p className={`text-xs font-semibold mt-0.5 ${change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                            {change >= 0 ? '▲' : '▼'} {Math.abs(change).toFixed(2)}%
                           </p>
                         </div>
                       </div>
 
-                      {// Render một đồ thị mini đơn giản mô phỏng biến động }
-                      <div className="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400">
-                        <span>Đồ thị xu hướng gần đây:</span>
-                        <span className="font-mono text-zinc-500">[{data.sparkline?.join(' → ')}]</span>
-                      </div>
+                      {/* Hiển thị sparkline an toàn (chỉ map khi mảng có phần tử) */}
+                      {sparkline.length > 0 && (
+                        <div className="mt-4 pt-3 border-t border-zinc-200/60 flex items-center justify-between text-[11px] opacity-60">
+                          <span>Biến động phiên:</span>
+                          <span className="font-mono tracking-tighter">
+                            {sparkline.map((v) => (typeof v === 'number' && !isNaN(v) ? v.toFixed(1) : '0')).join(' → ')}
+                          </span>
+                        </div>
+                      )}
 
-                      <div className="mt-2 text-[10px] text-zinc-400 text-right">
-                        Cập nhật lúc: {data.lastUpdated}
+                      <div className="mt-1 text-[9px] opacity-40 text-right">
+                        Cập nhật: {data.lastUpdated || 'Vừa xong'}
                       </div>
                     </div>
                   );
-                } */
-// ... Bên trong đoạn m.toolInvocations.map((ti) => { ... })
-if (toolName === 'getAssetData' && data.type === 'financial_card') {
-  
-  // Xác định màu sắc chủ đạo dựa trên nhóm tài sản (Category)
-  const theme = {
-    metal: 'border-amber-200 bg-amber-50/20 text-amber-950',
-    crypto: 'border-violet-200 bg-violet-50/20 text-violet-950',
-    commodity: 'border-zinc-300 bg-zinc-100/40 text-zinc-900',
-  }[data.category as 'metal' | 'crypto' | 'commodity'] || 'border-zinc-200 bg-white';
-
-  return (
-    <div key={toolCallId} className={`mr-auto w-full max-w-sm border p-5 rounded-2xl shadow-sm transition-all hover:shadow-md ${theme}`}>
-      <div className="flex justify-between items-start">
-        <div>
-          <h4 className="font-semibold text-sm tracking-tight">{data.name}</h4>
-          <span className="inline-block mt-1.5 px-2 py-0.5 bg-zinc-900 text-white rounded-md font-mono text-[10px] font-bold tracking-widest">
-            {data.code}
-          </span>
-        </div>
-        <div className="text-right">
-          <p className="font-mono font-bold text-lg">
-            ${data.price >= 1 ? data.price.toLocaleString(undefined, {minimumFractionDigits: 2}) : data.price}
-          </p>
-          <p className={`text-xs font-semibold mt-0.5 ${data.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-            {data.change >= 0 ? '▲' : '▼'} {Math.abs(data.change)}%
-          </p>
-        </div>
-      </div>
-
-      {/* Hiển thị sparkline tượng trưng */}
-      <div className="mt-4 pt-3 border-t border-zinc-200/60 flex items-center justify-between text-[11px] opacity-60">
-        <span>Biến động phiên:</span>
-        <span className="font-mono tracking-tighter">{data.sparkline?.map((v: number) => v.toFixed(1)).join(' → ')}</span>
-      </div>
-
-      <div className="mt-1 text-[9px] opacity-40 text-right">
-        Cập nhật: {data.lastUpdated}
-      </div>
-    </div>
-  );
-}
-
+                }
               }
-
               return null;
             })}
           </div>
@@ -148,12 +117,11 @@ if (toolName === 'getAssetData' && data.type === 'financial_card') {
         )}
       </div>
 
-      {/* Form nhập liệu tinh giản */}
       <form onSubmit={handleSubmit} className="flex gap-2 sticky bottom-4 bg-white p-2 border border-zinc-200 rounded-2xl shadow-sm focus-within:border-zinc-400 transition-colors">
         <input
           className="flex-1 px-3 py-2 outline-none text-sm bg-transparent"
           value={input}
-          placeholder="Ví dụ: Kiểm tra tình hình giá XAUUSD hiện tại thế nào..."
+          placeholder="Ví dụ: Kiểm tra tình hình giá XAUUSD hoặc BTCUSD hiện tại thế nào..."
           onChange={handleInputChange}
         />
         <button type="submit" className="bg-zinc-900 text-white px-5 py-2 rounded-xl text-xs font-medium hover:bg-zinc-800 transition-colors active:scale-95">
