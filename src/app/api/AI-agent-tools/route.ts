@@ -197,8 +197,7 @@ export async function POST(req: Request) {
               };
             }
 */
-// 2. NHÓM CRYPTO (Binance)
-// 2. NHÓM CRYPTO (Tự động chuyển đổi cổng kết nối dự phòng khi lỗi mạng)
+// 2. NHÓM CRYPTO (Chuyển hẳn sang CoinGecko để né lỗi chặn IP 451 của Binance)
 const isCrypto = 
   symbol.includes('BTC') || 
   symbol.includes('ETH') || 
@@ -207,67 +206,69 @@ const isCrypto =
   symbol.endsWith('USD');
 
 if (isCrypto) {
-  let coinBase = 'BTC';
-  if (symbol.includes('ETH')) coinBase = 'ETH';
-  if (symbol.includes('SOL')) coinBase = 'SOL';
-  
-  const binanceSymbol = `${coinBase}USDT`;
-  
-  // Danh sách các cổng API phân tán của Binance trên thế giới
-  const endpoints = [
-    `https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`,
-    `https://api1.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`,
-    `https://api3.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`
-  ];
+  // CoinGecko dùng tên định danh dạng đầy đủ (id) thay vì mã ticker viết tắt
+  let coinId = 'bitcoin';
+  let displayName = 'Bitcoin';
+  let displayCode = 'BTCUSDT';
 
-  let data = null;
-  let fetchError = '';
+  if (symbol.includes('ETH')) {
+    coinId = 'ethereum';
+    displayName = 'Ethereum';
+    displayCode = 'ETHUSDT';
+  } else if (symbol.includes('SOL')) {
+    coinId = 'solana';
+    displayName = 'Solana';
+    displayCode = 'SOLUSDT';
+  }
 
-  // Vòng lặp thử từng cổng, nếu cổng 1 lỗi sẽ tự nhảy sang cổng 2
-  for (const url of endpoints) {
-    try {
-      const res = await fetch(url, {
+  try {
+    // Gọi API public của CoinGecko (Lấy giá theo USD và kèm % thay đổi 24h)
+    const res = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd&include_24hr_change=true`,
+      {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-        next: { revalidate: 10 } // Cache ngắn 10 giây để tăng tốc độ phản hồi
-      });
-      
-      if (res.ok) {
-        data = await res.json();
-        break; // Lấy được dữ liệu thành công thì thoát vòng lặp ngay
-      } else {
-        fetchError = `Cổng ${url} trả về mã lỗi: ${res.status}`;
+        next: { revalidate: 30 } // Cache 30 giây để tránh bị dính giới hạn rate-limit của CoinGecko
       }
-    } catch (e: any) {
-      fetchError = e?.message || 'Lỗi kết nối mạng';
+    );
+
+    if (!res.ok) {
+      return { error: `Cổng CoinGecko báo lỗi hệ thống: Status ${res.status}` };
     }
-  }
 
-  // Nếu đi hết tất cả các cổng dự phòng mà vẫn thất bại
-  if (!data) {
-    return { 
-      error: `Không thể kết nối đến máy chủ dữ liệu Crypto lúc này. Chi tiết lỗi: ${fetchError}. Vui lòng thử lại.` 
+    const data = await res.json();
+    
+    // Cấu trúc data trả về của CoinGecko: { bitcoin: { usd: 65000, usd_24h_change: 2.5 } }
+    const coinData = data[coinId];
+    
+    if (!coinData) {
+      return { error: `Không tìm thấy dữ liệu cấu trúc cho đồng ${displayName}.` };
+    }
+
+    const price = Number(coinData.usd || 0);
+    const change = Number(coinData.usd_24h_change || 0);
+
+    return {
+      type: 'financial_card',
+      category: 'crypto',
+      name: displayName,
+      code: displayCode,
+      price: price,
+      change: change,
+      // Tạo sparkline mô phỏng dựa trên giá mở cửa ước tính từ % thay đổi
+      sparkline: [
+        price * (1 - change / 100), 
+        price * (1 - (change * 0.5) / 100), 
+        price
+      ],
+      lastUpdated: new Date().toLocaleTimeString('vi-VN')
     };
+
+  } catch (e: any) {
+    return { error: `Lỗi kết nối máy chủ CoinGecko: ${e?.message || 'Unknown Error'}` };
   }
-
-  const displayName = coinBase === 'BTC' ? 'Bitcoin' : coinBase === 'ETH' ? 'Ethereum' : 'Solana';
-
-  return {
-    type: 'financial_card',
-    category: 'crypto',
-    name: displayName,
-    code: binanceSymbol,
-    price: Number(data.lastPrice || 0),
-    change: Number(data.priceChangePercent || 0),
-    sparkline: [
-      Number(data.openPrice || 0), 
-      Number(data.lowPrice || 0), 
-      Number(data.highPrice || 0), 
-      Number(data.lastPrice || 0)
-    ],
-    lastUpdated: new Date().toLocaleTimeString('vi-VN')
-  };
 }
+
 
 
 
