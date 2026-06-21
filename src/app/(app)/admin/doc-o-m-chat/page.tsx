@@ -1,4 +1,5 @@
 // app/page.tsx
+/*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -11,12 +12,12 @@ export default function OMAgentChat() {
   return (
     <main className="max-w-3xl mx-auto p-6 min-h-screen flex flex-col justify-between bg-zinc-50 text-zinc-900">
       
-      {/* Khung nội dung hội thoại */}
+ 
       <div className="space-y-6 flex-1 overflow-y-auto mb-4 pr-2">
         {messages.map((m) => (
           <div key={m.id} className="flex flex-col gap-2">
             
-            {/* Render tin nhắn văn bản */}
+      
             {m.content && (
               <div className={`p-4 rounded-2xl max-w-[85%] text-sm ${
                 m.role === 'user' 
@@ -30,7 +31,7 @@ export default function OMAgentChat() {
               </div>
             )}
             
-            {/* Render các Tool Invocations */}
+       
             {m.toolInvocations && m.toolInvocations.map((ti) => {
               const { toolCallId, toolName, state } = ti;
 
@@ -97,7 +98,7 @@ export default function OMAgentChat() {
         )}
       </div>
 
-      {/* Form nhập liệu chân trang */}
+ 
       <form onSubmit={handleSubmit} className="flex gap-2 sticky bottom-4 bg-white p-2 border border-zinc-200 rounded-2xl shadow-sm focus-within:border-zinc-400 transition-colors">
         <input
           className="flex-1 px-3 py-2 outline-none text-sm bg-transparent"
@@ -106,6 +107,84 @@ export default function OMAgentChat() {
           onChange={handleInputChange}
         />
         <button type="submit" className="bg-zinc-900 text-white px-5 py-2 rounded-xl text-xs font-medium hover:bg-zinc-800 transition-colors active:scale-95">
+          Gửi lệnh
+        </button>
+      </form>
+    </main>
+  );
+}
+*/
+
+'use client';
+
+import { useChat } from 'ai/react';
+
+export default function OMAgentChat() {
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading
+  } = useChat({
+    api: '/api/doc-o-m-chat',
+  });
+
+  return (
+    <main className="max-w-3xl mx-auto p-6 min-h-screen flex flex-col justify-between bg-zinc-50 text-zinc-900">
+
+      {/* Chat messages */}
+      <div className="space-y-6 flex-1 overflow-y-auto mb-4 pr-2">
+        {messages.map((m) => (
+          <div
+            key={m.id}
+            className={`p-4 rounded-2xl max-w-[85%] text-sm ${
+              m.role === 'user'
+                ? 'bg-zinc-900 text-white ml-auto rounded-br-none shadow-sm'
+                : 'bg-white border border-zinc-200/80 mr-auto rounded-bl-none shadow-sm'
+            }`}
+          >
+            <p className="font-bold text-[10px] uppercase tracking-wider mb-1 opacity-40">
+              {m.role === 'user'
+                ? 'Kỹ thuật viên'
+                : 'Hệ thống Trợ lý O&M'}
+            </p>
+
+            <div className="whitespace-pre-wrap leading-relaxed">
+              {m.content}
+            </div>
+          </div>
+        ))}
+
+        {isLoading && (
+          <div className="flex items-center gap-2 text-zinc-400 text-xs px-4 animate-pulse">
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-bounce" />
+            Đang phân tích yêu cầu và truy xuất tài liệu O&M...
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <form
+        onSubmit={(e) => {
+          if (!input.trim()) return;
+          handleSubmit(e);
+        }}
+        className="flex gap-2 sticky bottom-4 bg-white p-2 border border-zinc-200 rounded-2xl shadow-sm focus-within:border-zinc-400 transition-colors"
+      >
+        <input
+          className="flex-1 px-3 py-2 outline-none text-sm bg-transparent"
+          value={input}
+          placeholder="Ví dụ: Quy trình khởi động bể Aerotank khi gặp sự cố bùn trào..."
+          onChange={handleInputChange}
+          disabled={isLoading}
+        />
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="bg-zinc-900 text-white px-5 py-2 rounded-xl text-xs font-medium hover:bg-zinc-800 transition-colors active:scale-95 disabled:opacity-50"
+        >
           Gửi lệnh
         </button>
       </form>
