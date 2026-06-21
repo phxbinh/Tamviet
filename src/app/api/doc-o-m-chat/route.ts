@@ -58,7 +58,7 @@ export async function POST(req: Request) {
         execute: async ({ query, limit }) => {
           try {
             // 1. Tạo vector 3072 chiều từ câu hỏi của người dùng bằng Gemini Embedding API
-            const { embedding } = await google.ai.embed({
+            const { embedding } = await google.embbeding({
               model: 'text-embedding-3-large', // Phải khớp 3072 dimensions với cấu trúc bảng
               value: query,
             });
