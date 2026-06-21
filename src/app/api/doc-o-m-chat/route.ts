@@ -1,4 +1,5 @@
 // app/api/chat/route.ts
+/*
 import { google } from '@ai-sdk/google';
 import { streamText, embed } from 'ai';
 import { z } from 'zod';
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
           try {
             // 1. Tạo vector 3072 chiều từ câu hỏi của người dùng bằng Gemini Embedding API
             const { embedding } = await embed({
-              model: google.embedding('text-embedding-001', {
+              model: google.embedding('gemini-embedding-001', {
                 outputDimensionality: 3072, // Ép model sinh ra đúng 3072 chiều để khớp hoàn hảo với DB của bạn
               }),
               value: query,
@@ -115,6 +116,269 @@ export async function POST(req: Request) {
         }
       }
     }
+  });
+
+  return result.toDataStreamResponse();
+}
+*/
+
+// app/api/chat/route.ts
+
+import { google } from "@ai-sdk/google";
+import {
+  streamText,
+  embed,
+  generateText
+} from "ai";
+
+import { db } from "@/dbchatbot";
+
+import {
+  assets,
+  documents,
+  documentSections,
+  documentChunks
+} from "@/chatbot_OM/schemas";
+
+import {
+  eq,
+  like,
+  sql,
+  and
+} from "drizzle-orm";
+
+export const maxDuration = 60;
+
+type Intent =
+  | "asset_lookup"
+  | "knowledge_search"
+  | "section_lookup"
+  | "general";
+
+async function classifyIntent(
+  message: string
+): Promise<Intent> {
+  const result = await generateText({
+    model: google("gemini-2.5-flash"),
+    prompt: `
+Phân loại intent của câu hỏi kỹ thuật O&M.
+
+Chỉ trả về đúng 1 giá trị:
+
+- asset_lookup
+- knowledge_search
+- section_lookup
+- general
+
+Câu hỏi:
+${message}
+    `,
+  });
+
+  return result.text.trim() as Intent;
+}
+
+async function searchAssets(
+  keyword: string
+) {
+  const rows = await db
+    .select()
+    .from(assets)
+    .where(
+      like(assets.name, `%${keyword}%`)
+    )
+    .limit(5);
+
+  return rows;
+}
+
+async function searchKnowledgeBase(
+  query: string,
+  limit = 4
+) {
+  const { embedding } = await embed({
+    model: google.embedding(
+      "gemini-embedding-001",
+      {
+        outputDimensionality: 3072,
+      }
+    ),
+    value: query,
+  });
+
+  const similarity = sql<number>`
+    1 - (
+      ${documentChunks.embedding}
+      <=>
+      ${JSON.stringify(
+        embedding
+      )}::vector
+    )
+  `;
+
+  const hits = await db
+    .select({
+      id: documentChunks.id,
+      sectionPath:
+        documentChunks.sectionPath,
+      content: documentChunks.content,
+      score: similarity,
+      documentTitle: documents.title,
+      assetName: assets.name,
+    })
+    .from(documentChunks)
+    .innerJoin(
+      documents,
+      eq(
+        documentChunks.documentId,
+        documents.id
+      )
+    )
+    .innerJoin(
+      assets,
+      eq(documents.assetId, assets.id)
+    )
+    // bỏ threshold cứng
+    .orderBy(
+      sql`
+        ${documentChunks.embedding}
+        <=>
+        ${JSON.stringify(
+          embedding
+        )}::vector
+      `
+    )
+    .limit(limit);
+
+  return hits;
+}
+
+async function getSectionDetails(
+  sectionId: string
+) {
+  const rows = await db
+    .select()
+    .from(documentSections)
+    .where(
+      eq(documentSections.id, sectionId)
+    )
+    .limit(1);
+
+  return rows[0] ?? null;
+}
+
+export async function POST(
+  req: Request
+) {
+  const { messages } =
+    await req.json();
+
+  const latestMessage =
+    messages[messages.length - 1]
+      ?.content ?? "";
+
+  // STEP 1: Classify intent
+  const intent =
+    await classifyIntent(
+      latestMessage
+    );
+
+  let context = "";
+
+  // STEP 2: Deterministic routing
+  switch (intent) {
+    case "asset_lookup": {
+      const assets =
+        await searchAssets(
+          latestMessage
+        );
+
+      context = `
+KẾT QUẢ TRA CỨU THIẾT BỊ:
+
+${JSON.stringify(
+  assets,
+  null,
+  2
+)}
+      `;
+      break;
+    }
+
+    case "knowledge_search": {
+      const chunks =
+        await searchKnowledgeBase(
+          latestMessage
+        );
+
+      context = `
+NGỮ CẢNH KỸ THUẬT (RAG):
+
+${chunks
+  .map(
+    (chunk, index) => `
+[Chunk ${index + 1}]
+Tài liệu: ${chunk.documentTitle}
+Thiết bị: ${chunk.assetName}
+Section: ${chunk.sectionPath}
+Score: ${chunk.score}
+
+${chunk.content}
+`
+  )
+  .join("\n\n")}
+      `;
+      break;
+    }
+
+    case "section_lookup": {
+      const section =
+        await getSectionDetails(
+          latestMessage
+        );
+
+      context = `
+CHI TIẾT SECTION:
+
+${JSON.stringify(
+  section,
+  null,
+  2
+)}
+      `;
+      break;
+    }
+
+    default:
+      context = `
+Không có dữ liệu nội bộ liên quan.
+      `;
+  }
+
+  // STEP 3: Synthesize answer
+  const result = streamText({
+    model: google(
+      "gemini-2.5-flash"
+    ),
+
+    system: `
+Bạn là trợ lý kỹ thuật O&M.
+
+QUY TẮC:
+
+1. Chỉ trả lời dựa trên CONTEXT.
+2. Không tự bịa thông số kỹ thuật.
+3. Nếu context thiếu dữ liệu:
+   nói rõ hệ thống chưa cập nhật.
+4. Với troubleshooting:
+   ưu tiên nguyên nhân → kiểm tra → hành động.
+
+CONTEXT:
+
+${context}
+    `,
+
+    messages,
   });
 
   return result.toDataStreamResponse();
