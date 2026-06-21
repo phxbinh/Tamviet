@@ -1,5 +1,4 @@
 // app/page.tsx
-/*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -113,8 +112,8 @@ export default function OMAgentChat() {
     </main>
   );
 }
-*/
 
+/*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -133,7 +132,7 @@ export default function OMAgentChat() {
   return (
     <main className="max-w-3xl mx-auto p-6 min-h-screen flex flex-col justify-between bg-zinc-50 text-zinc-900">
 
-      {/* Chat messages */}
+
       <div className="space-y-6 flex-1 overflow-y-auto mb-4 pr-2">
         {messages.map((m) => (
           <div
@@ -164,7 +163,7 @@ export default function OMAgentChat() {
         )}
       </div>
 
-      {/* Input */}
+  
       <form
         onSubmit={(e) => {
           if (!input.trim()) return;
@@ -191,3 +190,9 @@ export default function OMAgentChat() {
     </main>
   );
 }
+*/
+
+
+
+
+
