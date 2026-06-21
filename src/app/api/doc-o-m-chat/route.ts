@@ -1,5 +1,4 @@
 // app/api/chat/route.ts
-/*
 import { google } from '@ai-sdk/google';
 import { streamText, embed } from 'ai';
 import { z } from 'zod';
@@ -120,8 +119,8 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
-*/
 
+/*
 // app/api/chat/route.ts
 
 import { google } from "@ai-sdk/google";
@@ -383,3 +382,4 @@ ${context}
 
   return result.toDataStreamResponse();
 }
+*/
