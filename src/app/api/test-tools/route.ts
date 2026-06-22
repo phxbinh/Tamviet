@@ -2,7 +2,7 @@ import { streamText, tool } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 
-const model = google('gemini-2.5-pro'); // thử gemini-2.5-pro nếu vẫn lỗi
+const model = google('gemini-2.5-flash'); // thử gemini-2.5-pro nếu vẫn lỗi
 
 const tools = {
   getCurrentTime: tool({
