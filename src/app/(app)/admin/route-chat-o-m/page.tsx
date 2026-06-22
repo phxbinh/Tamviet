@@ -40,6 +40,23 @@ export default function Chat() {
                 </div>
               )}
 
+{/*
+     {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-white border p-4 rounded-2xl">
+              AI đang suy nghĩ...
+            </div>
+          </div>
+        )}
+*/}
+
+{/*
+              {!m.content && (!m.toolInvocations || m.toolInvocations.length === 0) && 
+                m.role === 'assistant' && <div className="italic text-gray-500">Đang suy nghĩ...</div>}
+*/}
+            </div>
+          </div>
+        ))}
 
      {isLoading && (
           <div className="flex justify-start">
@@ -48,13 +65,7 @@ export default function Chat() {
             </div>
           </div>
         )}
-{/*
-              {!m.content && (!m.toolInvocations || m.toolInvocations.length === 0) && 
-                m.role === 'assistant' && <div className="italic text-gray-500">Đang suy nghĩ...</div>}
-*/}
-            </div>
-          </div>
-        ))}
+
       </div>
 
       {error && <p className="text-red-600 mt-3">Lỗi: {error.message}</p>}
