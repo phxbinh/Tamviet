@@ -19,9 +19,7 @@ const tools = {
     parameters: z.object({
       city: z.string().describe('Tên thành phố'),
     }),
-    execute: async ({ city }) => {
-      return `Thời tiết tại ${city} hôm nay đẹp, 28°C. (dữ liệu test)`;
-    },
+    execute: async ({ city }) => `Thời tiết tại ${city} hôm nay đẹp, 28°C (test).`,
   }),
 };
 
@@ -31,7 +29,7 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model,
-      system: 'Bạn là trợ lý hữu ích. Hãy sử dụng tool khi cần thông tin thời gian hoặc thời tiết.',
+      system: 'Bạn là trợ lý hữu ích. Luôn trả lời bằng tiếng Việt. Khi cần dùng tool thì dùng, sau đó trả lời rõ ràng cho người dùng.',
       messages,
       tools,
       toolChoice: 'auto',
@@ -40,11 +38,11 @@ export async function POST(req: Request) {
     });
 
     return result.toDataStreamResponse();
-  } catch (error) {
-    console.error('Chat API Error:', error);
+  } catch (error: any) {
+    console.error('API Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Có lỗi xảy ra khi xử lý yêu cầu' }),
-      { status: 500 }
+      `data: ${JSON.stringify({ error: error.message })}\n\n`,
+      { headers: { 'Content-Type': 'text/event-stream' } }
     );
   }
 }
