@@ -131,7 +131,7 @@ Khi cần dùng tool:
       messages,
       tools,
       toolChoice: 'auto',
-      maxSteps: 5,           // ← Quan trọng nhất! 
+      maxSteps: 10,           // ← Quan trọng nhất! 
       maxRetries: 3,
       temperature: 0.7,
     });
