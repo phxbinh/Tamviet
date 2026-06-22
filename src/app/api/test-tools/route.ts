@@ -43,19 +43,17 @@ const tools = {
     }),
     execute: async ({ city }) => {
       try {
-        // Bước 1: Lấy tọa độ thành phố (geocoding)
         const geoRes = await fetch(
           `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=vi`
         );
         const geoData = await geoRes.json();
 
         if (!geoData.results || geoData.results.length === 0) {
-          return `Không tìm thấy thông tin thời tiết cho thành phố "${city}". Vui lòng thử tên khác (ví dụ: Hà Nội, TP.HCM).`;
+          return `Không tìm thấy thông tin thời tiết cho thành phố "${city}".`;
         }
 
         const { latitude, longitude, name } = geoData.results[0];
 
-        // Bước 2: Lấy dữ liệu thời tiết
         const weatherRes = await fetch(
           `https://api.open-meteo.com/v1/forecast?` +
           `latitude=${latitude}&longitude=${longitude}` +
@@ -65,12 +63,11 @@ const tools = {
         );
 
         const weatherData = await weatherRes.json();
-
         const current = weatherData.current;
         const daily = weatherData.daily;
 
-        // Weather code sang tiếng Việt đơn giản
-        const weatherCodeMap = {
+        // Weather code map với index signature
+        const weatherCodeMap: { [key: number]: string } = {
           0: "Trời quang",
           1: "Chủ yếu quang",
           2: "Có mây",
@@ -82,10 +79,11 @@ const tools = {
           65: "Mưa to",
           71: "Tuyết nhẹ",
           80: "Mưa rào",
-          // Có thể mở rộng thêm
+          95: "Giông",
         };
 
-        const description = weatherCodeMap[current.weather_code] || "Thời tiết thay đổi";
+        const code = Number(current.weather_code);
+        const description = weatherCodeMap[code] || "Thời tiết thay đổi";
 
         return `
 **Thời tiết tại ${name} (${city})**
@@ -96,7 +94,7 @@ const tools = {
 🌬️ Gió: ${current.wind_speed_10m} km/h
 ⛅ Trạng thái: ${description}
 
-**Dự báo 2 ngày tới:**
+**Dự báo:**
 - Ngày mai: ${daily.temperature_2m_max[1]}°C / ${daily.temperature_2m_min[1]}°C
 - Ngày kia: ${daily.temperature_2m_max[2]}°C / ${daily.temperature_2m_min[2]}°C
         `.trim();
