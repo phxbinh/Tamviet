@@ -2,7 +2,7 @@ import { streamText, tool } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 
-const model = google('gemini-2.5-flash');
+const model = google('gemini-2.5-flash'); // thử gemini-2.5-pro nếu vẫn lỗi
 
 const tools = {
   getCurrentTime: tool({
@@ -17,9 +17,11 @@ const tools = {
   getWeather: tool({
     description: 'Lấy thông tin thời tiết',
     parameters: z.object({
-      city: z.string().describe('Tên thành phố'),
+      city: z.string().describe('Tên thành phố, ví dụ: Hà Nội'),
     }),
-    execute: async ({ city }) => `Thời tiết tại ${city} hôm nay đẹp, 28°C (test).`,
+    execute: async ({ city }) => {
+      return `Thời tiết tại ${city} hôm nay đẹp, khoảng 28°C (dữ liệu test).`;
+    },
   }),
 };
 
@@ -29,10 +31,11 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model,
-      system: 'Bạn là trợ lý hữu ích. Luôn trả lời bằng tiếng Việt. Khi cần dùng tool thì dùng, sau đó trả lời rõ ràng cho người dùng.',
+      system: 'Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt tự nhiên. Khi cần thông tin, hãy dùng tool rồi sau đó đưa ra câu trả lời rõ ràng cho người dùng.',
       messages,
       tools,
       toolChoice: 'auto',
+      maxSteps: 5,           // ← Quan trọng nhất! 
       maxRetries: 3,
       temperature: 0.7,
     });
@@ -41,8 +44,11 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('API Error:', error);
     return new Response(
-      `data: ${JSON.stringify({ error: error.message })}\n\n`,
-      { headers: { 'Content-Type': 'text/event-stream' } }
+      `data: ${JSON.stringify({ error: error.message || 'Lỗi server' })}\n\n`,
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'text/event-stream' } 
+      }
     );
   }
 }
