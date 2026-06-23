@@ -121,13 +121,13 @@ Error: Command "npm run build" exited with 1
 
 
 
-// src/app/api/langchain-ai/route.ts
-import { toBaseMessages, toUIMessageStream } from '@ai-sdk/langchain';
+
+
+    // src/app/api/langchain-ai/route.ts
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { NextRequest } from 'next/server';
-import { createDataStreamResponse } from 'ai';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -135,8 +135,6 @@ export const maxDuration = 30;
 export async function POST(req: NextRequest) {
   try {
     const { messages } = await req.json();
-
-    const langchainMessages = await toBaseMessages(messages);
 
     const model = new ChatGoogleGenerativeAI({
       model: "gemini-2.5-flash",
@@ -150,29 +148,42 @@ export async function POST(req: NextRequest) {
 
     const chain = RunnableSequence.from([prompt, model]);
 
-    const lastInput = langchainMessages[langchainMessages.length - 1]?.content || "";
+    const lastMessage = messages[messages.length - 1]?.content || "";
 
-    const stream = await chain.stream({ input: lastInput });
+    const stream = await chain.stream({ input: lastMessage });
 
-    const uiStream = toUIMessageStream(stream);
+    // Tạo streaming response đơn giản
+    const encoder = new TextEncoder();
+    
+    const readable = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          const text = chunk?.content || chunk?.text || "";
+          if (text) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: text })}\n\n`));
+          }
+        }
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+        controller.close();
+      },
+    });
 
-    // Cách đúng cho ai v4
-    return createDataStreamResponse({
-      execute: async (dataStream) => {
-        uiStream.pipeTo(dataStream);   // Hoặc tương tự
+    return new Response(readable, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
       },
     });
 
   } catch (error: any) {
-    console.error("LangChain Error:", error);
+    console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "Có lỗi xảy ra. Vui lòng thử lại sau." }), 
+      JSON.stringify({ error: "Có lỗi xảy ra" }), 
       { status: 500 }
     );
   }
 }
-
-
 
 
 
