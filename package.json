@@ -45,11 +45,11 @@
     "@ai-sdk/react": "^1.0.0",
     "@google/generative-ai": "^0.21.0",
     
-    "langchain": "^0.x.x",
-    "@langchain/google": "^0.x.x",
-    "@langchain/core": "^0.x.x",
-    "@langchain/community": "^0.x.x",
-    "@ai-sdk/langchain": "^1.x.x",
+    "langchain": "^1.5.0",
+    "@langchain/google-genai": "^2.2.0",
+    "@langchain/core": "^1.2.0",
+    "@langchain/community": "^1.1.0",
+    "@ai-sdk/langchain": "latest",
    
     "react-markdown": "^9.0.0",
     "remark-gfm": "^4.0.0",
