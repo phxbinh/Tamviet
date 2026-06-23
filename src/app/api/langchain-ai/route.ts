@@ -123,7 +123,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const model = new ChatGoogleGenerativeAI({
-      model: "gemini-1.5-flash", // Hoặc gemini-2.5-flash tùy bạn cấu hình
+      model: "gemini-2.5-flash", // Hoặc gemini-2.5-flash tùy bạn cấu hình
       apiKey: process.env.GOOGLE_API_KEY,
       temperature: 0.7,
     });
