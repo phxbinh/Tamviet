@@ -48,17 +48,17 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { NextRequest } from 'next/server';
-import { createUIMessageStreamResponse } from 'ai';
+import { createDataStreamResponse } from 'ai';   // ← Sửa thành cái này
 
-export const runtime = 'nodejs';     // Bắt buộc với LangChain
-export const maxDuration = 30;       // Tăng thời gian nếu cần
+export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
     const { messages } = await req.json();
 
     const model = new ChatGoogleGenerativeAI({
-      modelName: "gemini-2.5-flash",   // hoặc gemini-2.5-pro
+      modelName: "gemini-2.5-flash",
       temperature: 0.7,
       apiKey: process.env.GOOGLE_API_KEY,
     });
@@ -73,11 +73,11 @@ export async function POST(req: NextRequest) {
 
     const stream = await chain.stream({ input: lastMessage });
 
-    // Convert LangChain stream → AI SDK stream
+    // Convert LangChain stream
     const uiStream = toUIMessageStream(stream);
 
-    return createUIMessageStreamResponse({ 
-      stream: uiStream 
+    return createDataStreamResponse({
+      stream: uiStream,
     });
 
   } catch (error) {
