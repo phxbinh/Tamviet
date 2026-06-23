@@ -1,36 +1,48 @@
-// app/page.tsx
-'use client';
+"use client";
 
-import { useChat } from 'ai/react';
+import { useChat } from "@ai-sdk/react";
 
-export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/langchain-ai',
+export default function ChatPage() {
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+  } = useChat({
+    api: "/api/langchain-ai",
   });
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="space-y-4 mb-8">
-        {messages.map(m => (
-          <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] p-4 rounded-lg ${m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
-              {m.content}
-            </div>
+    <main className="max-w-2xl mx-auto p-6">
+      <div className="space-y-4 mb-6">
+        {messages.map((message) => (
+          <div key={message.id}>
+            <b>{message.role}:</b>{" "}
+            {message.content}
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex gap-2"
+      >
         <input
           value={input}
           onChange={handleInputChange}
-          placeholder="Nhập tin nhắn..."
-          className="flex-1 border rounded-lg px-4 py-2"
+          placeholder="Nhập..."
+          className="border p-2 flex-1"
         />
-        <button type="submit" disabled={isLoading} className="bg-black text-white px-6 rounded-lg">
-          Gửi
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="border px-4"
+        >
+          Send
         </button>
       </form>
-    </div>
+    </main>
   );
 }
