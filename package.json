@@ -40,7 +40,7 @@
     "slugify": "^1.6.6",
     "use-debounce": "^10.0.4",
   
-    "ai": "^6.0.0",
+    "ai": "^4.0.0",
     "@ai-sdk/google": "^1.0.0",
     "@ai-sdk/react": "^1.0.0",
     "@google/generative-ai": "^0.21.0",
