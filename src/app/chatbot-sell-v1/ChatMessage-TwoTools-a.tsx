@@ -88,8 +88,8 @@ export function ChatMessage({ message }: { message: any }) {
                           onClick={() =>
                             copyToClipboard(String(children))
                           }
-                          className="text-[10px] text-gray-400 text-blue"
-                        > {/*hover:text-white"*/}
+                          className="text-[10px] text-blue-400"
+                        > {/*text-gray-400 hover:text-white"*/}
                           Copy
                         </button>
                       </div>
