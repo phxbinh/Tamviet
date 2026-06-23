@@ -1,4 +1,5 @@
 // app/page.tsx
+/*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -30,9 +31,7 @@ export default function OMAgentChat() {
                 <p className="font-bold text-[10px] uppercase tracking-wider mb-1 opacity-40">
                   {m.role === 'user' ? 'Kỹ thuật viên' : 'Hệ thống Trợ lý O&M'}
                 </p>
-{/*
-                <div className="whitespace-pre-wrap leading-relaxed">{m.content}</div>
-*/}
+
 <div className="prose prose-sm max-w-none">
   <ReactMarkdown remarkPlugins={[remarkGfm]}>
     {m.content}
@@ -125,8 +124,9 @@ export default function OMAgentChat() {
     </main>
   );
 }
+*/
 
-/*
+//*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -203,7 +203,7 @@ export default function OMAgentChat() {
     </main>
   );
 }
-*/
+//*/
 
 
 
