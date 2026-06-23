@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
 */
 
 // app/api/langchain-ai/route.ts
+/*
 import { toBaseMessages, toUIMessageStream } from '@ai-sdk/langchain';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
@@ -87,5 +88,89 @@ export async function POST(req: NextRequest) {
     return new Response("Có lỗi xảy ra. Vui lòng thử lại.", { status: 500 });
   }
 }
+*/
+/* Error 
+Failed to compile.
+15:05:22 
+15:05:22 
+./src/app/api/langchain-ai/route.ts:82:7
+15:05:22 
+Type error: Object literal may only specify known properties, and 'stream' does not exist in type 'ResponseInit & { execute: (dataStream: DataStreamWriter) => void | Promise<void>; onError?: ((error: unknown) => string) | undefined; }'.
+15:05:22 
+15:05:22 
+  80 |
+15:05:22 
+  81 |     return createDataStreamResponse({
+15:05:22 
+> 82 |       stream: uiStream,
+15:05:22 
+     |       ^
+15:05:22 
+  83 |     });
+15:05:22 
+  84 |
+15:05:22 
+  85 |   } catch (error) {
+15:05:22 
+Next.js build worker exited with code: 1 and signal: null
+15:05:22 
+Error: Command "npm run build" exited with 1
+
+
+*/
+
+
+
+// src/app/api/langchain-ai/route.ts
+import { toBaseMessages, toUIMessageStream } from '@ai-sdk/langchain';
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { NextRequest } from 'next/server';
+import { createDataStreamResponse } from 'ai';   // Dùng cái này theo lỗi của bạn
+
+export const runtime = 'nodejs';
+export const maxDuration = 30;
+
+export async function POST(req: NextRequest) {
+  try {
+    const { messages } = await req.json();
+
+    const langchainMessages = await toBaseMessages(messages);
+
+    const model = new ChatGoogleGenerativeAI({
+      model: "gemini-2.5-flash",
+      temperature: 0.7,
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
+    });
+
+    const prompt = PromptTemplate.fromTemplate(
+      `Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt một cách tự nhiên và ngắn gọn.\n\n{input}`
+    );
+
+    const chain = RunnableSequence.from([prompt, model]);
+
+    const lastInput = langchainMessages[langchainMessages.length - 1]?.content || "";
+
+    const stream = await chain.stream({ input: lastInput });
+
+    const uiStream = toUIMessageStream(stream);
+
+    return createDataStreamResponse({
+      stream: uiStream,
+    });
+
+  } catch (error: any) {
+    console.error("LangChain Error:", error);
+    return new Response(
+      JSON.stringify({ error: "Có lỗi xảy ra. Vui lòng thử lại." }), 
+      { status: 500 }
+    );
+  }
+}
+
+
+
+
 
 
