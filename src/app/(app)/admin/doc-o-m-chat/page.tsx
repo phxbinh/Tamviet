@@ -1,5 +1,5 @@
 // app/page.tsx
-/*
+//*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -91,7 +91,7 @@ export default function OMAgentChat() {
                   return (
                     <div key={toolCallId} className="text-[11px] text-emerald-600 font-medium italic flex items-center gap-1.5 px-4">
                       ✅ Đã trích xuất thành công {count} phân đoạn tri thức liên quan từ kho tài liệu.
-<pre> {data} </pre>
+
                     </div>
                   );
                 }
@@ -124,9 +124,9 @@ export default function OMAgentChat() {
     </main>
   );
 }
-*/
+//*/
 
-//*
+/*
 'use client';
 
 import { useChat } from 'ai/react';
