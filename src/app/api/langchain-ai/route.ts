@@ -73,8 +73,8 @@ export async function POST(req: Request) {
 // Gemini ->spaw
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-// 1. Nhập hàm chuyển đổi luồng dữ liệu chuẩn từ adapter langchain
-import { toDataStream } from "@ai-sdk/langchain";
+// 1. Nhập thực thể LangChainAdapter chuẩn từ adapter
+import { LangChainAdapter } from "@ai-sdk/langchain";
 // 2. Nhập hàm tạo Response từ package lõi 'ai'
 import { createDataStreamResponse } from "ai";
 
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
 
     const model = new ChatGoogleGenerativeAI({
-      model: "gemini-2.5-flash", // Mô hình Gemini chuẩn
+      model: "gemini-2.5-flash",
       apiKey: process.env.GOOGLE_API_KEY,
       temperature: 0.7,
     });
@@ -98,13 +98,11 @@ export async function POST(req: Request) {
     // Gọi stream từ LangChain như bình thường
     const stream = await model.stream(chatHistory);
 
-    // 3. Biến đổi luồng stream của LangChain thành cấu trúc Data Stream của AI SDK
-    const aiSdkDataStream = toDataStream(stream);
-
-    // 4. Trả về HTTP Response chuẩn phối hợp giữa hai thư viện cho frontend useChat nhận diện
+    // 3. Dùng đúng hàm tương thích để biến đổi stream và trả về data stream response luôn
     return createDataStreamResponse({
       execute: (dataStreamWriter) => {
-        dataStreamWriter.merge(aiSdkDataStream);
+        const aiSdkStream = LangChainAdapter.toAIStream(stream);
+        dataStreamWriter.merge(aiSdkStream);
       },
     });
 
@@ -113,6 +111,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Chat failed" }, { status: 500 });
   }
 }
+
 
 
 
