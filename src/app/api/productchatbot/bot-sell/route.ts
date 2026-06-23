@@ -249,7 +249,7 @@ User muốn xem chi tiết sản phẩm.
 
 Bắt buộc gọi tool openProductDetail
 với đúng slug sản phẩm bên dưới.
-
+Trả lời ngắn gọn và đúng dữ liệu. Ngôn từ thân thiện.
 PRODUCT:
 - title: ${bestProduct.title}
 - slug: ${bestProduct.slug}
