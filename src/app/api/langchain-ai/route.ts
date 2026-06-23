@@ -113,53 +113,33 @@ export async function POST(req: Request) {
   }
 }
 */
+
+
+import { toBaseMessages, toUIMessageStream } from '@ai-sdk/langchain';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import * as LangChainAdapter from "@ai-sdk/langchain";
-import { StreamData, createDataStreamResponse } from "ai";
+import { createUIMessageStreamResponse, UIMessage } from 'ai';
+
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  try {
-    const { messages } = await req.json();
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-    const model = new ChatGoogleGenerativeAI({
+  const model = new ChatGoogleGenerativeAI({
       model: "gemini-2.5-flash", // Hoặc gemini-2.5-flash tùy bạn cấu hình
       apiKey: process.env.GOOGLE_API_KEY,
       temperature: 0.7,
     });
 
-    const chatHistory = messages.map((msg: any) => {
-      if (msg.role === "user") {
-        return new HumanMessage(msg.content);
-      }
-      return new AIMessage(msg.content);
-    });
+  // Convert AI SDK UIMessages to LangChain messages
+  const langchainMessages = await toBaseMessages(messages);
 
-    // 1. Gọi stream từ LangChain
-    const langchainStream = await model.stream(chatHistory);
+  // Stream the response from the model
+  const stream = await model.stream(langchainMessages);
 
-    // 2. Tạo một thực thể StreamData để quản lý gói tin truyền đi
-    const data = new StreamData();
-
-    // 3. Chuyển đổi stream của LangChain thành AI SDK Stream bằng hàm chuẩn của bản 1.x
-    const aiSdkStream = (LangChainAdapter as any).toDataStream(langchainStream);
-
-    // 4. Trả về cấu trúc response chính xác mà useChat bản mới mong đợi
-    return createDataStreamResponse({
-      execute: async (dataStreamWriter) => {
-        // Đóng gói data stream từ adapter vào writer
-        dataStreamWriter.merge(aiSdkStream);
-        // Đóng kết nối an toàn sau khi kết thúc stream
-        data.close();
-      },
-    });
-
-  } catch (error) {
-    console.error("LangChain AI Error:", error);
-    return Response.json({ error: "Chat failed" }, { status: 500 });
-  }
+  // Convert the LangChain stream to UI message stream
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream(stream),
+  });
 }
-
-
 
 
