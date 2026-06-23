@@ -1,7 +1,8 @@
 // app/page.tsx
 
 
-/* Chạy được test -> tra cứu mã tài chính
+// Chạy được test -> tra cứu mã tài chính 
+//*
 'use client';
 
 import { useChat } from 'ai/react';
@@ -133,11 +134,12 @@ export default function AgentChat() {
     </main>
   );
 }
-*/
+//*/
 
 
 
 // Document O&M
+/*
 "use client";
 
 import { useState } from "react";
@@ -300,7 +302,7 @@ export default function DocumentResolverPage() {
   );
 }
 
-
+//*/
 
 
 
