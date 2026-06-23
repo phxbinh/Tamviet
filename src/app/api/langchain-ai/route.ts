@@ -46,7 +46,7 @@ export async function POST(req: Request) {
           controller.close();
         },
       });
-
+console.log(JSON.stringify(readable))
     return new Response(readable, {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
