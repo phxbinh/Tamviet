@@ -1,4 +1,5 @@
 // app/api/langchain-ai/route.ts
+/*
 import { toUIMessageStream } from '@ai-sdk/langchain';
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
@@ -39,3 +40,53 @@ export async function POST(req: NextRequest) {
     return new Response("Lỗi server", { status: 500 });
   }
 }
+*/
+
+// app/api/langchain-ai/route.ts
+import { toUIMessageStream } from '@ai-sdk/langchain';
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { PromptTemplate } from "@langchain/core/prompts";
+import { RunnableSequence } from "@langchain/core/runnables";
+import { NextRequest } from 'next/server';
+import { createUIMessageStreamResponse } from 'ai';
+
+export const runtime = 'nodejs';     // Bắt buộc với LangChain
+export const maxDuration = 30;       // Tăng thời gian nếu cần
+
+export async function POST(req: NextRequest) {
+  try {
+    const { messages } = await req.json();
+
+    const model = new ChatGoogleGenerativeAI({
+      modelName: "gemini-2.5-flash",   // hoặc gemini-2.5-pro
+      temperature: 0.7,
+      apiKey: process.env.GOOGLE_API_KEY,
+    });
+
+    const prompt = PromptTemplate.fromTemplate(
+      `Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt một cách tự nhiên.\n\n{input}`
+    );
+
+    const chain = RunnableSequence.from([prompt, model]);
+
+    const lastMessage = messages[messages.length - 1]?.content || "";
+
+    const stream = await chain.stream({ input: lastMessage });
+
+    // Convert LangChain stream → AI SDK stream
+    const uiStream = toUIMessageStream(stream);
+
+    return createUIMessageStreamResponse({ 
+      stream: uiStream 
+    });
+
+  } catch (error) {
+    console.error("LangChain error:", error);
+    return new Response("Có lỗi xảy ra khi xử lý yêu cầu.", { 
+      status: 500 
+    });
+  }
+}
+
+
+
