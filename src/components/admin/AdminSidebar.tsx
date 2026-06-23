@@ -1,30 +1,5 @@
 
-/*
-'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { CheckCircle2, Boxes, Box, Tag, Settings, LogOut, Zap, ShieldCheck, ChevronLeft, ChartArea } from 'lucide-react';
-import { UserAvatar } from '../dashboard/UserAvatar';
-import { signOut } from '@/lib/authActions/auth';
-
-
-
-import { 
-  LayoutDashboard, // Tổng quan
-  UserCircle,      // Profiles
-  Layers,          // Product types
-  Package,         // Products
-  Beaker,          // Product test
-  FolderTree,      // Categories
-  Fingerprint,     // Attributes
-  TableProperties, // Product type attributes
-  GitBranch,       // Product variants
-  FileText,        // Details all products
-  Settings2        // Cài đặt
-} from 'lucide-react';
-*/
 
 'use client';
 
@@ -72,6 +47,7 @@ export default function AdminSidebar({ user, onNavigate }: AdminSidebarProps) {
     { icon: Beaker, label: 'chatbot ui post', href: '/admin/product-chat-ui-post' },
     { icon: Beaker, label: 'doc-o-m-chat', href: '/admin/doc-o-m-chat' },
     { icon: Beaker, label: 'route-chat-o-m', href: '/admin/route-chat-o-m' },
+    { icon: Beaker, label: 'langchain-ai', href: '/admin/langchain-ai' },
 
   ];
 //src/app/(app)/admin/chatbotproduct/category-cross-sell
