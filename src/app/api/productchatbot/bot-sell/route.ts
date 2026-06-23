@@ -247,9 +247,11 @@ Không tìm thấy sản phẩm phù hợp.
     system: `
 User muốn xem chi tiết sản phẩm.
 
-Bắt buộc gọi tool openProductDetail
-với đúng slug sản phẩm bên dưới.
-Trả lời ngắn gọn và đúng dữ liệu. Ngôn từ thân thiện.
+Bắt buộc gọi tool openProductDetail với đúng slug sản phẩm bên dưới.
+Sau khi gọi tool BẮT BUỘC:
+- Trả lời ngắn gọn, tự nhiên như nhân viên tư vấn và đúng dữ liệu. Ngôn từ thân thiện.
+- Giới thiệu ngắn gọn category đã mở.
+
 PRODUCT:
 - title: ${bestProduct.title}
 - slug: ${bestProduct.slug}
