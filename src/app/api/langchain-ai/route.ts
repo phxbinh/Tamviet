@@ -127,7 +127,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { NextRequest } from 'next/server';
-import { createDataStreamResponse } from 'ai';   // Phù hợp với ai v4
+import { createDataStreamResponse } from 'ai';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -156,7 +156,12 @@ export async function POST(req: NextRequest) {
 
     const uiStream = toUIMessageStream(stream);
 
-    return createDataStreamResponse(uiStream);   // Cách gọi cho v4
+    // Cách đúng cho ai v4
+    return createDataStreamResponse({
+      execute: async (dataStream) => {
+        uiStream.pipeTo(dataStream);   // Hoặc tương tự
+      },
+    });
 
   } catch (error: any) {
     console.error("LangChain Error:", error);
@@ -166,7 +171,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
 
 
 
