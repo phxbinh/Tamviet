@@ -193,7 +193,7 @@ export function ChatMessage({ message }: { message: any }) {
           return (
             <div key={tool.result.slug} className="mt-4 w-full">
 {/* Trả content từ AI Agent */}
-              {tool.result.message.content}
+              {tool.result.message}
               <ViewDetailButton
                 slug={tool.result.slug}
                 title={tool.result.title}
