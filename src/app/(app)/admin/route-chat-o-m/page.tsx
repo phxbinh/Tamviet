@@ -1,6 +1,8 @@
 'use client';
 // Ok ->
 import { useChat } from 'ai/react';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
@@ -21,7 +23,12 @@ export default function Chat() {
               </strong>
 
               {/* Nội dung text chính */}
-              {m.content && <div className="whitespace-pre-wrap mb-3">{m.content}</div>}
+              {/* {m.content && <div className="whitespace-pre-wrap mb-3">{m.content}</div>} */}
+{m.content && <div className="prose prose-sm max-w-none">
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+    {m.content}
+  </ReactMarkdown>
+</div>}
 
               {/* Hiển thị Tool Calls (rất quan trọng) */}
               {m.toolInvocations && m.toolInvocations.length > 0 && (
