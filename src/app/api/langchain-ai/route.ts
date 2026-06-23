@@ -74,7 +74,9 @@ export async function POST(req: Request) {
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 // Nhập hàm chuyển đổi stream
-import { LangChainAdapter } from "@ai-sdk/langchain"; 
+//import { LangChainAdapter } from "@ai-sdk/langchain"; 
+// SỬA DÒNG 77 THÀNH DẠNG NÀY:
+import * as LangChainAdapter from "@ai-sdk/langchain";
 
 export async function POST(req: Request) {
   try {
