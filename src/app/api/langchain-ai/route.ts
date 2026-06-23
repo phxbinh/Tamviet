@@ -73,8 +73,8 @@ export async function POST(req: Request) {
 // Gemini ->spaw
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-// 1. Nhập trực tiếp hàm toDataStream từ package adapter bản mới nhất
-import { toDataStream } from "@ai-sdk/langchain";
+// 1. Gom toàn bộ xuất bản của package vào thực thể LangChainAdapter
+import * as LangChainAdapter from "@ai-sdk/langchain";
 // 2. Nhập hàm tạo Response từ package lõi 'ai'
 import { createDataStreamResponse } from "ai";
 
@@ -98,10 +98,12 @@ export async function POST(req: Request) {
     // Gọi stream từ LangChain như bình thường
     const stream = await model.stream(chatHistory);
 
-    // 3. Trả về Response bằng cách gọi trực tiếp hàm toDataStream của bản v1.x
+    // 3. Trả về Response bằng cách gọi hàm thông qua object bọc
     return createDataStreamResponse({
       execute: (dataStreamWriter) => {
-        dataStreamWriter.merge(toDataStream(stream));
+        // Dùng ép kiểu (any) nếu TypeScript ở môi trường Vercel vẫn khắt khe với cấu trúc stream của LangChain
+        const aiSdkStream = (LangChainAdapter as any).toDataStream(stream);
+        dataStreamWriter.merge(aiSdkStream);
       },
     });
 
@@ -110,8 +112,6 @@ export async function POST(req: Request) {
     return Response.json({ error: "Chat failed" }, { status: 500 });
   }
 }
-
-
 
 
 
