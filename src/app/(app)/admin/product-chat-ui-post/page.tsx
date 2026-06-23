@@ -1,4 +1,7 @@
 // app/page.tsx
+
+
+/* Chạy được test -> tra cứu mã tài chính
 'use client';
 
 import { useChat } from 'ai/react';
@@ -87,7 +90,6 @@ export default function AgentChat() {
                         </div>
                       </div>
 
-                      {/* Hiển thị sparkline an toàn (chỉ map khi mảng có phần tử) */}
                       {sparkline.length > 0 && (
                         <div className="mt-4 pt-3 border-t border-zinc-200/60 flex items-center justify-between text-[11px] opacity-60">
                           <span>Biến động phiên:</span>
@@ -131,3 +133,177 @@ export default function AgentChat() {
     </main>
   );
 }
+*/
+
+
+
+// Document O&M
+"use client";
+
+import { useState } from "react";
+
+interface ResolveDocumentResponse {
+  success: boolean;
+  documentId?: string | null;
+  error?: string;
+}
+
+export default function DocumentResolverPage() {
+  const [query, setQuery] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [result, setResult] =
+    useState<ResolveDocumentResponse | null>(
+      null
+    );
+
+  async function handleResolve() {
+    const normalized =
+      query.trim();
+
+    if (!normalized) return;
+
+    try {
+      setLoading(true);
+      setResult(null);
+
+      const response =
+        await fetch(
+          "/api/product-chat-ui-post",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify({
+              query: normalized,
+            }),
+          }
+        );
+
+      const json: ResolveDocumentResponse =
+        await response.json();
+
+      setResult(json);
+    } catch (error) {
+      setResult({
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Network error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderResult() {
+    if (!result) return null;
+
+    if (
+      result.success &&
+      result.documentId
+    ) {
+      return (
+        <div className="border rounded-xl p-4 bg-green-50 border-green-200">
+          <p>
+            ✅ Tìm thấy tài liệu
+          </p>
+
+          <code className="block mt-2">
+            {result.documentId}
+          </code>
+        </div>
+      );
+    }
+
+    if (result.error) {
+      return (
+        <div className="border rounded-xl p-4 bg-red-50 border-red-200">
+          ❌ {result.error}
+        </div>
+      );
+    }
+
+    return (
+      <div className="border rounded-xl p-4 bg-yellow-50 border-yellow-200">
+        ⚠ Không tìm thấy tài liệu phù hợp
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <textarea
+        value={query}
+        onChange={(e) =>
+          setQuery(
+            e.target.value
+          )
+        }
+        rows={4}
+        placeholder="Nhập yêu cầu tìm tài liệu..."
+        className="w-full border rounded-xl p-4"
+        disabled={loading}
+      />
+
+      <button
+        onClick={
+          handleResolve
+        }
+        disabled={
+          loading ||
+          !query.trim()
+        }
+        className="w-full border rounded-xl p-3"
+      >
+        {loading
+          ? "Đang xử lý..."
+          : "Tìm tài liệu"}
+      </button>
+
+      {renderResult()}
+
+    {result && (
+
+      <div className="border rounded-xl p-4 bg-gray-50 border-gray-200">
+
+        <h3 className="font-bold mb-2">
+
+          Raw Response
+
+        </h3>
+
+        <pre className="text-sm whitespace-pre-wrap break-all">
+
+          {JSON.stringify(
+
+            result,
+
+            null,
+
+            2
+
+          )}
+
+        </pre>
+
+      </div>
+
+    )}
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
