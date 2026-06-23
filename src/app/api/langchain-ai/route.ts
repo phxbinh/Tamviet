@@ -123,7 +123,8 @@ Error: Command "npm run build" exited with 1
 
 
 
-    // src/app/api/langchain-ai/route.ts
+
+// src/app/api/langchain-ai/route.ts
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
@@ -143,7 +144,7 @@ export async function POST(req: NextRequest) {
     });
 
     const prompt = PromptTemplate.fromTemplate(
-      `Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt một cách tự nhiên.\n\n{input}`
+      `Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt tự nhiên, ngắn gọn.\n\n{input}`
     );
 
     const chain = RunnableSequence.from([prompt, model]);
@@ -152,23 +153,33 @@ export async function POST(req: NextRequest) {
 
     const stream = await chain.stream({ input: lastMessage });
 
-    // Tạo streaming response đơn giản
     const encoder = new TextEncoder();
-    
-    const readable = new ReadableStream({
+
+    const readableStream = new ReadableStream({
       async start(controller) {
-        for await (const chunk of stream) {
-          const text = chunk?.content || chunk?.text || "";
-          if (text) {
-            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content: text })}\n\n`));
+        try {
+          for await (const chunk of stream) {
+            const text = typeof chunk === 'string' 
+              ? chunk 
+              : chunk?.content || chunk?.text || "";
+
+            if (text) {
+              // Format đúng cho Vercel AI SDK useChat
+              controller.enqueue(
+                encoder.encode(`data: ${JSON.stringify({ type: 'text-delta', content: text })}\n\n`)
+              );
+            }
           }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+          controller.close();
         }
-        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
-        controller.close();
       },
     });
 
-    return new Response(readable, {
+    return new Response(readableStream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -179,7 +190,7 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error("Error:", error);
     return new Response(
-      JSON.stringify({ error: "Có lỗi xảy ra" }), 
+      JSON.stringify({ error: "Lỗi server" }),
       { status: 500 }
     );
   }
