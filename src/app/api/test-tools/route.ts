@@ -117,9 +117,7 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model,
-{/*
-      system: 'Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt tự nhiên. Khi cần thông tin, hãy dùng tool rồi sau đó đưa ra câu trả lời rõ ràng cho người dùng.',
-*/}
+      //system: 'Bạn là trợ lý hữu ích. Trả lời bằng tiếng Việt tự nhiên. Khi cần thông tin, hãy dùng tool rồi sau đó đưa ra câu trả lời rõ ràng cho người dùng.',
       system: `
 Bạn là trợ lý hữu ích.
 Luôn trả lời bằng tiếng Việt.
