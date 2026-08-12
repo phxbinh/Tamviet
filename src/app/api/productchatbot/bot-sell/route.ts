@@ -36,7 +36,7 @@ const rerankWithGemini = async (
   if (!candidates.length) return [];
 
   const result = await generateObject({
-    model: google("models/gemini-2.5-flash"), // Đã sửa cú pháp model đúng chuẩn
+    model: google("models/gemini-3.5-flash-lite"), // Đã sửa cú pháp model đúng chuẩn
     schema: z.object({
       ranked: z.array(z.object({
         id: z.string(),
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     // ================= 1. INTENT + FILTER EXTRACTION =================
 
     const parsedResult = await generateObject({
-      model: google("gemini-2.5-flash"),
+      model: google("gemini-3.5-flash-lite"),
 
       schema: z.object({
         intent: z.enum([
@@ -214,7 +214,7 @@ const products = await searchProductSlugs({
   if (!products.length) {
 
     const result = await streamText({
-      model: google("gemini-2.5-flash"),
+      model: google("gemini-3.5-flash-lite"),
 
       system: `
 Không tìm thấy sản phẩm phù hợp.
@@ -234,7 +234,7 @@ Không tìm thấy sản phẩm phù hợp.
 
   // 3. STREAM TOOL
   const result = await streamText({
-    model: google("gemini-2.5-flash"),
+    model: google("gemini-3.5-flash-lite"),
 
     messages: recentMessages,
 
@@ -265,7 +265,7 @@ PRODUCT:
     // ================= 2. NON PRODUCT CHAT =================
     if (parsed.intent !== "PRODUCT") {
       const result = await streamText({
-        model: google("gemini-2.5-flash"),
+        model: google("gemini-3.5-flash-lite"),
 
         system: `
 Bạn là chatbot bán hàng thân thiện.
@@ -461,7 +461,7 @@ Danh mục: ${
     // ================= 7. FINAL RESPONSE =================
 
     const result = await streamText({
-      model: google("gemini-2.5-flash"),
+      model: google("gemini-3.5-flash-lite"),
 
       maxSteps: 3,
 
