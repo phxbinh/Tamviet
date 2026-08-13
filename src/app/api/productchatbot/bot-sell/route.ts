@@ -158,7 +158,7 @@ Ví dụ:
 if (parsed.intent === "NAVIGATION") {
 
   const result = await streamText({
-    model: google("gemini-2.5-flash"),
+    model: google("gemini-3.5-flash-lite"),
 
     messages: recentMessages,
 
@@ -397,7 +397,7 @@ Danh mục: ${
     // ================= 5. NO RESULTS =================
     if (!vectorResults.length) {
         const result = await streamText({
-        model: google("gemini-2.5-flash"),
+        model: google("gemini-3.5-flash-lite"),
 
         system: `
           Không tìm thấy sản phẩm phù hợp.
